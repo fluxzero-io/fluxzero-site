@@ -1,0 +1,17 @@
+# Project Guidelines
+
+This project is the documentation of https://flux-capacitor.io and https://flux.host. 
+We are all about developer productivity.
+
+- Target audience is a software engineer - writing style is inviting but to the point
+- This project built with Astro Starlight (https://starlight.astro.build) 
+- When generating code examples, it should always generate Java and Kotlin (use synced tabs) 
+- We follow the Diataxis framework for documentation (https://diataxis.fr/)
+
+Table of contents
+
+1. About - where we introduce Flux, the promise, use cases and typical usage scenario's.
+2. Get started - where a visitor can read which steps to take to quickly get started with Flux
+3. Tutorials - where we explain how to create your first application etc.
+4. Guides/How to's - where we explain how to achieve certain goals
+5. Reference - where all kinds of reference material is to learn in depth about certain topics
