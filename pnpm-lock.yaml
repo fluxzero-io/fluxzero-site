@@ -7,7 +7,7 @@ settings:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
       '@astrojs/cloudflare':
         specifier: ^12.5.3
         version: 12.5.3(@types/node@22.15.29)(astro@5.8.2(@types/node@22.15.29)(rollup@4.41.1)(typescript@5.8.3))
@@ -20,7 +20,6 @@ importers:
       sharp:
         specifier: ^0.32.6
         version: 0.32.6
-    devDependencies:
       wrangler:
         specifier: ^4.19.1
         version: 4.19.1(@cloudflare/workers-types@4.20250604.0)
