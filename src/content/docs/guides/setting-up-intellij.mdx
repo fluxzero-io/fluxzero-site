@@ -1,0 +1,38 @@
+---
+title: IntelliJ IDEA for Flux
+description: A guide to configuring IntelliJ IDEA for Flux development
+sidebar:
+   order: 20
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import { Image } from 'astro:assets';
+import liveTemplate from '~/assets/idea/flux-live-template.png';
+
+## Recommendations
+
+General recommendations for setting up IntelliJ IDEA for Flux development:
+- **Use IntelliJ IDEA Ultimate**: The Community Edition lacks some features that are useful for Flux development, such as advanced Spring Boot support.
+
+
+## Template project
+When starting a project with the Flux CLI, you will automatically get a `.idea` folder in your project root. 
+This folder contains the IntelliJ IDEA project configuration files with the necessary settings for Flux development.
+
+Currently, you will find that our configuration contains
+
+- Live templates; when you type 'flux' in a file, IntelliJ IDEA will suggest Flux-specific templates.
+- Preventing false-positive findings of "Unused classes"
+- A custom run configuration for running your Flux application directly from the IDE.
+- Web request example directly usable from IntelliJ IDEA
+
+<Image src={liveTemplate} alt="Screenshot of IntelliJ IDEA showing live templates" />
+
+
+## Known limitations
+- Spring Boot Integration: properties of `@Stateful` may be classified as "no autowire candidate available". This is incorrect, it happens because IDEA is not aware of certain beans.
+
+
+<Aside type='note'>
+We are working on an IntelliJ IDEA plugin for Flux, which will provide additional features and better integration with the IDE.
+</Aside>

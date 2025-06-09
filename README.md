@@ -40,3 +40,4 @@ Topics
  - Sending HTTP requests 
  - Configuration / secrets 
  - Performance / server requirements
+ - Comparing to ... Axon, Restate, etc.
