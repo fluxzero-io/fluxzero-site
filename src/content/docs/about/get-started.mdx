@@ -5,7 +5,7 @@ sidebar:
    order: 20
 ---
 
-import { Steps } from '@astrojs/starlight/components';
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 
 
 ## Scaffold a new project
@@ -14,20 +14,47 @@ To build Flux projects, the only thing you need is Java 21+. However, we recomme
 
 <Steps>
 
-1. Install the Flux CLI
+1. Get the Flux CLI
 
-   ```shell
-      curl -o- -s -L https://github.com/flux-capacitor-io/flux-cli/releases/latest/download/install.sh | bash
-   ```
+   <Tabs>
+      <TabItem label="Bash">
+         ```shell
+            curl -o- -s -L https://github.com/flux-capacitor-io/flux-cli/releases/latest/download/install.sh | bash
+         ```
 
-   This script will perform the following actions
-    - Check if you have Java 21+ installed
-    - Download the latest Flux CLI release 
-    - Install the CLI in `~/.flux/cli`
-    - Create an alias `fz` for `~/.flux/cli` 
+         This script will perform the following actions
+         - Check if you have Java 21+ installed
+         - Download the latest Flux CLI release 
+         - Install the CLI in `~/.flux/cli`
+         - (Optionally) Install Flux command `fz` into `/usr/local/bin`
+      </TabItem>
 
-    If you prefer, you can perform the steps yourself. However, make sure to install the jar in your home directory under `.flux/cli` if you want the auto update support to work.
+      <TabItem label="Docker">
+         If you prefer to use Docker, you can run the Flux CLI in a container. This is useful if you don't want to install Java or the CLI on your local machine.
 
+         Create an alias in your shell configuration file (e.g., `.bashrc`, `.zshrc`):
+         ```shell
+            alias fz='docker run --rm -it -v .:/project flux-zero/cli:latest' 
+         ```
+
+      </TabItem>
+
+      <TabItem label="Manually">
+         If you prefer, you can install the Flux CLI with a few steps yourself
+         1. Download the latest [flux-cli.jar](https://github.com/flux-capacitor-io/flux-cli/releases/latest/download/flux-cli.jar)
+         2. Place it in your home directory under `.flux/flux-cli.jar`
+         3. Create an alias in your shell configuration file (e.g., `.bashrc`, `.zshrc`):
+            ```shell
+            alias fz='java -jar ~/.flux/flux-cli.jar'
+            ```
+      </TabItem>
+         
+      
+   </Tabs>
+
+   
+
+    
 
 2. Generate a new project
 
