@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@astro-community/astro-embed-youtube':
+        specifier: ^0.5.6
+        version: 0.5.6(astro@5.8.2(@types/node@22.15.29)(rollup@4.41.1)(typescript@5.8.3))
       '@astrojs/cloudflare':
         specifier: ^12.5.3
         version: 12.5.3(@types/node@22.15.29)(astro@5.8.2(@types/node@22.15.29)(rollup@4.41.1)(typescript@5.8.3))
@@ -26,6 +29,11 @@ importers:
         version: 4.19.1(@cloudflare/workers-types@4.20250604.0)
 
 packages:
+
+  '@astro-community/astro-embed-youtube@0.5.6':
+    resolution: {integrity: sha512-/mRfCl/eTBUz0kmjD1psOy0qoDDBorVp0QumUacjFcIkBullYtbeFQ2ZGZ+3N/tA6cR/OIyzr2QA4dQXlY6USg==}
+    peerDependencies:
+      astro: ^2.0.0 || ^3.0.0-beta || ^4.0.0-beta || ^5.0.0-beta
 
   '@astrojs/cloudflare@12.5.3':
     resolution: {integrity: sha512-QYA6gkF+s3LpDNT0KoURgJeByjiSvUABK1VXBpi9yzqUQfWm3kSAtn0aBXX8EkRlE5UaJ0CkArizfgfqr9zBhA==}
@@ -1300,6 +1308,9 @@ packages:
     resolution: {integrity: sha512-dhG34DXATL5hSxJbIexCft8FChFXtmskoZYnoPWjXQuebWYCNkVeV3KkGegCK9CP1oswI/vQibS2GY7Em/sJJA==}
     engines: {node: '>= 8'}
 
+  lite-youtube-embed@0.3.3:
+    resolution: {integrity: sha512-gFfVVnj6NRjxVfJKo3qoLtpi0v5mn3AcR4eKD45wrxQuxzveFJUb+7Cr6uV6n+DjO8X3p0UzPPquhGt0H/y+NA==}
+
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
 
@@ -2113,6 +2124,11 @@ packages:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
 snapshots:
+
+  '@astro-community/astro-embed-youtube@0.5.6(astro@5.8.2(@types/node@22.15.29)(rollup@4.41.1)(typescript@5.8.3))':
+    dependencies:
+      astro: 5.8.2(@types/node@22.15.29)(rollup@4.41.1)(typescript@5.8.3)
+      lite-youtube-embed: 0.3.3
 
   '@astrojs/cloudflare@12.5.3(@types/node@22.15.29)(astro@5.8.2(@types/node@22.15.29)(rollup@4.41.1)(typescript@5.8.3))':
     dependencies:
@@ -3484,6 +3500,8 @@ snapshots:
   kleur@4.1.5: {}
 
   klona@2.0.6: {}
+
+  lite-youtube-embed@0.3.3: {}
 
   longest-streak@3.1.0: {}
 

@@ -10,21 +10,43 @@ import { Steps } from '@astrojs/starlight/components';
 
 ## Scaffold a new project
 
-Prerequisites:
-- Java 21+
+To build Flux projects, the only thing you need is Java 21+. However, we recommend using the **Flux CLI** as provides a lot of convenience features to help you get started quickly. The CLI is a command line tool that helps you scaffold, build, and run Flux applications.
 
 <Steps>
 
 1. Install the Flux CLI
 
    ```shell
-      curl -o- -L https://github.com/flux-capacitor-io/flux-cli/releases/latest/download/install.sh | bash
+      curl -o- -s -L https://github.com/flux-capacitor-io/flux-cli/releases/latest/download/install.sh | bash
    ```
+
+   This script will perform the following actions
+    - Check if you have Java 21+ installed
+    - Download the latest Flux CLI release 
+    - Install the CLI in `~/.flux/cli`
+    - Create an alias `fz` for `~/.flux/cli` 
+
+    If you prefer, you can perform the steps yourself. However, make sure to install the jar in your home directory under `.flux/cli` if you want the auto update support to work.
+
 
 2. Generate a new project
 
    ```shell
-      ~/.flux/cli init 
+      fz init 
+   ```
+   This command will prompt you for a few questions to set up your project. You can also pass options directly, for example:
+
+   ```shell
+      fz init --name my-project 
+   ```
+
+   See `fz -h` for more options.
+
+3. Build your project
+
+   ```shell
+      cd my-project
+      ./gradlew build
    ```
 
 </Steps>

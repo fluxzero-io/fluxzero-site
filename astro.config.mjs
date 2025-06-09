@@ -14,6 +14,9 @@ export default defineConfig({
               dark: './src/assets/flux-logo-white.png',
               alt: 'Flux Logo'
           },
+          editLink: {
+                baseUrl: 'https://github.com/flux-capacitor-io/flux-docs/edit/main',
+          },
           social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/flux-capacitor-io/flux-docs' }],
           sidebar: [
               {

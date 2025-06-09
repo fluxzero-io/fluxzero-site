@@ -1,5 +1,9 @@
 # Flux Documentation Site
 
+## Preview
+
+Current "production" URL https://flux-docs01.rene7346.workers.dev/
+
 ## Commands
 
 All commands are run from the root of the project, from a terminal:
@@ -18,3 +22,21 @@ All commands are run from the root of the project, from a terminal:
 
 - Download VSCode
 - Install extensions: Astro, MDX, TypeScript
+
+
+## Features we'd like to add
+
+- Generate project from a UI
+- Web IDE 
+- Comments / questions? 
+- Changelog
+
+
+Topics
+ - Typical thing: do something on startup
+ - Multi tenancy
+ - ID generation
+ - Handling HTTP requests
+ - Sending HTTP requests 
+ - Configuration / secrets 
+ - Performance / server requirements

@@ -15,6 +15,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astro-community/astro-embed-youtube": "^0.5.6",
     "@astrojs/cloudflare": "^12.5.3",
     "@astrojs/starlight": "^0.34.3",
     "@types/node": "^22.15.29",
