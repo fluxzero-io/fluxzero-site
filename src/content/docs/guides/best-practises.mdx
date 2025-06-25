@@ -1,0 +1,16 @@
+---
+title: Most common best praticses
+description: Most common best praticses
+sidebar:
+   order: 20
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+
+- Commands are usually handled by non-local handlers so that ...
+- Queries are usually handled by local handlers for performance reasons.
+- Type the response of your Queries and Commands to ensure type safety. (use Request interface)
+- Write tests :) 
+- logic for handling commands not inside aggregates but inside the command handlers 
+- Use prefixes for ID's and Aliases to ensure uniqueness and clarity.
