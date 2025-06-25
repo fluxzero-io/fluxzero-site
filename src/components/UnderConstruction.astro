@@ -1,0 +1,11 @@
+---
+import { Aside } from '@astrojs/starlight/components';
+
+// Get the current page path and construct the GitHub edit URL
+const pagePath = Astro.url.pathname.replace(/\/$/, '').slice(1);
+const editUrl = `https://github.com/flux-capacitor-io/flux-docs/edit/main/src/content/docs/${pagePath}.mdx`;
+---
+
+<Aside type="caution" title="Work in Progress">
+  This page is currently under construction. Help us improve it by <a href={editUrl}>editing this page on GitHub</a>.
+</Aside>
