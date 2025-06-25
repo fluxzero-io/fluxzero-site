@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: Flux is a developer productivity platform that lets you focus on business logic instead of infrastructure.
+description: Fluxzero is a developer productivity platform that lets you focus on business logic instead of infrastructure.
 sidebar:
    order: 10
 ---
@@ -11,13 +11,13 @@ import { YouTube } from '@astro-community/astro-embed-youtube';
 import simpleArchitecture from '~/assets/architecture/simplified.png';
 
 
-# What is Flux?
+# What is Fluxzero?
 
-Flux is a developer productivity platform that simplifies modern backend development. It’s built for teams who want to move fast without getting lost in boilerplate or operational overhead.
+Fluxzero is a developer productivity platform that simplifies modern backend development. It’s built for teams who want to move fast without getting lost in boilerplate or operational overhead.
 
-> **You focus on your business logic. Flux handles the rest.**
+> **You focus on your business logic. Fluxzero handles the rest.**
 
-### See Flux in action
+### See Fluxzero in action
 
 <YouTube />
 
@@ -27,7 +27,7 @@ Flux is a developer productivity platform that simplifies modern backend develop
 
 Building software today means stitching together countless tools and frameworks: identity management, APIs, auditing, search, scalability, and security. Most of your time ends up spent on infrastructure—not the product.
 
-**Flux flips that around.**
+**Fluxzero flips that around.**
 
 It gives you a clean, scalable foundation for software development, with everything you need to ship business applications out of the box:
 
@@ -38,7 +38,7 @@ It gives you a clean, scalable foundation for software development, with everyth
 - **Open source** – Self-host it or use our fully managed service.
 
 
-Basically, we want you to focus on building your product, not the infrastructure. Flux is designed to handle the heavy lifting so you can ship features faster and with less hassle.
+Basically, we want you to focus on building your product, not the infrastructure. Fluxzero is designed to handle the heavy lifting so you can ship features faster and with less hassle.
 
 - Everything is extremely testable without the need for mocking or stubbing
 - No dependencies on complicated infrastructure
@@ -49,8 +49,8 @@ Basically, we want you to focus on building your product, not the infrastructure
 
 ## Who it's for
 
-Flux is designed for developers building internal tools, APIs, or backend systems that need to grow with your business.
- If you're tired of wiring together the same plumbing for every project, Flux gives you a better baseline.
+Fluxzero is designed for developers building internal tools, APIs, or backend systems that need to grow with your business.
+ If you're tired of wiring together the same plumbing for every project, Fluxzero gives you a better baseline.
 
 <Aside type="tip">
 Skeptical? [Try it out yourself](/about/get-started).
@@ -58,18 +58,18 @@ Skeptical? [Try it out yourself](/about/get-started).
 
 ---
 
-## Flux components
+## Fluxzero components
 
-In the diagram below, you can see the main components of a Flux application and how they interact with each other.
+In the diagram below, you can see the main components of a Fluxzero application and how they interact with each other.
 
 <Image src={simpleArchitecture} alt="Architecture diagram" class={"dark:bg-white"}  style={"background-color: var(--sl-color-gray-4);"}/>
 
 
-- **Centralized orchestration via the Flux Server**  
+- **Centralized orchestration via the Fluxzero Server**  
   The server is the brain of the system: it handles message routing, storage, indexing for search, scheduling, and autoscaling.
 
 - **No direct HTTP exposure**  
-  Applications don’t expose HTTP endpoints themselves. All external traffic flows through the **Flux Proxy**, which handles authentication, rate limiting, and routing.
+  Applications don’t expose HTTP endpoints themselves. All external traffic flows through the **Fluxzero Proxy**, which handles authentication, rate limiting, and routing.
 
 - **External HTTP integration via proxy**  
   Outgoing calls to third-party APIs also pass through the proxy.  
@@ -77,15 +77,15 @@ In the diagram below, you can see the main components of a Flux application and 
 
 
 - **Persistent WebSocket connections**  
-  Flux clients connect to the server via WebSockets, enabling real-time bi-directional communication at scale.
+  Fluxzero clients connect to the server via WebSockets, enabling real-time bi-directional communication at scale.
 
 
 ## Message driven
 
-Flux takes a different approach to backend development. Everything in a Flux application is message driven. 
+Fluxzero takes a different approach to backend development. Everything in a Fluxzero application is message driven. 
 
 **Message-driven by design**  
-Flux applications communicate using typed messages:  
+Fluxzero applications communicate using typed messages:  
 - **Commands** trigger behavior  
 - **Queries** fetch data  
 - **Events** represent facts that happened
@@ -101,5 +101,5 @@ Flux applications communicate using typed messages:
 ---
 
 <Aside type="tip">
-Flux is open source. [Explore the code on GitHub](https://github.com/flux-capacitor-io/flux-capacitor-client), or get started with our managed service in minutes.
+Fluxzero is open source. [Explore the code on GitHub](https://github.com/flux-capacitor-io/flux-capacitor-client), or get started with our managed service in minutes.
 </Aside>

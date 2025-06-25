@@ -8,7 +8,7 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   integrations: [
       starlight({
-          title: 'Flux Documentation',
+          title: 'Fluxzero Documentation',
           logo: {
               light: './src/assets/flux-logo-black.png',
               dark: './src/assets/flux-logo-white.png',

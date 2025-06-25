@@ -1,6 +1,6 @@
 {
-  "name": "flux-docs",
-  "description": "Documentation for Flux",
+  "name": "fluxzero-docs",
+  "description": "Documentation for Fluxzero",
   "type": "module",
   "private": true,
   "version": "0.0.1",
