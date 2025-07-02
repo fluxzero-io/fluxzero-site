@@ -12,7 +12,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "update-changelog": "tsx scripts/update-changelog.ts",
+    "update-changelog:full": "tsx scripts/update-changelog.ts --full"
   },
   "dependencies": {
     "@astro-community/astro-embed-youtube": "^0.5.6",
@@ -23,6 +25,7 @@
     "sharp": "^0.34.2"
   },
   "devDependencies": {
+    "tsx": "^4.20.3",
     "wrangler": "^4.19.1"
   }
 }

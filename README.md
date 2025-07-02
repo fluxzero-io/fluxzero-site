@@ -41,3 +41,9 @@ Topics
  - Configuration / secrets 
  - Performance / server requirements
  - Comparing to ... Axon, Restate, etc.
+
+Backlog
+
+1. High over explanation of Fluxzero - what does it do, what can you use it for and why should you choose to use it?
+2. Getting started
+3. Building your first application (alle aspecten met deep-dives over testen, webapi's, web clients, )
