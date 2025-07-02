@@ -132,7 +132,7 @@ function parseChangelog(content: string): ChangelogData {
     
     for (let i = recentStart; i < endIdx; i++) {
       const line = lines[i];
-      if (line.match(/^##\s+\[?\d+\.\d+\.\d+/)) {
+      if (line.match(/^###?\s+\[?\d+\.\d+\.\d+/)) {
         if (currentRelease) {
           recentReleases.push(currentRelease.trim());
         }
@@ -172,7 +172,7 @@ function parseChangelog(content: string): ChangelogData {
           archiveByQuarter.set(`${currentYear}-${currentQuarter}`, currentReleases);
         }
         inDetails = false;
-      } else if (inDetails && line.match(/^##/)) {
+      } else if (inDetails && line.match(/^###?\s+/)) {
         // Start of a release in archive
         let releaseContent = line + '\n';
         i++;
@@ -191,18 +191,22 @@ function parseChangelog(content: string): ChangelogData {
 
 function formatRelease(release: GitHubRelease): string {
   // GitHub body already contains the formatted markdown
-  // Just need to ensure proper heading level
   let body = release.body;
   
-  // Ensure the main version heading is at level 2
+  // Increase all heading levels by 1 (h2->h3, h3->h4, etc.)
+  body = body.replace(/^(#+)/gm, (match, hashes) => {
+    return hashes + '#';
+  });
+  
+  // Ensure the main version heading is at level 3
   const versionMatch = body.match(/^#+\s*\[?(\d+\.\d+\.\d+)/m);
   if (versionMatch) {
     const version = release.tag_name.replace(/^v/, '');
     const dateMatch = release.published_at.match(/^(\d{4}-\d{2}-\d{2})/);
     const date = dateMatch ? dateMatch[1] : release.published_at;
     
-    // Replace the first line with our standardized format
-    body = body.replace(/^.*\n/, `## ${version} (${date})\n`);
+    // Replace the first line with our standardized format at h3 level
+    body = body.replace(/^.*\n/, `### ${version} (${date})\n`);
   }
   
   return body.trim();
