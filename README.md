@@ -16,6 +16,8 @@ All commands are run from the root of the project, from a terminal:
 | `pnpm preview`         | Preview your build locally, before deploying     |
 | `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `pnpm astro -- --help` | Get help using the Astro CLI                     |
+| `pnpm update-changelog` | Update changelog with new releases from GitHub   |
+| `pnpm update-changelog:full` | Rebuild entire changelog from GitHub           |
 
 
 ## Contributing 
@@ -24,12 +26,31 @@ All commands are run from the root of the project, from a terminal:
 - Install extensions: Astro, MDX, TypeScript
 
 
+## Changelog Automation
+
+The site includes automated changelog generation from GitHub releases:
+
+- **Incremental updates**: `pnpm update-changelog` fetches only new releases since the last update
+- **Full rebuild**: `pnpm update-changelog:full` rebuilds the entire changelog from GitHub  
+- **Smart filtering**: Automatically skips releases without meaningful content
+- **Organized structure**: Groups releases by year and quarter with version ranges
+- **Version cutoff**: Only includes releases from v0.1192.0 onwards
+- **Collapsible design**: Each release is wrapped in expandable details for better UX
+
+The changelog is automatically organized as:
+```
+## 2025
+### 2025-Q2 - release 0.1192.0 - 0.1201.0
+<details><summary>0.1201.0 (2025-06-30)</summary>
+[Release content with proper heading levels]
+</details>
+```
+
 ## Features we'd like to add
 
 - Generate project from a UI
 - Web IDE 
-- Comments / questions? 
-- Changelog
+- Comments / questions?
 
 
 Topics
