@@ -57,11 +57,16 @@ async function fetchReleases(sinceVersion?: string): Promise<GitHubRelease[]> {
   
   console.log(`Fetching releases from GitHub${sinceVersion ? ` since ${sinceVersion}` : ''}...`);
   
-  while (true) {
+  while (page <= 20) { // GitHub API has a limit, typically around 10-20 pages
     const url = `${GITHUB_API_BASE}/repos/${REPO}/releases?per_page=${perPage}&page=${page}`;
     const response = await fetch(url);
     
     if (!response.ok) {
+      if (response.status === 422 && page > 10) {
+        // GitHub API pagination limit reached
+        console.log(`  Reached GitHub API pagination limit at page ${page}`);
+        break;
+      }
       throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
     }
     
@@ -102,11 +107,31 @@ function parseChangelog(content: string): ChangelogData {
   
   // Parse frontmatter
   const frontmatter: Record<string, any> = {};
+  let currentKey: string | null = null;
+  
   for (let i = 1; i < frontmatterEnd; i++) {
     const line = lines[i];
+    
+    // Check for nested object (key with no value, followed by indented lines)
+    const keyOnlyMatch = line.match(/^(\w+):\s*$/);
+    if (keyOnlyMatch) {
+      currentKey = keyOnlyMatch[1];
+      frontmatter[currentKey] = {};
+      continue;
+    }
+    
+    // Check for indented line (part of nested object)
+    const indentedMatch = line.match(/^\s+(\w+):\s*(.+)$/);
+    if (indentedMatch && currentKey) {
+      frontmatter[currentKey][indentedMatch[1]] = indentedMatch[2].trim();
+      continue;
+    }
+    
+    // Regular key-value pair
     const match = line.match(/^(\w+):\s*(.+)$/);
     if (match) {
       frontmatter[match[1]] = match[2].trim();
+      currentKey = null;
     }
   }
   
@@ -218,7 +243,14 @@ function generateChangelog(data: ChangelogData): string {
   // Frontmatter
   parts.push('---');
   for (const [key, value] of Object.entries(data.frontmatter)) {
-    parts.push(`${key}: ${value}`);
+    if (typeof value === 'object' && value !== null) {
+      parts.push(`${key}:`);
+      for (const [subKey, subValue] of Object.entries(value)) {
+        parts.push(`  ${subKey}: ${subValue}`);
+      }
+    } else {
+      parts.push(`${key}: ${value}`);
+    }
   }
   parts.push('---');
   parts.push('');
@@ -281,43 +313,93 @@ function generateChangelog(data: ChangelogData): string {
 
 async function updateChangelog(fullRebuild = false) {
   try {
-    // Read existing changelog
-    const existingContent = readFileSync(CHANGELOG_PATH, 'utf-8');
-    const changelogData = parseChangelog(existingContent);
+    let changelogData: ChangelogData;
     
-    // Fetch new releases
+    if (fullRebuild) {
+      console.log('🔄 Running full rebuild mode...');
+      // Start fresh for full rebuild
+      changelogData = {
+        frontmatter: {
+          title: 'Changelog',
+          description: 'Complete release history for flux-capacitor-client',
+          sidebar: {
+            order: 45
+          },
+          updatedUntil: '0.0.0'
+        },
+        recentReleases: [],
+        archiveByQuarter: new Map()
+      };
+    } else {
+      // Read existing changelog for incremental update
+      const existingContent = readFileSync(CHANGELOG_PATH, 'utf-8');
+      changelogData = parseChangelog(existingContent);
+    }
+    
+    // Fetch releases
     const sinceVersion = fullRebuild ? undefined : changelogData.frontmatter.updatedUntil;
-    const newReleases = await fetchReleases(sinceVersion);
+    const releases = await fetchReleases(sinceVersion);
     
-    if (newReleases.length === 0 && !fullRebuild) {
+    if (releases.length === 0 && !fullRebuild) {
       console.log('No new releases found. Changelog is up to date.');
       return;
     }
     
-    // Add new releases to recent section
-    const formattedNewReleases = newReleases.map(formatRelease);
-    changelogData.recentReleases.unshift(...formattedNewReleases);
-    
-    // Move old releases to archive if we exceed the limit
-    while (changelogData.recentReleases.length > RECENT_RELEASES_COUNT) {
-      const oldRelease = changelogData.recentReleases.pop()!;
+    if (fullRebuild) {
+      // For full rebuild, process all releases
+      console.log(`Processing ${releases.length} releases...`);
       
-      // Extract date from release
-      const dateMatch = oldRelease.match(/##\s+\d+\.\d+\.\d+\s+\((\d{4}-\d{2}-\d{2})\)/);
-      if (dateMatch) {
-        const { year, quarter } = getQuarterKey(dateMatch[1]);
-        const key = `${year}-${quarter}`;
+      for (const release of releases) {
+        const formattedRelease = formatRelease(release);
         
-        if (!changelogData.archiveByQuarter.has(key)) {
-          changelogData.archiveByQuarter.set(key, []);
+        // First RECENT_RELEASES_COUNT go to recent section
+        if (changelogData.recentReleases.length < RECENT_RELEASES_COUNT) {
+          changelogData.recentReleases.push(formattedRelease);
+        } else {
+          // Rest go to archive
+          const dateMatch = release.published_at.match(/^(\d{4}-\d{2}-\d{2})/);
+          if (dateMatch) {
+            const { year, quarter } = getQuarterKey(dateMatch[1]);
+            const key = `${year}-${quarter}`;
+            
+            if (!changelogData.archiveByQuarter.has(key)) {
+              changelogData.archiveByQuarter.set(key, []);
+            }
+            changelogData.archiveByQuarter.get(key)!.push(formattedRelease);
+          }
         }
-        changelogData.archiveByQuarter.get(key)!.unshift(oldRelease);
       }
-    }
-    
-    // Update frontmatter
-    if (newReleases.length > 0) {
-      changelogData.frontmatter.updatedUntil = newReleases[0].tag_name.replace(/^v/, '');
+      
+      // Update frontmatter with latest version
+      if (releases.length > 0) {
+        changelogData.frontmatter.updatedUntil = releases[0].tag_name.replace(/^v/, '');
+      }
+    } else {
+      // Incremental update logic (existing)
+      const formattedNewReleases = releases.map(formatRelease);
+      changelogData.recentReleases.unshift(...formattedNewReleases);
+      
+      // Move old releases to archive if we exceed the limit
+      while (changelogData.recentReleases.length > RECENT_RELEASES_COUNT) {
+        const oldRelease = changelogData.recentReleases.pop()!;
+        
+        // Extract date from release
+        const dateMatch = oldRelease.match(/###\s+\d+\.\d+\.\d+\s+\((\d{4}-\d{2}-\d{2})\)/);
+        if (dateMatch) {
+          const { year, quarter } = getQuarterKey(dateMatch[1]);
+          const key = `${year}-${quarter}`;
+          
+          if (!changelogData.archiveByQuarter.has(key)) {
+            changelogData.archiveByQuarter.set(key, []);
+          }
+          changelogData.archiveByQuarter.get(key)!.unshift(oldRelease);
+        }
+      }
+      
+      // Update frontmatter
+      if (releases.length > 0) {
+        changelogData.frontmatter.updatedUntil = releases[0].tag_name.replace(/^v/, '');
+      }
     }
     
     // Generate new changelog
@@ -325,7 +407,8 @@ async function updateChangelog(fullRebuild = false) {
     
     // Write back
     writeFileSync(CHANGELOG_PATH, newContent);
-    console.log(`✅ Changelog updated successfully with ${newReleases.length} new releases`);
+    console.log(`✅ Changelog updated successfully${fullRebuild ? ' (full rebuild)' : ''}`);
+    console.log(`   Total releases: ${changelogData.recentReleases.length + Array.from(changelogData.archiveByQuarter.values()).reduce((sum, arr) => sum + arr.length, 0)}`);
     console.log(`   Updated until: ${changelogData.frontmatter.updatedUntil}`);
     
   } catch (error) {
