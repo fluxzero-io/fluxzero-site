@@ -1,0 +1,22 @@
+---
+export const prerender = true;
+import { getCollection } from "astro:content";
+const javadocClasses = await getCollection("javadocClasses");
+
+interface Props {
+    className: string;
+}
+
+const { className } = Astro.props;
+
+let match = javadocClasses.find(
+    (item) => item.data.simpleName.toLowerCase() === className.toLowerCase(),
+);
+
+if (!match) {
+    throw new Error(`Javadoc class not found: ${className}`);
+}
+
+---
+
+<a target="_blank" href={match.data.url}>📖 {match.data.simpleName}</a>
