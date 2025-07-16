@@ -5,6 +5,159 @@ sidebar:
    order: 10
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
-Placeholder for command concept explanation.
+Commands are used to trigger state changes or domain logic in your application. They may return a result or be fire-and-forget.
+
+Commands can be sent from anywhere in your application, such as from a WebRequest, or even another command handler.
+
+## Defining Commands
+
+Commands are simple POJO's, typically defined as Java Record or Kotlin Data class.
+There is no need to implement any specific interface or extend a base class. 
+However, we recommend using the `Request` interface for commands that return a result, as it provides additional metadata and functionality.
+
+<Tabs>
+<TabItem label="Java">
+```java
+public record ToggleLight(LightId lightId) implements Request<BigDecimal> {}
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+data class ToggleLight(val lightId: LightId) : Request<BigDecimal>
+```
+</TabItem>
+</Tabs>
+
+## Sending Commands
+
+### Fire-and-Forget Commands
+
+When you don't need a response from the command, use `sendAndForgetCommand()`:
+
+<Tabs>
+<TabItem label="Java">
+```java
+FluxCapacitor.sendAndForgetCommand(new CreateUser("Alice"));
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+FluxCapacitor.sendAndForgetCommand(CreateUser("Alice"))
+```
+</TabItem>
+</Tabs>
+
+When using fire-and-forget commands, by default, Flux does not guarantee that the command will be processed. 
+For fire-and-forget commands, there is a way to provide the kind of guarantee you want.
+
+- **None** - default; no guarantee that the command is event sent (in case of a network failure, the command may not be sent)
+- **Sent** - guarantees that the command is sent to the Flux platform, but not necessarilty committed to the message log
+- Stored - guarantees that the command is sent and stored in the message log
+
+
+### Commands with Response
+
+When you need to wait for a response, you can use either asynchronous or blocking approaches:
+
+<Tabs>
+<TabItem label="Java">
+```java
+// Asynchronous - returns CompletableFuture
+CompletableFuture<UserId> future 
+        = FluxCapacitor.sendCommand(new AddLight("Living Room #1"));
+
+// Blocking - waits for result
+LightId id = FluxCapacitor.sendCommandAndWait(
+        new AddLight("Living Room #1"));
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+// Asynchronous - returns CompletableFuture
+val future: CompletableFuture<LightId> 
+        = FluxCapacitor.sendCommand(AddLight("Living Room #1"))
+
+// Blocking - waits for result
+val id: LightId = FluxCapacitor.sendCommandAndWait(
+        AddLight("Living Room #1"))
+```
+</TabItem>
+</Tabs>
+
+## Adding metadata to commands
+
+You can add metadata to commands to provide additional context, such as the source of the command or user information. 
+
+<Tabs>
+<TabItem label="Java">
+```java
+FluxCapacitor.sendCommand(
+    new AddLight("Living Room #1"),
+    Metadata.of("source", "admin-ui")
+);
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+FluxCapacitor.sendCommand(
+    AddLight("Living Room #1"),
+    Metadata.of("source", "admin-ui")
+)
+```
+</TabItem>
+</Tabs>
+
+
+<Aside type="caution">
+Metadata is not automatically propagated; see the [Metadata](/reference/core-components/message#metadata) section for more details.
+</Aside>
+
+## Request Timeouts
+
+The `@Timeout` annotation allows you to specify how long Flux should wait for a command to complete when using synchronous APIs:
+
+<Tabs>
+<TabItem label="Java">
+```java
+@Timeout(value = 3, timeUnit = TimeUnit.SECONDS)
+public record CalculatePremium(UserProfile profile) implements Request<BigDecimal> {}
+
+// When sending this command, the timeout is respected
+BigDecimal result = FluxCapacitor
+        .sendAndWait(new CalculatePremium(user));
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+@Timeout(value = 3, timeUnit = TimeUnit.SECONDS)
+data class CalculatePremium(val profile: UserProfile) : Request<BigDecimal>
+
+// When sending this command, the timeout is respected
+val result: BigDecimal = FluxCapacitor
+        .sendAndWait(CalculatePremium(user))
+```
+</TabItem>
+</Tabs>
+
+**Important notes about timeouts:**
+- The timeout only applies to blocking calls (e.g., `sendAndWait`)
+- For non-blocking `send()` methods that return `CompletableFuture`, no timeout is enforced unless you manually attach one
+- The default timeout for blocking operations (when `@Timeout` is not present) is **1 minute**
+
+## What Happens When You Send a Command
+
+When you dispatch a command, Flux goes through the following pipeline:
+
+1. **Dispatch Interceptors (Pre-Serialization)** - Inject metadata, validate, or modify the message
+2. **Local Handlers** - If local handlers exist, they process the command first
+3. **Serialization** - The message is converted to a `SerializedMessage`
+4. **Dispatch Interceptors (Post-Serialization)** - Final modifications after serialization
+5. **Forwarding to Flux Platform** - The command is sent to the platform for processing
+
+## See Also
+
+- [Message Handling](/docs/reference/core-components/message-handling) - Learn how to handle commands
+- [Metadata](/docs/reference/core-components/message#metadata) - Add context to your commands
+- [Testing](/docs/guides/testing) - How to test command handlers 

@@ -68,3 +68,46 @@ Backlog
 1. High over explanation of Fluxzero - what does it do, what can you use it for and why should you choose to use it?
 2. Getting started
 3. Building your first application (alle aspecten met deep-dives over testen, webapi's, web clients, )
+
+
+# Example Application
+
+In order to demonstrate Fluxzero, we will build home automation software based on the Fluxzero platform. 
+
+Features
+- Turning lights on/off (virtual buttons)
+- Showing light status (reactive updates)
+- Grouping lights in a room
+- Grouping rooms into a house
+- Turning lights on/off based on a timer
+- Turning lights on/off based on sunset / sundown (integrate with weather api)
+- Login to control the house
+- Sensor processing --> movement events 
+- Statistics (read models)
+- MQTT integration? 
+
+
+
+Stappen 
+
+- Goal: being able to turn off and on lights
+  - post /lights 
+
+
+Brede context
+Readme uit elkaar trekken --> referentie
+
+Birds eye view
+Most important concepts -- aggregate, command, query, event 
+Goal of flux 
+
+
+Wat mist in de readme
+Diagrammen uitgezoomd
+core concepten wat is een command? 
+hoe run je het lokaal ?
+
+
+
+Patterns
+Best practises 
