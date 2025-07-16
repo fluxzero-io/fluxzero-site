@@ -3,221 +3,113 @@ title: Changelog
 description: Complete release history for flux-capacitor-client
 sidebar:
   order: 45
-updatedUntil: 0.1202.0
 ---
 
-## 2025
-
-### 2025-Q3 - release 0.1202.0
-
-<details>
-<summary>0.1202.0 (2025-07-02)</summary>
-
-#### [0.1202.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1201.0...0.1202.0) (2025-07-02)
-
-
-##### Features
-
-* add a flag that indicates whether a tracker has reached the end of the log ([f3f7a81](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/f3f7a81df44f944bcc6d69f1b613945ccd6dab81))
-
-
-##### Bug Fixes
-
-* prevent double handler registration from Spring ([2557b97](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/2557b97b9ef762fe764ada59af053a0e3657de13))
-* prevent metrics NPE for `SerializedMessage` without data ([44f0973](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/44f09739291bec7e826498b4284cd5a181a45107))
-
-</details>
-
-### 2025-Q2 - release 0.1192.0 - 0.1201.0
-
-<details>
-<summary>0.1201.0 (2025-06-30)</summary>
-
-#### [0.1201.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1200.2...0.1201.0) (2025-06-30)
-
-
-##### Features
-
-* add byte sizes to metrics ([#64](https://github.com/flux-capacitor-io/flux-capacitor-client/issues/64)) ([e3b90f2](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/e3b90f24e178c0992066dcffb462e1d4fe758845))
-
-</details>
-
-<details>
-<summary>0.1200.2 (2025-06-30)</summary>
-
-##### [0.1200.2](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1200.1...0.1200.2) (2025-06-30)
-
-
-##### Bug Fixes
-
-* `WebResponse#toBuilder` should not recreate cookies ([ff6fb24](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/ff6fb244ebc5ffa9b78f0f82402b219a62f251ff)), closes [#63](https://github.com/flux-capacitor-io/flux-capacitor-client/issues/63)
-
-</details>
-
-<details>
-<summary>0.1200.1 (2025-06-30)</summary>
-
-##### [0.1200.1](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1200.0...0.1200.1) (2025-06-30)
-
-
-##### Bug Fixes
-
-* support role-based access in websocket endpoints ([b55dbc4](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/b55dbc414f830b6d68f2d15757601b2097590daa)), closes [#49](https://github.com/flux-capacitor-io/flux-capacitor-client/issues/49)
-
-</details>
-
-<details>
-<summary>0.1200.0 (2025-06-29)</summary>
-
-#### [0.1200.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1199.3...0.1200.0) (2025-06-29)
-
-
-##### Features
-
-* enhance role-based access control ([4052adf](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/4052adf6b5fcce588c344e325df8947c51a94518))
-
-</details>
-
-<details>
-<summary>0.1199.3 (2025-06-27)</summary>
-
-##### [0.1199.3](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1199.2...0.1199.3) (2025-06-27)
-
-
-##### Bug Fixes
-
-* detect constructor methods in websocket handlers requiring an automatic handshake ([50ecef8](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/50ecef895d17f21d946aaf9eff4e0a9a1aa79476))
-
-</details>
-
-<details>
-<summary>0.1199.2 (2025-06-27)</summary>
-
-##### [0.1199.2](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1199.1...0.1199.2) (2025-06-27)
-
-
-##### Bug Fixes
-
-* fix various issues related to `@SocketEndpoint` ([a101cbd](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/a101cbd71baef89fa412133a5b049edb194719a9))
-
-</details>
-
-<details>
-<summary>0.1199.1 (2025-06-23)</summary>
-
-##### [0.1199.1](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1199.0...0.1199.1) (2025-06-23)
-
-
-##### Bug Fixes
-
-* **web:** disable compression for static media files, deduplicate Content-Type header ([94274fc](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/94274fc43ab0840a231a45e7ab805a260849c6ea))
-
-</details>
-
-<details>
-<summary>0.1199.0 (2025-06-22)</summary>
-
-#### [0.1199.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1198.0...0.1199.0) (2025-06-22)
-
-
-##### Features
-
-* enable verifying outgoing web response even when a local handler throws an exception ([8ca2c58](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/8ca2c58e15bbcd6c3275961d718da0baa45de766)), closes [#44](https://github.com/flux-capacitor-io/flux-capacitor-client/issues/44)
-* expose FluxCapacitorConfiguration via FluxCapacitor API ([d1004f1](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/d1004f1aa3f22449557ebb71aa2f3382a5bfbc7b))
-
-</details>
-
-<details>
-<summary>0.1198.0 (2025-06-21)</summary>
-
-#### [0.1198.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1197.0...0.1198.0) (2025-06-21)
-
-
-##### Features
-
-* add convenience methods to `FluxCapacitor` ([83dd770](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/83dd7709a8ae8df0710006adecdc3a230d055cfa))
-
-</details>
-
-<details>
-<summary>0.1197.0 (2025-06-21)</summary>
-
-#### [0.1197.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1196.0...0.1197.0) (2025-06-21)
-
-
-##### Features
-
-* add a metadata-field `$msDelay` with the delay between a trigger and dispatched message ([53e2767](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/53e2767a33dde7ad34111c6c54828e873eba580b)), closes [#52](https://github.com/flux-capacitor-io/flux-capacitor-client/issues/52)
-
-</details>
-
-<details>
-<summary>0.1196.0 (2025-06-21)</summary>
-
-#### [0.1196.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1195.4...0.1196.0) (2025-06-21)
-
-
-##### Features
-
-* enable suppression of errors during the given-phase of tests ([aa71517](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/aa7151708933e1b9095d713fbf8b061c4beb8c13)), closes [#60](https://github.com/flux-capacitor-io/flux-capacitor-client/issues/60)
-
-</details>
-
-<details>
-<summary>0.1195.4 (2025-06-21)</summary>
-
-##### [0.1195.4](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1195.3...0.1195.4) (2025-06-21)
-
-
-##### Bug Fixes
-
-* in async tests, ensure consumers don't wait for canceled schedules ([0de631d](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/0de631d8ab26c2e8c87961721c302e6f24d597ba))
-
-</details>
-
-<details>
-<summary>0.1195.3 (2025-06-20)</summary>
-
-##### [0.1195.3](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1195.2...0.1195.3) (2025-06-20)
-
-
-##### Bug Fixes
-
-* in async tests, ensure the active list of schedules only consists of 'future' schedules ([4b60b9c](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/4b60b9ccf647fb5fa100b4f17497822527c9e740)), closes [#61](https://github.com/flux-capacitor-io/flux-capacitor-client/issues/61)
-
-</details>
-
-<details>
-<summary>0.1195.1 (2025-06-20)</summary>
-
-##### [0.1195.1](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1195.0...0.1195.1) (2025-06-20)
-
-
-##### Bug Fixes
-
-* in tests, register Spring handlers with TestFixture instead of FluxCapacitor ([07ac8e2](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/07ac8e2a643d9918f213e34ac792117ab7939ae8))
-
-</details>
-
-<details>
-<summary>0.1195.0 (2025-06-20)</summary>
-
-#### [0.1195.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1192.0...0.1195.0) (2025-06-20)
-
-##### Features
-
-* enable serving static files from classpath or fs ([2014117](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/201411733017419106c2af07df1d159375061288))
-
-##### Documentation
-
-* add a section on `@ServeStatic` in `README.md` ([9e876de](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/9e876dea08d1915021eb66a01cf99130f1ff450f))
-
-</details>
-
-<details>
-<summary>0.1192.0 (2025-06-15)</summary>
-
-#### [0.1192.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1191.3...0.1192.0) (2025-06-15)
-
-</details>
-
+import { getCollection } from 'astro:content';
+
+export const releases = await getCollection('changelogReleases');
+
+export function groupReleasesByQuarter(releases) {
+  // Group releases by quarter
+  const groupedByQuarter = new Map();
+  
+  for (const release of releases) {
+    const quarterKey = release.data.quarterKey;
+    if (!groupedByQuarter.has(quarterKey)) {
+      groupedByQuarter.set(quarterKey, []);
+    }
+    groupedByQuarter.get(quarterKey).push(release.data);
+  }
+  
+  // Convert to array and sort by quarter (most recent first)
+  const quarters = Array.from(groupedByQuarter.entries()).map(([quarterKey, releases]) => {
+    // Sort releases within quarter by version (most recent first)
+    releases.sort((a, b) => {
+      const versionA = a.version.split('.').map(Number);
+      const versionB = b.version.split('.').map(Number);
+      
+      for (let i = 0; i < Math.max(versionA.length, versionB.length); i++) {
+        const numA = versionA[i] || 0;
+        const numB = versionB[i] || 0;
+        if (numA !== numB) return numB - numA;
+      }
+      return 0;
+    });
+    
+    // Calculate version range for quarter
+    const versions = releases.map(r => r.version);
+    const minVersion = versions[versions.length - 1];
+    const maxVersion = versions[0];
+    
+    return {
+      quarterKey,
+      year: releases[0].year,
+      quarter: releases[0].quarter,
+      releases,
+      minVersion,
+      maxVersion
+    };
+  });
+  
+  // Sort quarters by year and quarter (most recent first)
+  quarters.sort((a, b) => {
+    if (a.year !== b.year) return b.year - a.year;
+    // Extract quarter number for comparison
+    const qNumA = parseInt(a.quarter.replace('Q', ''));
+    const qNumB = parseInt(b.quarter.replace('Q', ''));
+    return qNumB - qNumA;
+  });
+  
+  return quarters;
+}
+
+export function groupQuartersByYear(quarters) {
+  const yearGroups = new Map();
+  
+  for (const quarter of quarters) {
+    if (!yearGroups.has(quarter.year)) {
+      yearGroups.set(quarter.year, []);
+    }
+    yearGroups.get(quarter.year).push(quarter);
+  }
+  
+  // Convert to array and sort by year (most recent first)
+  return Array.from(yearGroups.entries())
+    .sort(([yearA], [yearB]) => yearB - yearA)
+    .map(([year, quarters]) => ({
+      year,
+      quarters: quarters.sort((a, b) => {
+        const qNumA = parseInt(a.quarter.replace('Q', ''));
+        const qNumB = parseInt(b.quarter.replace('Q', ''));
+        return qNumB - qNumA;
+      })
+    }));
+}
+
+export const quarterGroups = groupReleasesByQuarter(releases);
+export const yearGroups = groupQuartersByYear(quarterGroups);
+
+:::note
+This changelog is automatically generated from the [GitHub releases](https://github.com/flux-capacitor-io/flux-capacitor-client/releases) and shows releases from version 0.1192.0 onwards.
+:::
+
+{yearGroups.map(({ year, quarters }) => (
+  <div key={year}>
+    <h2>{year}</h2>
+    
+    {quarters.map(({ quarterKey, quarter, releases, minVersion, maxVersion }) => (
+      <div key={quarterKey}>
+        <h3>
+          {quarterKey} - release {minVersion === maxVersion ? minVersion : `${minVersion} - ${maxVersion}`}
+        </h3>
+        
+        {releases.map((release) => (
+          <details key={release.version}>
+            <summary>{release.version} ({release.date})</summary>
+            <div set:html={release.body} />
+          </details>
+        ))}
+      </div>
+    ))}
+  </div>
+))}
