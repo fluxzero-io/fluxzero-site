@@ -20,6 +20,8 @@
     "@astrojs/starlight": "^0.34.3",
     "@types/node": "^22.15.29",
     "astro": "^5.8.2",
+    "astro-mermaid": "^1.0.4",
+    "mermaid": "^11.9.0",
     "sharp": "^0.34.2"
   },
   "devDependencies": {

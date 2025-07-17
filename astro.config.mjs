@@ -1,12 +1,14 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import mermaid from 'astro-mermaid';
 
 import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [starlight({
+  integrations: [
+    starlight({
       title: 'Fluxzero Documentation',
       logo: {
           light: './src/assets/flux-logo-black.png',
@@ -35,7 +37,26 @@ export default defineConfig({
               autogenerate: { directory: 'reference' },
           },
       ],
-  })],
+    }),
+    mermaid({
+      theme: 'default',
+      autoTheme: true,
+      mermaidConfig: {
+        theme: 'default',
+        themeVariables: {
+          primaryColor: '#3b82f6',
+          primaryTextColor: '#ffffff',
+          primaryBorderColor: '#1e40af',
+          lineColor: '#6b7280',
+          sectionBkgColor: '#f3f4f6',
+          altSectionBkgColor: '#e5e7eb',
+          gridColor: '#d1d5db',
+          secondaryColor: '#f59e0b',
+          tertiaryColor: '#10b981'
+        }
+      }
+    })
+  ],
 
   adapter: cloudflare({
     imageService: 'compile',
