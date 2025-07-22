@@ -19,9 +19,9 @@ Think of a consumer like a team of workers at a restaurant. Multiple instances o
 graph TB
     ML[Message Log<br/>Commands, Events, Queries]
     
-    ML --> C1[Consumer: "user-service"]
-    ML --> C2[Consumer: "order-service"]
-    ML --> C3[Consumer: "notification-service"]
+    ML --> C1[Consumer: user-service]
+    ML --> C2[Consumer: order-service]
+    ML --> C3[Consumer: notification-service]
     
     C1 --> I1[Instance 1]
     C1 --> I2[Instance 2]

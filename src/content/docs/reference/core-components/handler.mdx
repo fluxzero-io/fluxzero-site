@@ -1,12 +1,1509 @@
 ---
-title: Handlers
-description: What is a handler?
+title: Handler
+description: Understanding message handlers - the heart of your business logic in Fluxzero
 sidebar:
-   order: 30
+   order: 80
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem, Card, CardGrid, Aside } from '@astrojs/starlight/components';
 
-Placeholder for explanation.
+A **Handler** is a method that processes messages in your smart home system. Handlers contain your business logic and are automatically invoked when specific message types are received. They're the bridge between Fluxzero's messaging infrastructure and your application code.
 
-- local
+<Aside type="tip" title="Real-world analogy">
+Think of handlers like smart home automation rules. When a motion sensor detects movement (message), several things might happen: lights turn on (lighting handler), security system logs activity (security handler), and energy usage is tracked (analytics handler). Each handler responds to the same trigger but performs different actions.
+</Aside>
+
+## Key Concepts
+
+<CardGrid>
+<Card title="Automatic Invocation" icon="rocket">
+Handlers are called automatically when matching messages arrive. Fluxzero handles all the routing, parameter injection, and error handling.
+</Card>
+
+<Card title="Type-Based Routing" icon="setting">
+The most specific handler method is chosen based on the message type and parameter types. Multiple handlers can process the same message.
+</Card>
+
+<Card title="Parameter Injection" icon="list-format">
+Handlers can receive not just the message, but also metadata, user context, aggregate instances, and other dependencies.
+</Card>
+
+<Card title="Location Transparency" icon="magnifier">
+Handlers can be local (same process) or remote (distributed). The calling code doesn't need to know the difference.
+</Card>
+</CardGrid>
+
+## Handler Types
+
+### Command Handlers
+
+Process commands to change system state:
+
+<Tabs>
+<TabItem label="Java">
+```java
+@Component
+public class DeviceCommandHandler {
+    
+    @HandleCommand
+    public DeviceId handle(AddDevice command) {
+        // Validate the device
+        validateDevice(command.device());
+        
+        // Add device to home
+        SmartHome home = FluxCapacitor.loadAggregate(command.homeId(), SmartHome.class);
+        Device newDevice = command.device().toBuilder()
+            .deviceId(DeviceId.generate())
+            .build();
+            
+        FluxCapacitor.sendCommand(new UpdateSmartHome(
+            command.homeId(),
+            home.toBuilder()
+                .devices(addToList(home.devices(), newDevice))
+                .build()
+        ));
+        
+        // Publish event
+        FluxCapacitor.publishEvent(new DeviceAdded(
+            command.homeId(), 
+            newDevice, 
+            Instant.now()
+        ));
+        
+        return newDevice.deviceId();
+    }
+    
+    @HandleCommand
+    public void handle(TurnOnLight command) {
+        Device light = FluxCapacitor.loadEntity(command.lightId());
+        
+        if (light.type() != DeviceType.LIGHT) {
+            throw new IllegalCommandException("Device is not a light");
+        }
+        
+        if (!light.isOnline()) {
+            throw new IllegalCommandException("Light is offline");
+        }
+        
+        // Send control signal to physical device
+        deviceControlService.turnOnLight(command.lightId(), command.brightness());
+        
+        // Update device state
+        Device updatedLight = light.toBuilder()
+            .settings(Map.of(
+                "isOn", true,
+                "brightness", command.brightness(),
+                "lastUpdated", Instant.now()
+            ))
+            .build();
+            
+        FluxCapacitor.updateEntity(updatedLight);
+        
+        // Publish event
+        FluxCapacitor.publishEvent(new LightTurnedOn(
+            command.lightId(),
+            getRoomForDevice(command.lightId()),
+            command.brightness()
+        ));
+    }
+    
+    @HandleCommand
+    public void handle(SetThermostatTemperature command) {
+        Device thermostat = FluxCapacitor.loadEntity(command.thermostatId());
+        
+        // Validate temperature range
+        if (command.temperature() < 10.0 || command.temperature() > 35.0) {
+            throw new IllegalCommandException(
+                "Temperature must be between 10°C and 35°C");
+        }
+        
+        double oldTemperature = (Double) thermostat.settings()
+            .getOrDefault("targetTemperature", 20.0);
+        
+        // Send to physical device
+        deviceControlService.setTemperature(
+            command.thermostatId(), 
+            command.temperature()
+        );
+        
+        // Update state
+        Device updatedThermostat = thermostat.toBuilder()
+            .settings(updateMap(thermostat.settings(), Map.of(
+                "targetTemperature", command.temperature(),
+                "lastUpdated", Instant.now()
+            )))
+            .build();
+            
+        FluxCapacitor.updateEntity(updatedThermostat);
+        
+        // Publish event
+        FluxCapacitor.publishEvent(new ThermostatTemperatureChanged(
+            command.thermostatId(),
+            oldTemperature,
+            command.temperature(),
+            "manual"
+        ));
+    }
+}
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+@Component
+class DeviceCommandHandler {
+    
+    @HandleCommand
+    fun handle(command: AddDevice): DeviceId {
+        // Validate the device
+        validateDevice(command.device)
+        
+        // Add device to home
+        val home = FluxCapacitor.loadAggregate(command.homeId, SmartHome::class.java)
+        val newDevice = command.device.copy(deviceId = DeviceId.generate())
+        
+        FluxCapacitor.sendCommand(UpdateSmartHome(
+            command.homeId,
+            home.copy(devices = home.devices + newDevice)
+        ))
+        
+        // Publish event
+        FluxCapacitor.publishEvent(DeviceAdded(
+            command.homeId, 
+            newDevice, 
+            Instant.now()
+        ))
+        
+        return newDevice.deviceId
+    }
+    
+    @HandleCommand
+    fun handle(command: TurnOnLight) {
+        val light = FluxCapacitor.loadEntity<Device>(command.lightId)
+        
+        require(light.type == DeviceType.LIGHT) { "Device is not a light" }
+        require(light.isOnline) { "Light is offline" }
+        
+        // Send control signal to physical device
+        deviceControlService.turnOnLight(command.lightId, command.brightness)
+        
+        // Update device state
+        val updatedLight = light.copy(
+            settings = light.settings + mapOf(
+                "isOn" to true,
+                "brightness" to command.brightness,
+                "lastUpdated" to Instant.now()
+            )
+        )
+        
+        FluxCapacitor.updateEntity(updatedLight)
+        
+        // Publish event
+        FluxCapacitor.publishEvent(LightTurnedOn(
+            command.lightId,
+            getRoomForDevice(command.lightId),
+            command.brightness
+        ))
+    }
+    
+    @HandleCommand
+    fun handle(command: SetThermostatTemperature) {
+        val thermostat = FluxCapacitor.loadEntity<Device>(command.thermostatId)
+        
+        // Validate temperature range
+        require(command.temperature in 10.0..35.0) {
+            "Temperature must be between 10°C and 35°C"
+        }
+        
+        val oldTemperature = thermostat.settings["targetTemperature"] as? Double ?: 20.0
+        
+        // Send to physical device
+        deviceControlService.setTemperature(command.thermostatId, command.temperature)
+        
+        // Update state
+        val updatedThermostat = thermostat.copy(
+            settings = thermostat.settings + mapOf(
+                "targetTemperature" to command.temperature,
+                "lastUpdated" to Instant.now()
+            )
+        )
+        
+        FluxCapacitor.updateEntity(updatedThermostat)
+        
+        // Publish event
+        FluxCapacitor.publishEvent(ThermostatTemperatureChanged(
+            command.thermostatId,
+            oldTemperature,
+            command.temperature,
+            "manual"
+        ))
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+### Event Handlers
+
+React to events to maintain projections, trigger automation, or perform side effects:
+
+<Tabs>
+<TabItem label="Java">
+```java
+@Component
+public class SecurityEventHandler {
+    
+    @HandleEvent
+    public void on(MotionDetected event) {
+        SmartHome home = getHomeForRoom(event.roomId());
+        
+        if (home.isSecurityArmed()) {
+            // Log security event
+            securityLog.recordEvent(SecurityLogEntry.builder()
+                .homeId(home.homeId())
+                .eventType("MOTION_WHILE_ARMED")
+                .deviceId(event.sensorId())
+                .severity("HIGH")
+                .timestamp(event.detectedAt())
+                .build());
+            
+            // Trigger security breach
+            FluxCapacitor.publishEvent(new SecurityBreach(
+                home.homeId(),
+                event.sensorId(),
+                "motion_while_armed",
+                "HIGH"
+            ));
+            
+            // Send immediate notification
+            FluxCapacitor.sendCommand(new SendNotification(
+                home.homeId(),
+                "Security Alert: Motion detected while system armed",
+                NotificationPriority.URGENT
+            ));
+        }
+    }
+    
+    @HandleEvent
+    public void on(DeviceOffline event) {
+        Device device = FluxCapacitor.loadEntity(event.deviceId());
+        
+        // Check if it's a critical security device
+        if (isSecurityDevice(device)) {
+            SmartHome home = FluxCapacitor.loadAggregateFor(event.deviceId());
+            
+            FluxCapacitor.publishEvent(new SecurityDeviceOffline(
+                home.homeId(),
+                event.deviceId(),
+                device.type(),
+                event.offlineDuration()
+            ));
+            
+            // If offline too long, trigger maintenance alert
+            if (event.offlineDuration().toHours() > 24) {
+                FluxCapacitor.sendCommand(new ScheduleMaintenance(
+                    home.homeId(),
+                    event.deviceId(),
+                    "Device offline for extended period"
+                ));
+            }
+        }
+    }
+    
+    @HandleEvent
+    public void on(DoorUnlocked event) {
+        // Log all door access for security audit
+        AccessLogEntry logEntry = AccessLogEntry.builder()
+            .deviceId(event.lockId())
+            .userId(event.userId())
+            .accessMethod(event.unlockMethod())
+            .timestamp(Instant.now())
+            .successful(true)
+            .build();
+            
+        accessAuditService.recordAccess(logEntry);
+        
+        // Check if access is during restricted hours
+        if (isRestrictedHours()) {
+            FluxCapacitor.publishEvent(new UnauthorizedAccess(
+                getHomeId(event.lockId()),
+                event.lockId(),
+                "Access during restricted hours: " + event.unlockMethod(),
+                getCurrentIpAddress()
+            ));
+        }
+    }
+}
+
+@Component
+public class AutomationEventHandler {
+    
+    @HandleEvent  
+    public void on(MotionDetected event) {
+        RoomId roomId = event.roomId();
+        
+        // Auto-lighting based on motion
+        List<DeviceId> roomLights = deviceRepository.findLightsByRoom(roomId);
+        
+        for (DeviceId lightId : roomLights) {
+            Device light = FluxCapacitor.loadEntity(lightId);
+            
+            if (light.isOnline() && !isLightOn(light)) {
+                int brightness = calculateOptimalBrightness(roomId);
+                
+                FluxCapacitor.sendCommand(new TurnOnLight(lightId, brightness));
+            }
+        }
+        
+        // Check automation rules
+        List<AutomationRule> motionRules = getAutomationRulesForTrigger(
+            roomId, "motion_detected"
+        );
+        
+        for (AutomationRule rule : motionRules) {
+            if (rule.isEnabled()) {
+                FluxCapacitor.sendCommand(new ExecuteAutomationRule(
+                    rule.ruleId(),
+                    Map.of("triggeredBy", event)
+                ));
+            }
+        }
+    }
+    
+    @HandleEvent
+    public void on(TemperatureReading event) {
+        // Auto-adjust thermostat based on temperature readings
+        List<DeviceId> thermostats = deviceRepository.findThermostatsByRoom(event.roomId());
+        
+        for (DeviceId thermostatId : thermostats) {
+            Device thermostat = FluxCapacitor.loadEntity(thermostatId);
+            
+            if (thermostat.isOnline()) {
+                double targetTemp = (Double) thermostat.settings()
+                    .getOrDefault("targetTemperature", 22.0);
+                
+                // If room is too hot/cold, adjust thermostat
+                if (Math.abs(event.temperature() - targetTemp) > 2.0) {
+                    FluxCapacitor.sendCommand(new AutoAdjustThermostat(
+                        thermostatId,
+                        event.temperature(),
+                        targetTemp
+                    ));
+                }
+            }
+        }
+    }
+}
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+@Component
+class SecurityEventHandler {
+    
+    @HandleEvent
+    fun on(event: MotionDetected) {
+        val home = getHomeForRoom(event.roomId)
+        
+        if (home.isSecurityArmed) {
+            // Log security event
+            securityLog.recordEvent(SecurityLogEntry(
+                homeId = home.homeId,
+                eventType = "MOTION_WHILE_ARMED",
+                deviceId = event.sensorId,
+                severity = "HIGH",
+                timestamp = event.detectedAt
+            ))
+            
+            // Trigger security breach
+            FluxCapacitor.publishEvent(SecurityBreach(
+                home.homeId,
+                event.sensorId,
+                "motion_while_armed",
+                "HIGH"
+            ))
+            
+            // Send immediate notification
+            FluxCapacitor.sendCommand(SendNotification(
+                home.homeId,
+                "Security Alert: Motion detected while system armed",
+                NotificationPriority.URGENT
+            ))
+        }
+    }
+    
+    @HandleEvent
+    fun on(event: DeviceOffline) {
+        val device = FluxCapacitor.loadEntity<Device>(event.deviceId)
+        
+        // Check if it's a critical security device
+        if (isSecurityDevice(device)) {
+            val home = FluxCapacitor.loadAggregateFor(event.deviceId)
+            
+            FluxCapacitor.publishEvent(SecurityDeviceOffline(
+                home.homeId,
+                event.deviceId,
+                device.type,
+                event.offlineDuration
+            ))
+            
+            // If offline too long, trigger maintenance alert
+            if (event.offlineDuration.toHours() > 24) {
+                FluxCapacitor.sendCommand(ScheduleMaintenance(
+                    home.homeId,
+                    event.deviceId,
+                    "Device offline for extended period"
+                ))
+            }
+        }
+    }
+    
+    @HandleEvent
+    fun on(event: DoorUnlocked) {
+        // Log all door access for security audit
+        val logEntry = AccessLogEntry(
+            deviceId = event.lockId,
+            userId = event.userId,
+            accessMethod = event.unlockMethod,
+            timestamp = Instant.now(),
+            successful = true
+        )
+        
+        accessAuditService.recordAccess(logEntry)
+        
+        // Check if access is during restricted hours
+        if (isRestrictedHours()) {
+            FluxCapacitor.publishEvent(UnauthorizedAccess(
+                getHomeId(event.lockId),
+                event.lockId,
+                "Access during restricted hours: ${event.unlockMethod}",
+                getCurrentIpAddress()
+            ))
+        }
+    }
+}
+
+@Component
+class AutomationEventHandler {
+    
+    @HandleEvent  
+    fun on(event: MotionDetected) {
+        val roomId = event.roomId
+        
+        // Auto-lighting based on motion
+        val roomLights = deviceRepository.findLightsByRoom(roomId)
+        
+        roomLights.forEach { lightId ->
+            val light = FluxCapacitor.loadEntity<Device>(lightId)
+            
+            if (light.isOnline && !isLightOn(light)) {
+                val brightness = calculateOptimalBrightness(roomId)
+                
+                FluxCapacitor.sendCommand(TurnOnLight(lightId, brightness))
+            }
+        }
+        
+        // Check automation rules
+        val motionRules = getAutomationRulesForTrigger(roomId, "motion_detected")
+        
+        motionRules.filter { it.isEnabled }.forEach { rule ->
+            FluxCapacitor.sendCommand(ExecuteAutomationRule(
+                rule.ruleId,
+                mapOf("triggeredBy" to event)
+            ))
+        }
+    }
+    
+    @HandleEvent
+    fun on(event: TemperatureReading) {
+        // Auto-adjust thermostat based on temperature readings
+        val thermostats = deviceRepository.findThermostatsByRoom(event.roomId)
+        
+        thermostats.forEach { thermostatId ->
+            val thermostat = FluxCapacitor.loadEntity<Device>(thermostatId)
+            
+            if (thermostat.isOnline) {
+                val targetTemp = thermostat.settings["targetTemperature"] as? Double ?: 22.0
+                
+                // If room is too hot/cold, adjust thermostat
+                if (kotlin.math.abs(event.temperature - targetTemp) > 2.0) {
+                    FluxCapacitor.sendCommand(AutoAdjustThermostat(
+                        thermostatId,
+                        event.temperature,
+                        targetTemp
+                    ))
+                }
+            }
+        }
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+### Query Handlers
+
+Provide read access to data and projections:
+
+<Tabs>
+<TabItem label="Java">
+```java
+@Component
+public class SmartHomeQueryHandler {
+    
+    @HandleQuery
+    public SmartHome handle(GetSmartHome query) {
+        return FluxCapacitor.loadAggregate(query.homeId(), SmartHome.class);
+    }
+    
+    @HandleQuery
+    public List<Device> handle(GetDevicesByRoom query) {
+        SmartHome home = FluxCapacitor.loadAggregateFor(query.roomId());
+        
+        return home.devices().stream()
+            .filter(device -> {
+                RoomId deviceRoom = getRoomForDevice(device.deviceId());
+                return deviceRoom != null && deviceRoom.equals(query.roomId());
+            })
+            .toList();
+    }
+    
+    @HandleQuery
+    public List<Device> handle(GetOnlineDevices query) {
+        SmartHome home = FluxCapacitor.loadAggregate(query.homeId(), SmartHome.class);
+        
+        return home.devices().stream()
+            .filter(Device::isOnline)
+            .toList();
+    }
+    
+    @HandleQuery
+    public DeviceStatus handle(GetDeviceStatus query) {
+        Device device = FluxCapacitor.loadEntity(query.deviceId());
+        
+        return DeviceStatus.builder()
+            .deviceId(device.deviceId())
+            .name(device.name())
+            .type(device.type())
+            .isOnline(device.isOnline())
+            .settings(device.settings())
+            .lastUpdated(getLastUpdated(device))
+            .batteryLevel(getBatteryLevel(device))
+            .signalStrength(getSignalStrength(device))
+            .build();
+    }
+    
+    @HandleQuery
+    public EnergyUsageReport handle(GetEnergyUsage query) {
+        List<Device> devices = getDevicesForHome(query.homeId());
+        
+        double totalUsage = 0.0;
+        List<DeviceEnergyUsage> deviceUsages = new ArrayList<>();
+        
+        for (Device device : devices) {
+            double deviceUsage = energyService.getUsageForPeriod(
+                device.deviceId(), 
+                query.startDate(), 
+                query.endDate()
+            );
+            
+            totalUsage += deviceUsage;
+            deviceUsages.add(new DeviceEnergyUsage(
+                device.deviceId(),
+                device.name(),
+                deviceUsage
+            ));
+        }
+        
+        return EnergyUsageReport.builder()
+            .homeId(query.homeId())
+            .startDate(query.startDate())
+            .endDate(query.endDate())
+            .totalUsage(totalUsage)
+            .deviceUsages(deviceUsages)
+            .averageDailyUsage(calculateAverageDailyUsage(totalUsage, query))
+            .build();
+    }
+}
+
+@Component
+public class SecurityQueryHandler {
+    
+    @HandleQuery
+    public SecurityStatus handle(GetSecurityStatus query) {
+        SmartHome home = FluxCapacitor.loadAggregate(query.homeId(), SmartHome.class);
+        
+        return SecurityStatus.builder()
+            .homeId(query.homeId())
+            .isArmed(home.isSecurityArmed())
+            .armingMode(home.getSecurityMode())
+            .onlineDevices(countOnlineSecurityDevices(home))
+            .offlineDevices(countOfflineSecurityDevices(home))
+            .lastArmed(getLastArmedTime(home))
+            .activeAlerts(getActiveSecurityAlerts(query.homeId()))
+            .build();
+    }
+    
+    @HandleQuery
+    public List<SecurityEvent> handle(GetSecurityHistory query) {
+        return securityEventRepository.findByHomeIdAndDateRange(
+            query.homeId(),
+            query.startDate(),
+            query.endDate()
+        );
+    }
+    
+    @HandleQuery
+    public AccessReport handle(GetAccessReport query) {
+        List<AccessLogEntry> accessLogs = accessAuditService.getAccessLogs(
+            query.homeId(),
+            query.startDate(),
+            query.endDate()
+        );
+        
+        return AccessReport.builder()
+            .homeId(query.homeId())
+            .totalAccesses(accessLogs.size())
+            .uniqueUsers(getUniqueUsers(accessLogs))
+            .accessesByHour(groupAccessesByHour(accessLogs))
+            .accessesByDevice(groupAccessesByDevice(accessLogs))
+            .unauthorizedAttempts(countUnauthorizedAttempts(accessLogs))
+            .build();
+    }
+}
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+@Component
+class SmartHomeQueryHandler {
+    
+    @HandleQuery
+    fun handle(query: GetSmartHome): SmartHome {
+        return FluxCapacitor.loadAggregate(query.homeId, SmartHome::class.java)
+    }
+    
+    @HandleQuery
+    fun handle(query: GetDevicesByRoom): List<Device> {
+        val home = FluxCapacitor.loadAggregateFor(query.roomId)
+        
+        return home.devices.filter { device ->
+            val deviceRoom = getRoomForDevice(device.deviceId)
+            deviceRoom == query.roomId
+        }
+    }
+    
+    @HandleQuery
+    fun handle(query: GetOnlineDevices): List<Device> {
+        val home = FluxCapacitor.loadAggregate(query.homeId, SmartHome::class.java)
+        return home.devices.filter { it.isOnline }
+    }
+    
+    @HandleQuery
+    fun handle(query: GetDeviceStatus): DeviceStatus {
+        val device = FluxCapacitor.loadEntity<Device>(query.deviceId)
+        
+        return DeviceStatus(
+            deviceId = device.deviceId,
+            name = device.name,
+            type = device.type,
+            isOnline = device.isOnline,
+            settings = device.settings,
+            lastUpdated = getLastUpdated(device),
+            batteryLevel = getBatteryLevel(device),
+            signalStrength = getSignalStrength(device)
+        )
+    }
+    
+    @HandleQuery
+    fun handle(query: GetEnergyUsage): EnergyUsageReport {
+        val devices = getDevicesForHome(query.homeId)
+        
+        var totalUsage = 0.0
+        val deviceUsages = devices.map { device ->
+            val deviceUsage = energyService.getUsageForPeriod(
+                device.deviceId, 
+                query.startDate, 
+                query.endDate
+            )
+            
+            totalUsage += deviceUsage
+            DeviceEnergyUsage(device.deviceId, device.name, deviceUsage)
+        }
+        
+        return EnergyUsageReport(
+            homeId = query.homeId,
+            startDate = query.startDate,
+            endDate = query.endDate,
+            totalUsage = totalUsage,
+            deviceUsages = deviceUsages,
+            averageDailyUsage = calculateAverageDailyUsage(totalUsage, query)
+        )
+    }
+}
+
+@Component
+class SecurityQueryHandler {
+    
+    @HandleQuery
+    fun handle(query: GetSecurityStatus): SecurityStatus {
+        val home = FluxCapacitor.loadAggregate(query.homeId, SmartHome::class.java)
+        
+        return SecurityStatus(
+            homeId = query.homeId,
+            isArmed = home.isSecurityArmed,
+            armingMode = home.securityMode,
+            onlineDevices = countOnlineSecurityDevices(home),
+            offlineDevices = countOfflineSecurityDevices(home),
+            lastArmed = getLastArmedTime(home),
+            activeAlerts = getActiveSecurityAlerts(query.homeId)
+        )
+    }
+    
+    @HandleQuery
+    fun handle(query: GetSecurityHistory): List<SecurityEvent> {
+        return securityEventRepository.findByHomeIdAndDateRange(
+            query.homeId,
+            query.startDate,
+            query.endDate
+        )
+    }
+    
+    @HandleQuery
+    fun handle(query: GetAccessReport): AccessReport {
+        val accessLogs = accessAuditService.getAccessLogs(
+            query.homeId,
+            query.startDate,
+            query.endDate
+        )
+        
+        return AccessReport(
+            homeId = query.homeId,
+            totalAccesses = accessLogs.size,
+            uniqueUsers = getUniqueUsers(accessLogs),
+            accessesByHour = groupAccessesByHour(accessLogs),
+            accessesByDevice = groupAccessesByDevice(accessLogs),
+            unauthorizedAttempts = countUnauthorizedAttempts(accessLogs)
+        )
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+### Error Handlers
+
+Handle errors and exceptions in the system:
+
+<Tabs>
+<TabItem label="Java">
+```java
+@Component
+public class SmartHomeErrorHandler {
+    
+    @HandleError
+    public void handle(IllegalCommandException error, Object originalMessage) {
+        // Log command validation errors
+        log.warn("Command validation failed for {}: {}", 
+                originalMessage.getClass().getSimpleName(), 
+                error.getMessage());
+        
+        if (originalMessage instanceof TurnOnLight command) {
+            // Try fallback - maybe device needs firmware update
+            FluxCapacitor.sendCommand(new ScheduleDeviceUpdate(command.lightId()));
+        }
+    }
+    
+    @HandleError
+    public void handle(DeviceOfflineException error, TurnOnLight command) {
+        // Device is offline, queue command for retry
+        commandRetryService.scheduleRetry(command, Duration.ofMinutes(5));
+        
+        // Notify user about offline device
+        FluxCapacitor.sendCommand(new SendNotification(
+            getHomeId(command.lightId()),
+            "Device " + getDeviceName(command.lightId()) + " is offline",
+            NotificationPriority.NORMAL
+        ));
+    }
+    
+    @HandleError
+    public void handle(SecurityException error, Object command) {
+        // Log security violations
+        securityLog.recordSecurityViolation(
+            SecurityViolation.builder()
+                .commandType(command.getClass().getSimpleName())
+                .errorMessage(error.getMessage())
+                .timestamp(Instant.now())
+                .severity("HIGH")
+                .build()
+        );
+        
+        // Alert administrators
+        FluxCapacitor.sendCommand(new SendAdminAlert(
+            "Security violation detected: " + error.getMessage(),
+            command
+        ));
+    }
+    
+    @HandleError
+    public void handle(Exception error, Object originalMessage, Metadata metadata) {
+        // Generic error handler for unexpected failures
+        String correlationId = metadata.get("correlationId");
+        
+        ErrorLogEntry errorEntry = ErrorLogEntry.builder()
+            .correlationId(correlationId)
+            .messageType(originalMessage.getClass().getSimpleName())
+            .errorType(error.getClass().getSimpleName())
+            .errorMessage(error.getMessage())
+            .timestamp(Instant.now())
+            .stackTrace(ExceptionUtils.getStackTrace(error))
+            .build();
+            
+        errorRepository.save(errorEntry);
+        
+        // For critical commands, try alternative approaches
+        if (originalMessage instanceof SetThermostatTemperature thermostat) {
+            // Maybe network issue, try local override
+            localDeviceService.setTemperatureDirectly(
+                thermostat.thermostatId(), 
+                thermostat.temperature()
+            );
+        }
+    }
+}
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+@Component
+class SmartHomeErrorHandler {
+    
+    @HandleError
+    fun handle(error: IllegalCommandException, originalMessage: Any) {
+        // Log command validation errors
+        log.warn("Command validation failed for ${originalMessage::class.simpleName}: ${error.message}")
+        
+        when (originalMessage) {
+            is TurnOnLight -> {
+                // Try fallback - maybe device needs firmware update
+                FluxCapacitor.sendCommand(ScheduleDeviceUpdate(originalMessage.lightId))
+            }
+        }
+    }
+    
+    @HandleError
+    fun handle(error: DeviceOfflineException, command: TurnOnLight) {
+        // Device is offline, queue command for retry
+        commandRetryService.scheduleRetry(command, Duration.ofMinutes(5))
+        
+        // Notify user about offline device
+        FluxCapacitor.sendCommand(SendNotification(
+            getHomeId(command.lightId),
+            "Device ${getDeviceName(command.lightId)} is offline",
+            NotificationPriority.NORMAL
+        ))
+    }
+    
+    @HandleError
+    fun handle(error: SecurityException, command: Any) {
+        // Log security violations
+        securityLog.recordSecurityViolation(SecurityViolation(
+            commandType = command::class.simpleName ?: "Unknown",
+            errorMessage = error.message ?: "Unknown security error",
+            timestamp = Instant.now(),
+            severity = "HIGH"
+        ))
+        
+        // Alert administrators
+        FluxCapacitor.sendCommand(SendAdminAlert(
+            "Security violation detected: ${error.message}",
+            command
+        ))
+    }
+    
+    @HandleError
+    fun handle(error: Exception, originalMessage: Any, metadata: Metadata) {
+        // Generic error handler for unexpected failures
+        val correlationId = metadata["correlationId"]
+        
+        val errorEntry = ErrorLogEntry(
+            correlationId = correlationId,
+            messageType = originalMessage::class.simpleName ?: "Unknown",
+            errorType = error::class.simpleName ?: "Unknown",
+            errorMessage = error.message ?: "Unknown error",
+            timestamp = Instant.now(),
+            stackTrace = error.stackTraceToString()
+        )
+        
+        errorRepository.save(errorEntry)
+        
+        // For critical commands, try alternative approaches
+        when (originalMessage) {
+            is SetThermostatTemperature -> {
+                // Maybe network issue, try local override
+                localDeviceService.setTemperatureDirectly(
+                    originalMessage.thermostatId,
+                    originalMessage.temperature
+                )
+            }
+        }
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+## Handler Resolution
+
+Fluxzero uses sophisticated handler resolution to find the most specific handler:
+
+```mermaid
+graph TD
+    MSG[Incoming Message: TurnOnLight] --> SCAN[Scan for Handlers]
+    SCAN --> MATCH[Match Handler Methods]
+    
+    MATCH --> H1[@HandleCommand\nhandle(TurnOnLight)]
+    MATCH --> H2[@HandleCommand\nhandle(DeviceCommand)]
+    MATCH --> H3[@HandleCommand\nhandle(Object)]
+    
+    H1 --> SPECIFIC[Most Specific Match]
+    H2 --> GENERAL[Less Specific]
+    H3 --> GENERIC[Generic Handler]
+    
+    SPECIFIC --> INVOKE[Invoke Handler]
+    
+    INVOKE --> INJECT[Parameter Injection]
+    INJECT --> PARAMS[Message + Dependencies]
+    PARAMS --> EXECUTE[Execute Business Logic]
+    EXECUTE --> RESULT[Return Result]
+```
+
+### Handler Priority Rules
+
+<Tabs>
+<TabItem label="Java">
+```java
+@Component
+public class DeviceHandlerExamples {
+    
+    // Most specific - exact type match
+    @HandleCommand
+    public void handle(TurnOnLight command) {
+        // This will be chosen for TurnOnLight messages
+    }
+    
+    // Less specific - parent type
+    @HandleCommand
+    public void handle(DeviceCommand command) {
+        // This will be chosen if TurnOnLight extends DeviceCommand
+        // and no exact TurnOnLight handler exists
+    }
+    
+    // Generic - handles any command
+    @HandleCommand
+    public void handle(Object command) {
+        // This will be chosen only if no more specific handler exists
+    }
+    
+    // Handler with additional parameters (higher precedence)
+    @HandleCommand
+    public void handle(TurnOnLight command, User user, Metadata metadata) {
+        // This will be chosen over the simple TurnOnLight handler
+        // because it has more parameters
+    }
+}
+
+// Multiple handlers can process the same message
+@Component
+public class SecurityHandler {
+    @HandleEvent
+    public void on(MotionDetected event) { /* Security logic */ }
+}
+
+@Component  
+public class LightingHandler {
+    @HandleEvent
+    public void on(MotionDetected event) { /* Lighting logic */ }
+}
+
+@Component
+public class AnalyticsHandler {
+    @HandleEvent  
+    public void on(MotionDetected event) { /* Analytics logic */ }
+}
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+@Component
+class DeviceHandlerExamples {
+    
+    // Most specific - exact type match
+    @HandleCommand
+    fun handle(command: TurnOnLight) {
+        // This will be chosen for TurnOnLight messages
+    }
+    
+    // Less specific - parent type
+    @HandleCommand
+    fun handle(command: DeviceCommand) {
+        // This will be chosen if TurnOnLight extends DeviceCommand
+        // and no exact TurnOnLight handler exists
+    }
+    
+    // Generic - handles any command
+    @HandleCommand
+    fun handle(command: Any) {
+        // This will be chosen only if no more specific handler exists
+    }
+    
+    // Handler with additional parameters (higher precedence)
+    @HandleCommand
+    fun handle(command: TurnOnLight, user: User, metadata: Metadata) {
+        // This will be chosen over the simple TurnOnLight handler
+        // because it has more parameters
+    }
+}
+
+// Multiple handlers can process the same message
+@Component
+class SecurityHandler {
+    @HandleEvent
+    fun on(event: MotionDetected) { /* Security logic */ }
+}
+
+@Component  
+class LightingHandler {
+    @HandleEvent
+    fun on(event: MotionDetected) { /* Lighting logic */ }
+}
+
+@Component
+class AnalyticsHandler {
+    @HandleEvent  
+    fun on(event: MotionDetected) { /* Analytics logic */ }
+}
+```
+</TabItem>
+</Tabs>
+
+## Parameter Injection
+
+Handlers can receive various types of parameters through dependency injection:
+
+<Tabs>
+<TabItem label="Java">
+```java
+@Component
+public class AdvancedHandlerExamples {
+    
+    @HandleCommand
+    public DeviceId handle(AddDevice command,
+                          SmartHome home,           // Current aggregate state
+                          User currentUser,         // Current user context
+                          Metadata metadata,        // Message metadata
+                          HttpServletRequest request) { // Web request (if applicable)
+        
+        // Validate user permissions
+        if (!currentUser.hasPermission("DEVICE_MANAGEMENT")) {
+            throw new SecurityException("User not authorized to add devices");
+        }
+        
+        // Use metadata for correlation
+        String requestId = metadata.get("requestId");
+        log.info("Processing device addition request {} for user {}", 
+                requestId, currentUser.getId());
+        
+        // Add device with full context
+        Device newDevice = command.device().toBuilder()
+            .deviceId(DeviceId.generate())
+            .addedBy(currentUser.getId())
+            .addedAt(Instant.now())
+            .build();
+            
+        // Business logic here
+        return newDevice.deviceId();
+    }
+    
+    @HandleQuery
+    public DeviceStatus handle(GetDeviceStatus query,
+                              Device device) {  // Entity loaded automatically
+        
+        // Device is automatically loaded based on the query's deviceId
+        return DeviceStatus.builder()
+            .deviceId(device.deviceId())
+            .name(device.name())
+            .isOnline(device.isOnline())
+            .settings(device.settings())
+            .build();
+    }
+    
+    @HandleEvent
+    public void on(MotionDetected event,
+                  SmartHome home,              // Home containing the motion sensor
+                  Room room,                   // Room where motion occurred  
+                  List<Device> roomDevices) {  // All devices in the room
+        
+        // Use injected room and devices for automation
+        roomDevices.stream()
+            .filter(device -> device.type() == DeviceType.LIGHT)
+            .filter(device -> !isLightOn(device))
+            .forEach(light -> {
+                FluxCapacitor.sendCommand(new TurnOnLight(
+                    light.deviceId(),
+                    calculateBrightness(room, event.detectedAt())
+                ));
+            });
+    }
+    
+    @HandleError
+    public void handle(Exception error,
+                      Object originalMessage,
+                      Metadata metadata,
+                      User user,
+                      Duration processingTime) {  // How long processing took
+        
+        ErrorReport errorReport = ErrorReport.builder()
+            .messageType(originalMessage.getClass().getSimpleName())
+            .errorType(error.getClass().getSimpleName())
+            .userId(user.getId())
+            .processingTime(processingTime)
+            .correlationId(metadata.get("correlationId"))
+            .build();
+            
+        errorReportingService.reportError(errorReport);
+    }
+}
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+@Component
+class AdvancedHandlerExamples {
+    
+    @HandleCommand
+    fun handle(command: AddDevice,
+               home: SmartHome,           // Current aggregate state
+               currentUser: User,         // Current user context
+               metadata: Metadata,        // Message metadata
+               request: HttpServletRequest): DeviceId { // Web request (if applicable)
+        
+        // Validate user permissions
+        require(currentUser.hasPermission("DEVICE_MANAGEMENT")) {
+            "User not authorized to add devices"
+        }
+        
+        // Use metadata for correlation
+        val requestId = metadata["requestId"]
+        log.info("Processing device addition request $requestId for user ${currentUser.id}")
+        
+        // Add device with full context
+        val newDevice = command.device.copy(
+            deviceId = DeviceId.generate(),
+            addedBy = currentUser.id,
+            addedAt = Instant.now()
+        )
+        
+        // Business logic here
+        return newDevice.deviceId
+    }
+    
+    @HandleQuery
+    fun handle(query: GetDeviceStatus,
+               device: Device): DeviceStatus {  // Entity loaded automatically
+        
+        // Device is automatically loaded based on the query's deviceId
+        return DeviceStatus(
+            deviceId = device.deviceId,
+            name = device.name,
+            isOnline = device.isOnline,
+            settings = device.settings
+        )
+    }
+    
+    @HandleEvent
+    fun on(event: MotionDetected,
+           home: SmartHome,              // Home containing the motion sensor
+           room: Room,                   // Room where motion occurred  
+           roomDevices: List<Device>) {  // All devices in the room
+        
+        // Use injected room and devices for automation
+        roomDevices
+            .filter { it.type == DeviceType.LIGHT }
+            .filter { !isLightOn(it) }
+            .forEach { light ->
+                FluxCapacitor.sendCommand(TurnOnLight(
+                    light.deviceId,
+                    calculateBrightness(room, event.detectedAt)
+                ))
+            }
+    }
+    
+    @HandleError
+    fun handle(error: Exception,
+               originalMessage: Any,
+               metadata: Metadata,
+               user: User,
+               processingTime: Duration) {  // How long processing took
+        
+        val errorReport = ErrorReport(
+            messageType = originalMessage::class.simpleName ?: "Unknown",
+            errorType = error::class.simpleName ?: "Unknown",
+            userId = user.id,
+            processingTime = processingTime,
+            correlationId = metadata["correlationId"]
+        )
+        
+        errorReportingService.reportError(errorReport)
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+## Local vs Remote Handlers
+
+### Local Handlers
+
+Process messages in the same thread/process for immediate response:
+
+<Tabs>
+<TabItem label="Java">
+```java
+@Component
+public class LocalDeviceHandler {
+    
+    // Local handler - executes immediately in calling thread
+    @LocalHandler
+    @HandleCommand  
+    public ValidationResult validate(TurnOnLight command) {
+        Device device = deviceRepository.findById(command.lightId());
+        
+        if (device == null) {
+            return ValidationResult.invalid("Device not found");
+        }
+        
+        if (!device.isOnline()) {
+            return ValidationResult.invalid("Device is offline");
+        }
+        
+        return ValidationResult.valid();
+    }
+    
+    // Local query for immediate response
+    @LocalHandler
+    @HandleQuery
+    public DeviceQuickStatus handle(GetDeviceQuickStatus query) {
+        // Fast, cached lookup
+        return deviceCacheService.getQuickStatus(query.deviceId());
+    }
+}
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+@Component
+class LocalDeviceHandler {
+    
+    // Local handler - executes immediately in calling thread
+    @LocalHandler
+    @HandleCommand  
+    fun validate(command: TurnOnLight): ValidationResult {
+        val device = deviceRepository.findById(command.lightId)
+        
+        return when {
+            device == null -> ValidationResult.invalid("Device not found")
+            !device.isOnline -> ValidationResult.invalid("Device is offline")
+            else -> ValidationResult.valid()
+        }
+    }
+    
+    // Local query for immediate response
+    @LocalHandler
+    @HandleQuery
+    fun handle(query: GetDeviceQuickStatus): DeviceQuickStatus {
+        // Fast, cached lookup
+        return deviceCacheService.getQuickStatus(query.deviceId)
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+### Remote Handlers
+
+Process messages through Fluxzero's messaging infrastructure:
+
+<Tabs>
+<TabItem label="Java">
+```java
+@Component
+@Consumer(name = "device-control-service")
+public class RemoteDeviceHandler {
+    
+    // Remote handler - routed through Fluxzero
+    @HandleCommand
+    public void handle(TurnOnLight command) {
+        // This will be load balanced across multiple instances
+        // Provides durability, retries, and monitoring
+        
+        // Actual device control logic
+        hardwareControlService.turnOnLight(command.lightId(), command.brightness());
+        
+        // Update device state
+        Device device = FluxCapacitor.loadEntity(command.lightId());
+        Device updatedDevice = device.toBuilder()
+            .settings(updateSettings(device.settings(), Map.of(
+                "isOn", true,
+                "brightness", command.brightness()
+            )))
+            .build();
+            
+        FluxCapacitor.updateEntity(updatedDevice);
+        
+        // Publish event
+        FluxCapacitor.publishEvent(new LightTurnedOn(
+            command.lightId(), 
+            getRoomForDevice(command.lightId()), 
+            command.brightness()
+        ));
+    }
+}
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+@Component
+@Consumer(name = "device-control-service")
+class RemoteDeviceHandler {
+    
+    // Remote handler - routed through Fluxzero
+    @HandleCommand
+    fun handle(command: TurnOnLight) {
+        // This will be load balanced across multiple instances
+        // Provides durability, retries, and monitoring
+        
+        // Actual device control logic
+        hardwareControlService.turnOnLight(command.lightId, command.brightness)
+        
+        // Update device state
+        val device = FluxCapacitor.loadEntity<Device>(command.lightId)
+        val updatedDevice = device.copy(
+            settings = device.settings + mapOf(
+                "isOn" to true,
+                "brightness" to command.brightness
+            )
+        )
+        
+        FluxCapacitor.updateEntity(updatedDevice)
+        
+        // Publish event
+        FluxCapacitor.publishEvent(LightTurnedOn(
+            command.lightId, 
+            getRoomForDevice(command.lightId), 
+            command.brightness
+        ))
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+## Handler Best Practices
+
+### 1. Keep Handlers Focused
+```java
+// Good: Single responsibility
+@HandleCommand
+public void handle(TurnOnLight command) {
+    // Only light-related logic
+}
+
+// Bad: Multiple responsibilities  
+@HandleCommand
+public void handle(TurnOnLight command) {
+    // Light logic + logging + analytics + notification
+}
+```
+
+### 2. Use Appropriate Handler Types
+```java
+// Command: Changes state
+@HandleCommand
+public void handle(TurnOnLight command) { /* Modify device state */ }
+
+// Event: React to changes
+@HandleEvent  
+public void on(LightTurnedOn event) { /* Update analytics */ }
+
+// Query: Read data
+@HandleQuery
+public DeviceStatus handle(GetDeviceStatus query) { /* Return status */ }
+```
+
+### 3. Handle Errors Gracefully
+```java
+@HandleCommand
+public void handle(TurnOnLight command) {
+    try {
+        controlDevice(command.lightId(), command.brightness());
+    } catch (DeviceOfflineException e) {
+        // Queue for retry
+        scheduleRetry(command);
+        throw e; // Let Fluxzero handle retry logic
+    } catch (SecurityException e) {
+        // Don't retry security violations
+        logSecurityViolation(e, command);
+        throw new IllegalCommandException("Unauthorized", e);
+    }
+}
+```
+
+### 4. Use Injection Wisely
+```java
+// Good: Only inject what you need
+@HandleCommand
+public void handle(TurnOnLight command, Device device) {
+    // Use injected device
+}
+
+// Bad: Over-injection
+@HandleCommand
+public void handle(TurnOnLight command, SmartHome home, User user, 
+                  Metadata metadata, HttpRequest request) {
+    // Only using command - unnecessary injections
+}
+```
+
+### 5. Test Handlers Thoroughly
+```java
+@Test
+void shouldTurnOnLightSuccessfully() {
+    // Given
+    TestFluxCapacitor flux = TestFluxCapacitor.create();
+    DeviceId lightId = DeviceId.generate();
+    setupOnlineLight(lightId);
+    
+    // When
+    flux.sendCommand(new TurnOnLight(lightId, 75));
+    
+    // Then
+    Device light = flux.loadEntity(lightId);
+    assertThat((Boolean) light.settings().get("isOn")).isTrue();
+    assertThat((Integer) light.settings().get("brightness")).isEqualTo(75);
+    
+    // Verify event was published
+    assertThat(flux.getPublishedEvents())
+        .anyMatch(event -> event instanceof LightTurnedOn &&
+                          ((LightTurnedOn) event).brightness() == 75);
+}
+```
+
+## Related Concepts
+
+- **[Commands](/reference/core-components/command)** - Processed by command handlers
+- **[Events](/reference/core-components/event)** - Handled by event handlers  
+- **[Queries](/reference/core-components/query)** - Processed by query handlers
+- **[Consumers](/reference/core-components/consumer)** - Group handlers for scaling
+- **[Trackers](/reference/core-components/tracker)** - Deliver messages to handlers
+- **[Message Log](/reference/core-components/message-log)** - Source of messages for handlers
