@@ -154,9 +154,22 @@ async function fetchReleases(sinceVersion?: string): Promise<GitHubRelease[]> {
   let page = 1;
   const perPage = 100;
   
+  // Prepare headers with GitHub token if available
+  const headers: Record<string, string> = {
+    'Accept': 'application/vnd.github.v3+json',
+    'User-Agent': 'flux-docs-changelog-loader'
+  };
+  
+  if (process.env.GITHUB_TOKEN) {
+    headers['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
+    console.log('Using GitHub token for API requests');
+  } else {
+    console.warn('No GITHUB_TOKEN found, using unauthenticated requests (rate limited)');
+  }
+  
   while (page <= 20) { // GitHub API has a limit
     const url = `${GITHUB_API_BASE}/repos/${REPO}/releases?per_page=${perPage}&page=${page}`;
-    const response = await fetch(url);
+    const response = await fetch(url, { headers });
     
     if (!response.ok) {
       if (response.status === 422 && page > 10) {

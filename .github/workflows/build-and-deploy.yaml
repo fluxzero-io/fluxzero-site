@@ -29,7 +29,9 @@ jobs:
         run: pnpm install
 
       - name: Build Astro site
-        run: pnpm build        
+        run: pnpm build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
 
       - name: Deploy to Cloudflare Workers
         run: |
