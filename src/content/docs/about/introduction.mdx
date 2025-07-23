@@ -13,9 +13,9 @@ import simpleArchitecture from '~/assets/architecture/simplified.png';
 
 # What is Fluxzero?
 
-Fluxzero is a developer productivity platform that simplifies modern backend development. It’s built for teams who want to move fast without getting lost in boilerplate or operational overhead.
+Fluxzero is a backend development platform that handles infrastructure so you can focus on business logic. Instead of configuring databases, message queues, and HTTP routing, you write message handlers.
 
-> **You focus on your business logic. Fluxzero handles the rest.**
+> **You write the business code. Fluxzero handles the plumbing.**
 
 ### See Fluxzero in action
 
@@ -31,7 +31,7 @@ Building software today means stitching together countless tools and frameworks:
 
 It gives you a clean, scalable foundation for software development, with everything you need to ship business applications out of the box:
 
-- **Scalable by default** – No setup required to scale across machines, regions or workloads.
+- **Scalable by default** – No setup required to scale your workloads.
 - **Secure by default** – Your applications are never exposed directly to the internet.
 - **Complete toolkit** – Built-in support for HTTP, job scheduling, full-text search, auditing, and more.
 - **Java-based** – Use the libraries, tools, and ecosystem you already know.
@@ -43,14 +43,77 @@ Basically, we want you to focus on building your product, not the infrastructure
 - Everything is extremely testable without the need for mocking or stubbing
 - No dependencies on complicated infrastructure
 - For development, you only need Java (no databases, no message brokers, no caching layers)
-- 
+
+---
+
+## Why this matters for productivity
+
+Most backend development time goes to infrastructure setup, configuration, and debugging distributed systems. Fluxzero removes most of this overhead.
+
+### What changes
+
+- **No infrastructure code**: No HTTP routing, database connections, message queue setup, or service configuration
+- **Pure business logic**: Message handlers contain only your domain logic—no framework boilerplate
+- **Automatic concurrency**: No thread management, connection pools, or async/await complexity
+- **Built-in backpressure**: System automatically handles load without manual throttling or circuit breakers
+- **HTTP request visibility**: All inbound and outbound HTTP requests are handled as messages, providing full observability
+- **Testing**: Test message handlers like pure functions—no mocking databases or HTTP clients
+- **One programming model**: HTTP requests, background jobs, webhooks, and scheduling all use the same message handlers
+
+### Works well with AI
+
+AI coding assistants are more effective with Fluxzero because:
+
+- **Simpler patterns**: Three message types (command/query/event) instead of dozens of frameworks and plumbing code
+- **Less configuration**: Fewer files and settings that can be wrong
+- **Consistent structure**: Every feature follows the same pattern
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+<Tabs>
+<TabItem label="Java">
+```java
+@HandleCommand
+public Device addDevice(AddDevice command) {
+    // Just business logic - no HTTP routing, validation annotations, or response handling
+    return new Device(command.homeId(), command.deviceType(), command.name());
+}
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+@HandleCommand
+fun addDevice(command: AddDevice): Device {
+    // Just business logic - no HTTP routing, validation annotations, or response handling
+    return Device(command.homeId, command.deviceType, command.name)
+}
+```
+</TabItem>
+</Tabs>
+
+Compare this to traditional development where you'd need:
+- REST controller with routing annotations
+- Service layer with dependency injection
+- Repository with SQL queries or ORM mapping
+- Database connection management
+- Request/response serialization
+- Error handling and validation
+- Transaction management
+
+Fluxzero handles all of that infrastructure automatically. You just write the business logic.
 
 ---
 
 ## Who it's for
 
-Fluxzero is designed for developers building internal tools, APIs, or backend systems that need to grow with your business.
- If you're tired of wiring together the same plumbing for every project, Fluxzero gives you a better baseline.
+Fluxzero works well for:
+
+- Teams building internal tools or APIs without dedicated infrastructure staff
+- Developers who spend too much time on setup and configuration
+- Projects where you want to focus on business logic rather than distributed systems
+- Codebases that work with AI coding assistants
+
+If you find yourself spending weeks setting up infrastructure before writing your first business feature, Fluxzero might be a good fit.
 
 <Aside type="tip">
 Skeptical? [Try it out yourself](/about/get-started).
@@ -80,18 +143,41 @@ In the diagram below, you can see the main components of a Fluxzero application 
   Fluxzero clients connect to the server via WebSockets, enabling real-time bi-directional communication at scale.
 
 
-## Message driven
+## Message-driven development
 
-Fluxzero takes a different approach to backend development. Everything in a Fluxzero application is message driven. 
+Fluxzero applications use three types of messages:
 
-**Message-driven by design**  
-Fluxzero applications communicate using typed messages:  
-- **Commands** trigger behavior  
-- **Queries** fetch data  
-- **Events** represent facts that happened
+- **Commands** → Make something happen (`CreateOrder`, `UpdateUser`)
+- **Queries** → Get data (`GetOrderHistory`, `FindUsers`)  
+- **Events** → Something happened (`OrderCreated`, `UserRegistered`)
 
+Every feature you build follows this pattern. Instead of learning different frameworks for HTTP routing, background jobs, webhooks, and event handling, you write message handlers.
 
+For example, to send a welcome email when someone registers:
 
+```java
+@HandleEvent
+public void sendWelcomeEmail(UserRegistered event) {
+    emailService.send(event.userEmail(), "Welcome!");
+}
+```
+
+This approach keeps code predictable and reduces the variety of patterns you need to remember.
+
+---
+
+## Comparison with traditional stacks
+
+| Task | Traditional approach | With Fluxzero |
+|------|---------------------|---------------|
+| **New project setup** | Configure databases, message queues, HTTP framework | Run one command, start coding |
+| **Add API endpoint** | Route, controller, validation, serialization | Write message handler |
+| **Background job** | Set up job queue, workers | Handle command or event |
+| **Full-text search** | Integrate search engine | Built-in, works automatically |
+| **Testing** | Mock databases, HTTP clients, queues | Test pure functions |
+| **Audit trail** | Custom logging implementation | Automatic for all messages |
+
+The main difference is that Fluxzero provides infrastructure as a service, so you spend more time on application code.
 
 ## Server requirements 
 

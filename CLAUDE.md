@@ -103,3 +103,62 @@ When working on documentation content:
 - ALWAYS check the latest SDK documentation before writing: https://raw.githubusercontent.com/flux-capacitor-io/flux-capacitor-client/refs/heads/master/README.md
 - ALWAYS check the latest Javadoc if you need to know if a symbol exists or what options are available: https://flux-capacitor.io/flux-capacitor-client/javadoc/apidocs/
 - Use this as the authoritative source for current SDK capabilities and examples
+
+## Documentation Patterns & Standards
+
+### Established Example Domain
+- **Smart Home/Home Automation** is the primary example domain across all documentation
+- Use consistent entities: Device, Room, Home, SecuritySystem, etc.
+- Examples should include: lights, thermostats, security sensors, cameras, motion detectors
+- Device IDs, Room IDs, Home IDs are the primary routing key examples
+
+### Content Structure Patterns
+- **CardGrid with 4 cards** for key concepts introduction
+- **Mermaid diagrams** for architecture visualization (configured for client-side rendering)
+- **Real-world analogies** in Aside components to explain complex concepts
+- **Java/Kotlin code tabs** for all code examples
+- **Best practices sections** with numbered guidelines
+- **Troubleshooting sections** with Aside caution components
+- **Related concepts** section linking to other documentation
+
+### Code Example Standards
+- Always provide both Java and Kotlin variants using Tabs component
+- Use smart home domain consistently (Device, Room, Home entities)
+- Include practical, complete examples that demonstrate real-world usage
+- Avoid service layer abstractions - show direct business logic
+- Use meaningful method and variable names that reflect the domain
+- Include comments explaining the business logic, not the technical implementation
+
+### Visual Components
+- **Import statement**: `import { Tabs, TabItem, Card, CardGrid, Aside } from '@astrojs/starlight/components';`
+- **Mermaid diagrams**: Use for architecture, flow, and relationship visualization
+- **CardGrid**: For key concepts (typically 4 cards with icons)
+- **Aside components**: For tips, warnings, cautions, and notes
+- **Performance tables**: For configuration guidelines and comparisons
+
+### FAQ Structure
+- Use collapsible `<details><summary>` for 20+ questions
+- Organize into 5 categories: Getting Started, Technical Architecture, Development & Testing, Deployment & Operations, Migration & Comparison
+- Include CardGrid overview for category navigation
+- Bold questions in summary tags for easy scanning
+
+### Productivity Messaging
+- Emphasize elimination of infrastructure complexity
+- Focus on "pure business logic" development
+- Highlight AI coding assistant benefits
+- Use realistic productivity claims with specific scenarios
+- Avoid excessive marketing language - be factual and developer-focused
+
+### Technical Accuracy Guidelines
+- Fluxzero handles HTTP through messaging (endpoints exist but no REST controllers)
+- All HTTP requests (inbound/outbound) are handled as messages for observability
+- Built-in backpressure and automatic concurrency management
+- One programming model for HTTP, background jobs, webhooks, AND scheduling
+- Message handlers contain only business logic - no infrastructure code
+- PostgreSQL backend but no direct database access needed
+
+### Mermaid Configuration
+- Client-side rendering configured in astro.config.mjs
+- Automatic theme switching (light/dark)
+- Remove quotes from node labels to avoid parsing errors
+- Use consistent smart home node examples in diagrams
