@@ -1,7 +1,169 @@
 {
-  "lastUpdated": "2025-07-16T14:16:58.934Z",
-  "latestVersion": "0.1209.0",
+  "lastUpdated": "2025-08-27T09:08:31.643Z",
+  "latestVersion": "0.1229.0",
   "releases": [
+    {
+      "version": "0.1229.0",
+      "date": "2025-08-20",
+      "body": "#### [0.1229.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1228.0...0.1229.0) (2025-08-20)\n\n\n##### Features\n\n* **Ids:** make Id comparable ([9e1f5e1](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/9e1f5e11a0c9feae6be78052a99338bcbfaf6fed))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1229.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1228.0",
+      "date": "2025-08-11",
+      "body": "#### [0.1228.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1227.0...0.1228.0) (2025-08-11)\n\n\n##### Features\n\n* **search:** add support for fetching multiple documents by IDs (enhanced) ([ea97c12](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/ea97c120acfad2f022f854240d27fda6e5a82429))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1228.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1227.0",
+      "date": "2025-08-08",
+      "body": "#### [0.1227.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1226.0...0.1227.0) (2025-08-08)\n\n\n##### Features\n\n* **search:** add support for fetching multiple documents by IDs ([c48a347](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/c48a3472ff5629f6d228f5b04c9656e0f8946a0d))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1227.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1226.0",
+      "date": "2025-08-01",
+      "body": "#### [0.1226.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1225.0...0.1226.0) (2025-08-01)",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1226.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1224.0",
+      "date": "2025-08-01",
+      "body": "#### [0.1224.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1223.0...0.1224.0) (2025-08-01)\n\n\n##### Documentation\n\n* clarify usage and return behavior of `UserProvider#getUserById` for test scenarios ([b68dcc2](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/b68dcc291846bd62f668341f918b47368a115da6))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1224.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1223.0",
+      "date": "2025-08-01",
+      "body": "#### [0.1223.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1222.0...0.1223.0) (2025-08-01)",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1223.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1222.0",
+      "date": "2025-08-01",
+      "body": "#### [0.1222.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1221.1...0.1222.0) (2025-08-01)",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1222.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1221.0",
+      "date": "2025-07-28",
+      "body": "#### [0.1221.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1220.1...0.1221.0) (2025-07-28)",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1221.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1220.1",
+      "date": "2025-07-27",
+      "body": "##### [0.1220.1](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1220.0...0.1220.1) (2025-07-27)\n\n\n##### Bug Fixes\n\n* **build:** prevent attaching artifacts in proxy and test-server ([80d08a3](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/80d08a31108e3de042f180be7925dc8fe0dca285))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1220.1",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1220.0",
+      "date": "2025-07-27",
+      "body": "#### [0.1220.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1219.0...0.1220.0) (2025-07-27)\n\n\n##### Documentation\n\n* expand quick-ref with project layout standards and examples ([189ebd7](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/189ebd7e388f41f58bfb4fb3034fb9d9a5c8471a))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1220.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1219.0",
+      "date": "2025-07-27",
+      "body": "#### [0.1219.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1218.0...0.1219.0) (2025-07-27)",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1219.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1217.0",
+      "date": "2025-07-26",
+      "body": "#### [0.1217.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1216.0...0.1217.0) (2025-07-26)\n\n\n##### Documentation\n\n* improve quick-ref with payload naming tips ([3cb9654](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/3cb965486decefdfae19f1a5161e5feb21a76a4f))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1217.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1216.0",
+      "date": "2025-07-26",
+      "body": "#### [0.1216.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1215.3...0.1216.0) (2025-07-26)\n\n\n##### Documentation\n\n* split the main readme up into focused guides under /docs ([8eacd9c](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/8eacd9c6c15ec06bf3df0f5f5fef77a25592460b))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1216.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1215.3",
+      "date": "2025-07-26",
+      "body": "##### [0.1215.3](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1215.2...0.1215.3) (2025-07-26)\n\n\n##### Bug Fixes\n\n* **proxy:** update Proxy URL resolution logic to prefer FLUX_BASE_URL over FLUX_URL ([ebb9e76](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/ebb9e767c2e0aba7b207101b194ce727fbfc1009))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1215.3",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1215.2",
+      "date": "2025-07-25",
+      "body": "##### [0.1215.2](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1215.1...0.1215.2) (2025-07-25)\n\n\n##### Bug Fixes\n\n* **web:** allow @ServeStatic to be on a package instead of a type ([e18daef](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/e18daefbe06ca194fb2c5b8dc76e69b5ff08699c))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1215.2",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1215.1",
+      "date": "2025-07-25",
+      "body": "##### [0.1215.1](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1215.0...0.1215.1) (2025-07-25)\n\n\n##### Bug Fixes\n\n* **serialization:** support serializing null if data format is custom ([a4c83f4](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/a4c83f43eae5c87c803d7894307f1c47822e7494))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1215.1",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1215.0",
+      "date": "2025-07-25",
+      "body": "#### [0.1215.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1214.0...0.1215.0) (2025-07-25)\n\n\n##### Features\n\n* **testing:** add support for simulating DELETE requests in test fixtures ([57e0ff6](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/57e0ff67abdda0b1eb5ce6165b00c9265701fdb9))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1215.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1214.0",
+      "date": "2025-07-23",
+      "body": "#### [0.1214.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1213.0...0.1214.0) (2025-07-23)",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1214.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
     {
       "version": "0.1209.0",
       "date": "2025-07-10",
