@@ -7,6 +7,9 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
+  redirects: {
+    '/': '/about/introduction'
+  },
   integrations: [
     starlight({
       title: 'Fluxzero Documentation',
