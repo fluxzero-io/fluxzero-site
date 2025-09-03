@@ -237,13 +237,15 @@
     color: #565973 !important;
   }
   
-  [data-bs-theme="light"] #main-header .status-btn.btn.btn-outline-light:hover {
+  [data-bs-theme="light"] #main-header .status-btn.btn.btn-outline-light:hover,
+  [data-bs-theme="light"] #main-header .status-btn.btn.btn-outline-light:focus {
     color: white !important;
     background-color: #565973 !important;
     border-color: #565973 !important;
   }
   
-  [data-bs-theme="light"] #main-header .status-btn.btn.btn-outline-light:hover span {
+  [data-bs-theme="light"] #main-header .status-btn.btn.btn-outline-light:hover span,
+  [data-bs-theme="light"] #main-header .status-btn.btn.btn-outline-light:focus span {
     color: white !important;
   }
   
@@ -252,8 +254,15 @@
     color: #565973 !important;
   }
   
-  [data-bs-theme="light"] #main-header .pe-lg-1 .status-btn:hover span {
+  [data-bs-theme="light"] #main-header .pe-lg-1 .status-btn:hover span,
+  [data-bs-theme="light"] #main-header .pe-lg-1 .status-btn:focus span {
     color: white !important;
+  }
+  
+  [data-bs-theme="light"] #main-header .pe-lg-1 .status-btn:hover,
+  [data-bs-theme="light"] #main-header .pe-lg-1 .status-btn:focus {
+    background-color: #565973 !important;
+    border-color: #565973 !important;
   }
   
   /* Ensure status indicator is visible in all themes */
@@ -266,7 +275,26 @@
     color: #565973 !important;
   }
   
-  [data-bs-theme="light"] a[href="/status"]:hover span:not(.status-indicator) {
+  [data-bs-theme="light"] a[href="/status"]:hover span:not(.status-indicator),
+  [data-bs-theme="light"] a[href="/status"]:focus span:not(.status-indicator) {
+    color: white !important;
+  }
+  
+  [data-bs-theme="light"] a[href="/status"]:hover,
+  [data-bs-theme="light"] a[href="/status"]:focus {
+    background-color: #565973 !important;
+    border-color: #565973 !important;
+  }
+  
+  /* Ultra-specific status button fix */
+  [data-bs-theme="light"] .pe-lg-1.ms-auto.me-4 a.status-btn:hover,
+  [data-bs-theme="light"] .pe-lg-1.ms-auto.me-4 a.status-btn:focus {
+    background-color: #565973 !important;
+    border-color: #565973 !important;
+  }
+  
+  [data-bs-theme="light"] .pe-lg-1.ms-auto.me-4 a.status-btn:hover span,
+  [data-bs-theme="light"] .pe-lg-1.ms-auto.me-4 a.status-btn:focus span {
     color: white !important;
   }
   
@@ -316,6 +344,61 @@
     background-color: var(--si-primary);
     border-color: var(--si-primary);
     color: white;
+  }
+  
+  /* Desktop dropdown menu fixes for light theme */
+  [data-bs-theme="light"] .dropdown-menu-dark {
+    background-color: var(--si-light) !important;
+    color: var(--si-dark);
+  }
+  
+  [data-bs-theme="light"] .dropdown-menu-dark .dropdown-header {
+    color: var(--si-dark) !important;
+  }
+  
+  [data-bs-theme="light"] .dropdown-menu-dark .dropdown-item {
+    color: var(--si-dark) !important;
+  }
+  
+  [data-bs-theme="light"] .dropdown-menu-dark .dropdown-item:hover,
+  [data-bs-theme="light"] .dropdown-menu-dark .dropdown-item:focus {
+    background-color: var(--si-primary);
+    color: white !important;
+  }
+  
+  [data-bs-theme="light"] .dropdown-menu-dark .dropdown-item .text-muted {
+    color: var(--si-secondary-color) !important;
+  }
+  
+  /* Login button group fixes for light theme */
+  [data-bs-theme="light"] #main-header .btn-group .btn-outline-light {
+    --si-btn-color: #565973 !important;
+    --si-btn-border-color: rgba(86, 89, 115, 0.3) !important;
+    --si-btn-bg: transparent !important;
+    color: #565973 !important;
+    border-color: rgba(86, 89, 115, 0.3) !important;
+    background-color: transparent !important;
+  }
+  
+  [data-bs-theme="light"] #main-header .btn-group .btn-outline-light:hover {
+    --si-btn-hover-color: white !important;
+    --si-btn-hover-bg: #565973 !important;
+    --si-btn-hover-border-color: #565973 !important;
+    color: white !important;
+    background-color: #565973 !important;
+    border-color: #565973 !important;
+  }
+  
+  /* Nuclear option - target the exact buttons */
+  [data-bs-theme="light"] .btn-group.d-none.d-lg-inline-flex .btn-outline-light {
+    color: #565973 !important;
+  }
+  
+  [data-bs-theme="light"] .btn-group.d-none.d-lg-inline-flex .btn-outline-light:hover,
+  [data-bs-theme="light"] .btn-group.d-none.d-lg-inline-flex .btn-outline-light:focus {
+    color: white !important;
+    background-color: #565973 !important;
+    border-color: #565973 !important;
   }
 </style>
 
