@@ -32,12 +32,24 @@ importers:
       boxicons:
         specifier: ^2.1.4
         version: 2.1.4
+      jarallax:
+        specifier: ^2.2.1
+        version: 2.2.1
+      lightgallery:
+        specifier: 2.9.0-beta.1
+        version: 2.9.0-beta.1
       mermaid:
         specifier: ^11.9.0
         version: 11.9.0
+      rellax:
+        specifier: ^1.12.1
+        version: 1.12.1
       sharp:
         specifier: ^0.34.2
         version: 0.34.2
+      smooth-scroll:
+        specifier: ^16.1.3
+        version: 16.1.3
       swiper:
         specifier: ^11.2.6
         version: 11.2.10
@@ -1954,6 +1966,9 @@ packages:
   isarray@0.0.1:
     resolution: {integrity: sha512-D2S+3GLxWH+uhrNEcoh/fnmYeP8E8/zHl644d/jdA0g2uyXvy3sb0qxotE+ne0LtccHknQzWwZEzhak7oJ0COQ==}
 
+  jarallax@2.2.1:
+    resolution: {integrity: sha512-O4pqiWGp856cTGG5uBG9b0Uk7AIRmfFCVisRwgpICsG2xyIRnUrVbx4SIbpzUDAhkD00jdjBiqb1bZPTkHi1vQ==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -1992,6 +2007,10 @@ packages:
 
   layout-base@2.0.1:
     resolution: {integrity: sha512-dp3s92+uNI1hWIpPGH3jK2kxE2lMjdXdr+DH8ynZHpd6PUlH6x6cbuXnoMmiNumznqaNO31xu9e79F0uuZ0JFg==}
+
+  lightgallery@2.9.0-beta.1:
+    resolution: {integrity: sha512-4Bl1vsYGOsI6RsPyephAUFW8bbZuZlLrpxU59cfKYKPDEX5Mhxfo1DUoUIJ+j5QPNrHEqrd+QeQtnGUCCwqK2g==}
+    engines: {node: '>=6.0.0'}
 
   lite-youtube-embed@0.3.3:
     resolution: {integrity: sha512-gFfVVnj6NRjxVfJKo3qoLtpi0v5mn3AcR4eKD45wrxQuxzveFJUb+7Cr6uV6n+DjO8X3p0UzPPquhGt0H/y+NA==}
@@ -2459,6 +2478,9 @@ packages:
   rehype@13.0.2:
     resolution: {integrity: sha512-j31mdaRFrwFRUIlxGeuPXXKWQxet52RBQRvCmzl5eCefn/KGbomK5GMHNMsOJf55fgo3qw5tST5neDuarDYR2A==}
 
+  rellax@1.12.1:
+    resolution: {integrity: sha512-XBIi0CDpW5FLTujYjYBn1CIbK2CJL6TsAg/w409KghP2LucjjzBjsujXDAjyBLWgsfupfUcL5WzdnIPcGfK7XA==}
+
   remark-directive@3.0.1:
     resolution: {integrity: sha512-gwglrEQEZcZYgVyG1tQuA+h58EZfq5CSULw7J90AFuCTyib1thgHPoqQ+h9iFvU6R+vnZ5oNFQR5QKgGpk741A==}
 
@@ -2672,6 +2694,9 @@ packages:
   smol-toml@1.3.4:
     resolution: {integrity: sha512-UOPtVuYkzYGee0Bd2Szz8d2G3RfMfJ2t3qVdZUAozZyAk+a0Sxa+QKix0YCwjL/A1RR0ar44nCxaoN9FxdJGwA==}
     engines: {node: '>= 18'}
+
+  smooth-scroll@16.1.3:
+    resolution: {integrity: sha512-ca9U+neJS/cbdScTBuUTCZvUWNF2EuMCk7oAx3ImdeRK5FPm+xRo9XsVHIkeEVkn7MBRx+ufVEhyveM4ZhaTGA==}
 
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
@@ -2946,6 +2971,9 @@ packages:
 
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
+
+  video-worker@2.2.0:
+    resolution: {integrity: sha512-bjdpCArfD/kvt3HBU2sJUEEFq+6HjIufKXL2NojWswInxalJwR5yh/cgaGismHS8PAe5hx+W0GfrFqlxJTfI/w==}
 
   vite@6.3.5:
     resolution: {integrity: sha512-cZn6NDFE7wdTpINgs++ZJ4N49W2vRp8LCKrn3Ob1kYNtOo21vfDoaV5GzBfLU4MovSAB8uNRm4jgzVQZ+mBzPQ==}
@@ -5117,6 +5145,10 @@ snapshots:
 
   isarray@0.0.1: {}
 
+  jarallax@2.2.1:
+    dependencies:
+      video-worker: 2.2.0
+
   js-tokens@4.0.0: {}
 
   js-yaml@4.1.0:
@@ -5148,6 +5180,8 @@ snapshots:
   layout-base@1.0.2: {}
 
   layout-base@2.0.1: {}
+
+  lightgallery@2.9.0-beta.1: {}
 
   lite-youtube-embed@0.3.3: {}
 
@@ -5997,6 +6031,8 @@ snapshots:
       rehype-stringify: 10.0.1
       unified: 11.0.5
 
+  rellax@1.12.1: {}
+
   remark-directive@3.0.1:
     dependencies:
       '@types/mdast': 4.0.4
@@ -6313,6 +6349,8 @@ snapshots:
 
   smol-toml@1.3.4: {}
 
+  smooth-scroll@16.1.3: {}
+
   source-map-js@1.2.1: {}
 
   source-map@0.6.1: {}
@@ -6546,6 +6584,8 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
+
+  video-worker@2.2.0: {}
 
   vite@6.3.5(@types/node@22.15.29)(sass-embedded@1.92.0)(sass@1.92.0)(tsx@4.20.3):
     dependencies:

@@ -1,4 +1,6 @@
 ---
+import '../styles/theme.css';
+
 export interface Props {
   title?: string;
   description?: string;
@@ -29,7 +31,7 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Theme switcher (color modes) -->
-    <script is:inline src="/js/theme-switcher.js"></script>
+    <script is:inline src="/src/scripts/theme-switcher.js"></script>
 
     <!-- Favicon and Touch Icons-->
     <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
@@ -42,12 +44,7 @@ const {
     <meta name="msapplication-config" content="/favicon/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
 
-    <!-- Vendor Styles-->
-    <link rel="stylesheet" media="screen" href="/vendor/boxicons/css/boxicons.min.css">
-    <link rel="stylesheet" media="screen" href="/vendor/swiper/swiper-bundle.min.css">
 
-    <!-- Main Theme Styles + Bootstrap-->
-    <link rel="stylesheet" media="screen" href="/css/theme.min.css">
     
     <!-- Additional head content -->
     <slot name="head" />
@@ -155,19 +152,10 @@ const {
       <i class="btn-scroll-top-icon bx bx-chevron-up"></i>
     </a>
 
-    <!-- Vendor Scripts-->
-    <script is:inline src="/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script is:inline src="/vendor/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
-    <script is:inline src="/vendor/jarallax/dist/jarallax.min.js"></script>
-    <script is:inline src="/vendor/rellax/rellax.min.js"></script>
-    <script is:inline src="/vendor/swiper/swiper-bundle.min.js"></script>
-    <script is:inline src="/vendor/lightgallery/lightgallery.min.js"></script>
-    <script is:inline src="/vendor/lightgallery/plugins/fullscreen/lg-fullscreen.min.js"></script>
-    <script is:inline src="/vendor/lightgallery/plugins/zoom/lg-zoom.min.js"></script>
-    <script is:inline src="/vendor/lightgallery/plugins/video/lg-video.min.js"></script>
 
     <!-- Main Theme Script-->
-    <script is:inline src="/js/theme.min.js"></script>
+    <script is:inline src="/src/scripts/theme.js"></script>
     <script type="module" src="/src/scripts/main.js"></script>
+    <script type="module" src="/src/scripts/vendor.js"></script>
   </body>
 </html>

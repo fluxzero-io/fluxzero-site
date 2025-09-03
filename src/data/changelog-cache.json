@@ -1,7 +1,43 @@
 {
-  "lastUpdated": "2025-08-27T09:08:31.643Z",
-  "latestVersion": "0.1229.0",
+  "lastUpdated": "2025-09-03T14:46:34.112Z",
+  "latestVersion": "0.1234.0",
   "releases": [
+    {
+      "version": "0.1234.0",
+      "date": "2025-09-03",
+      "body": "#### [0.1234.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1233.0...0.1234.0) (2025-09-03)",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1234.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1232.0",
+      "date": "2025-09-03",
+      "body": "#### [0.1232.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1231.1...0.1232.0) (2025-09-03)",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1232.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1231.1",
+      "date": "2025-09-03",
+      "body": "##### [0.1231.1](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1231.0...0.1231.1) (2025-09-03)\n\n\n##### Bug Fixes\n\n* **scheduling:** make `cronExpression` non-static to resolve potential state issues in tests ([34814a1](https://github.com/flux-capacitor-io/flux-capacitor-client/commit/34814a13bb1cff1db6657bdf439ab85ffff2817d))",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1231.1",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "0.1231.0",
+      "date": "2025-09-02",
+      "body": "#### [0.1231.0](https://github.com/flux-capacitor-io/flux-capacitor-client/compare/0.1230.0...0.1231.0) (2025-09-02)",
+      "url": "https://github.com/flux-capacitor-io/flux-capacitor-client/releases/tag/0.1231.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
     {
       "version": "0.1229.0",
       "date": "2025-08-20",
