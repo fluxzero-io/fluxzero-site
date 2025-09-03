@@ -2,14 +2,18 @@
 //
 // Custom variables for the `[data-bs-theme="dark"]` theme.
 
+@use "sass:color";
+@import "variables";
+@import "bootstrap/scss/functions";
+
 // Global colors
 
-$primary-text-emphasis-dark:        darken($primary, 5%) !default;
+$primary-text-emphasis-dark:        color.scale($primary, $lightness: -7%) !default;
 $secondary-text-emphasis-dark:      $gray-200 !default;
-$success-text-emphasis-dark:        darken($success, 5%) !default;
-$info-text-emphasis-dark:           darken($info, 5%) !default;
-$warning-text-emphasis-dark:        darken($warning, 5%) !default;
-$danger-text-emphasis-dark:         darken($danger, 5%) !default;
+$success-text-emphasis-dark:        color.scale($success, $lightness: -7%) !default;
+$info-text-emphasis-dark:           color.scale($info, $lightness: -7%) !default;
+$warning-text-emphasis-dark:        color.scale($warning, $lightness: -7%) !default;
+$danger-text-emphasis-dark:         color.scale($danger, $lightness: -7%) !default;
 $light-text-emphasis-dark:          $gray-200 !default;
 $dark-text-emphasis-dark:           $white !default;
 
@@ -36,7 +40,7 @@ $body-bg-dark:                      $gray-900 !default;
 $border-color-dark:                 $border-light-color !default;
 $headings-color-dark:               $white !default;
 $link-color-dark:                   $primary !default;
-$link-hover-color-dark:             darken($link-color, 8%) !default;
+$link-hover-color-dark:             color.scale($primary, $lightness: -8%) !default;
 
 
 // Image thumbnails
@@ -194,7 +198,7 @@ $pre-bg-dark:                       rgba($white, .04) !default;
 $pre-line-numbers-border-color-dark: $border-light-color !default;
 $pre-line-numbers-color-dark:       rgba($white, .5) !default;
 $kbd-color-dark:                    $white !default;
-$kbd-bg-dark:                       darken($gray-900, 8%) !default;
+$kbd-bg-dark:                       color.scale($gray-900, $lightness: -8%) !default;
 
 
 // Carousel

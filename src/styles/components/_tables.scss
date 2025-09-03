@@ -2,6 +2,8 @@
 // Tables
 // --------------------------------------------------
 
+@use "sass:color";
+
 .table {
   --#{$prefix}table-th-color: #{$table-th-color};
   --#{$prefix}table-dark-color: #{$body-color-dark};
@@ -16,7 +18,7 @@
   }
 }
 .table > :not(:last-child) > :last-child > * {
-  border-bottom-color: darken($border-color, 12%);
+  border-bottom-color: color.scale($border-color, $lightness: -12%);
 }
 .table.table-dark > :not(:last-child) > :last-child > * {
   border-bottom-color: rgba($white, .3);

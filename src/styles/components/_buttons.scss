@@ -2,6 +2,8 @@
 // Buttons
 // --------------------------------------------------
 
+@use "sass:color";
+
 
 // Global styles
 
@@ -26,10 +28,10 @@
   .btn-#{$color} {
     --#{$prefix}btn-hover-color: #{$btn-color};
     --#{$prefix}btn-active-color: #{$btn-color};
-    --#{$prefix}btn-hover-bg: #{darken($value, 7.5%)};
-    --#{$prefix}btn-active-bg: #{darken($value, 7.5%)};
-    --#{$prefix}btn-hover-border-color: #{darken($value, 7.5%)};
-    --#{$prefix}btn-active-border-color: #{darken($value, 7.5%)};
+    --#{$prefix}btn-hover-bg: #{color.scale($value, $lightness: -7.5%)};
+    --#{$prefix}btn-active-bg: #{color.scale($value, $lightness: -7.5%)};
+    --#{$prefix}btn-hover-border-color: #{color.scale($value, $lightness: -7.5%)};
+    --#{$prefix}btn-active-border-color: #{color.scale($value, $lightness: -7.5%)};
     --#{$prefix}btn-disabled-color: #{$btn-color};
   }
 }
@@ -301,8 +303,8 @@
       --#{$prefix}btn-hover-color: #{$gray-800} !important; // stylelint-disable-line declaration-no-important
       --#{$prefix}btn-active-color: #{$gray-800} !important; // stylelint-disable-line declaration-no-important
       --#{$prefix}btn-bg: #{$gray-200};
-      --#{$prefix}btn-hover-bg: #{darken($gray-200, 6%)};
-      --#{$prefix}btn-active-bg: #{darken($gray-200, 6%)};
+      --#{$prefix}btn-hover-bg: #{color.scale($gray-200, $lightness: -6%)};
+      --#{$prefix}btn-active-bg: #{color.scale($gray-200, $lightness: -6%)};
     }
 
     .btn-video {

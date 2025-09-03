@@ -1,0 +1,21 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+---
+
+<StarlightPage frontmatter={{ title: 'Fluxzero', template: 'splash' }}>
+  <div class="hero">
+    <h1>Welcome to Fluxzero</h1>
+    <p class="tagline">
+      Focus on business logic, not infrastructure. 
+      Build scalable backend applications with message-driven development.
+    </p>
+    <div class="actions">
+      <a href="/docs/about/introduction" class="action primary">
+        Get Started
+      </a>
+      <a href="/docs/about/introduction" class="action secondary">
+        Learn More
+      </a>
+    </div>
+  </div>
+</StarlightPage>

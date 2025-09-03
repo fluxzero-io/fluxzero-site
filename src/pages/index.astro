@@ -1,21 +1,238 @@
 ---
-import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/main.scss';
 ---
 
-<StarlightPage frontmatter={{ title: 'Fluxzero', template: 'splash' }}>
-  <div class="hero">
-    <h1>Welcome to Fluxzero</h1>
-    <p class="tagline">
-      Focus on business logic, not infrastructure. 
-      Build scalable backend applications with message-driven development.
-    </p>
-    <div class="actions">
-      <a href="/docs/about/introduction" class="action primary">
-        Get Started
-      </a>
-      <a href="/docs/about/introduction" class="action secondary">
-        Learn More
-      </a>
-    </div>
-  </div>
-</StarlightPage>
+<BaseLayout 
+  title="Product | Fluxzero" 
+  description="Fluxzero is the fastest way to build scalable, message-driven apps. One unified SDK, zero boilerplate, full observability, and deploy anywhere."
+>
+  <!-- Bootstrap icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" slot="head">
+  <link rel="stylesheet" href="/fluxzero/fluxzero.css" slot="head">
+  
+  <style slot="head">
+    .keyword { color: #569cd6; }
+    .field { color: #9cdcfe; }
+    .method { color: #dcdcaa; }
+    .comment { color: #6a9955; }
+    .annotation { color: #4fc1ff; }
+  </style>
+
+  <!-- Page wrapper for sticky footer -->
+  <main class="page-wrapper">
+    <Header />
+
+    <section class="container pt-2 pb-2" style="margin-top: 100px;">
+      <!-- Nav tabs -->
+      <ul class="nav nav-tabs flex-nowrap justify-content-lg-center overflow-auto pb-2 mb-3 mb-lg-4" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link text-nowrap active" id="sdk-tab" data-bs-toggle="tab" data-bs-target="#sdk" type="button" role="tab" aria-controls="sdk" aria-selected="true">
+            <i class="bx bx-star fs-lg opacity-60 me-2"></i>
+            Fluxzero SDK
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link text-nowrap" id="runtime-tab" data-bs-toggle="tab" data-bs-target="#runtime" type="button" role="tab" aria-controls="runtime" aria-selected="false">
+            <i class="bx bx-briefcase-alt-2 fs-lg opacity-60 me-2"></i>
+            Fluxzero Runtime
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link text-nowrap" id="cloud-tab" data-bs-toggle="tab" data-bs-target="#cloud" type="button" role="tab" aria-controls="cloud" aria-selected="false">
+            <i class="bx bx-rocket fs-lg opacity-60 me-2"></i>
+            Fluxzero Cloud
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content bg-secondary rounded-3 py-4 px-3">
+        <!-- Fluxzero SDK -->
+        <div class="tab-pane fade show active" id="sdk" role="tabpanel" aria-labelledby="sdk-tab">
+          <!-- Hero Section -->
+          <div class="row align-items-center pt-3 pt-sm-4 pt-md-0 px-3 px-sm-4 px-lg-0 mb-5">
+            <div class="col-lg-5 col-md-6 offset-lg-1 text-center text-md-start">
+              <h3 class="display-6 fw-bold mb-3">Fluxzero SDK</h3>
+              <p class="lead text-muted mb-4">
+                Build message-driven apps with <strong>zero boilerplate</strong> and a <strong>unified programming model</strong>.
+                Handle commands, queries, events, schedules, and web requests — all in one place.
+              </p>
+              <div class="d-flex justify-content-center justify-content-md-start gap-3">
+                <a href="/docs/getting-started" class="btn btn-primary btn-lg px-4">Get Started</a>
+                <a href="/docs" class="btn btn-outline-secondary btn-lg px-4">Read the Docs</a>
+              </div>
+            </div>
+            <div class="col-lg-5 col-md-6 mt-md-4">
+              <img src="/fluxzero/fluxzero-engine-features.png"
+                   class="d-block my-lg-2 mx-auto me-md-0"
+                   width="560"
+                   alt="Fluxzero SDK Overview">
+            </div>
+          </div>
+
+          <!-- Core Features -->
+          <section class="container py-5">
+            <div class="row text-center mb-5">
+              <div class="col-lg-8 mx-auto">
+                <h4 class="fw-bold mb-3">Everything You Need to Build Apps Faster</h4>
+                <p class="text-muted">
+                  Fluxzero SDK gives you one consistent model for every type of interaction —
+                  so you can focus on your business logic, not glue code.
+                </p>
+              </div>
+            </div>
+            <div class="row g-4">
+              <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                  <div class="card-body">
+                    <i class="bi bi-envelope-paper fs-1 text-primary mb-3"></i>
+                    <h6 class="fw-semibold">Unified Messaging</h6>
+                    <p class="text-muted small">
+                      Handle commands, queries, events, schedules, and requests seamlessly.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                  <div class="card-body">
+                    <i class="bi bi-database fs-1 text-primary mb-3"></i>
+                    <h6 class="fw-semibold">Automatic Persistence</h6>
+                    <p class="text-muted small">
+                      Store documents, events, and workflows — no boilerplate or ORM mapping needed.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                  <div class="card-body">
+                    <i class="bi bi-search fs-1 text-primary mb-3"></i>
+                    <h6 class="fw-semibold">Built-in Search</h6>
+                    <p class="text-muted small">
+                      Query structured and unstructured data right out of the box.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-3">
+                <div class="card border-0 shadow-sm h-100 text-center">
+                  <div class="card-body">
+                    <i class="bi bi-calendar-event fs-1 text-primary mb-3"></i>
+                    <h6 class="fw-semibold">Scheduling & Workflows</h6>
+                    <p class="text-muted small">
+                      Define timers, triggers, and long-running processes in a single model.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Code Example -->
+          <section class="container py-5 my-5">
+            <div class="row align-items-center gy-4">
+              <div class="col-lg-6">
+                <h4 class="fw-bold mb-3">Powerful but Minimal</h4>
+                <p class="mb-4">
+                  Fluxzero's message-driven model keeps your codebase clean and extensible.
+                </p>
+                <ul class="list-unstyled">
+                  <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i> Minimal annotations</li>
+                  <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i> Declarative persistence</li>
+                  <li class="mb-2"><i class="bi bi-check2-circle text-success me-2"></i> First-class observability</li>
+                </ul>
+              </div>
+              <div class="col-lg-6">
+                <div data-bs-theme="dark" class="bg-secondary-subtle rounded-3">
+                  <pre class="rounded p-3 mb-0">
+<code>
+<span class="keyword">public record</span> DepositMoney(AccountId <span class="field">accountId</span>, BigDecimal <span class="field">amount</span>) &#123;
+  <span class="annotation">@Apply</span>
+  BankAccount <span class="method">deposit</span>(BankAccount account) &#123;
+     <span class="keyword">return</span> account.withBalance(account.balance().add(<span class="field">amount</span>));
+  &#125;
+&#125;
+
+<span class="comment">// No frameworks. No plumbing. Just business logic — at any scale.</span></code>
+          </pre>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Observability -->
+          <section class="container py-5">
+            <div class="row align-items-center gy-4">
+              <div class="col-lg-6 order-lg-2">
+                <img src="/fluxzero/dashboard-eb.png"
+                     class="d-block mx-auto rounded shadow img-fluid"
+                     width="500"
+                     alt="Fluxzero Observability Dashboard">
+              </div>
+              <div class="col-lg-6 order-lg-1 text-center text-lg-start">
+                <h4 class="fw-bold mb-3">Full Observability Built-In</h4>
+                <p class="text-muted mb-4">
+                  Every message, every handler, every state change — instantly visible via Fluxzero Cloud or your own monitoring.
+                </p>
+                <a href="/features/observability" class="btn btn-outline-primary btn-lg px-4">Learn More</a>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Fluxzero Runtime -->
+        <div class="tab-pane fade" id="runtime" role="tabpanel" aria-labelledby="runtime-tab">
+          <div class="row align-items-center pt-3 pb-2 pb-sm-3 pt-sm-4 pt-md-0 px-3 px-sm-4 px-lg-0">
+            <div class="col-lg-4 col-md-5 offset-lg-1 text-center text-md-start">
+              <h3 class="mb-lg-4">Fluxzero Runtime</h3>
+              <p>Run your applications anywhere with zero operational overhead. The Fluxzero Runtime handles scaling, persistence, and infrastructure so you can focus on building features.</p>
+            </div>
+            <div class="col-lg-6 col-md-7 mt-md-4">
+              <img src="/fluxzero/fluxzero-engine-features2.png" class="d-block my-lg-2 mx-auto me-md-0" width="502" alt="Fluxzero Runtime">
+            </div>
+          </div>
+        </div>
+
+        <!-- Fluxzero Cloud -->
+        <div class="tab-pane fade" id="cloud" role="tabpanel" aria-labelledby="cloud-tab">
+          <div class="row align-items-center pt-3 pt-sm-4 pt-md-0 px-3 pe-sm-4 pe-md-0 ps-sm-4 ps-lg-0">
+            <div class="col-lg-4 col-md-5 offset-lg-1 text-center text-md-start">
+              <h3 class="mb-lg-4">Fluxzero Cloud</h3>
+              <p>Fully managed backend platform with built-in monitoring, auto-scaling, and global deployment. Let us handle the infrastructure while you focus on your application.</p>
+            </div>
+            <div class="col-lg-6 col-md-7 mt-n3 mt-md-1">
+              <img src="/fluxzero/fluxzero-engine-features3.png" class="d-block mb-lg-2 mx-auto me-md-0" width="525" alt="Fluxzero Cloud">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const hash = window.location.hash; // e.g. "#cloud"
+      if (!hash) return;
+
+      const triggerEl = document.querySelector(`button[data-bs-target="${hash}"]`);
+      if (triggerEl) {
+        const tab = new bootstrap.Tab(triggerEl);
+        tab.show();
+      }
+    });
+
+    document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(button => {
+      button.addEventListener('shown.bs.tab', event => {
+        const target = event.target.getAttribute("data-bs-target");
+        if (target && history.replaceState) {
+          history.replaceState(null, null, target);
+        }
+      });
+    });
+  </script>
+</BaseLayout>
