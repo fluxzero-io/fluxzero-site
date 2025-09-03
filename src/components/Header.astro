@@ -1,0 +1,341 @@
+---
+// Header component for the Fluxzero website
+---
+
+<header class="header navbar navbar-expand-lg bg-light fixed-top" data-bs-theme="light" id="main-header">
+  <div class="container px-3">
+    <a href="/" class="navbar-brand pe-3 text-uppercase">
+      <img src="/fluxzero/fluxzero-logo.png" width="47" alt="Fluxzero">
+      Fluxzero
+    </a>
+    
+    <div id="navbarNav" class="offcanvas offcanvas-end bg-dark mobile-menu">
+      <div class="offcanvas-header border-bottom border-light">
+        <h5 class="offcanvas-title text-white">Menu</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      
+      <div class="offcanvas-body">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-current="page">Product</a>
+            <div class="dropdown-menu dropdown-menu-dark p-0">
+              <div class="d-lg-flex">
+                <!-- Core Products Column -->
+                <div class="mega-dropdown-column pt-lg-3 pb-lg-4" style="--si-mega-dropdown-column-width: 22rem;">
+                  <h6 class="dropdown-header text-uppercase">Core Products</h6>
+                  <ul class="list-unstyled mb-0">
+                    <li>
+                      <a href="/fluxzero-product#sdk" class="dropdown-item d-flex align-items-start">
+                        <i class="bi bi-code-slash me-2"></i>
+                        <div>
+                          <span class="fw-semibold">Fluxzero SDK</span><br>
+                          <small class="text-muted">Build apps with a unified programming model.</small>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/fluxzero-product#runtime" class="dropdown-item d-flex align-items-start">
+                        <i class="bi bi-boxes me-2"></i>
+                        <div>
+                          <span class="fw-semibold">Fluxzero Runtime</span><br>
+                          <small class="text-muted">Zero‑ops runtime for deploying and scaling anywhere.</small>
+                        </div>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Platform Features Column -->
+                <div class="mega-dropdown-column pt-lg-3 pb-lg-4" style="--si-mega-dropdown-column-width: 27rem;">
+                  <h6 class="dropdown-header text-uppercase">Services</h6>
+                  <ul class="list-unstyled mb-0">
+                    <li>
+                      <a href="/fluxzero-product#cloud" class="dropdown-item d-flex align-items-start">
+                        <i class="bi bi-cloud-check me-2"></i>
+                        <div>
+                          <span class="fw-semibold">Fluxzero Cloud</span><br>
+                          <small class="text-muted">Managed backend with monitoring and auto‑scaling.</small>
+                        </div>
+                      </a>
+                    </li>
+                    <li>
+                      <a href="/fluxzero-product#byoc" class="dropdown-item d-flex align-items-start">
+                        <i class="bi bi-cloud-upload me-2"></i>
+                        <div>
+                          <span class="fw-semibold">Bring-your-own cloud</span><br>
+                          <small class="text-muted">Run the Fluxzero runtime fully managed, yet in your own cloud.</small>
+                        </div>
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+          
+          <li class="nav-item">
+            <a href="/docs/getting-started" class="nav-link">Docs</a>
+          </li>
+          
+          <li class="nav-item">
+            <a href="/pricing" class="nav-link fw-semibold">Pricing</a>
+          </li>
+          
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">About</a>
+            <div class="dropdown-menu dropdown-menu-dark p-2" style="--si-mega-dropdown-column-width: 18rem;">
+              <ul class="list-unstyled mb-0">
+                <li>
+                  <a href="#" class="dropdown-item d-flex align-items-center">
+                    <i class="bi bi-bullseye me-2"></i>
+                    Mission & Vision
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="dropdown-item d-flex align-items-center">
+                    <i class="bi bi-people me-2"></i>
+                    Team
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="dropdown-item d-flex align-items-center">
+                    <i class="bi bi-chat-quote me-2"></i>
+                    Customers
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="dropdown-item d-flex align-items-center">
+                    <i class="bi bi-briefcase me-2"></i>
+                    Jobs
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="dropdown-item d-flex align-items-center">
+                    <i class="bi bi-bank me-2"></i>
+                    Investors
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="dropdown-item d-flex align-items-center">
+                    <i class="bi bi-envelope me-2"></i>
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+      
+      <div class="offcanvas-header border-top border-light flex-column gap-2">
+        <a href="#" class="btn btn-secondary w-100" target="_blank" rel="noopener">
+          Sign In
+        </a>
+        <a href="#" class="btn btn-primary w-100" target="_blank" rel="noopener">
+          Get Started
+        </a>
+      </div>
+    </div>
+
+    <div class="pe-lg-1 ms-auto me-4">
+      <!-- Status Button -->
+      <a href="/status" class="btn btn-outline-light border-0 btn-sm d-flex align-items-center gap-2 px-3 rounded-pill shadow-sm status-btn">
+        <span class="status-indicator bg-success"></span>
+        <span>Status</span>
+      </a>
+    </div>
+
+    <!-- Theme switcher -->
+    <div class="form-check form-switch mode-switch pe-lg-1 me-4" data-bs-toggle="mode">
+      <input type="checkbox" class="form-check-input" id="theme-mode">
+      <label class="form-check-label d-none d-sm-block" for="theme-mode">Light</label>
+      <label class="form-check-label d-none d-sm-block" for="theme-mode">Dark</label>
+    </div>
+
+    <!-- Navbar toggler -->
+    <button type="button" class="navbar-toggler" data-bs-toggle="offcanvas"
+            data-bs-target="#navbarNav" aria-controls="navbarNav"
+            aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="btn-group rounded-pill shadow-sm d-none d-lg-inline-flex">
+      <a href="#" class="btn btn-outline-light btn-sm px-3 rounded-start-pill">Sign In</a>
+      <a href="#" class="btn btn-primary btn-sm px-3 rounded-end-pill">Get Started</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
+  /* Dark theme styles for header */
+  [data-bs-theme="dark"] #main-header {
+    background-color: var(--si-dark) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  [data-bs-theme="dark"] #main-header .navbar-brand {
+    color: white !important;
+  }
+  
+  [data-bs-theme="dark"] #main-header .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+  }
+  
+  [data-bs-theme="dark"] #main-header .nav-link:hover,
+  [data-bs-theme="dark"] #main-header .nav-link:focus {
+    color: white !important;
+  }
+  
+  [data-bs-theme="dark"] #main-header .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  [data-bs-theme="dark"] #main-header .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='m4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  }
+  
+  /* Button adjustments for light theme */
+  [data-bs-theme="light"] #main-header .btn-outline-light {
+    color: #565973;
+    border-color: rgba(86, 89, 115, 0.3);
+    background-color: transparent;
+  }
+  
+  [data-bs-theme="light"] #main-header .btn-outline-light:hover {
+    color: white;
+    background-color: #565973;
+    border-color: #565973;
+  }
+  
+  /* Button adjustments for dark theme */
+  [data-bs-theme="dark"] #main-header .btn-outline-light {
+    color: rgba(255, 255, 255, 0.85);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  [data-bs-theme="dark"] #main-header .btn-outline-light:hover {
+    color: #0b0f19;
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+  
+  /* Status button theme fixes - more specific selectors */
+  [data-bs-theme="light"] #main-header .status-btn.btn.btn-outline-light {
+    color: #565973 !important;
+    border-color: rgba(86, 89, 115, 0.2) !important;
+    background-color: transparent !important;
+  }
+  
+  [data-bs-theme="light"] #main-header .status-btn.btn.btn-outline-light span {
+    color: #565973 !important;
+  }
+  
+  [data-bs-theme="light"] #main-header .status-btn.btn.btn-outline-light:hover {
+    color: white !important;
+    background-color: #565973 !important;
+    border-color: #565973 !important;
+  }
+  
+  [data-bs-theme="light"] #main-header .status-btn.btn.btn-outline-light:hover span {
+    color: white !important;
+  }
+  
+  /* Even more specific - target the exact structure */
+  [data-bs-theme="light"] #main-header .pe-lg-1 .status-btn span {
+    color: #565973 !important;
+  }
+  
+  [data-bs-theme="light"] #main-header .pe-lg-1 .status-btn:hover span {
+    color: white !important;
+  }
+  
+  /* Ensure status indicator is visible in all themes */
+  [data-bs-theme="light"] #main-header .status-indicator.bg-success {
+    background-color: #22c55e !important;
+  }
+  
+  /* Nuclear option - override everything for status text */
+  [data-bs-theme="light"] a[href="/status"] span:not(.status-indicator) {
+    color: #565973 !important;
+  }
+  
+  [data-bs-theme="light"] a[href="/status"]:hover span:not(.status-indicator) {
+    color: white !important;
+  }
+  
+  /* Mobile menu (offcanvas) theme switching */
+  [data-bs-theme="light"] .mobile-menu {
+    background-color: var(--si-light) !important;
+    color: var(--si-dark);
+  }
+  
+  [data-bs-theme="light"] .mobile-menu .offcanvas-header {
+    border-bottom-color: rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  [data-bs-theme="light"] .mobile-menu .offcanvas-title {
+    color: var(--si-dark) !important;
+  }
+  
+  [data-bs-theme="light"] .mobile-menu .btn-close {
+    filter: invert(1) grayscale(100%) brightness(0%);
+  }
+  
+  [data-bs-theme="light"] .mobile-menu .nav-link {
+    color: var(--si-dark) !important;
+  }
+  
+  [data-bs-theme="light"] .mobile-menu .dropdown-menu {
+    background-color: var(--si-secondary-bg) !important;
+  }
+  
+  [data-bs-theme="light"] .mobile-menu .dropdown-item {
+    color: var(--si-dark) !important;
+  }
+  
+  [data-bs-theme="light"] .mobile-menu .dropdown-item:hover,
+  [data-bs-theme="light"] .mobile-menu .dropdown-item:focus {
+    background-color: var(--si-primary);
+    color: white !important;
+  }
+  
+  [data-bs-theme="light"] .mobile-menu .btn-secondary {
+    background-color: var(--si-secondary);
+    border-color: var(--si-secondary);
+    color: var(--si-dark);
+  }
+  
+  [data-bs-theme="light"] .mobile-menu .btn-primary {
+    background-color: var(--si-primary);
+    border-color: var(--si-primary);
+    color: white;
+  }
+</style>
+
+<script>
+  // Update header theme when document theme changes
+  function updateHeaderTheme() {
+    const header = document.getElementById('main-header');
+    const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+    if (header && currentTheme) {
+      header.setAttribute('data-bs-theme', currentTheme);
+    }
+  }
+  
+  // Update on load
+  document.addEventListener('DOMContentLoaded', updateHeaderTheme);
+  
+  // Watch for theme changes
+  const observer = new MutationObserver(updateHeaderTheme);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-bs-theme']
+  });
+</script>

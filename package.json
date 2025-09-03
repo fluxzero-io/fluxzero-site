@@ -21,10 +21,15 @@
     "@types/node": "^22.15.29",
     "astro": "^5.8.2",
     "astro-mermaid": "^1.0.4",
+    "bootstrap": "^5.3.5",
+    "boxicons": "^2.1.4",
     "mermaid": "^11.9.0",
-    "sharp": "^0.34.2"
+    "sharp": "^0.34.2",
+    "swiper": "^11.2.6"
   },
   "devDependencies": {
+    "sass": "^1.80.3",
+    "sass-embedded": "^1.92.0",
     "tsx": "^4.20.3",
     "wrangler": "^4.19.1"
   }
