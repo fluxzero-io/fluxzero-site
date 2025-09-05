@@ -1,9 +1,109 @@
 ---
-title: "Getting Started: FluxHome"
-description: Building home automation software with Fluxzero
+title: "Create a New Project"
+description: Generate a new Fluxzero project with our interactive project generator
 sidebar:
    order: 20
+tableOfContents: false
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
-import { Steps } from '@astrojs/starlight/components';
+import { Tabs, TabItem, Steps } from '@astrojs/starlight/components';
+import ProjectGenerator from '../../../../components/ProjectGenerator.astro';
+
+# Create a New Project
+
+The easiest way to get started with Fluxzero is to generate a new project using our interactive project generator. Choose from several pre-configured templates that include common patterns and best practices.
+
+## Interactive Project Generator
+
+Use the generator below to create a new Fluxzero project tailored to your needs:
+
+<ProjectGenerator />
+
+## Available Templates
+
+### Basic Starter
+Perfect for learning Fluxzero fundamentals or building simple applications. Includes:
+- Single aggregate example
+- Basic command and event handling
+- Simple validation patterns
+- Getting started documentation
+
+### Smart Home
+Ideal for IoT and home automation applications. Features:
+- Device management aggregates
+- Room-based organization
+- Sensor data handling
+- Automation rule engine
+- WebSocket integration for real-time updates
+
+### E-commerce
+Complete foundation for online stores and marketplaces. Includes:
+- Product catalog management
+- Order processing workflows
+- Inventory tracking
+- Payment integration patterns
+- Customer management
+
+### Microservices
+Advanced template for distributed systems. Provides:
+- Multiple service boundaries
+- Inter-service communication patterns
+- Distributed event handling
+- API gateway configuration
+- Service discovery setup
+
+## Next Steps
+
+After generating your project:
+
+<Steps>
+1. **Extract** the downloaded ZIP file to your desired location
+2. **Navigate** to the project directory in your terminal
+3. **Install dependencies** using your preferred package manager:
+   ```bash
+   ./mvnw install  # Maven
+   # or
+   ./gradlew build # Gradle
+   ```
+4. **Start the development server**:
+   ```bash
+   ./mvnw spring-boot:run  # Maven
+   # or  
+   ./gradlew bootRun       # Gradle
+   ```
+5. **Open your browser** to `http://localhost:8080` to see your application
+</Steps>
+
+## Manual Project Setup
+
+If you prefer to set up a project manually, you can also:
+
+<Tabs>
+<TabItem label="Maven">
+```bash
+mvn archetype:generate \
+  -DgroupId=com.example \
+  -DartifactId=my-fluxzero-app \
+  -DarchetypeArtifactId=fluxzero-starter-archetype \
+  -DarchetypeGroupId=io.fluxzero
+```
+</TabItem>
+<TabItem label="Gradle">
+```bash
+mkdir my-fluxzero-app
+cd my-fluxzero-app
+gradle init --type java-application
+# Add Fluxzero dependencies to build.gradle
+```
+</TabItem>
+</Tabs>
+
+## Troubleshooting
+
+If you encounter issues:
+
+- **Download doesn't start**: Check that you've filled in both the project name and selected a template
+- **Build fails**: Ensure you have Java 17+ installed and configured
+- **Port already in use**: Change the server port in `application.properties`
+
+For more help, check our [FAQ](/docs/about/faq) or join our community discussions.

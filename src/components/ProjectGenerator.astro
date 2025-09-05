@@ -1,0 +1,402 @@
+---
+// Project Generator Component for Fluxzero Documentation
+---
+
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden my-8">
+  <!-- Header -->
+  <div class="bg-green-50 dark:bg-green-900/20 border-b border-green-200 dark:border-green-800 px-6 py-4">
+    <div class="flex items-center gap-3">
+      <div class="flex-shrink-0">
+        <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+        </svg>
+      </div>
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Fluxzero Project Generator</h3>
+        <p class="text-sm text-gray-600 dark:text-gray-300">Bootstrap your new Fluxzero project</p>
+      </div>
+    </div>
+  </div>
+
+  <form id="project-generator-form" class="p-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Left Column: Project Configuration -->
+      <div class="space-y-6">
+        <div>
+          <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+            </svg>
+            Project Metadata
+          </h4>
+          
+          <!-- Project Name -->
+          <div class="space-y-2">
+            <label for="project-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Project Name
+            </label>
+            <input 
+              type="text" 
+              id="project-name" 
+              name="projectName"
+              placeholder="my-awesome-project"
+              value="demo"
+              required
+              class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-white transition-colors"
+            />
+          </div>
+
+          <!-- Group -->
+          <div class="space-y-2 mt-4">
+            <label for="group-id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Group
+            </label>
+            <input 
+              type="text" 
+              id="group-id" 
+              name="groupId"
+              placeholder="com.example"
+              value="com.example"
+              class="w-full px-3 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-800 dark:text-white transition-colors"
+            />
+          </div>
+
+          <!-- Language & Build Tool -->
+          <div class="grid grid-cols-2 gap-4 mt-4">
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Language</label>
+              <div class="flex flex-col gap-2">
+                <label class="flex items-center">
+                  <input type="radio" name="language" value="java" checked class="text-primary-600 focus:ring-primary-500">
+                  <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Java</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="radio" name="language" value="kotlin" class="text-primary-600 focus:ring-primary-500">
+                  <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Kotlin</span>
+                </label>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Build Tool</label>
+              <div class="flex flex-col gap-2">
+                <label class="flex items-center">
+                  <input type="radio" name="buildTool" value="maven" checked class="text-primary-600 focus:ring-primary-500">
+                  <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Maven</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="radio" name="buildTool" value="gradle" class="text-primary-600 focus:ring-primary-500">
+                  <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Gradle</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Template Selection -->
+      <div class="space-y-6">
+        <div>
+          <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+            <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            Project Template
+          </h4>
+
+          <!-- Template Cards -->
+          <div class="space-y-3">
+            <label class="template-card block cursor-pointer" data-template="basic">
+              <input type="radio" name="templateId" value="basic" class="hidden" required>
+              <div class="template-card-inner border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-primary-300 dark:hover:border-primary-600 transition-all">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 mt-0.5">
+                    <div class="w-3 h-3 rounded-full border-2 border-gray-400 template-radio"></div>
+                  </div>
+                  <div class="flex-1">
+                    <h5 class="font-medium text-gray-900 dark:text-white">Basic Starter</h5>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Minimal setup for learning fundamentals</p>
+                  </div>
+                </div>
+              </div>
+            </label>
+
+            <label class="template-card block cursor-pointer" data-template="smart-home">
+              <input type="radio" name="templateId" value="smart-home" class="hidden">
+              <div class="template-card-inner border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-primary-300 dark:hover:border-primary-600 transition-all">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 mt-0.5">
+                    <div class="w-3 h-3 rounded-full border-2 border-gray-400 template-radio"></div>
+                  </div>
+                  <div class="flex-1">
+                    <h5 class="font-medium text-gray-900 dark:text-white">Smart Home</h5>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">IoT and automation features</p>
+                  </div>
+                </div>
+              </div>
+            </label>
+
+            <label class="template-card block cursor-pointer" data-template="ecommerce">
+              <input type="radio" name="templateId" value="ecommerce" class="hidden">
+              <div class="template-card-inner border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-primary-300 dark:hover:border-primary-600 transition-all">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 mt-0.5">
+                    <div class="w-3 h-3 rounded-full border-2 border-gray-400 template-radio"></div>
+                  </div>
+                  <div class="flex-1">
+                    <h5 class="font-medium text-gray-900 dark:text-white">E-commerce</h5>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Online store functionality</p>
+                  </div>
+                </div>
+              </div>
+            </label>
+
+            <label class="template-card block cursor-pointer" data-template="microservices">
+              <input type="radio" name="templateId" value="microservices" class="hidden">
+              <div class="template-card-inner border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:border-primary-300 dark:hover:border-primary-600 transition-all">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 mt-0.5">
+                    <div class="w-3 h-3 rounded-full border-2 border-gray-400 template-radio"></div>
+                  </div>
+                  <div class="flex-1">
+                    <h5 class="font-medium text-gray-900 dark:text-white">Microservices</h5>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Distributed architecture</p>
+                  </div>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Template Description -->
+    <div id="template-description" class="hidden mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <h6 class="font-medium text-blue-900 dark:text-blue-100 mb-1" id="description-title"></h6>
+          <p class="text-sm text-blue-800 dark:text-blue-200" id="description-text"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generate Button -->
+    <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <div id="status-message" class="hidden">
+        <span id="success-message" class="inline-flex items-center gap-2 text-green-600 dark:text-green-400 text-sm hidden">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          Project will be downloaded
+        </span>
+        <span id="error-message" class="inline-flex items-center gap-2 text-red-600 dark:text-red-400 text-sm hidden">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+          <span>Error generating project</span>
+        </span>
+      </div>
+      
+      <button 
+        type="submit" 
+        id="generate-btn"
+        class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-medium px-6 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+      >
+        <svg id="btn-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+        </svg>
+        <span id="btn-text">Generate</span>
+        <span id="btn-loading" class="hidden inline-flex items-center gap-2">
+          <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          Generating...
+        </span>
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Template data with descriptions
+  const templates = {
+    'basic': {
+      name: 'Basic Starter',
+      description: 'A minimal Fluxzero setup with a single aggregate. Perfect for learning the basics and simple applications.'
+    },
+    'smart-home': {
+      name: 'Smart Home',
+      description: 'Home automation template with device management, rooms, and sensor handling. Ideal for IoT applications.'
+    },
+    'ecommerce': {
+      name: 'E-commerce',
+      description: 'Complete shop template with products, orders, inventory, and payment handling. Ready for online stores.'
+    },
+    'microservices': {
+      name: 'Microservices',
+      description: 'Multi-service architecture template with service-to-service communication and distributed event handling.'
+    }
+  };
+
+  // DOM elements
+  const form = document.getElementById('project-generator-form');
+  const templateCards = document.querySelectorAll('.template-card');
+  const templateRadios = document.querySelectorAll('input[name="templateId"]');
+  const templateDescription = document.getElementById('template-description');
+  const descriptionTitle = document.getElementById('description-title');
+  const descriptionText = document.getElementById('description-text');
+  const generateBtn = document.getElementById('generate-btn');
+  const btnText = document.getElementById('btn-text');
+  const btnLoading = document.getElementById('btn-loading');
+  const btnIcon = document.getElementById('btn-icon');
+  const statusMessage = document.getElementById('status-message');
+  const successMessage = document.getElementById('success-message');
+  const errorMessage = document.getElementById('error-message');
+
+  // Handle template card selection
+  templateCards.forEach(card => {
+    card.addEventListener('click', function() {
+      const radio = this.querySelector('input[type="radio"]');
+      const templateId = radio.value;
+      
+      // Update radio selection
+      radio.checked = true;
+      
+      // Update card styles
+      updateTemplateCardStyles();
+      
+      // Show description
+      if (templates[templateId]) {
+        descriptionTitle.textContent = templates[templateId].name;
+        descriptionText.textContent = templates[templateId].description;
+        templateDescription.classList.remove('hidden');
+      }
+    });
+  });
+
+  // Update visual state of template cards
+  function updateTemplateCardStyles() {
+    templateCards.forEach(card => {
+      const radio = card.querySelector('input[type="radio"]');
+      const cardInner = card.querySelector('.template-card-inner');
+      const radioIndicator = card.querySelector('.template-radio');
+      
+      if (radio.checked) {
+        cardInner.classList.add('border-primary-500', 'bg-primary-50', 'dark:bg-primary-900/20');
+        cardInner.classList.remove('border-gray-200', 'dark:border-gray-700');
+        radioIndicator.classList.add('border-primary-500', 'bg-primary-500');
+        radioIndicator.classList.remove('border-gray-400');
+      } else {
+        cardInner.classList.remove('border-primary-500', 'bg-primary-50', 'dark:bg-primary-900/20');
+        cardInner.classList.add('border-gray-200', 'dark:border-gray-700');
+        radioIndicator.classList.remove('border-primary-500', 'bg-primary-500');
+        radioIndicator.classList.add('border-gray-400');
+      }
+    });
+  }
+
+  // Form submission handler
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    const projectName = formData.get('projectName').trim();
+    const groupId = formData.get('groupId').trim();
+    const templateId = formData.get('templateId');
+    const language = formData.get('language');
+    const buildTool = formData.get('buildTool');
+    
+    // Validation
+    if (!projectName || !templateId) {
+      showError('Please fill in all required fields');
+      return;
+    }
+    
+    // Show loading state
+    setLoading(true);
+    hideMessages();
+    
+    try {
+      const projectData = {
+        projectName,
+        groupId,
+        templateId,
+        language,
+        buildTool
+      };
+      await generateProject(projectData);
+      showSuccess();
+    } catch (error) {
+      showError('Failed to generate project. Please try again.');
+      console.error('Project generation error:', error);
+    } finally {
+      setLoading(false);
+    }
+  });
+
+  // Mock API call function (to be replaced with actual API)
+  async function generateProject(projectData) {
+    console.log('Generating project with data:', projectData);
+    console.log('Selected template:', templates[projectData.templateId]?.name);
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // TODO: Replace with actual API call
+    // For now, just log the data that would be sent to the API
+    console.log('Project data ready for API:', {
+      ...projectData,
+      template: templates[projectData.templateId]?.name,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Simulate successful response
+    return { success: true, downloadUrl: '#' };
+  }
+
+  // Helper functions
+  function setLoading(loading) {
+    generateBtn.disabled = loading;
+    
+    if (loading) {
+      btnText.classList.add('hidden');
+      btnIcon.classList.add('hidden');
+      btnLoading.classList.remove('hidden');
+    } else {
+      btnText.classList.remove('hidden');
+      btnIcon.classList.remove('hidden');
+      btnLoading.classList.add('hidden');
+    }
+  }
+
+  function showSuccess() {
+    statusMessage.classList.remove('hidden');
+    successMessage.classList.remove('hidden');
+    errorMessage.classList.add('hidden');
+    
+    // Hide success message after 3 seconds
+    setTimeout(() => {
+      statusMessage.classList.add('hidden');
+      successMessage.classList.add('hidden');
+    }, 3000);
+  }
+
+  function showError(message) {
+    statusMessage.classList.remove('hidden');
+    errorMessage.textContent = message;
+    errorMessage.classList.remove('hidden');
+    successMessage.classList.add('hidden');
+  }
+
+  function hideMessages() {
+    statusMessage.classList.add('hidden');
+    successMessage.classList.add('hidden');
+    errorMessage.classList.add('hidden');
+  }
+</script>
+
+<!-- No custom styles needed - Tailwind CSS should work now -->
