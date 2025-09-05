@@ -2,13 +2,14 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import mermaid from 'astro-mermaid';
-import tailwind from '@astrojs/tailwind';
+import tailwindcss from '@tailwindcss/vite';
 
 import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
   vite: {
+    plugins: [tailwindcss()],
     css: {
       preprocessorOptions: {
         scss: {
@@ -23,10 +24,6 @@ export default defineConfig({
   redirects: {
   },
   integrations: [
-    tailwind({
-      // Disable the default base styles to avoid conflicts with Starlight
-      applyBaseStyles: false,
-    }),
     starlight({
       components: {
         Header: './src/components/DocsHeader.astro',
@@ -41,10 +38,15 @@ export default defineConfig({
             baseUrl: 'https://github.com/flux-capacitor-io/flux-docs/edit/main',
       },
       social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/flux-capacitor-io/flux-docs' }],
+      customCss: ['./src/styles/global.css'],
       sidebar: [
           {
               label: 'About',
               autogenerate: { directory: 'docs/about' },
+          },
+          {
+              label: 'Get started',
+              autogenerate: { directory: 'docs/get-started' },
           },
           {
               label: 'Tutorials',
