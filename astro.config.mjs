@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import mermaid from 'astro-mermaid';
+import tailwind from '@astrojs/tailwind';
 
 import cloudflare from '@astrojs/cloudflare';
 
@@ -13,13 +14,23 @@ export default defineConfig({
         scss: {
           silenceDeprecations: ['import', 'global-builtin', 'color-functions']
         }
+      },
+      postcss: {
+        plugins: []
       }
     }
   },
   redirects: {
   },
   integrations: [
+    tailwind({
+      // Disable the default base styles to avoid conflicts with Starlight
+      applyBaseStyles: false,
+    }),
     starlight({
+      components: {
+        Header: './src/components/DocsHeader.astro',
+      },
       title: 'Fluxzero Documentation',
       logo: {
           light: './src/assets/flux-logo-black.png',
