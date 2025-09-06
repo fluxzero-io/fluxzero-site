@@ -39,9 +39,9 @@ export default defineConfig({
           alt: 'Flux Logo'
       },
       editLink: {
-            baseUrl: 'https://github.com/flux-capacitor-io/flux-docs/edit/main',
+            baseUrl: 'https://github.com/fluxzero-io/flux-docs/edit/main',
       },
-      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/flux-capacitor-io/flux-docs' }],
+      social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/fluxzero-io/flux-docs' }],
       customCss: ['./src/styles/global.css'],
       sidebar: [
           {

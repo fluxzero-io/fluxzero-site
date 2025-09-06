@@ -100,7 +100,7 @@ When working on documentation content:
 - Maintain consistent language and terminology
 
 **Required Reference:**
-- ALWAYS check the latest SDK documentation before writing: https://raw.githubusercontent.com/flux-capacitor-io/flux-capacitor-client/refs/heads/master/README.md
+- ALWAYS check the latest SDK documentation before writing: https://raw.githubusercontent.com/fluxzero-io/flux-capacitor-client/refs/heads/master/README.md
 - ALWAYS check the latest Javadoc if you need to know if a symbol exists or what options are available: https://flux-capacitor.io/flux-capacitor-client/javadoc/apidocs/
 - Use this as the authoritative source for current SDK capabilities and examples
 
