@@ -4,7 +4,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 
 const GITHUB_API_BASE = 'https://api.github.com';
-const REPO = 'fluxzero-io/flux-capacitor-client';
+const REPO = 'fluxzero-io/fluxzero-sdk-java';
 const CACHE_FILE = join(process.cwd(), 'src', 'data', 'changelog-cache.json');
 
 interface GitHubRelease {

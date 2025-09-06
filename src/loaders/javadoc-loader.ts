@@ -14,7 +14,7 @@ export function javadocLoader(): Loader {
     async load({ store, logger, parseData }) {
       logger.info("Loading Javadoc classes from overview tree");
       
-      const url = 'https://flux-capacitor.io/flux-capacitor-client/javadoc/apidocs/overview-tree.html';
+      const url = 'https://flux-capacitor.io/fluxzero-sdk-java/javadoc/apidocs/overview-tree.html';
       
       try {
         const response = await fetch(url);
@@ -81,7 +81,7 @@ function parseJavadocClasses(html: string) {
       fullName,
       simpleName: className,
       packageName,
-      url: `https://flux-capacitor.io/flux-capacitor-client/javadoc/apidocs/${relativePath}`
+      url: `https://flux-capacitor.io/fluxzero-sdk-java/javadoc/apidocs/${relativePath}`
     });
   }
   

@@ -17,14 +17,14 @@ This is an Astro documentation site using pnpm as the package manager:
 This documentation site covers **fluxzero**, a message-driven software development platform that aims to radically improve developer productivity. Fluxzero allows developers to write business logic while the platform handles all the underlying plumbing.
 
 ### Fluxzero Components
-- **fluxzero-java-sdk** / **fluxzero-kotlin-sdk** - Language-specific SDKs (currently named flux-capacitor-client)
+- **fluxzero-sdk-java** / **fluxzero-kotlin-sdk** - Language-specific SDKs (currently named fluxzero-sdk-java)
 - **fluxzero** - Server component
 - **fluxzero-proxy** - Proxy component;
 - **fluxzero-cloud** - Cloud offering
 - **fluxzero-cli** - CLI -- 'fz'
 
 ### Core Platform Capabilities
-The fluxzero-java-sdk is an event-driven, distributed messaging framework with:
+The fluxzero-sdk-java is an event-driven, distributed messaging framework with:
 
 **Message Types & Handling:**
 - Commands, events, queries, web requests, schedules
@@ -100,8 +100,8 @@ When working on documentation content:
 - Maintain consistent language and terminology
 
 **Required Reference:**
-- ALWAYS check the latest SDK documentation before writing: https://raw.githubusercontent.com/fluxzero-io/flux-capacitor-client/refs/heads/master/README.md
-- ALWAYS check the latest Javadoc if you need to know if a symbol exists or what options are available: https://flux-capacitor.io/flux-capacitor-client/javadoc/apidocs/
+- ALWAYS check the latest SDK documentation before writing: https://raw.githubusercontent.com/fluxzero-io/fluxzero-sdk-java/refs/heads/master/README.md
+- ALWAYS check the latest Javadoc if you need to know if a symbol exists or what options are available: https://flux-capacitor.io/fluxzero-sdk-java/javadoc/apidocs/
 - Use this as the authoritative source for current SDK capabilities and examples
 
 ## Documentation Patterns & Standards
