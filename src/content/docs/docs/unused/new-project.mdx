@@ -186,3 +186,52 @@ The main difference is that Fluxzero provides infrastructure as a service, so yo
     Fluxzero is open source. [Explore the code on GitHub](https://github.com/flux-capacitor-io/flux-capacitor-client),
     or get started with our managed service in minutes.
 </Aside>
+
+
+
+
+
+## Everyday actions in Fluxzero
+
+These are some of the most common actions you’ll perform in a Fluxzero app. The Fluxzero runtime does the heavy lifting to make this work fast and reliably:
+
+<table>
+    <thead>
+    <tr>
+        <th style={{ width: "170px" }}>Action</th>
+        <th style={{ width: "auto" }}>Description</th>
+        <th style={{ width: "270px" }}>Example</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><strong>Send messages</strong></td>
+        <td>Dispatch a message to be handled anywhere</td>
+        <td><code>sendCommand(new BuyItem(...))</code></td>
+    </tr>
+    <tr>
+        <td><strong>Load entities</strong></td>
+        <td>Get the current state of a persisted object</td>
+        <td><code>loadEntity(accountId)</code></td>
+    </tr>
+    <tr>
+        <td><strong>Schedule actions</strong></td>
+        <td>Trigger a message at a future time</td>
+        <td><code>schedule(email, ofMinutes(5))</code></td>
+    </tr>
+    <tr>
+        <td><strong>Search documents</strong></td>
+        <td>Full-text search over indexed data</td>
+        <td><code>search("items").match("apple")</code></td>
+    </tr>
+    <tr>
+        <td><strong>Call HTTP APIs</strong></td>
+        <td>Make outbound HTTP requests</td>
+        <td><code>sendWebRequest(post(...))</code></td>
+    </tr>
+    </tbody>
+</table>
+
+These are the actions you’ll use in most apps — but Fluxzero can do a lot more.
+
+From long-running workflows and upcasting to content filtering and multi-tenant access control, advanced topics are covered in later guides.

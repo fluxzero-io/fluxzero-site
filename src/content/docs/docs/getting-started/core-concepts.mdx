@@ -1,11 +1,700 @@
 ---
-title: Core Concepts
+title: Core concepts
 description: Fluxzero is a cloud runtime that lets you focus on business logic instead of infrastructure.
 sidebar:
     order: 11
 ---
+# Your code in Fluxzero
+
+Fluxzero apps are built with **clean, expressive code** — no scaffolding, no layers, no framework gymnastics.
+
+You write the heart of your application: the messages, logic, and state.
+Fluxzero handles everything else: delivery, persistence, routing, retries, observability, and scale.
+
+Let’s go over the only parts you still write — the ones that define your product.
+
+## What you write
+
+These are the core building blocks of your business logic — all plain Java or Kotlin classes:
+
+| Concept      | Description                            | Example                       |
+|--------------|----------------------------------------|-------------------------------|
+| **Command**  | A request to change state              | `DepositMoney`                |
+| **Query**    | A request for information              | `GetAccountBalance`           |
+| **Handler**  | Responds to messages like commands     | `@HandleCommand DepositMoney` |
+| **Endpoint** | Handler that responds to HTTP requests | `@HandleGet("/account/{id}")` |
+| **Entity**   | Evolving object that holds state       | `BankAccount`                 |
+| **Test**     | Verifies business flows                | `fixture.whenCommand(...)`    |
+
+## Commands
+
+Every backend has them — even if you didn’t call them that.
+
+Commands represent **something your user wants to happen**: submitting a form, clicking a “Like” button, posting a comment, and so on.
+They’re the first input into your system — a request to *do* something.
+
+In Fluxzero, commands are **plain objects that model those actions directly**, with their own built-in business logic:
+
+- **What needs to be validated** – to ensure the request is well-formed and meaningful.
+- **Who can perform it** – based on the current user, their identity, or permissions.
+- **What must be true** – assert expectations against the current entity state.
+- **How to apply it to the current state** – commands are typically applied directly to entities, evolving their state if accepted.
+
+They are **self-contained requests** that define the intent and behavior of a single action.
+And because they’re requests, they can be rejected — for example, when validation fails or access is denied.
 
 import {Aside} from '@astrojs/starlight/components';
-import {Image} from 'astro:assets';
-import simpleArchitecture from '~/assets/architecture/simplified.png';
 
+<Aside type="tip">
+    Start your design with commands and queries.
+
+    They reflect your product’s behavior and are more important than your entities or APIs.
+</Aside>
+
+### Examples
+
+You typically have commands to **create**, **modify**, **delete**, or **upsert** entities.
+
+#### Create
+
+```java
+@RequiresRole(manager)
+public record CreateProject(@NotNull ProjectId projectId,
+                            @NotNull @Valid ProjectDetails details) {
+    @Apply
+    Project create(Sender sender) {
+        return new Project(projectId, details, sender.userId());
+    }
+}
+```
+
+Here we inject the current user sending the command — making them the owner of the new project.
+
+---
+
+#### Modify
+
+```java
+public record RenameProject(@NotNull ProjectId projectId,
+                            @NotBlank String newName) {
+    @AssertLegal
+    void assertAuthorized(Project project, Sender sender) {
+        if (!sender.isAuthorizedFor(project.ownerId())) {
+            throw new UnauthorizedException("Not allowed to modify project");
+        }
+    }
+
+    @Apply
+    Project apply(Project project) {
+        return project.renameTo(newName);
+    }
+}
+```
+
+This command checks that the sender is authorized to update the project before applying the change.
+You can define any number of `@AssertLegal` methods to validate business rules.
+
+---
+
+#### Delete
+
+```java
+public record DeleteProject(ProjectId projectId) implements ProjectUpdate {
+    @Apply
+    Project delete(Project project) {
+        return null;
+    }
+}
+```
+
+To delete an entity, simply return `null` from the `@Apply` method as shown above.
+
+Here we also implement a shared interface with common validation logic:
+
+```java
+@RequiresRole(manager)
+public interface ProjectUpdate {
+
+    @NotNull ProjectId projectId();
+
+    @AssertLegal
+    default void assertAuthorized(Project project, Sender sender) {
+        if (!sender.isAuthorizedFor(project.ownerId())) {
+            throw new UnauthorizedException("Not allowed to modify project");
+        }
+    }
+}
+```
+
+To prevent duplication, we implemented a simple interface that defines common rules for project updates.
+
+---
+
+#### Upsert (create or update)
+
+```java
+public record UpsertProject(ProjectId projectId,
+                            @NotNull @Valid ProjectDetails details) implements ProjectUpdate {
+
+    @Apply
+    Project create(Sender sender) {
+        return new Project(projectId, details, sender.userId());
+    }
+
+    @Apply
+    Project update(Project project) {
+        return project.withDetails(details);
+    }
+}
+```
+
+This command handles both creation and update.
+Fluxzero will invoke the appropriate `@Apply` method depending on whether the entity already exists.
+
+---
+
+### Best practices
+
+- **Generate IDs outside the command.**
+This avoids mixing system concerns and makes testing easier.
+
+- **Keep `@Apply` pure and deterministic.**
+This method may be re-run during [event sourcing](/docs/reference/event-sourcing) — avoid randomness, timestamps, or I/O actions here.
+
+- **Treat commands as contracts.**
+The command itself should contain everything needed to execute the action.
+
+
+## Queries
+
+Queries are requests for information — things users trigger by clicking, typing, or loading a page:
+
+- Viewing a shopping cart
+- Searching for products
+- Fetching project details
+
+In Fluxzero, queries are first-class citizens. Like commands, they are plain classes with clear intent — but instead of changing state, they return data.
+
+### Keep the logic with the query
+
+You can handle queries directly inside the query class. This keeps your logic close to where it's defined, and avoids spreading read logic across layers:
+
+```java
+public record GetProject(@NotNull ProjectId projectId) {
+
+    @HandleQuery
+    Project handle(Sender sender) {
+        return Fluxzero.search(Project.class)
+                       .match(sender.isAdmin() ? null : sender.userId(), "ownerId")
+                       .fetchFirstOrNull();
+    }
+}
+```
+
+You can inject the `Sender` just like with commands, and implement filtering or authorization logic as needed. This
+query shows how to fetch a project, with logic to restrict access based on the sender. Passing `null` in `.match()` removes the filter, allowing
+admins to view all results.
+
+### Specifying return type
+
+Here’s an example implementing `Request`, which defines the return type. Fluxzero checks this at compile time, ensuring all
+handlers return the correct types. It also improves test clarity and lets calling code safely rely on the return type.
+
+```java
+public record FindMyProjects() implements Request<List<Project>> {
+
+    @HandleQuery
+    List<Project> find(Sender sender) {
+        return Fluxzero.search(Project.class)
+                       .match(sender.userId(), "ownerId")
+                       .fetch(100);
+    }
+}
+```
+
+<Aside type="tip">
+    Have all your queries implement <code>Request&lt;R&gt;</code>.<br />
+    This helps you avoid mistakes and ensures your code is type-safe.
+</Aside>
+
+### Full-text search out of the box
+
+Fluxzero’s search is full-text and autocomplete-ready from day one. Here's how to implement lookahead behavior:
+
+```java
+public record SearchProjects(String term) implements Request<List<Project>> {
+
+    @HandleQuery
+    List<Project> search() {
+        return Fluxzero.search(Project.class)
+                       .lookAhead(term)
+                       .fetch(100);
+    }
+}
+```
+
+You can use `.match()`, `.lookAhead()`, and many other options — no configuration needed.
+
+### Composing queries
+
+Queries can call other queries — just like functions. This allows you to reuse logic, filter results, or assemble responses from multiple sources.
+
+```java
+public record GetProvider(@NotNull ProviderId id) implements Request<Provider> {
+
+    @HandleQuery
+    Provider handle() {
+        List<Provider> providers = Fluxzero.queryAndWait(new GetProviders());
+        return providers.stream()
+                        .filter(p -> Objects.equals(id, p.id()))
+                        .findFirst()
+                        .orElse(null);
+    }
+}
+```
+
+This is a valid and common pattern — no layers or repositories required. Just reuse your existing queries.
+
+### When to use separate handlers
+
+You can handle queries outside the query class too — just like with commands. This is useful if you want to keep query classes pure or group logic elsewhere. But for most cases, **handling them in-place keeps code focused and discoverable.**
+
+
+## Handlers
+
+Handlers are how your application **reacts to messages**.
+
+They listen for specific messages — like commands, queries, events, schedules, or HTTP requests — and respond with the appropriate logic.
+
+In Fluxzero, all handlers follow the same simple pattern:
+
+- You write a method and annotate it with `@HandleCommand`, `@HandleQuery`, `@HandleEvent`, `@HandleSchedule`, or `@HandleGet`, `@HandlePost`, etc.
+- The method runs automatically when a matching message is received.
+- The payload type you declare determines what messages this handler responds to.
+
+Handlers can live inside:
+
+- The **same app** that sends the message,
+- Or a **separate app** entirely — Fluxzero ensures the message is routed correctly.
+
+If you use Spring, just annotate your class with `@Component` and Fluxzero will register it automatically.
+
+---
+
+### Handling a command
+
+Let’s look at a command handler that applies a command to a matching entity:
+
+```java
+@Component
+public class ProjectCommandHandler {
+
+    @HandleCommand
+    void handle(CreateProject command) {
+        Fluxzero.loadEntity(command.projectId()).assertAndApply(command);
+    }
+}
+```
+
+The call to `loadEntity()` retrieves the current state of the project, if any.
+
+By calling `assertAndApply(command)` on the entity:
+
+- Fluxzero runs any `@AssertLegal` methods in the command
+- Then it calls the matching `@Apply` method
+- If successful, the command is accepted and an **event is published** (with the same payload)
+
+---
+
+### Handling multiple commands
+
+You can also generalize logic across commands using interfaces:
+
+```java
+@Component
+public class ProjectCommandHandler {
+
+    @HandleCommand
+    void handle(ProjectUpdate command) {
+        Fluxzero.loadEntity(command.projectId()).assertAndApply(command);
+    }
+}
+```
+
+This handler matches all `ProjectUpdate` commands and applies them to the matching entity.
+
+In most cases, this is all you need. If you want to customize behavior for certain commands — like converting a `CreateProject` into an `UpdateProject` if the project already exists — you can override the default.
+
+See the [handler reference guide](/docs/reference/handler) for more advanced usage.
+
+---
+
+### Reacting to events
+
+Handlers can also respond to events published by other parts of the system:
+
+```java
+@Component
+public class ProjectEventHandler {
+
+    @HandleEvent
+    void on(CreateProject event) {
+        Fluxzero.sendCommand(new NotifyUser(event.projectId(), "Project created"));
+    }
+
+    @HandleEvent
+    void on(DeleteProject event) {
+        Fluxzero.sendCommand(new NotifyUser(event.projectId(), "Project deleted"));
+    }
+}
+```
+
+This handler responds to different Project events and sends out new commands.
+
+<Aside type="tip">
+    Multiple handlers can respond to the same message.
+
+    This makes it easy to build decoupled, reactive behaviors.
+</Aside>
+
+For deeper control — like async behavior, parallelism, error handling, and more — see the [handler reference guide](/docs/reference/handler).
+
+---
+
+### HTTP endpoints
+
+Fluxzero lets you handle HTTP requests just like any other message — no controllers, no adapters, no routing config.
+
+You write a plain method, annotate it, and return a result. That’s it.
+
+#### Example: Hello world
+
+```java
+@HandleGet("/hello")
+public String hello() {
+    return "Hello, world!";
+}
+```
+
+You can handle `GET`, `POST`, `PUT`, and other methods using the corresponding annotations:
+`@HandleGet`, `@HandlePost`, `@HandlePut`, and so on.
+
+Fluxzero takes care of routing, deserialization, and response formatting — including error handling.
+
+---
+
+#### Typical REST-like usage
+
+Fluxzero endpoints work great for traditional REST flows:
+
+```java
+@HandlePost("/projects")
+ProjectId createProject(ProjectDetails details) {
+    ProjectId id = Fluxzero.generateId(ProjectId.class);
+    Fluxzero.sendCommandAndWait(new CreateProject(id, details));
+    return id;
+}
+```
+
+```java
+@HandleGet("/projects/{projectId}")
+Project getProject(@PathParam ProjectId projectId) {
+    return Fluxzero.queryAndWait(new GetProject(projectId));
+}
+```
+
+In the example above:
+
+- Path parameters are injected automatically using `@PathParam`.
+- The `POST` request triggers a command to create the project.
+- The `GET` request triggers a query to retrieve it.
+
+---
+
+<Aside type="tip">
+    HTTP endpoints are handlers like any other — no controllers, config, or proxies required.
+
+    You can define them in any Fluxzero app and they’ll just work.
+</Aside>
+
+For more advanced background on HTTP endpoints in Fluxzero, including handling websocket connections, having multiple handlers for the same request, and so on, see [HTTP endpoints](/docs/guides/http-requests).
+
+---
+
+### Schedule handlers
+
+Fluxzero lets you schedule messages to be delivered at a specific time in the future.
+
+This is useful for reminders, retries, timeouts, follow-ups, and more.
+
+#### Example: sending a reminder later
+
+```java
+public record RemindUser(UserId userId, String message) {
+}
+```
+
+You can schedule the message like this:
+
+```java
+Fluxzero.schedule(new RemindUser(userId, "Don’t forget your task!"), ofHours(2));
+```
+
+This will deliver the message to all matching handlers **2 hours later**.
+
+---
+
+#### Handling scheduled messages
+
+You can write a regular handler for the message:
+
+```java
+@HandleSchedule
+void handle(RemindUser message) {
+    // Send notification, email, etc.
+}
+```
+
+#### Scheduling commands
+
+You can also schedule commands to fire at a given time:
+
+```java
+Fluxzero.scheduleCommand(new NotifyUser(userId, "Don’t forget your task!"), ofHours(2));
+```
+
+This prevents you from sending a command yourself the moment the schedule is handled.
+
+#### Cancelling schedules
+
+Scheduled messages can be **cancelled** or **rescheduled** after publication — useful for reversible workflows.
+
+Here’s an example where we schedule a project cleanup 30 days after it’s archived. If the project is restored during that period, the cleanup is cancelled.
+
+```java
+@Component
+class ProjectLifecycleHandler {
+
+    @HandleEvent
+    void handle(ArchiveProject event) {
+        Fluxzero.scheduleCommand(
+                new DeleteProject(event.projectId()),
+                "ProjectCleanup-" + event.projectId(),
+                Duration.ofDays(30)
+        );
+    }
+
+    @HandleEvent
+    void handle(RestoreProject event) {
+        Fluxzero.cancelSchedule("ProjectCleanup-" + event.projectId());
+    }
+}
+```
+
+In this example:
+- We schedule a `DeleteProject` command with a custom **schedule ID**.
+- If the project is restored before deletion, we cancel it using the same ID.
+- The `@HandleSchedule` method performs the cleanup when triggered.
+
+<Aside type="tip">
+    You can also schedule messages periodically (e.g. every day) or at exact times.
+    See the <a href="/docs/guides/scheduling">scheduling guide</a> for advanced options.
+</Aside>
+
+---
+
+## Entities
+
+Entities hold your application’s **state** — not layers, services, or repositories. Just the evolving data that defines your domain.
+
+Most entities are simple and immutable. In fact, they typically contain no behavior at all, or just a few helper methods.
+
+---
+
+### Declaring an entity
+
+You can annotate your entity root with `@Aggregate` to configure its behavior:
+
+```java
+@Aggregate(searchable = true, eventPublication = EventPublication.IF_MODIFIED)
+public record Project(@EntityId ProjectId id, @With ProjectDetails details,
+                      UserId ownerId) {
+
+    public Project renameTo(String newName) {
+        return withDetails(details.with(newName));
+    }
+}
+```
+
+In the example above:
+- `searchable = true` makes this entity available automatically for full-text search.
+- `eventPublication = IF_MODIFIED` prevents publishing an event if the state didn’t change.
+- `renameTo` is a convenience method to rename the project. But totally optional, of course.
+
+
+<Aside type="tip">
+    We used Lombok’s <code>@With</code> in this example.
+
+    Fluxzero plays great with Lombok — use <code>@With</code>, <code>@Value</code>, <code>@Builder</code>, or anything else that fits your style.
+</Aside>
+
+---
+
+### Entity IDs
+
+Each entity must have a unique ID — it identifies the instance and determines where its state is stored.
+
+We usually represent IDs as value objects like `ProjectId`, `UserId`, etc. This improves clarity and prevents type mixups.
+
+---
+
+### Event sourcing (or not)
+
+By default, Fluxzero uses **event sourcing** to persist and load entities.
+
+You can turn this off by setting `eventSourced = false`:
+
+```java
+@Aggregate(eventSourced = false)
+public record Counter(CounterId id, int value) { ... }
+```
+
+When disabled, the entity will be persisted as a snapshot instead of a list of events. See [event sourcing](/docs/reference/event-sourcing) for more.
+
+---
+
+### Immutability
+
+Entities, like most components in Fluxzero, are usually **immutable**. Every change returns a new copy.
+
+This makes your app easier to reason about and plays nicely with event sourcing and time travel.
+
+---
+
+### Nested entities
+
+You can model sub-entities by exposing them via methods annotated with `@Member`.
+
+```java
+@Aggregate
+public record Project(ProjectId id, @Member @With List<Task> tasks) { ... }
+
+public record Task(@EntityId TaskId id, String title, @With boolean completed) { ... }
+```
+
+When you call `assertAndApply(update)` on the parent entity, Fluxzero **automatically routes** the update to the correct child entity.
+
+You don’t need to manually search the list — even if it’s deeply nested.
+
+<Aside type="tip">
+    Entities are simple and focused — just your evolving domain data, with the option to nest sub-entities where needed.
+</Aside>
+
+---
+
+##### Add a task to a project
+
+```java
+public record AddTask(ProjectId projectId,
+                      @NotNull TaskId taskId,
+                      String description) implements ProjectUpdate {
+
+    @Apply
+    Task add() {
+        return new Task(taskId, description);
+    }
+}
+```
+
+---
+
+##### Complete an existing task
+
+```java
+public record CompleteTask(ProjectId projectId,
+                           @NotNull TaskId taskId) implements ProjectUpdate {
+
+    @Apply
+    Task complete(Task task) {
+        return task.withCompleted(true);
+    }
+}
+```
+
+Fluxzero will automatically route the command to the correct task using the `@Member` fields in your entity — even creating the task if it doesn’t yet exist.
+
+<Aside type="tip">
+    The command can also omit the parent ID (`ProjectId` in this case), but you'd need a separate command handler to load the parent entity.
+</Aside>
+
+---
+
+## Tests
+
+Fluxzero includes a built-in test framework that makes it really easy to write **behavioral tests** for your app — without mocks, or boilerplate.
+
+Tests use a simple `given → when → then` structure to simulate message flows and verify outcomes.
+
+### Testing a command flow
+
+```java
+TestFixture fixture = TestFixture.create(new ProjectCommandHandler());
+
+@Test
+void creatingProjectSucceeds() {
+    var createProject = new CreateProject(projectId, details);
+    fixture.whenCommand(createProject)
+           .expectEvents(createProject);
+}
+```
+
+In this example:
+
+- We simulate sending a command to create a project.
+- We expect that the same command is applied and published as an event.
+
+This verifies that the command was accepted and processed correctly.
+
+---
+
+### Testing time-based behavior
+
+You can simulate time passing to test scheduled messages:
+
+```java
+@Test
+void projectIsDeletedAfterArchiving() {
+    fixture.givenCommands(new ArchiveProject(projectId))
+           .whenTimeElapses(Duration.ofDays(30))
+           .expectEvents(new DeleteProject(projectId));
+}
+```
+
+---
+
+### Reuse test data
+
+You can load test inputs from external JSON files:
+
+```java
+fixture.givenCommands("archive-project.json")
+       .whenTimeElapses(Duration.ofDays(30))
+       .expectEvents("delete-project.json");
+```
+
+This keeps your test code clean and allows you to reuse structured input data across test cases.
+
+Each JSON file used must include a `@class` field that tells Fluxzero which Java type to deserialize:
+
+```json
+{
+  "@class": "ArchiveProject",
+  "projectId": "project-123"
+}
+```
+
+<Aside type="note">
+    You don’t need to mock anything — Fluxzero tests run your actual handlers just like in production.
+</Aside>
+
+For more advanced examples — including async fixtures, HTTP endpoint testing, user impersonation, and Spring tests — see the <a href="/docs/guides/testing">testing guide</a>.

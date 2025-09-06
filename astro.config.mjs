@@ -32,7 +32,7 @@ export default defineConfig({
       components: {
         Header: './src/components/DocsHeader.astro',
       },
-      title: 'Fluxzero Documentation',
+      title: 'Fluxzero documentation',
       logo: {
           light: './src/assets/flux-logo-black.png',
           dark: './src/assets/flux-logo-white.png',
@@ -45,12 +45,8 @@ export default defineConfig({
       customCss: ['./src/styles/global.css'],
       sidebar: [
           {
-              label: 'Getting Started',
+              label: 'Getting started',
               autogenerate: { directory: 'docs/getting-started' },
-          },
-          {
-              label: 'Get started',
-              autogenerate: { directory: 'docs/get-started' },
           },
           {
               label: 'Foundation',
