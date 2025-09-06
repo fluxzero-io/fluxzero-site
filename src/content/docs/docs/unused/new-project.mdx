@@ -6,6 +6,11 @@ sidebar:
 tableOfContents: false
 ---
 
+
+### See Fluxzero in action
+
+<YouTube/>
+
 import { Tabs, TabItem, Steps } from '@astrojs/starlight/components';
 import ProjectGenerator from '../../../../components/ProjectGenerator.astro';
 
@@ -68,7 +73,7 @@ After generating your project:
 4. **Start the development server**:
    ```bash
    ./mvnw spring-boot:run  # Maven
-   # or  
+   # or
    ./gradlew bootRun       # Gradle
    ```
 5. **Open your browser** to `http://localhost:8080` to see your application
@@ -107,3 +112,77 @@ If you encounter issues:
 - **Port already in use**: Change the server port in `application.properties`
 
 For more help, check our [FAQ](/docs/about/faq) or join our community discussions.
+
+
+---
+
+## Fluxzero components
+
+In the diagram below, you can see the main components of a Fluxzero application and how they interact with each other.
+
+<Image src={simpleArchitecture} alt="Architecture diagram" class={"dark:bg-white"}
+       style={"background-color: var(--sl-color-gray-4);"}/>
+
+
+- **Centralized orchestration via the Fluxzero Server**
+The server is the brain of the system: it handles message routing, storage, indexing for search, scheduling, and autoscaling.
+
+- **No direct HTTP exposure**
+Applications don’t expose HTTP endpoints themselves. All external traffic flows through the **Fluxzero Proxy**, which handles authentication, rate limiting, and routing.
+
+- **External HTTP integration via proxy**
+Outgoing calls to third-party APIs also pass through the proxy.
+[Why this is a good idea →](../concepts/proxy-routing)
+
+
+- **Persistent WebSocket connections**
+Fluxzero clients connect to the server via WebSockets, enabling real-time bi-directional communication at scale.
+
+
+## Message-driven development
+
+Fluxzero applications use three types of messages:
+
+- **Commands** → Make something happen (`CreateOrder`, `UpdateUser`)
+- **Queries** → Get data (`GetOrderHistory`, `FindUsers`)
+- **Events** → Something happened (`OrderCreated`, `UserRegistered`)
+
+Every feature you build follows this pattern. Instead of learning different frameworks for HTTP routing, background jobs, webhooks, and event handling, you write message handlers.
+
+For example, to send a welcome email when someone registers:
+
+```java
+@HandleEvent
+public void sendWelcomeEmail(UserRegistered event) {
+    emailService.send(event.userEmail(), "Welcome!");
+}
+```
+
+This approach keeps code predictable and reduces the variety of patterns you need to remember.
+
+---
+
+## Comparison with traditional stacks
+
+| Task | Traditional approach | With Fluxzero |
+|------|---------------------|---------------|
+| **New project setup** | Configure databases, message queues, HTTP framework | Run one command, start coding |
+| **Add API endpoint** | Route, controller, validation, serialization | Write message handler |
+| **Background job** | Set up job queue, workers | Handle command or event |
+| **Full-text search** | Integrate search engine | Built-in, works automatically |
+| **Testing** | Mock databases, HTTP clients, queues | Test pure functions |
+| **Audit trail** | Custom logging implementation | Automatic for all messages |
+
+The main difference is that Fluxzero provides infrastructure as a service, so you spend more time on application code.
+
+## Server requirements
+
+- Java 21 or higher
+- PostgreSQL 15 or higher
+
+---
+
+<Aside type="tip">
+    Fluxzero is open source. [Explore the code on GitHub](https://github.com/flux-capacitor-io/flux-capacitor-client),
+    or get started with our managed service in minutes.
+</Aside>

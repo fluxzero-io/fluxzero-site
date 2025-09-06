@@ -22,6 +22,10 @@ export default defineConfig({
     }
   },
   redirects: {
+      "/docs": {
+          status: 302,
+          destination: "/docs/getting-started/introduction"
+      }
   },
   integrations: [
     starlight({
@@ -41,16 +45,16 @@ export default defineConfig({
       customCss: ['./src/styles/global.css'],
       sidebar: [
           {
-              label: 'About',
-              autogenerate: { directory: 'docs/about' },
+              label: 'Getting Started',
+              autogenerate: { directory: 'docs/getting-started' },
           },
           {
               label: 'Get started',
               autogenerate: { directory: 'docs/get-started' },
           },
           {
-              label: 'Tutorials',
-              autogenerate: { directory: 'docs/tutorials' },
+              label: 'Foundation',
+              autogenerate: { directory: 'docs/foundation' },
           },
           {
               label: 'Guides',

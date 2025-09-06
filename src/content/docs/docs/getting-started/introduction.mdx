@@ -1,0 +1,197 @@
+---
+title: Introduction
+description: Fluxzero is a cloud runtime that lets you focus on business logic instead of infrastructure.
+sidebar:
+    order: 10
+---
+
+import {Aside} from '@astrojs/starlight/components';
+
+# What is Fluxzero?
+
+Fluxzero is a cloud runtime for building backends without infrastructure overhead.
+
+It’s designed to help you move fast by writing only your product’s business logic — no boilerplate or distractions.
+It’s the right fit whether you’re building an MVP or aiming for planet-scale.
+
+Instead of gluing together tools, layering service code, mapping models, and wiring up infrastructure, **you just write messages and handlers**.
+Fluxzero takes care of everything around them — delivery, routing, persistence, retries, observability, and scale.
+
+Whether you’re running a single instance of your app or hundreds of distributed services, your code stays the same — no rewrites or migrations needed.
+Just expressive business logic that scales from day one.
+
+And because Fluxzero is designed for this, you get full-strength performance, security, and observability from day one — without doing any of the heavy lifting.
+
+Fluxzero delivers:
+
+- **High throughput by design** – Handle millions of messages per second without tuning brokers or scaling logic.
+- **Secure-by-default architecture** – No public exposure, built-in backpressure, and strong isolation between services.
+- **Complete observability** – Functional logs, metrics, and audit trails — all integrated and traceable in one place.
+
+All without setting up infrastructure, monitoring, or custom integrations.
+
+> **Build 10× faster with 10× less code — Fluxzero handles the heavy lifting so you can focus on your product.**
+
+---
+
+## Why we built it
+
+Modern backend development often means spending more time on plumbing than product.
+
+You’re not just stitching together tools — you’re managing brittle architectures, writing boilerplate for every feature, and fighting frameworks that were meant to help.
+
+Even simple features demand layers of ceremony: data models, service layers, validation, routing, persistence, object mapping, access control, database migrations, test scaffolding — just to get started. Believe us, we've been there.
+
+Most of your time is spent on technicalities — not your product.
+
+**Fluxzero flips that around.**
+
+We designed it to put your business logic front and center — clean, expressive, and testable from day one.
+
+Everything else — messaging, persistence, routing, scheduling, observability, deployment — works in service of that goal.
+
+No wiring. No fighting.
+You just write code that drives your product — and Fluxzero ensures it runs, scales, and thrives in production.
+
+These capabilities aren’t bolted on — they’re built into the core design and refined through years of iteration to deliver performance, security, and observability at the highest level.
+
+> **You get code that’s joyful to write — yet built on battle-tested foundations.**
+
+---
+
+## Designed for Clean Code
+
+Fluxzero offers a simpler, more natural way to write backend code.
+
+You model your domain with messages — like commands and queries — and implement side effects with simple handlers. That’s it.
+
+- **No boilerplate** — no wiring, annotation soup, or framework acrobatics
+- **No local dependencies** — no databases, queues, or containers required
+- **Automatic concurrency**: No thread management, connection pools, or async/await complexity
+- **Built-in backpressure**: System automatically handles load without manual throttling or circuit breakers
+- **Fully testable** — test entire business flows using given–when–then patterns
+- **Scales with you** — the code you write on day one is the same code that runs at scale
+
+Fluxzero was designed so you can write scalable business applications with zero scaffolding — just clear, expressive logic.
+
+### Sample feature
+
+import {Tabs, TabItem} from '@astrojs/starlight/components';
+
+<Tabs>
+    <TabItem label="Java">
+        ```java
+        public record DepositMoney(AccountId accountId, @Positive BigDecimal amount) {
+            @Apply
+            BankAccount deposit(BankAccount account) {
+                return account.withBalance(account.balance().add(amount));
+            }
+        }
+        ```
+    </TabItem>
+    <TabItem label="Kotlin">
+        ```kotlin
+        data class DepositMoney(val accountId: AccountId, @field:Positive val amount: BigDecimal) {
+            @Apply
+            fun deposit(account: BankAccount): BankAccount {
+                return account.copy(balance = account.balance + amount)
+            }
+        }
+        ```
+    </TabItem>
+</Tabs>
+
+Now compare this to traditional backend development, where handling a simple update like this typically requires:
+
+- A service layer with dependency injection
+- A repository with SQL queries or ORM mappings
+- Database connection and transaction management
+- Request/response serialization and validation
+- Manual error handling and concurrency safeguards
+- Infrastructure to route the request to the right service
+
+With Fluxzero, you don’t need any of that.
+
+You just write the business logic — clean, expressive, and testable.
+Everything else — delivery, persistence, retries, routing, metrics, and auditing — is handled for you.
+
+---
+
+## Zero Ops Deployment
+
+Fluxzero doesn’t just help you write better code — it takes the pain out of getting that code into production.
+
+With Fluxzero Cloud, you can go from local dev to full production with a single push — no infra setup, no config files, no ops overhead.
+
+- **Push-to-deploy simplicity** — Use a GitHub Action or API call to deploy. If your cluster or app doesn’t exist yet, it’s created on the fly.
+- **No infra to configure** — Clusters, load balancers, storage, messaging, and scaling are provisioned automatically.
+- **Reproducible environments** — Define your apps and clusters once, then deploy them anywhere.
+- **Self-host or Cloud** — Run on Fluxzero Cloud or bring your own infrastructure — your code doesn’t change.
+
+> **From laptop to production in minutes. No YAML. No Terraform. No cloud console. Just your code.**
+
+---
+
+## Core Advantages
+
+- **Blazing Velocity** – Build complete backends in hours, not weeks — fewer moving parts, less boilerplate, less code.
+- **Same Code, All the Way Up** – The code you write on day 1 is still right on day 1000. No rewrites, no migrations, no architectural U-turns.
+- **Clean Code by Default** – Your logic lives inside messages. No layers, no glue code — just POJOs, handlers, and clear intent.
+- **Effortless Testing** – Test full business flows with given–when–then patterns. No mocks. No containers. Just logic.
+- **Scales Hard. Observes Everything. Exposes Nothing.** – Millions/sec throughput, full auditability, built-in backpressure, and zero exposed attack surface.
+- **Integrated by Design** – HTTP, messaging, scheduling, search, event sourcing, auditing, access control — all in one runtime.
+- **Zero Ops Deployment** – Deploy to Fluxzero Cloud with a single GitHub Action or API call. No infrastructure to manage, no configuration required.
+
+---
+
+## Why this matters for productivity
+
+Fluxzero transforms how you build.
+
+By removing layers of boilerplate and technical ceremony, it clears the path for teams to focus entirely on product logic. The result is a faster, cleaner, more enjoyable development process — one where features flow instead of stall.
+
+### What Changes
+
+This changes how teams work:
+
+- **Less Wiring, More Shipping** — Spend your time building product features, not plumbing infrastructure.
+- **Fewer Bugs, Clearer Code** — With less indirection and fewer moving parts, your domain logic stays obvious and correct.
+- **Better Traceability** — Understand how a feature works — or why something broke — just by following the messages.
+- **Faster Onboarding** — New developers can grasp the full system in days, not weeks.
+- **Deploy With Confidence** — Entire business flows can be tested end-to-end. No mocks. No gaps. No surprises in production.
+- **Less Process** — Teams work on isolated features without stepping on each other’s toes, requiring less process overhead.
+
+> **Fluxzero shortens the path from idea to feature — and makes your team faster, calmer, and more effective.**
+
+### Works Well With AI
+
+Fluxzero’s design makes it easy for LLMs to generate code that actually works.
+
+- **Natural Code Generation** – Because Fluxzero enables clean business code, LLMs can generate real features — not just snippets.
+- **Less Configuration** – Fewer files, fewer settings, and fewer places to go wrong.
+- **Consistent Structure** – Every feature follows the same clean pattern — easy to generate, understand, and evolve.
+
+> **Fluxzero pairs naturally with LLMs — making AI a real coding partner, not just a copy-paste tool.**
+
+---
+
+## Who it's for
+
+Fluxzero is for anyone building business backend software — without wanting to drown in boilerplate, frameworks, and infrastructure.
+
+Whether you're a solo dev or part of a large team, Fluxzero helps you stay focused on what matters: your product.
+
+It’s especially well suited for:
+
+- **Startup teams** – Ship fast without duct-taping 12 tools together. Go from MVP to scale with no architectural rewrites.
+- **Product engineers** – Write only the logic that moves the product forward. No glue code, no framework fights.
+- **Architects** – Enforce structure and separation by default — without adding layers.
+- **Platform teams** – Provide powerful backend capabilities to other teams, while reducing maintenance burden.
+- **AI-assisted developers** – Generate real, working features — not boilerplate scaffolding or mock stubs.
+- **Modern Java/Kotlin shops** – Leverage your existing skills and ecosystem — but with far less code.
+
+> Whether you’re building something small or massive — if your product has business logic, Fluxzero is for you.
+
+<Aside type="tip">
+    Skeptical? [Try it out yourself](/docs/getting-started/installation).
+</Aside>

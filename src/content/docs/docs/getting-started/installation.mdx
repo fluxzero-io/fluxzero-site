@@ -1,8 +1,9 @@
 ---
-title: Get Started
-description: Run your Fluxzero application
+title: Installation
+description: Install Fluxzero from CLI, via UI or manually
 sidebar:
    order: 20
+tableOfContents: false
 ---
 
 import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -10,7 +11,7 @@ import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 
 ## Scaffold a new project
 
-To build Fluxzero projects, the only thing you need is Java 21+. However, we recommend using the **Fluxzero CLI** as provides a lot of convenience features to help you get started quickly. The CLI is a command line tool that helps you scaffold, build, and run Fluxzero applications.
+To build Fluxzero projects, the only thing you need is Java 21+. However, we recommend using the **Fluxzero CLI** as it is the most convenient way to get started quickly. The CLI is a command line tool that helps you scaffold, build, and run Fluxzero applications.
 
 <Steps>
 
@@ -61,7 +62,11 @@ To build Fluxzero projects, the only thing you need is Java 21+. However, we rec
    ```shell
       fz init 
    ```
-   This command will prompt you for a few questions to set up your project. You can also pass options directly, for example:
+   This command will prompt you for a few questions to set up your project:
+
+    <img src="/terminal/fz-init-noargs.gif" />
+
+    You can also pass options directly, for example:
 
    ```shell
       fz init --name my-project 
