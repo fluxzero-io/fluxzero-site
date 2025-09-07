@@ -14,10 +14,19 @@ export function javadocLoader(): Loader {
     async load({ store, logger, parseData }) {
       logger.info("Loading Javadoc classes from overview tree");
       
+      // Check if Javadoc is optional from npm config
+      const isOptional = process.env.npm_package_config_javadoc_optional === 'true';
+      const shouldThrowErrors = !isOptional;
+      
       const url = 'https://flux-capacitor.io/fluxzero-sdk-java/javadoc/apidocs/overview-tree.html';
       
       try {
         const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
         const html = await response.text();
         
         // Clear existing store
@@ -41,8 +50,14 @@ export function javadocLoader(): Loader {
           });
         }
       } catch (error) {
-        logger.error(`Failed to load Javadoc classes: ${error}`);
-        throw error;
+        if (shouldThrowErrors) {
+          logger.error(`Failed to load Javadoc classes: ${error}`);
+          throw error;
+        } else {
+          logger.warn(`Failed to load Javadoc classes (continuing without Javadoc data): ${error}`);
+          // Clear the store but don't throw - build will continue without Javadoc data
+          store.clear();
+        }
       }
     }
   };

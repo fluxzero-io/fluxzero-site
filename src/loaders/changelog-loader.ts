@@ -47,6 +47,10 @@ export function changelogLoader(): Loader {
     async load({ store, logger, parseData }) {
       logger.info("Loading changelog releases");
       
+      // Check if GitHub releases are optional from npm config
+      const isOptional = process.env.npm_package_config_ghreleases_optional === 'true';
+      const shouldThrowErrors = !isOptional;
+      
       try {
         // Clear existing store
         store.clear();
@@ -114,8 +118,33 @@ export function changelogLoader(): Loader {
         logger.info(`Loaded ${allReleases.length} changelog releases`);
         
       } catch (error) {
-        logger.error(`Failed to load changelog: ${error}`);
-        throw error;
+        if (shouldThrowErrors) {
+          logger.error(`Failed to load changelog: ${error}`);
+          throw error;
+        } else {
+          logger.warn(`Failed to load changelog (continuing with cached data): ${error}`);
+          
+          // Try to load cached data even if GitHub API failed
+          const cachedData = await readCacheFile();
+          if (cachedData.releases.length > 0) {
+            logger.info(`Using ${cachedData.releases.length} cached releases after GitHub API failure`);
+            
+            // Add cached releases to the store
+            for (const release of cachedData.releases) {
+              const data = await parseData({
+                id: release.version,
+                data: release
+              });
+              
+              store.set({
+                id: data.version,
+                data
+              });
+            }
+          } else {
+            logger.warn("No cached data available and GitHub API failed - changelog will be empty");
+          }
+        }
       }
     }
   };
