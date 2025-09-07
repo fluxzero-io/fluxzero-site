@@ -11,8 +11,9 @@ tableOfContents: false
 
 <YouTube/>
 
-import { Tabs, TabItem, Steps } from '@astrojs/starlight/components';
-import ProjectGenerator from '../../../../components/ProjectGenerator.astro';
+import { Tabs, TabItem, Steps, Aside } from '@astrojs/starlight/components';
+import { YouTube } from '@astro-community/astro-embed-youtube';
+import ProjectGenerator from '~/components/ProjectGenerator.astro';
 
 # Create a New Project
 
@@ -120,8 +121,7 @@ For more help, check our [FAQ](/docs/about/faq) or join our community discussion
 
 In the diagram below, you can see the main components of a Fluxzero application and how they interact with each other.
 
-<Image src={simpleArchitecture} alt="Architecture diagram" class={"dark:bg-white"}
-       style={"background-color: var(--sl-color-gray-4);"}/>
+_Architecture diagram would be shown here_
 
 
 - **Centralized orchestration via the Fluxzero Server**
