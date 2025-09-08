@@ -15,8 +15,8 @@
     "astro": "astro"
   },
   "config": {
-    "javadoc.optional": true,
-    "ghreleases.optional": true
+    "javadoc.optional": false,
+    "ghreleases.optional": false
   },
   "dependencies": {
     "@astro-community/astro-embed-youtube": "^0.5.6",

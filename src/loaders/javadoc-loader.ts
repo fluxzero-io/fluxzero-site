@@ -18,7 +18,7 @@ export function javadocLoader(): Loader {
       const isOptional = process.env.npm_package_config_javadoc_optional === 'true';
       const shouldThrowErrors = !isOptional;
       
-      const url = 'https://flux-capacitor.io/fluxzero-sdk-java/javadoc/apidocs/overview-tree.html';
+      const url = 'https://fluxzero-io.github.io/fluxzero-sdk-java/javadoc/apidocs/overview-tree.html';
       
       try {
         const response = await fetch(url);
