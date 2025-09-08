@@ -4,9 +4,12 @@ description: Fluxzero is a cloud runtime that lets you focus on business logic i
 sidebar:
     order: 11
 ---
+
+import {Tabs, TabItem} from '@astrojs/starlight/components';
+
 # Your code in Fluxzero
 
-Fluxzero apps are built with **clean, expressive code** — no scaffolding, no layers, no framework gymnastics.
+Fluxzero apps are built with **clean, expressive code** — no scaffolding, no layers, no dependency injection. Just logic.
 
 You write the heart of your application: the messages, logic, and state.
 Fluxzero handles everything else: delivery, persistence, routing, retries, observability, and scale.
@@ -27,8 +30,6 @@ These are the core building blocks of your business logic — all plain Java or 
 | **Test**     | Verifies business flows                | `fixture.whenCommand(...)`    |
 
 ## Commands
-
-Every backend has them — even if you didn’t call them that.
 
 Commands represent **something your user wants to happen**: submitting a form, clicking a “Like” button, posting a comment, and so on.
 They’re the first input into your system — a request to *do* something.
@@ -57,16 +58,38 @@ You typically have commands to **create**, **modify**, **delete**, or **upsert**
 
 #### Create
 
-```java
-@RequiresRole(manager)
-public record CreateProject(@NotNull ProjectId projectId,
-                            @NotNull @Valid ProjectDetails details) {
-    @Apply
-    Project create(Sender sender) {
-        return new Project(projectId, details, sender.userId());
-    }
-}
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  @RequiresRole(manager)
+  public record CreateProject(@NotNull ProjectId projectId,
+                              @NotNull @Valid ProjectDetails details) {
+      @Apply
+      Project create(Sender sender) {
+          return new Project(projectId, details, sender.userId());
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @RequiresRole(manager)
+  data class CreateProject(
+      @field:NotNull val projectId: ProjectId,
+      @field:Valid val details: ProjectDetails
+  ) {
+      @Apply
+      fun create(sender: Sender): Project {
+          return Project(projectId, details, sender.userId())
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 Here we inject the current user sending the command — making them the owner of the new project.
 
@@ -74,22 +97,50 @@ Here we inject the current user sending the command — making them the owner of
 
 #### Modify
 
-```java
-public record RenameProject(@NotNull ProjectId projectId,
-                            @NotBlank String newName) {
-    @AssertLegal
-    void assertAuthorized(Project project, Sender sender) {
-        if (!sender.isAuthorizedFor(project.ownerId())) {
-            throw new UnauthorizedException("Not allowed to modify project");
-        }
-    }
+<Tabs>
+  <TabItem label="Java">
 
-    @Apply
-    Project apply(Project project) {
-        return project.renameTo(newName);
-    }
-}
-```
+  ```java
+  public record RenameProject(@NotNull ProjectId projectId,
+                              @NotBlank String newName) {
+      @AssertLegal
+      void assertAuthorized(Project project, Sender sender) {
+          if (!sender.isAuthorizedFor(project.ownerId())) {
+              throw new UnauthorizedException("Not allowed to modify project");
+          }
+      }
+
+      @Apply
+      Project apply(Project project) {
+          return project.renameTo(newName);
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  data class RenameProject(
+      @field:NotNull val projectId: ProjectId,
+      @field:NotBlank val newName: String
+  ) {
+      @AssertLegal
+      fun assertAuthorized(project: Project, sender: Sender) {
+          if (!sender.isAuthorizedFor(project.ownerId)) {
+              throw UnauthorizedException("Not allowed to modify project")
+          }
+      }
+
+      @Apply
+      fun apply(project: Project): Project {
+          return project.renameTo(newName)
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 This command checks that the sender is authorized to update the project before applying the change.
 You can define any number of `@AssertLegal` methods to validate business rules.
@@ -98,33 +149,75 @@ You can define any number of `@AssertLegal` methods to validate business rules.
 
 #### Delete
 
-```java
-public record DeleteProject(ProjectId projectId) implements ProjectUpdate {
-    @Apply
-    Project delete(Project project) {
-        return null;
-    }
-}
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  public record DeleteProject(ProjectId projectId) implements ProjectUpdate {
+      @Apply
+      Project delete(Project project) {
+          return null;
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  data class DeleteProject(val projectId: ProjectId) : ProjectUpdate {
+      @Apply
+      fun delete(project: Project): Project? {
+          return null
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 To delete an entity, simply return `null` from the `@Apply` method as shown above.
 
 Here we also implement a shared interface with common validation logic:
 
-```java
-@RequiresRole(manager)
-public interface ProjectUpdate {
+<Tabs>
+  <TabItem label="Java">
 
-    @NotNull ProjectId projectId();
+  ```java
+  @RequiresRole(manager)
+  public interface ProjectUpdate {
 
-    @AssertLegal
-    default void assertAuthorized(Project project, Sender sender) {
-        if (!sender.isAuthorizedFor(project.ownerId())) {
-            throw new UnauthorizedException("Not allowed to modify project");
-        }
-    }
-}
-```
+      @NotNull ProjectId projectId();
+
+      @AssertLegal
+      default void assertAuthorized(Project project, Sender sender) {
+          if (!sender.isAuthorizedFor(project.ownerId())) {
+              throw new UnauthorizedException("Not allowed to modify project");
+          }
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @RequiresRole(manager)
+  interface ProjectUpdate {
+
+      fun projectId(): ProjectId
+
+      @AssertLegal
+      fun assertAuthorized(project: Project, sender: Sender) {
+          if (!sender.isAuthorizedFor(project.ownerId)) {
+              throw UnauthorizedException("Not allowed to modify project")
+          }
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 To prevent duplication, we implemented a simple interface that defines common rules for project updates.
 
@@ -132,21 +225,48 @@ To prevent duplication, we implemented a simple interface that defines common ru
 
 #### Upsert (create or update)
 
-```java
-public record UpsertProject(ProjectId projectId,
-                            @NotNull @Valid ProjectDetails details) implements ProjectUpdate {
+<Tabs>
+  <TabItem label="Java">
 
-    @Apply
-    Project create(Sender sender) {
-        return new Project(projectId, details, sender.userId());
-    }
+  ```java
+  public record UpsertProject(ProjectId projectId,
+                              @NotNull @Valid ProjectDetails details) implements ProjectUpdate {
 
-    @Apply
-    Project update(Project project) {
-        return project.withDetails(details);
-    }
-}
-```
+      @Apply
+      Project create(Sender sender) {
+          return new Project(projectId, details, sender.userId());
+      }
+
+      @Apply
+      Project update(Project project) {
+          return project.withDetails(details);
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  data class UpsertProject(
+      val projectId: ProjectId,
+      @field:Valid val details: ProjectDetails
+  ) : ProjectUpdate {
+
+      @Apply
+      fun create(sender: Sender): Project {
+          return Project(projectId, details, sender.userId())
+      }
+
+      @Apply
+      fun update(project: Project): Project {
+          return project.withDetails(details)
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 This command handles both creation and update.
 Fluxzero will invoke the appropriate `@Apply` method depending on whether the entity already exists.
@@ -179,17 +299,38 @@ In Fluxzero, queries are first-class citizens. Like commands, they are plain cla
 
 You can handle queries directly inside the query class. This keeps your logic close to where it's defined, and avoids spreading read logic across layers:
 
-```java
-public record GetProject(@NotNull ProjectId projectId) {
+<Tabs>
+  <TabItem label="Java">
 
-    @HandleQuery
-    Project handle(Sender sender) {
-        return Fluxzero.search(Project.class)
-                       .match(sender.isAdmin() ? null : sender.userId(), "ownerId")
-                       .fetchFirstOrNull();
-    }
-}
-```
+  ```java
+  public record GetProject(@NotNull ProjectId projectId) {
+
+      @HandleQuery
+      Project handle(Sender sender) {
+          return Fluxzero.search(Project.class)
+                         .match(sender.isAdmin() ? null : sender.userId(), "ownerId")
+                         .fetchFirstOrNull();
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  data class GetProject(val projectId: ProjectId) {
+
+      @HandleQuery
+      fun handle(sender: Sender): Project? {
+          return Fluxzero.search(Project::class.java)
+              .match(if (sender.isAdmin()) null else sender.userId(), "ownerId")
+              .fetchFirstOrNull()
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 You can inject the `Sender` just like with commands, and implement filtering or authorization logic as needed. This
 query shows how to fetch a project, with logic to restrict access based on the sender. Passing `null` in `.match()` removes the filter, allowing
@@ -200,20 +341,41 @@ admins to view all results.
 Here’s an example implementing `Request`, which defines the return type. Fluxzero checks this at compile time, ensuring all
 handlers return the correct types. It also improves test clarity and lets calling code safely rely on the return type.
 
-```java
-public record FindMyProjects() implements Request<List<Project>> {
+<Tabs>
+  <TabItem label="Java">
 
-    @HandleQuery
-    List<Project> find(Sender sender) {
-        return Fluxzero.search(Project.class)
-                       .match(sender.userId(), "ownerId")
-                       .fetch(100);
-    }
-}
-```
+  ```java
+  public record FindMyProjects() implements Request<List<Project>> {
+
+      @HandleQuery
+      List<Project> find(Sender sender) {
+          return Fluxzero.search(Project.class)
+                         .match(sender.userId(), "ownerId")
+                         .fetch(100);
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  data class FindMyProjects() : Request<List<Project>> {
+
+      @HandleQuery
+      fun find(sender: Sender): List<Project> {
+          return Fluxzero.search(Project::class.java)
+              .match(sender.userId(), "ownerId")
+              .fetch(100)
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 <Aside type="tip">
-    Have all your queries implement <code>Request&lt;R&gt;</code>.<br />
+    Have all your queries implement `Request<R>`.<br />
     This helps you avoid mistakes and ensures your code is type-safe.
 </Aside>
 
@@ -221,17 +383,38 @@ public record FindMyProjects() implements Request<List<Project>> {
 
 Fluxzero’s search is full-text and autocomplete-ready from day one. Here's how to implement lookahead behavior:
 
-```java
-public record SearchProjects(String term) implements Request<List<Project>> {
+<Tabs>
+  <TabItem label="Java">
 
-    @HandleQuery
-    List<Project> search() {
-        return Fluxzero.search(Project.class)
-                       .lookAhead(term)
-                       .fetch(100);
-    }
-}
-```
+  ```java
+  public record SearchProjects(String term) implements Request<List<Project>> {
+
+      @HandleQuery
+      List<Project> search() {
+          return Fluxzero.search(Project.class)
+                         .lookAhead(term)
+                         .fetch(100);
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  data class SearchProjects(val term: String) : Request<List<Project>> {
+
+      @HandleQuery
+      fun search(): List<Project> {
+          return Fluxzero.search(Project::class.java)
+                         .lookAhead(term)
+                         .fetch(100)
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 You can use `.match()`, `.lookAhead()`, and many other options — no configuration needed.
 
@@ -239,19 +422,39 @@ You can use `.match()`, `.lookAhead()`, and many other options — no configurat
 
 Queries can call other queries — just like functions. This allows you to reuse logic, filter results, or assemble responses from multiple sources.
 
-```java
-public record GetProvider(@NotNull ProviderId id) implements Request<Provider> {
+<Tabs>
+  <TabItem label="Java">
 
-    @HandleQuery
-    Provider handle() {
-        List<Provider> providers = Fluxzero.queryAndWait(new GetProviders());
-        return providers.stream()
-                        .filter(p -> Objects.equals(id, p.id()))
-                        .findFirst()
-                        .orElse(null);
-    }
-}
-```
+  ```java
+  public record GetProvider(@NotNull ProviderId id) implements Request<Provider> {
+
+      @HandleQuery
+      Provider handle() {
+          List<Provider> providers = Fluxzero.queryAndWait(new GetProviders());
+          return providers.stream()
+                          .filter(p -> Objects.equals(id, p.id()))
+                          .findFirst()
+                          .orElse(null);
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  data class GetProvider(@field:NotNull val id: ProviderId) : Request<Provider> {
+
+      @HandleQuery
+      fun handle(): Provider? {
+          val providers = Fluxzero.queryAndWait(GetProviders())
+          return providers.firstOrNull { it.id == id }
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 This is a valid and common pattern — no layers or repositories required. Just reuse your existing queries.
 
@@ -285,16 +488,36 @@ If you use Spring, just annotate your class with `@Component` and Fluxzero will 
 
 Let’s look at a command handler that applies a command to a matching entity:
 
-```java
-@Component
-public class ProjectCommandHandler {
+<Tabs>
+  <TabItem label="Java">
 
-    @HandleCommand
-    void handle(CreateProject command) {
-        Fluxzero.loadEntity(command.projectId()).assertAndApply(command);
-    }
-}
-```
+  ```java
+  @Component
+  public class ProjectCommandHandler {
+
+      @HandleCommand
+      void handle(CreateProject command) {
+          Fluxzero.loadEntity(command.projectId()).assertAndApply(command);
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @Component
+  class ProjectCommandHandler {
+
+      @HandleCommand
+      fun handle(command: CreateProject) {
+          Fluxzero.loadEntity(command.projectId()).assertAndApply(command)
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 The call to `loadEntity()` retrieves the current state of the project, if any.
 
@@ -310,16 +533,36 @@ By calling `assertAndApply(command)` on the entity:
 
 You can also generalize logic across commands using interfaces:
 
-```java
-@Component
-public class ProjectCommandHandler {
+<Tabs>
+  <TabItem label="Java">
 
-    @HandleCommand
-    void handle(ProjectUpdate command) {
-        Fluxzero.loadEntity(command.projectId()).assertAndApply(command);
-    }
-}
-```
+  ```java
+  @Component
+  public class ProjectCommandHandler {
+
+      @HandleCommand
+      void handle(ProjectUpdate command) {
+          Fluxzero.loadEntity(command.projectId()).assertAndApply(command);
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @Component
+  class ProjectCommandHandler {
+
+      @HandleCommand
+      fun handle(command: ProjectUpdate) {
+          Fluxzero.loadEntity(command.projectId()).assertAndApply(command)
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 This handler matches all `ProjectUpdate` commands and applies them to the matching entity.
 
@@ -333,21 +576,47 @@ See the [handler reference guide](/docs/reference/handler) for more advanced usa
 
 Handlers can also respond to events published by other parts of the system:
 
-```java
-@Component
-public class ProjectEventHandler {
+<Tabs>
+  <TabItem label="Java">
 
-    @HandleEvent
-    void on(CreateProject event) {
-        Fluxzero.sendCommand(new NotifyUser(event.projectId(), "Project created"));
-    }
+  ```java
+  @Component
+  public class ProjectEventHandler {
 
-    @HandleEvent
-    void on(DeleteProject event) {
-        Fluxzero.sendCommand(new NotifyUser(event.projectId(), "Project deleted"));
-    }
-}
-```
+      @HandleEvent
+      void on(CreateProject event) {
+          Fluxzero.sendCommand(new NotifyUser(event.projectId(), "Project created"));
+      }
+
+      @HandleEvent
+      void on(DeleteProject event) {
+          Fluxzero.sendCommand(new NotifyUser(event.projectId(), "Project deleted"));
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @Component
+  class ProjectEventHandler {
+
+      @HandleEvent
+      fun on(event: CreateProject) {
+          Fluxzero.sendCommand(NotifyUser(event.projectId(), "Project created"))
+      }
+
+      @HandleEvent
+      fun on(event: DeleteProject) {
+          Fluxzero.sendCommand(NotifyUser(event.projectId(), "Project deleted"))
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
+
 
 This handler responds to different Project events and sends out new commands.
 
@@ -369,12 +638,28 @@ You write a plain method, annotate it, and return a result. That’s it.
 
 #### Example: Hello world
 
-```java
-@HandleGet("/hello")
-public String hello() {
-    return "Hello, world!";
-}
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  @HandleGet("/hello")
+  public String hello() {
+      return "Hello, world!";
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @HandleGet("/hello")
+  fun hello(): String {
+      return "Hello, world!"
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 You can handle `GET`, `POST`, `PUT`, and other methods using the corresponding annotations:
 `@HandleGet`, `@HandlePost`, `@HandlePut`, and so on.
@@ -387,21 +672,55 @@ Fluxzero takes care of routing, deserialization, and response formatting — inc
 
 Fluxzero endpoints work great for traditional REST flows:
 
-```java
-@HandlePost("/projects")
-ProjectId createProject(ProjectDetails details) {
-    ProjectId id = Fluxzero.generateId(ProjectId.class);
-    Fluxzero.sendCommandAndWait(new CreateProject(id, details));
-    return id;
-}
-```
+<Tabs>
+  <TabItem label="Java">
 
-```java
-@HandleGet("/projects/{projectId}")
-Project getProject(@PathParam ProjectId projectId) {
-    return Fluxzero.queryAndWait(new GetProject(projectId));
-}
-```
+  ```java
+  @HandlePost("/projects")
+  ProjectId createProject(ProjectDetails details) {
+      ProjectId id = Fluxzero.generateId(ProjectId.class);
+      Fluxzero.sendCommandAndWait(new CreateProject(id, details));
+      return id;
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @HandlePost("/projects")
+  fun createProject(details: ProjectDetails): ProjectId {
+      val id = Fluxzero.generateId(ProjectId::class.java)
+      Fluxzero.sendCommandAndWait(CreateProject(id, details))
+      return id
+  }
+  ```
+
+  </TabItem>
+</Tabs>
+
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  @HandleGet("/projects/{projectId}")
+  Project getProject(@PathParam ProjectId projectId) {
+      return Fluxzero.queryAndWait(new GetProject(projectId));
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @HandleGet("/projects/{projectId}")
+  fun getProject(@PathParam projectId: ProjectId): Project {
+      return Fluxzero.queryAndWait(GetProject(projectId))
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 In the example above:
 
@@ -429,16 +748,42 @@ This is useful for reminders, retries, timeouts, follow-ups, and more.
 
 #### Example: sending a reminder later
 
-```java
-public record RemindUser(UserId userId, String message) {
-}
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  public record RemindUser(UserId userId, String message) {
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  data class RemindUser(val userId: UserId, val message: String)
+  ```
+
+  </TabItem>
+</Tabs>
 
 You can schedule the message like this:
 
-```java
-Fluxzero.schedule(new RemindUser(userId, "Don’t forget your task!"), ofHours(2));
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  Fluxzero.schedule(new RemindUser(userId, "Don’t forget your task!"), ofHours(2));
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  Fluxzero.schedule(RemindUser(userId, "Don’t forget your task!"), ofHours(2))
+  ```
+
+  </TabItem>
+</Tabs>
 
 This will deliver the message to all matching handlers **2 hours later**.
 
@@ -448,20 +793,49 @@ This will deliver the message to all matching handlers **2 hours later**.
 
 You can write a regular handler for the message:
 
-```java
-@HandleSchedule
-void handle(RemindUser message) {
-    // Send notification, email, etc.
-}
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  @HandleSchedule
+  void handle(RemindUser message) {
+      // Send notification, email, etc.
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @HandleSchedule
+  fun handle(message: RemindUser) {
+      // Send notification, email, etc.
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 #### Scheduling commands
 
 You can also schedule commands to fire at a given time:
 
-```java
-Fluxzero.scheduleCommand(new NotifyUser(userId, "Don’t forget your task!"), ofHours(2));
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  Fluxzero.scheduleCommand(new NotifyUser(userId, "Don’t forget your task!"), ofHours(2));
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  Fluxzero.scheduleCommand(NotifyUser(userId, "Don’t forget your task!"), ofHours(2))
+  ```
+
+  </TabItem>
+</Tabs>
 
 This prevents you from sending a command yourself the moment the schedule is handled.
 
@@ -471,25 +845,54 @@ Scheduled messages can be **cancelled** or **rescheduled** after publication —
 
 Here’s an example where we schedule a project cleanup 30 days after it’s archived. If the project is restored during that period, the cleanup is cancelled.
 
-```java
-@Component
-class ProjectLifecycleHandler {
+<Tabs>
+  <TabItem label="Java">
 
-    @HandleEvent
-    void handle(ArchiveProject event) {
-        Fluxzero.scheduleCommand(
-                new DeleteProject(event.projectId()),
-                "ProjectCleanup-" + event.projectId(),
-                Duration.ofDays(30)
-        );
-    }
+  ```java
+  @Component
+  class ProjectLifecycleHandler {
 
-    @HandleEvent
-    void handle(RestoreProject event) {
-        Fluxzero.cancelSchedule("ProjectCleanup-" + event.projectId());
-    }
-}
-```
+      @HandleEvent
+      void handle(ArchiveProject event) {
+          Fluxzero.scheduleCommand(
+                  new DeleteProject(event.projectId()),
+                  "ProjectCleanup-" + event.projectId(),
+                  Duration.ofDays(30)
+          );
+      }
+
+      @HandleEvent
+      void handle(RestoreProject event) {
+          Fluxzero.cancelSchedule("ProjectCleanup-" + event.projectId());
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @Component
+  class ProjectLifecycleHandler {
+
+      @HandleEvent
+      fun handle(event: ArchiveProject) {
+          Fluxzero.scheduleCommand(
+              DeleteProject(event.projectId()),
+              "ProjectCleanup-" + event.projectId(),
+              Duration.ofDays(30)
+          )
+      }
+
+      @HandleEvent
+      fun handle(event: RestoreProject) {
+          Fluxzero.cancelSchedule("ProjectCleanup-" + event.projectId())
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 In this example:
 - We schedule a `DeleteProject` command with a custom **schedule ID**.
@@ -515,16 +918,38 @@ Most entities are simple and immutable. In fact, they typically contain no behav
 
 You can annotate your entity root with `@Aggregate` to configure its behavior:
 
-```java
-@Aggregate(searchable = true, eventPublication = EventPublication.IF_MODIFIED)
-public record Project(@EntityId ProjectId id, @With ProjectDetails details,
-                      UserId ownerId) {
+<Tabs>
+  <TabItem label="Java">
 
-    public Project renameTo(String newName) {
-        return withDetails(details.with(newName));
-    }
-}
-```
+  ```java
+  @Aggregate(searchable = true, eventPublication = EventPublication.IF_MODIFIED)
+  public record Project(@EntityId ProjectId id, @With ProjectDetails details,
+                        UserId ownerId) {
+
+      public Project renameTo(String newName) {
+          return withDetails(details.with(newName));
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @Aggregate(searchable = true, eventPublication = EventPublication.IF_MODIFIED)
+  data class Project(
+      @EntityId val id: ProjectId,
+      @With val details: ProjectDetails,
+      val ownerId: UserId
+  ) {
+      fun renameTo(newName: String): Project {
+          return copy(details = details.with(newName))
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 In the example above:
 - `searchable = true` makes this entity available automatically for full-text search.
@@ -546,6 +971,37 @@ Each entity must have a unique ID — it identifies the instance and determines 
 
 We usually represent IDs as value objects like `ProjectId`, `UserId`, etc. This improves clarity and prevents type mixups.
 
+You can create your own identifier classes by extending `Id<T>`:
+
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  public class ProjectId extends Id<Project> {
+      public ProjectId(String id) {
+          super(id);
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  class ProjectId(id: String) : Id<Project>(id)
+  ```
+
+  </TabItem>
+</Tabs>
+
+<Aside type="tip">
+  To generate a random strongly typed ID, just use:
+
+  ```java
+  ProjectId id = Fluxzero.generateId(ProjectId.class);
+  ```
+</Aside>
+
 ---
 
 ### Event sourcing (or not)
@@ -554,10 +1010,24 @@ By default, Fluxzero uses **event sourcing** to persist and load entities.
 
 You can turn this off by setting `eventSourced = false`:
 
-```java
-@Aggregate(eventSourced = false)
-public record Counter(CounterId id, int value) { ... }
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  @Aggregate(eventSourced = false)
+  public record Counter(CounterId id, int value) { ... }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @Aggregate(eventSourced = false)
+  data class Counter(val id: CounterId, val value: Int) { /* ... */ }
+  ```
+
+  </TabItem>
+</Tabs>
 
 When disabled, the entity will be persisted as a snapshot instead of a list of events. See [event sourcing](/docs/reference/event-sourcing) for more.
 
@@ -575,12 +1045,28 @@ This makes your app easier to reason about and plays nicely with event sourcing 
 
 You can model sub-entities by exposing them via methods annotated with `@Member`.
 
-```java
-@Aggregate
-public record Project(ProjectId id, @Member @With List<Task> tasks) { ... }
+<Tabs>
+  <TabItem label="Java">
 
-public record Task(@EntityId TaskId id, String title, @With boolean completed) { ... }
-```
+  ```java
+  @Aggregate
+  public record Project(ProjectId id, @Member @With List<Task> tasks) { ... }
+
+  public record Task(@EntityId TaskId id, String title, @With boolean completed) { ... }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @Aggregate
+  data class Project(val id: ProjectId, @Member @With val tasks: List<Task>) { /* ... */ }
+
+  data class Task(@EntityId val id: TaskId, val title: String, @With val completed: Boolean)
+  ```
+
+  </TabItem>
+</Tabs>
 
 When you call `assertAndApply(update)` on the parent entity, Fluxzero **automatically routes** the update to the correct child entity.
 
@@ -594,32 +1080,77 @@ You don’t need to manually search the list — even if it’s deeply nested.
 
 ##### Add a task to a project
 
-```java
-public record AddTask(ProjectId projectId,
-                      @NotNull TaskId taskId,
-                      String description) implements ProjectUpdate {
+<Tabs>
+  <TabItem label="Java">
 
-    @Apply
-    Task add() {
-        return new Task(taskId, description);
-    }
-}
-```
+  ```java
+  public record AddTask(ProjectId projectId,
+                        @NotNull TaskId taskId,
+                        String description) implements ProjectUpdate {
+
+      @Apply
+      Task add() {
+          return new Task(taskId, description);
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  data class AddTask(
+      val projectId: ProjectId,
+      @field:NotNull val taskId: TaskId,
+      val description: String?
+  ) : ProjectUpdate {
+
+      @Apply
+      fun add(): Task {
+          return Task(taskId, description)
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 ---
 
 ##### Complete an existing task
 
-```java
-public record CompleteTask(ProjectId projectId,
-                           @NotNull TaskId taskId) implements ProjectUpdate {
+<Tabs>
+  <TabItem label="Java">
 
-    @Apply
-    Task complete(Task task) {
-        return task.withCompleted(true);
-    }
-}
-```
+  ```java
+  public record CompleteTask(ProjectId projectId,
+                             @NotNull TaskId taskId) implements ProjectUpdate {
+
+      @Apply
+      Task complete(Task task) {
+          return task.withCompleted(true);
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  data class CompleteTask(
+      val projectId: ProjectId,
+      @field:NotNull val taskId: TaskId
+  ) : ProjectUpdate {
+
+      @Apply
+      fun complete(task: Task): Task {
+          return task.withCompleted(true)
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 Fluxzero will automatically route the command to the correct task using the `@Member` fields in your entity — even creating the task if it doesn’t yet exist.
 
@@ -637,16 +1168,36 @@ Tests use a simple `given → when → then` structure to simulate message flows
 
 ### Testing a command flow
 
-```java
-TestFixture fixture = TestFixture.create(new ProjectCommandHandler());
+<Tabs>
+  <TabItem label="Java">
 
-@Test
-void creatingProjectSucceeds() {
-    var createProject = new CreateProject(projectId, details);
-    fixture.whenCommand(createProject)
-           .expectEvents(createProject);
-}
-```
+  ```java
+  TestFixture fixture = TestFixture.create(new ProjectCommandHandler());
+
+  @Test
+  void creatingProjectSucceeds() {
+      var createProject = new CreateProject(projectId, details);
+      fixture.whenCommand(createProject)
+             .expectEvents(createProject);
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  val fixture = TestFixture.create(ProjectCommandHandler())
+
+  @Test
+  fun creatingProjectSucceeds() {
+      val createProject = CreateProject(projectId, details)
+      fixture.whenCommand(createProject)
+             .expectEvents(createProject)
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 In this example:
 
@@ -661,14 +1212,32 @@ This verifies that the command was accepted and processed correctly.
 
 You can simulate time passing to test scheduled messages:
 
-```java
-@Test
-void projectIsDeletedAfterArchiving() {
-    fixture.givenCommands(new ArchiveProject(projectId))
-           .whenTimeElapses(Duration.ofDays(30))
-           .expectEvents(new DeleteProject(projectId));
-}
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  @Test
+  void projectIsDeletedAfterArchiving() {
+      fixture.givenCommands(new ArchiveProject(projectId))
+             .whenTimeElapses(Duration.ofDays(30))
+             .expectEvents(new DeleteProject(projectId));
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  @Test
+  fun projectIsDeletedAfterArchiving() {
+      fixture.givenCommands(ArchiveProject(projectId))
+             .whenTimeElapses(Duration.ofDays(30))
+             .expectEvents(DeleteProject(projectId))
+  }
+  ```
+
+  </TabItem>
+</Tabs>
 
 ---
 
@@ -676,11 +1245,26 @@ void projectIsDeletedAfterArchiving() {
 
 You can load test inputs from external JSON files:
 
-```java
-fixture.givenCommands("archive-project.json")
-       .whenTimeElapses(Duration.ofDays(30))
-       .expectEvents("delete-project.json");
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  fixture.givenCommands("archive-project.json")
+         .whenTimeElapses(Duration.ofDays(30))
+         .expectEvents("delete-project.json");
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  fixture.givenCommands("archive-project.json")
+         .whenTimeElapses(Duration.ofDays(30))
+         .expectEvents("delete-project.json")
+  ```
+
+  </TabItem>
+</Tabs>
 
 This keeps your test code clean and allows you to reuse structured input data across test cases.
 

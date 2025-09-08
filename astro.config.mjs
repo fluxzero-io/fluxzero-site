@@ -49,6 +49,10 @@ export default defineConfig({
               autogenerate: { directory: 'docs/getting-started' },
           },
           {
+              label: 'Tutorials',
+              autogenerate: { directory: 'docs/tutorials' },
+          },
+          {
               label: 'Foundation',
               autogenerate: { directory: 'docs/foundation' },
           },

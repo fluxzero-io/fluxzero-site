@@ -1,0 +1,860 @@
+---
+title: Building your first app
+description: Tutorial for creating your first Fluxzero app
+sidebar:
+   order: 30
+---
+import {Aside, TabItem, Tabs} from '@astrojs/starlight/components';
+
+# Your first Fluxzero app
+
+In this tutorial, we’ll build a simple to-do application that shows the core ideas of Fluxzero — one step at a time.
+We’ll start from a blank slate and add features like creating projects, managing tasks, querying data, and scheduling actions.
+
+Each feature comes with a test, so you’ll see how Fluxzero works in practice, not just theory.
+
+---
+
+## Why a to-do app?
+
+To-do apps are simple and familiar, yet they cover all the essentials of a Fluxzero backend, like commands, queries and entities.
+
+To familiarize yourself with core concepts in Fluxzero, first [check them out](/docs/getting-started/core-concepts), if you haven't done so.
+
+---
+
+## Getting started
+
+Create a new project called 'Todo' (see [Installation](/docs/getting-started/installation) for how).
+
+Open your project in
+  <a href="https://www.jetbrains.com/idea/" target="_blank" rel="noopener noreferrer">IntelliJ IDEA <span aria-hidden="true">↗</span></a>
+  for the best experience.
+
+---
+
+## App structure
+
+We’ll use the following package layout:
+
+```text
+io.fluxzero.todo
+└── project
+    ├── command       // Commands like CreateProject, AssignTask
+    ├── query         // Queries like ListProjects
+    ├── model         // Entities, value objects, ID types
+    └── handler classes
+```
+
+---
+
+## Designing our app
+
+Before we start coding, let’s decide what kind of to-do app we want.
+
+Our app should support multiple projects, each containing its own tasks.
+This lets users organize tasks into categories like *Work*, *Groceries*, or *Side project*.
+
+That’s why we’ll model `Project` as our **root entity**.
+It gives us a clear entry point for commands and queries, and acts as a container for related tasks.
+
+Later, we’ll add `Tasks` as nested entities inside a project.
+
+---
+
+## Create a project
+
+We’ll begin with a command that represents the intent to create a new project.
+A command can be a simple record:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+// src/main/java/io/fluxzero/todo/project/command/CreateProject.java
+public record CreateProject(ProjectId projectId,
+                            ProjectDetails details) {
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// src/main/kotlin/io/fluxzero/todo/project/command/CreateProject.kt
+data class CreateProject(
+    val projectId: ProjectId,
+    val details: ProjectDetails
+)
+```
+
+  </TabItem>
+</Tabs>
+
+Most commands contain identifiers of the entities they target and some data.
+
+Here we use a strongly typed `ProjectId` to identify our target entity. Strong IDs like `ProjectId` are preferred over raw strings or UUIDs.
+This id class extends from `Id<T>`:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+// src/main/java/io/fluxzero/todo/project/model/ProjectId.java
+public final class ProjectId extends Id<Project> {
+    public ProjectId(String id) {
+        super(id);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// src/main/kotlin/io/fluxzero/todo/project/model/ProjectId.kt
+class ProjectId(id: String) : Id<Project>(id)
+```
+
+  </TabItem>
+</Tabs>
+
+This id class references its entity class `Project`. We’ll get to the entity in a bit.
+
+<Aside type="tip">
+  The `Id<T>` class is a handy way to create strongly typed ids. They serialize simply as strings and can be
+  made case-insensitive and given a prefix to prevent potential clashes.
+</Aside>
+
+---
+
+### Enforce business rules
+
+You can add any number of business rules to a command. These rules generally fall into three categories:
+
+- **Constraint validations** — required fields, min/max lengths, etc.
+- **User access control** — who is allowed to execute the command.
+- **Invariants** — what must be true before the command can succeed.
+
+#### Validation constraints
+
+Let’s start by adding basic constraints using annotations:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+public record CreateProject(@NotNull ProjectId projectId,
+                            @NotNull @Valid ProjectDetails details) {
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+data class CreateProject(
+    @field:NotNull val projectId: ProjectId,
+    @field:NotNull @field:Valid val details: ProjectDetails
+)
+```
+
+  </TabItem>
+</Tabs>
+
+We’ve added:
+
+- `@NotNull` to ensure both fields are present.
+- `@Valid` to cascade validation into the `ProjectDetails` value object.
+
+Let’s define `ProjectDetails` next:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+// src/main/java/io/fluxzero/todo/project/model/ProjectDetails.java
+public record ProjectDetails(@NotBlank String name,
+                             @Size(max = 1000) String description) {
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// src/main/kotlin/io/fluxzero/todo/project/model/ProjectDetails.kt
+data class ProjectDetails(
+    @field:NotBlank val name: String,
+    @field:Size(max = 1000) val description: String
+)
+```
+
+  </TabItem>
+</Tabs>
+
+This makes sure every project has a name and an optional description, up to 1000 characters.
+
+<Aside type="note">
+  Fluxzero automatically validates incoming request payloads using
+  <a href="https://beanvalidation.org/2.0/" target="_blank" rel="noopener noreferrer">JSR 380 (Bean Validation 2.0) ↗</a>.
+  Annotations like <code>@NotNull</code> on commands and queries will be enforced automatically.
+</Aside>
+
+---
+
+#### Control user access
+
+To limit who can create projects we can require users to have the role of manager:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+@RequiresRole(manager)
+public record CreateProject(@NotNull ProjectId projectId,
+                            @NotNull @Valid ProjectDetails details) {
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+@RequiresRole(manager)
+data class CreateProject(
+    @field:NotNull val projectId: ProjectId,
+    @field:NotNull @field:Valid val details: ProjectDetails
+)
+```
+
+  </TabItem>
+</Tabs>
+
+You can define any roles. For more info on user and role based access see [user access control](/docs/guides/user-access).
+
+---
+
+### Handle the command
+
+Ok, we've created the command, but are not doing anything with it in our application. Let's create a handler:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+// src/main/java/io/fluxzero/todo/project/ProjectCommandHandler.java
+@Component
+public class ProjectCommandHandler {
+
+    @HandleCommand
+    void handle(CreateProject command) {
+        // handler logic here
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// src/main/kotlin/io/fluxzero/todo/project/ProjectCommandHandler.kt
+@Component
+class ProjectCommandHandler {
+
+    @HandleCommand
+    fun handle(command: CreateProject) {
+        // handler logic here
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+What this method tells Fluxzero is that this handler is interested in commands of type `CreateProject`. These commands
+may have been published in the same app or any other service connected to the Fluxzero runtime.
+
+You can inject all kinds of parameters into handler methods, like the command sender, metadata, or full command message. For more info on handlers see [message handlers](/docs/guides/message-handling).
+
+<Aside type="note">
+  Handlers can be Spring components. This way they will get auto-registered with Fluxzero.
+</Aside>
+
+#### Applying to an entity
+
+Our `CreateProject` command targets a specific `Project` entity (as opposed to say a command to send an email). For
+these types of commands it is most elegant to defer all business behavior to the command itself.
+
+We can do that by loading the targeted entity and applying the command:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+@Component
+public class ProjectCommandHandler {
+
+    @HandleCommand
+    void handle(CreateProject command) {
+        Fluxzero.loadEntity(command.projectId())
+                .assertAndApply(command);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+@Component
+class ProjectCommandHandler {
+
+    @HandleCommand
+    fun handle(command: CreateProject) {
+        Fluxzero.loadEntity(command.projectId)
+            .assertAndApply(command)
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+This loads the current state of the project entity as `Entity<Project>` and applies the command to the entity. This
+works even if the entity does not yet exist.
+
+---
+
+#### What gets published?
+
+In the last example, the command payload (`CreateProject`) is applied to the entity.
+If that succeeds, the same payload is wrapped in a new message which gets published as event.
+
+You don't need a separate `ProjectCreated` class — this avoids duplication and ensures the event log contains what *actually* happened.
+
+Want to understand why we recommend reusing the same payload in both command and event? See [Applying entity updates](/docs/guides/applying-entity-updates).
+
+---
+
+#### Creating a new Project using @Apply
+
+Now let's have the command create a new project when it gets applied:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+public record CreateProject(@NotNull ProjectId projectId,
+                            @NotNull @Valid ProjectDetails details) {
+
+    @Apply
+    Project create() {
+        return new Project(projectId, details);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+data class CreateProject(
+    @field:NotNull val projectId: ProjectId,
+    @field:NotNull @field:Valid val details: ProjectDetails
+) {
+    @Apply
+    fun create(): Project = Project(projectId, details)
+}
+```
+
+  </TabItem>
+</Tabs>
+
+`@Apply` methods are used to modify the state of an entity. In our case the Project doesn't exist yet so we simply
+create a new one.
+
+Like with handlers you can inject context into `@Apply` methods. In fact, let's inject the user sending in the
+command and make it the owner of the Project:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+public record CreateProject(@NotNull ProjectId projectId,
+                            @NotNull @Valid ProjectDetails details) {
+
+    @Apply
+    Project create(Sender sender) {
+        return new Project(projectId, details, sender.userId());
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+data class CreateProject(
+    @field:NotNull val projectId: ProjectId,
+    @field:NotNull @field:Valid val details: ProjectDetails
+) {
+    @Apply
+    fun create(sender: Sender): Project =
+        Project(projectId, details, sender.userId)
+}
+```
+
+  </TabItem>
+</Tabs>
+
+---
+
+#### Assert invariants
+
+Most commands contain checks against the current state of the entity. You can add those checks by annotating
+methods with `@AssertLegal`.
+
+For our `CreateProject` command we want to ensure that no `Project` exists having the same id:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+public record CreateProject(@NotNull ProjectId projectId,
+                            @NotNull @Valid ProjectDetails details) {
+
+    @AssertLegal
+    void assertNew(Project project) {
+        if (project != null) {
+            throw new IllegalCommandException("Project already exists");
+        }
+    }
+
+    @Apply
+    Project create(Sender sender) {
+        return new Project(projectId, details, sender.userId());
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+data class CreateProject(
+    @field:NotNull val projectId: ProjectId,
+    @field:NotNull @field:Valid val details: ProjectDetails
+) {
+
+    @AssertLegal
+    fun assertNew(project: Project?) {
+        if (project != null) {
+            throw IllegalCommandException("Project already exists")
+        }
+    }
+
+    @Apply
+    fun create(sender: Sender): Project {
+        return Project(projectId, details, sender.userId())
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+Here we added an assertion that injects the current state of the Project entity. If the project already exists an
+exception is thrown.
+
+Actually, this method can even be simpler:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+@AssertLegal
+void assertNew(Project project) {
+    throw new IllegalCommandException("Project already exists");
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+@AssertLegal
+fun assertNew(project: Project) {
+    throw IllegalCommandException("Project already exists")
+}
+```
+
+  </TabItem>
+</Tabs>
+
+This also works, because Fluxzero will only invoke this method if the Project != `null`. To invoke the method even
+when a parameter may be `null`, add `@Nullable` to the parameter (or `?` in Kotlin).
+
+<Aside type="tip">
+  In Fluxzero it is not needed to log any context like project id when throwing exceptions. That's because all messages
+   including commands and errors are available and correlated in Fluxzero's audit trail.
+
+   This means you can write clean error messages that can go straight to your users.
+</Aside>
+
+---
+
+### The Project entity
+
+Okay, that concludes our command and handler. Let’s now have a look at the `Project` entity that will hold our project's state:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+// src/main/java/io/fluxzero/todo/project/model/Project.java
+@Aggregate(searchable = true, eventSourced = false)
+public record Project(@EntityId ProjectId id,
+                      ProjectDetails details,
+                      UserId ownerId) {
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// src/main/kotlin/io/fluxzero/todo/project/model/Project.kt
+@Aggregate(searchable = true, eventSourced = false)
+data class Project(
+    @EntityId val id: ProjectId,
+    val details: ProjectDetails,
+    val ownerId: UserId
+)
+```
+
+  </TabItem>
+</Tabs>
+
+Here:
+- the `@Aggregate` annotation tells Fluxzero that Project is the base point of a group of related entities. For instance our Project will later be given a list of Task entities.
+- the `@EntityId` marks the field that uniquely identifies each project.
+
+<Aside type="note">
+  Most entity classes are immutable. With each evolution of the entity we simply return a new instance.
+</Aside>
+
+To configure the way a Project is to be persisted you can use the `@Aggregate` annotation. For instance, to make Projects
+available for search, simply enable it:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+@Aggregate(searchable = true)
+public record Project(@EntityId ProjectId id,
+                      ProjectDetails details,
+                      UserId ownerId) {
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+@Aggregate(searchable = true)
+data class Project(
+    @EntityId val id: ProjectId,
+    val details: ProjectDetails,
+    val ownerId: UserId
+)
+```
+
+  </TabItem>
+</Tabs>
+
+**By default, Fluxzero enables event-sourcing for aggregates.** When an event-sourced entity is loaded and applied to, the following happens:
+
+1. **Rehydrates** the entity from events or snapshots.
+2. **Runs `@AssertLegal` methods** to validate business rules.
+3. **Calls the `@Apply` method** to produce the next state.
+4. **Persists an event to Project's event log** containing the applied update.
+5. **Publishes the same event** to the global event log.
+6. **Stores the entity** in the document store (if `searchable = true`).
+
+This ensures that business rules are enforced before anything is persisted, and that your event log reflects what actually happened.
+
+<Aside type="tip">
+  Want to dive deeper into persistence models and aggregate lifecycles?
+  See [Entity persistence](/docs/guides/entity-persistence).
+</Aside>
+
+To disable event-sourcing just configure it:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+@Aggregate(searchable = true, eventSourced = false)
+public record Project(@EntityId ProjectId id,
+                      ProjectDetails details,
+                      UserId ownerId) {
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+@Aggregate(searchable = true, eventSourced = false)
+data class Project(
+    @EntityId val id: ProjectId,
+    val details: ProjectDetails,
+    val ownerId: UserId
+)
+```
+
+  </TabItem>
+</Tabs>
+
+This would cause the following changes in how the entity is loaded and updated:
+
+1. **Loads the entity document** from the document store.
+2. **Runs `@AssertLegal` methods** to validate business rules.
+3. **Calls the `@Apply` method** to produce the next state.
+4. **Persists the update** to the event log.
+5. **Stores the entity** in the document store.
+
+---
+
+### Testing our command
+
+Fluxzero makes it easy to write behavior tests as you go. Here’s our first one:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+// src/test/java/io/fluxzero/todo/project/CreateProjectTest.java
+class CreateProjectTest {
+    TestFixture fixture = TestFixture.create(new ProjectCommandHandler());
+
+    @Test
+    void creatingProjectSucceeds() {
+        var projectId = new ProjectId("p1");
+        var details = new ProjectDetails("My first project", "Tutorial starter");
+        var createProject = new CreateProject(projectId, details);
+
+        fixture.whenCommand(createProject)
+               .expectEvents(createProject);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// src/test/kotlin/io/fluxzero/todo/project/CreateProjectTest.kt
+class CreateProjectTest {
+    private val fixture = TestFixture.create(ProjectCommandHandler())
+
+    @Test
+    fun creatingProjectSucceeds() {
+        val projectId = ProjectId("p1")
+        val details = ProjectDetails("My first project", "Tutorial starter")
+        val createProject = CreateProject(projectId, details)
+
+        fixture.whenCommand(createProject)
+            .expectEvents(createProject)
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+This test checks that when we send a `CreateProject` command, the same payload is applied and published as an event.
+
+#### Testing with JSON
+
+Writing tests like this can be quite cumbersome. It is often preferable to load test inputs and outputs from external JSON files:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+@Test
+void creatingProjectSucceeds() {
+    fixture.whenCommand("/project/create-project.json")
+           .expectEvents("/project/create-project.json");
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+@Test
+fun creatingProjectSucceeds() {
+    fixture.whenCommand("/project/create-project.json")
+        .expectEvents("/project/create-project.json")
+}
+```
+
+  </TabItem>
+</Tabs>
+
+```json
+// src/test/resources/io/fluxzero/todo/project/create-project.json
+{
+  "@class": "CreateProject",
+  "projectId": "p1",
+  "details": {
+    "name": "My first project",
+    "description": "Tutorial starter"
+  }
+}
+```
+
+Adding `"@class": "CreateProject"` is needed for deserialization of the JSON.
+
+#### Creating the same project twice
+
+In our command we added a check that the project should not exist yet. Let's test that business rule:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+@Test
+void creatingProjectTwiceFails() {
+    fixture.givenCommands("/project/create-project.json")
+           .whenCommand("/project/create-project.json")
+           .expectExceptionalResult(IllegalCommandException.class);
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+@Test
+fun creatingProjectTwiceFails() {
+    fixture.givenCommands("/project/create-project.json")
+        .whenCommand("/project/create-project.json")
+        .expectExceptionalResult(IllegalCommandException::class.java)
+}
+```
+
+  </TabItem>
+</Tabs>
+
+It would be even better if we'd check for the expected error. We recommend introducing a `ProjectErrors` class that can
+be used by the command and in tests:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+// src/main/java/io/fluxzero/todo/project/ProjectErrors.java
+public interface ProjectErrors {
+    IllegalCommandException alreadyExists = illegalCommandException("Project already exists");
+
+    static IllegalCommandException illegalCommandException(String message) {
+        return new IllegalCommandException(message);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// src/main/kotlin/io/fluxzero/todo/project/ProjectErrors.kt
+object ProjectErrors {
+    val alreadyExists: IllegalCommandException = illegalCommandException("Project already exists")
+
+    @JvmStatic
+    fun illegalCommandException(message: String): IllegalCommandException =
+        IllegalCommandException(message)
+}
+```
+
+  </TabItem>
+</Tabs>
+
+We can now improve both our command and test:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+public record CreateProject(@NotNull ProjectId projectId,
+                            @NotNull @Valid ProjectDetails details) {
+
+    @AssertLegal
+    void assertNew(Project project) {
+        throw ProjectErrors.alreadyExists;
+    }
+
+    @Apply
+    Project create(Sender sender) {
+        return new Project(projectId, details, sender.userId());
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+data class CreateProject(
+    @field:NotNull val projectId: ProjectId,
+    @field:NotNull @field:Valid val details: ProjectDetails
+) {
+
+    @AssertLegal
+    fun assertNew(project: Project?) {
+        throw ProjectErrors.alreadyExists
+    }
+
+    @Apply
+    fun create(sender: Sender): Project {
+        return Project(projectId, details, sender.userId())
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+@Test
+void creatingProjectTwiceFails() {
+    fixture.givenCommands("/project/create-project.json")
+           .whenCommand("/project/create-project.json")
+           .expectExceptionalResult(ProjectErrors.alreadyExists);
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+@Test
+fun creatingProjectTwiceFails() {
+    fixture.givenCommands("/project/create-project.json")
+        .whenCommand("/project/create-project.json")
+        .expectExceptionalResult(ProjectErrors.alreadyExists)
+}
+```
+
+  </TabItem>
+</Tabs>
+
+
+
