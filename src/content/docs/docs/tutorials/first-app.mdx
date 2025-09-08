@@ -513,7 +513,7 @@ Okay, that concludes our command and handler. Let’s now have a look at the `Pr
 
 ```java
 // src/main/java/io/fluxzero/todo/project/model/Project.java
-@Aggregate(searchable = true, eventSourced = false)
+@Aggregate
 public record Project(@EntityId ProjectId id,
                       ProjectDetails details,
                       UserId ownerId) {
@@ -525,7 +525,7 @@ public record Project(@EntityId ProjectId id,
 
 ```kotlin
 // src/main/kotlin/io/fluxzero/todo/project/model/Project.kt
-@Aggregate(searchable = true, eventSourced = false)
+@Aggregate
 data class Project(
     @EntityId val id: ProjectId,
     val details: ProjectDetails,
@@ -856,5 +856,286 @@ fun creatingProjectTwiceFails() {
   </TabItem>
 </Tabs>
 
+## Update a Project
+
+Let’s move on to updating an existing `Project`. This command can be used to rename the project or update its description.
+
+Start by introducing a new command:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+public record UpdateProject(@NotNull ProjectId projectId,
+                            @NotNull @Valid ProjectDetails details) {
+
+    @AssertLegal
+    void assertExists(@Nullable Project project) {
+        if (project == null) {
+            throw ProjectErrors.notFound;
+        }
+    }
+
+    @AssertLegal
+    void assertAuthorized(Project project, Sender sender) {
+        if (!sender.isAuthorizedFor(project.ownerId())) {
+            throw ProjectErrors.unauthorized;
+        }
+    }
+
+    @Apply
+    Project apply(Project project) {
+        return project.withUpdate(details);
+    }
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+data class UpdateProject(
+    @field:NotNull val projectId: ProjectId,
+    @field:Valid val details: ProjectDetails
+) {
+
+    @AssertLegal
+    fun assertExists(project: Project?) {
+        if (project == null) {
+            throw ProjectErrors.notFound
+        }
+    }
+
+    @AssertLegal
+    fun assertAuthorized(project: Project, sender: Sender) {
+        if (!sender.isAuthorizedFor(project.ownerId)) {
+            throw ProjectErrors.unauthorized
+        }
+    }
+
+    @Apply
+    fun apply(project: Project): Project {
+        return project.withUpdate(details)
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+This command checks that the project exists, verifies that the user is authorized (i.e., project owner or admin), and applies an update to the project.
+
+We’ll make a small change to the `Project` entity, adding `@With` to its `details`:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+@Aggregate(searchable = true)
+public record Project(@EntityId ProjectId id,
+                      @With ProjectDetails details,
+                      UserId ownerId) {
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+@Aggregate(searchable = true)
+data class Project(
+    @EntityId val id: ProjectId,
+    @With val details: ProjectDetails,
+    val ownerId: UserId
+)
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="tip">
+  Fluxzero plays great with Lombok — use <code>@With</code>, <code>@Value</code>, <code>@Builder</code>, or anything else that fits your style.
+</Aside>
+
+---
+
+### Update the command handler
+
+Currently, the command handler only handles `CreateProject`. Instead of adding a new method for `UpdateProject`, we’ll extract a shared interface that both commands can implement:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+public interface ProjectUpdate {
+    @NotNull
+    ProjectId projectId();
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+interface ProjectUpdate {
+    fun projectId(): ProjectId
+}
+```
+
+</TabItem>
+</Tabs>
+
+And implement this interface:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+public record CreateProject(ProjectId projectId,
+                            @NotNull @Valid ProjectDetails details)
+        implements ProjectUpdate { ... }
+
+public record UpdateProject(ProjectId projectId,
+                            @NotNull @Valid ProjectDetails details)
+        implements ProjectUpdate { ... }
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+data class CreateProject(
+    val projectId: ProjectId,
+    @field:Valid val details: ProjectDetails
+) : ProjectUpdate
+
+data class UpdateProject(
+    val projectId: ProjectId,
+    @field:Valid val details: ProjectDetails
+) : ProjectUpdate
+```
+
+</TabItem>
+</Tabs>
+
+Now update the handler:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+@Component
+public class ProjectCommandHandler {
+
+    @HandleCommand
+    void handle(ProjectUpdate command) {
+        Fluxzero.loadEntity(command.projectId())
+                .assertAndApply(command);
+    }
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+@Component
+class ProjectCommandHandler {
+
+    @HandleCommand
+    fun handle(command: ProjectUpdate) {
+        Fluxzero.loadEntity(command.projectId())
+            .assertAndApply(command)
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### Testing Project updates
+
+Let’s test our `UpdateProject` command:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+// src/test/java/io/fluxzero/todo/project/UpdateProjectTest.java
+class UpdateProjectTest {
+    TestFixture fixture = TestFixture.create(new ProjectCommandHandler());
+
+    @Test
+    void renamingProjectSucceeds() {
+        fixture.givenCommands("/project/create-project.json")
+               .whenCommand("/project/rename-project.json")
+               .expectEvents("/project/rename-project.json");
+    }
+
+    @Test
+    void renamingNonExistentProjectFails() {
+        fixture.whenCommand("/project/rename-project.json")
+               .expectExceptionalResult(ProjectErrors.notFound);
+    }
+
+    @Test
+    void renamingProjectByNonOwnerFails() {
+        fixture.givenCommands("/project/create-project.json")
+               .whenCommandByUser("somebodyElse", "/project/rename-project.json")
+               .expectExceptionalResult(ProjectErrors.unauthorized);
+    }
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+// src/test/kotlin/io/fluxzero/todo/project/UpdateProjectTest.kt
+class UpdateProjectTest {
+    private val fixture = TestFixture.create(ProjectCommandHandler())
+
+    @Test
+    fun renamingProjectSucceeds() {
+        fixture.givenCommands("/project/create-project.json")
+            .whenCommand("/project/rename-project.json")
+            .expectEvents("/project/rename-project.json")
+    }
+
+    @Test
+    fun renamingNonExistentProjectFails() {
+        fixture.whenCommand("/project/rename-project.json")
+            .expectExceptionalResult(ProjectErrors.notFound)
+    }
+
+    @Test
+    fun renamingProjectByNonOwnerFails() {
+        fixture.givenCommands("/project/create-project.json")
+            .whenCommandByUser("somebodyElse", "/project/rename-project.json")
+            .expectExceptionalResult(ProjectErrors.unauthorized)
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+```json
+// src/test/resources/io/fluxzero/todo/project/rename-project.json
+{
+  "@class": "UpdateProject",
+  "projectId": "p1",
+  "details": {
+    "name": "Renamed project",
+    "description": "Tutorial starter"
+  }
+}
+```
+
+<Aside type="note">
+  The default user in tests is the system user. For more info on how users get injected in production and in tests, see <a href="/docs/guides/user-providers">User Providers →</a>
+</Aside>
 
 
