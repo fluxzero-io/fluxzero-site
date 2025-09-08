@@ -3,13 +3,13 @@ title: Installation
 description: Install Fluxzero from CLI, via UI or manually
 sidebar:
    order: 20
-tableOfContents: false
+tableOfContents: true
 ---
 
 import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+import ProjectGenerator from '~/components/ProjectGenerator.astro';
 
-
-## Scaffold a new project
+## Using the Fluxzero CLI
 
 To build Fluxzero projects, the only thing you need is Java 21+. However, we recommend using the **Fluxzero CLI** as it is the most convenient way to get started quickly. The CLI is a command line tool that helps you scaffold, build, and run Fluxzero applications.
 
@@ -82,3 +82,11 @@ To build Fluxzero projects, the only thing you need is Java 21+. However, we rec
    ```
 
 </Steps>
+
+
+## Generate a project 
+
+In case you prefer not to install our CLI, you can generate a project using the form below. 
+This will create a zip file with a ready-to-go Fluxzero project that you can download and run locally.
+
+<ProjectGenerator />
