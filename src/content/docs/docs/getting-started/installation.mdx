@@ -20,34 +20,36 @@ To build Fluxzero projects, the only thing you need is Java 21+. However, we rec
    <Tabs>
       <TabItem label="Bash">
          ```shell
-            curl -o- -s -L https://github.com/fluxzero-io/flux-cli/releases/latest/download/install.sh | bash
+            curl -o- -s -L https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/install.sh | bash
          ```
 
          This script will perform the following actions
          - Check if you have Java 21+ installed
          - Download the latest Fluxzero CLI release 
-         - Install the CLI in `~/.flux/cli`
+         - Install the CLI in `~/.fluxzero/bin/fz`
          - (Optionally) Install Fluxzero command `fz` into `/usr/local/bin`
       </TabItem>
 
-      <TabItem label="Docker">
+      {/* <TabItem label="Docker">
          If you prefer to use Docker, you can run the Fluxzero CLI in a container. This is useful if you don't want to install Java or the CLI on your local machine.
 
          Create an alias in your shell configuration file (e.g., `.bashrc`, `.zshrc`):
          ```shell
-            alias fz='docker run --rm -it -v .:/project flux-zero/cli:latest' 
+            alias fz='docker run --rm -it -v .:/project fluxzero/cli:latest' 
          ```
 
-      </TabItem>
+      </TabItem> */}
 
       <TabItem label="Manually">
          If you prefer, you can install the Fluxzero CLI with a few steps yourself
-         1. Download the latest [flux-cli.jar](https://github.com/fluxzero-io/flux-cli/releases/latest/download/flux-cli.jar)
+         1. Download the latest [flux-cli.jar](https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/fluxzero-cli.jar)
          2. Place it in your home directory under `.flux/flux-cli.jar`
          3. Create an alias in your shell configuration file (e.g., `.bashrc`, `.zshrc`):
             ```shell
-            alias fz='java -jar ~/.flux/flux-cli.jar'
+            alias fz='java -jar ~/.fluxzero/flux-cli.jar'
             ```
+
+         ❗️ Note that the CLI is only tested on Java 21. We recommend to install `temurin 21` for the best compatibility.
       </TabItem>
          
       

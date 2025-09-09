@@ -88,7 +88,7 @@ function parseJavadocClasses(html: string) {
     const fullName = packageName ? `${packageName}.${className}` : className;
     
     // Skip if it doesn't look like a proper class
-    if (!fullName.startsWith('io.fluxcapacitor')) {
+    if (!fullName.startsWith('io.fluxzero')) {
       continue;
     }
     
@@ -96,7 +96,7 @@ function parseJavadocClasses(html: string) {
       fullName,
       simpleName: className,
       packageName,
-      url: `https://flux-capacitor.io/fluxzero-sdk-java/javadoc/apidocs/${relativePath}`
+      url: `https://fluxzero-io.github.io/fluxzero-sdk-java/javadoc/apidocs/${relativePath}`
     });
   }
   
