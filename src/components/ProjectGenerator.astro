@@ -82,33 +82,18 @@ const templates: Record<string, Template> = {
             />
           </div>
 
-          <!-- Language & Build Tool -->
-          <div class="grid grid-cols-2 gap-4 mt-4">
-            <div class="space-y-2 mt-0">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Language</label>
-              <div class="flex flex-col gap-2">
-                <label class="flex items-baseline gap-3">
-                  <input type="radio" name="language" value="java" checked class="text-primary-600 focus:ring-primary-500 mt-0.5">
-                  <span class="text-sm text-gray-700 dark:text-gray-300">Java</span>
-                </label>
-                <label class="flex items-baseline gap-3">
-                  <input type="radio" name="language" value="kotlin" class="text-primary-600 focus:ring-primary-500 mt-0.5">
-                  <span class="text-sm text-gray-700 dark:text-gray-300">Kotlin</span>
-                </label>
-              </div>
-            </div>
-            <div class="space-y-2 mt-0">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Build Tool</label>
-              <div class="flex flex-col gap-2">
-                <label class="flex items-baseline gap-3">
-                  <input type="radio" name="buildTool" value="maven" checked class="text-primary-600 focus:ring-primary-500 mt-0.5">
-                  <span class="text-sm text-gray-700 dark:text-gray-300">Maven</span>
-                </label>
-                <label class="flex items-baseline gap-3">
-                  <input type="radio" name="buildTool" value="gradle" class="text-primary-600 focus:ring-primary-500 mt-0.5">
-                  <span class="text-sm text-gray-700 dark:text-gray-300">Gradle</span>
-                </label>
-              </div>
+          <!-- Build Tool -->
+          <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Build Tool</label>
+            <div class="flex flex-col gap-2">
+              <label class="flex items-baseline gap-3">
+                <input type="radio" name="buildTool" value="maven" checked class="text-primary-600 focus:ring-primary-500 mt-0.5">
+                <span class="text-sm text-gray-700 dark:text-gray-300">Maven</span>
+              </label>
+              <label class="flex items-baseline gap-3">
+                <input type="radio" name="buildTool" value="gradle" class="text-primary-600 focus:ring-primary-500 mt-0.5">
+                <span class="text-sm text-gray-700 dark:text-gray-300">Gradle</span>
+              </label>
             </div>
           </div>
         </div>
@@ -155,37 +140,23 @@ const templates: Record<string, Template> = {
 
     <!-- Generate Button -->
     <div class="flex items-center justify-between mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-      <div id="status-message" class="hidden">
-        <span id="success-message" class="inline-flex items-center gap-2 text-green-600 dark:text-green-400 text-sm hidden">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-          Project will be downloaded
-        </span>
-        <span id="error-message" class="inline-flex items-center gap-2 text-red-600 dark:text-red-400 text-sm hidden">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-          <span>Error generating project</span>
-        </span>
+      <div id="status-message" class="hidden inline-flex items-center gap-2 text-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d=""></path>
+        </svg>
+        <span class="message-text"></span>
       </div>
       
       <button 
         type="submit" 
         id="generate-btn"
         class="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-medium px-6 py-3 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+        data-state="idle"
       >
-        <svg id="btn-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
         </svg>
-        <span id="btn-text">Generate</span>
-        <span id="btn-loading" class="hidden inline-flex items-center gap-2">
-          <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          Generating...
-        </span>
+        <span class="btn-content">Generate</span>
       </button>
     </div>
   </form>
@@ -199,12 +170,7 @@ const templates: Record<string, Template> = {
   const templateCards = document.querySelectorAll('.template-card');
   const templateRadios = document.querySelectorAll('input[name="templateId"]');
   const generateBtn = document.getElementById('generate-btn');
-  const btnText = document.getElementById('btn-text');
-  const btnLoading = document.getElementById('btn-loading');
-  const btnIcon = document.getElementById('btn-icon');
   const statusMessage = document.getElementById('status-message');
-  const successMessage = document.getElementById('success-message');
-  const errorMessage = document.getElementById('error-message');
 
   // Handle template card selection
   templateCards.forEach(card => {
@@ -255,95 +221,150 @@ const templates: Record<string, Template> = {
     const projectName = formData.get('projectName').trim();
     const groupId = formData.get('groupId').trim();
     const templateId = formData.get('templateId');
-    const language = formData.get('language');
     const buildTool = formData.get('buildTool');
     
     // Validation
     if (!projectName || !templateId) {
-      showError('Please fill in all required fields');
+      showMessage('Please fill in all required fields', 'error');
       return;
     }
     
     // Show loading state
-    setLoading(true);
-    hideMessages();
+    setButtonState('loading');
+    hideMessage();
     
     try {
       const projectData = {
         projectName,
         groupId,
         templateId,
-        language,
         buildTool
       };
-      await generateProject(projectData);
-      showSuccess();
+      const result = await generateProject(projectData);
+      if (result.success) {
+        setButtonState('success');
+        showMessage('Project downloaded successfully!', 'success');
+      }
     } catch (error) {
-      showError('Failed to generate project. Please try again.');
+      setButtonState('idle');
+      showMessage('Failed to generate project. Please try again some time later.', 'error');
       console.error('Project generation error:', error);
-    } finally {
-      setLoading(false);
     }
   });
 
-  // Mock API call function (to be replaced with actual API)
+  // API call function
   async function generateProject(projectData) {
     console.log('Generating project with data:', projectData);
-    console.log('Selected template:', templates[projectData.templateId]?.name);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Map form data to API format
+    const apiPayload = {
+      template: projectData.templateId,
+      name: projectData.projectName,
+      packageName: projectData.groupId + '.' + projectData.projectName.toLowerCase().replace(/[^a-z0-9]/g, ''),
+      groupId: projectData.groupId,
+      buildSystem: projectData.buildTool
+    };
     
-    // TODO: Replace with actual API call
-    // For now, just log the data that would be sent to the API
-    console.log('Project data ready for API:', {
-      ...projectData,
-      template: templates[projectData.templateId]?.name,
-      timestamp: new Date().toISOString()
-    });
+    console.log('API payload:', apiPayload);
     
-    // Simulate successful response
-    return { success: true, downloadUrl: '#' };
-  }
-
-  // Helper functions
-  function setLoading(loading) {
-    generateBtn.disabled = loading;
-    
-    if (loading) {
-      btnText.classList.add('hidden');
-      btnIcon.classList.add('hidden');
-      btnLoading.classList.remove('hidden');
-    } else {
-      btnText.classList.remove('hidden');
-      btnIcon.classList.remove('hidden');
-      btnLoading.classList.add('hidden');
+    try {
+      const response = await fetch('https://fluxzero-cli-api-production.rene7346.workers.dev/api/init', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(apiPayload)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+      }
+      
+      // Get the response as blob for download
+      const blob = await response.blob();
+      
+      // Create download link
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = `${projectData.projectName}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Clean up the object URL
+      URL.revokeObjectURL(downloadUrl);
+      
+      return { success: true };
+    } catch (error) {
+      console.error('API call failed:', error);
+      throw error;
     }
   }
 
-  function showSuccess() {
-    statusMessage.classList.remove('hidden');
-    successMessage.classList.remove('hidden');
-    errorMessage.classList.add('hidden');
+  // Button state management
+  function setButtonState(state) {
+    const btnContent = generateBtn.querySelector('.btn-content');
+    const btnIcon = generateBtn.querySelector('svg');
     
-    // Hide success message after 3 seconds
+    generateBtn.setAttribute('data-state', state);
+    
+    switch (state) {
+      case 'idle':
+        generateBtn.disabled = false;
+        btnContent.textContent = 'Generate';
+        btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>';
+        btnIcon.classList.remove('animate-spin');
+        break;
+      case 'loading':
+        generateBtn.disabled = true;
+        btnContent.textContent = 'Generating...';
+        btnIcon.innerHTML = '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>';
+        btnIcon.classList.add('animate-spin');
+        break;
+      case 'success':
+        generateBtn.disabled = false;
+        btnContent.textContent = 'Downloaded!';
+        btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+        btnIcon.classList.remove('animate-spin');
+        // Reset to idle after 2 seconds
+        setTimeout(() => setButtonState('idle'), 2000);
+        break;
+    }
+  }
+
+
+  // Unified message system
+  function showMessage(text, type = 'error') {
+    const messageText = statusMessage.querySelector('.message-text');
+    const messageIcon = statusMessage.querySelector('svg path');
+    
+    // Update message text
+    messageText.textContent = text;
+    
+    // Update styling based on type
+    statusMessage.className = type === 'error' 
+      ? 'inline-flex items-center gap-2 text-sm text-red-600 dark:text-red-400'
+      : 'inline-flex items-center gap-2 text-sm text-green-600 dark:text-green-400';
+    
+    // Update icon based on type
+    if (type === 'error') {
+      messageIcon.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+    } else {
+      messageIcon.setAttribute('d', 'M5 13l4 4L19 7');
+    }
+    
+    // Show message
+    statusMessage.classList.remove('hidden');
+    
+    // Auto-hide after 5 seconds
     setTimeout(() => {
       statusMessage.classList.add('hidden');
-      successMessage.classList.add('hidden');
-    }, 3000);
+    }, 5000);
   }
-
-  function showError(message) {
-    statusMessage.classList.remove('hidden');
-    errorMessage.textContent = message;
-    errorMessage.classList.remove('hidden');
-    successMessage.classList.add('hidden');
-  }
-
-  function hideMessages() {
+  
+  function hideMessage() {
     statusMessage.classList.add('hidden');
-    successMessage.classList.add('hidden');
-    errorMessage.classList.add('hidden');
   }
 </script>
 
