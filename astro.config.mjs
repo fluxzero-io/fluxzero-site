@@ -25,6 +25,10 @@ export default defineConfig({
       "/docs": {
           status: 302,
           destination: "/docs/getting-started/introduction"
+      },
+      "/cli.sh": {
+          status: 302,
+          destination: "https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/install.sh"
       }
   },
   integrations: [
