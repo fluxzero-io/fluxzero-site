@@ -155,10 +155,53 @@ const {
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     
+    <!-- Parallax Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/parallax/3.1.0/parallax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rellax/1.12.1/rellax.min.js"></script>
+    
     <!-- Scripts -->
     <script src="../scripts/theme-switcher.js"></script>
     <script src="../scripts/theme.js"></script>
     <script src="../scripts/main.js"></script>
     <script src="../scripts/vendor.js"></script>
+
+    <script>
+      // Initialize mouse-based parallax effects
+      document.addEventListener('DOMContentLoaded', function() {
+        const parallaxContainers = document.querySelectorAll('.parallax');
+        
+        parallaxContainers.forEach(function(container) {
+          const layers = container.querySelectorAll('.parallax-layer');
+          
+          container.addEventListener('mousemove', function(e) {
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            
+            layers.forEach(function(layer) {
+              const depth = parseFloat(layer.getAttribute('data-depth')) || 0;
+              const moveX = x * depth;
+              const moveY = y * depth;
+              
+              layer.style.transform = `translate(${moveX}px, ${moveY}px)`;
+            });
+          });
+          
+          container.addEventListener('mouseleave', function() {
+            layers.forEach(function(layer) {
+              layer.style.transform = 'translate(0px, 0px)';
+            });
+          });
+        });
+
+        // Initialize Rellax for scroll-based parallax if available
+        if (typeof Rellax !== 'undefined') {
+          const rellaxElements = document.querySelectorAll('.rellax');
+          if (rellaxElements.length > 0) {
+            var rellax = new Rellax('.rellax');
+          }
+        }
+      });
+    </script>
   </body>
 </html>
