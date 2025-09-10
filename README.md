@@ -2,7 +2,7 @@
 
 ## Preview
 
-Current "production" URL https://flux-docs01.rene7346.workers.dev/
+Current "production" URL https://flux-website.rene7346.workers.dev
 
 ## Commands
 
