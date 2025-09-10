@@ -166,33 +166,27 @@ const {
     <script src="../scripts/vendor.js"></script>
 
     <script>
-      // Initialize mouse-based parallax effects
+      // Initialize global mouse-based parallax effects
       document.addEventListener('DOMContentLoaded', function() {
-        const parallaxContainers = document.querySelectorAll('.parallax');
+        const parallaxLayers = document.querySelectorAll('.parallax-layer[data-depth]');
         
-        parallaxContainers.forEach(function(container) {
-          const layers = container.querySelectorAll('.parallax-layer');
-          
-          container.addEventListener('mousemove', function(e) {
-            const rect = container.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
+        if (parallaxLayers.length > 0) {
+          document.addEventListener('mousemove', function(e) {
+            // Calculate mouse position relative to viewport center
+            const x = (e.clientX - window.innerWidth / 2) / window.innerWidth;
+            const y = (e.clientY - window.innerHeight / 2) / window.innerHeight;
             
-            layers.forEach(function(layer) {
+            parallaxLayers.forEach(function(layer) {
               const depth = parseFloat(layer.getAttribute('data-depth')) || 0;
-              const moveX = x * depth;
-              const moveY = y * depth;
+              // Scale the movement to be more subtle
+              const moveX = x * depth * 60; // Adjust multiplier for desired intensity
+              const moveY = y * depth * 60;
               
               layer.style.transform = `translate(${moveX}px, ${moveY}px)`;
+              layer.style.transition = 'transform 0.1s ease-out'; // Smooth movement
             });
           });
-          
-          container.addEventListener('mouseleave', function() {
-            layers.forEach(function(layer) {
-              layer.style.transform = 'translate(0px, 0px)';
-            });
-          });
-        });
+        }
 
         // Initialize Rellax for scroll-based parallax if available
         if (typeof Rellax !== 'undefined') {
