@@ -1,0 +1,106 @@
+.annotation {
+    color: #B2AE6A;
+}
+
+.method {
+    color: #6BA6EF;
+}
+
+.field {
+    color: #BD80B8;
+}
+
+.keyword {
+    color: #BC8B6E;
+}
+
+.comment {
+    color: #bbc0c2;
+}
+
+.fluxzero-code {
+    font-size: 1.1rem !important;
+}
+
+.fluxzero-logos img {
+    filter: grayscale(100%) brightness(90%) contrast(40%);
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.fluxzero-logos img:hover {
+    filter: grayscale(0%) brightness(100%) contrast(100%);
+    opacity: 1;
+}
+
+/* Status Button Indicator */
+.status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #28a745; /* default = green */
+    box-shadow: 0 0 6px rgba(40, 167, 69, 0.6);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect on status button */
+.status-btn:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.fluxzero-menu-right {
+    /* Status Button Indicator */
+    .status-btn .status-indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #28a745; /* default = green */
+        box-shadow: 0 0 6px rgba(40, 167, 69, 0.6);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Hover effect on status button */
+    .status-btn:hover {
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Button group styling */
+    /* Fix Sign In hover on dark navbar */
+    .btn-group .btn-outline-light {
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.25);
+        background-color: transparent;
+    }
+
+    .btn-group .btn-outline-light:hover {
+        background-color: rgba(255, 255, 255, 0.12); /* subtle bright hover */
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Keep the primary "Get Started" button vibrant */
+    .btn-group .btn-primary {
+        background: linear-gradient(135deg, #8a2be2, #6f00ff);
+        border: none;
+        color: #fff;
+    }
+
+    .btn-group .btn-primary:hover {
+        filter: brightness(1.1);
+    }
+
+    /* Status button: match hover style */
+    .status-btn {
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background-color: transparent;
+    }
+
+    .status-btn:hover {
+        background-color: rgba(255, 255, 255, 0.12); /* match Sign In hover */
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+}
+
