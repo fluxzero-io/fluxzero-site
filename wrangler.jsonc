@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "flux-docs01",
+	"name": "flux-website",
 	"account_id": "fbb4ae392a349c3a4c7b713ec57dbc29",
 	"main": "./dist/_worker.js/index.js",
 	"compatibility_date": "2025-06-04",
