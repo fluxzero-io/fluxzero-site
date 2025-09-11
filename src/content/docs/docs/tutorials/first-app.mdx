@@ -8,7 +8,7 @@ import {Aside, TabItem, Tabs} from '@astrojs/starlight/components';
 
 # Your first Fluxzero app
 
-In this tutorial, we’ll build a simple to-do application that shows the core ideas of Fluxzero — one step at a time.
+In this tutorial, we’ll build a simple to-do app that shows the core ideas of Fluxzero — one step at a time.
 We’ll start from a blank slate and add features like creating projects, managing tasks, querying data, and scheduling actions.
 
 Each feature comes with a test, so you’ll see how Fluxzero works in practice, not just theory.
@@ -2000,7 +2000,7 @@ We’ll add three commands:
 
 - **AssignTask**: assigns a task to a different user.
 - **CompleteTask**: marks a task as completed.
-- **DeleteTask**: removes an unresolved task.
+- **CancelTask**: cancels an unresolved task.
 
 Let’s start by defining a shared interface for task-related updates. We allow these to be sent by Project owner or Task assignee:
 
@@ -2163,16 +2163,16 @@ data class CompleteTask(
 
 ---
 
-### Delete a Task
+### Cancel a Task
 
-To delete a task, simply return `null` from your `@Apply` method:
+To cancel a task and delete it from the Project, simply return `null` from your `@Apply` method:
 
 <Tabs>
 <TabItem value="Java" label="Java">
 
 ```java
-// src/main/java/io/fluxzero/todo/project/command/DeleteTask.java
-public record DeleteTask(ProjectId projectId,
+// src/main/java/io/fluxzero/todo/project/command/CancelTask.java
+public record CancelTask(ProjectId projectId,
                          @NotNull TaskId taskId) implements TaskUpdate {
 
     @Apply
@@ -2186,8 +2186,8 @@ public record DeleteTask(ProjectId projectId,
 <TabItem value="Kotlin" label="Kotlin">
 
 ```kotlin
-// src/main/kotlin/io/fluxzero/todo/project/command/DeleteTask.kt
-data class DeleteTask(
+// src/main/kotlin/io/fluxzero/todo/project/command/CancelTask.kt
+data class CancelTask(
     val projectId: ProjectId,
     val taskId: TaskId
 ) : TaskUpdate {
@@ -2232,7 +2232,7 @@ public class TaskIndexer {
     }
 
     @HandleEvent
-    void handle(DeleteTask event) {
+    void handle(CancelTask event) {
         Fluxzero.deleteDocument(event.taskId(), Task.class);
     }
 }
@@ -2251,7 +2251,7 @@ class TaskIndexer {
     }
 
     @HandleEvent
-    fun handle(event: DeleteTask) {
+    fun handle(event: CancelTask) {
         Fluxzero.deleteDocument(event.taskId, Task::class.java)
     }
 }
@@ -2333,3 +2333,370 @@ fun getMyTasks(): List<Task> {
 
 </TabItem>
 </Tabs>
+
+## Scheduling a notification
+
+To wrap up this tutorial, let's add support for task deadlines.
+
+When a task has a deadline, we want to notify the assignee if it's not completed in time. If the task is completed before the deadline, the scheduled notification should be cancelled automatically.
+
+First, we extend TaskDetails to include an optional deadline:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+public record TaskDetails(@NotBlank String name,
+                          Instant deadline) {
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+data class TaskDetails(
+    @field:NotBlank val name: String,
+    val deadline: Instant? = null
+)
+```
+
+</TabItem>
+</Tabs>
+
+Now let’s create a handler that listens for Task events and is responsible for scheduling and cancelling task expiry:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+@Component
+public class TaskScheduler {
+
+    @HandleEvent
+    void handle(AddTask event, Entity<Task> taskEntity) {
+        if (event.details().deadline() != null) {
+            Fluxzero.schedule(new TaskExpiry(event.taskId()),
+                              event.details().deadline());
+        }
+    }
+
+    @HandleEvent(allowedClasses = {CompleteTask.class, CancelTask.class})
+    void handle(TaskUpdate event) {
+        Fluxzero.cancelSchedule(new TaskExpiry(event.taskId()));
+    }
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+@Component
+class TaskScheduler {
+
+    @HandleEvent
+    fun handle(event: AddTask, taskEntity: Entity<Task>) {
+        event.details.deadline?.let {
+            Fluxzero.schedule(TaskExpiry(event.taskId), it)
+        }
+    }
+
+    @HandleEvent(allowedClasses = [CompleteTask::class, CancelTask::class])
+    fun handle(event: TaskUpdate) {
+        Fluxzero.cancelSchedule(TaskExpiry(event.taskId))
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+The scheduled object, TaskExpiry, looks like this:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+public record TaskExpiry(TaskId taskId) {
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+data class TaskExpiry(val taskId: TaskId)
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### Sending to Slack
+
+Now that we’ve scheduled TaskExpiry, let’s send a notification to a Slack channel when a tasks expires.
+
+We’ll do this in a separate handler to keep responsibilities clear. This handler will load the task, check if it still exists, and then send a message to a Slack webhook (if configured):
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+@Component
+@ConditionalOnProperty("slack.webhook.url")
+public class SlackNotifier {
+
+    @HandleSchedule
+    void notifyAssignee(TaskExpiry expiry) {
+        Task task = Fluxzero.loadEntity(expiry.taskId()).get();
+        if (task != null) {
+            var message = String.format("Task '%s' has expired!", task.details().name());
+            var slackUrl = ApplicationProperties.getProperty("slack.webhook.url");
+            Fluxzero.sendWebRequest(
+                WebRequest.post(slackUrl)
+                          .payload(Map.of("text", message))
+                          .build()
+            );
+        }
+    }
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+@Component
+@ConditionalOnProperty("slack.webhook.url")
+class SlackNotifier {
+
+    @HandleSchedule
+    fun notifyAssignee(expiry: TaskExpiry) {
+        val task = Fluxzero.loadEntity(expiry.taskId).get() ?: return
+        val message = "Task '${task.details.name}' has expired!"
+        val slackUrl = ApplicationProperties.getProperty("slack.webhook.url")
+        Fluxzero.sendWebRequest(
+            WebRequest.post(slackUrl)
+                      .payload(mapOf("text" to message))
+                      .build()
+        )
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="note">
+  If your app is running in a secure environment, make sure to inject secrets like `slack.webhook.url` via environment variables or secret stores.
+</Aside>
+
+This pattern keeps things clean:
+
+- TaskScheduler schedules and cancels deadlines.
+- SlackNotifier reacts to expirations.
+- You could easily add other notifiers (e.g. email, WebSocket) that also react to the TaskExpiry schedule.
+
+This design keeps your logic clean and your system honest: expiry is only acted on when the schedule triggers — and always based on the **latest task state**.
+
+Let us know if you want to take this even further!
+
+### Outgoing API calls
+
+In Fluxzero, outgoing web requests — like sending a Slack message — are treated just like any other message.
+
+When you call:
+
+```java
+Fluxzero.sendWebRequest(
+    WebRequest.post(slackUrl)
+              .payload(Map.of("text", message))
+              .build()
+);
+```
+
+Fluxzero does not send the request immediately from your app. Instead, the request is:
+
+1. **Logged to the WebRequest log**, just like a regular command or event.
+2. **Picked up and executed by Fluxzero’s proxy**, which handles all outbound traffic.
+3. **Audited and observable** in the same way as incoming requests and internal messages.
+
+This gives you several advantages:
+
+- **Monitoring**: You can track which external calls were made and when.
+- **Security**: You can restrict or filter external requests in production (e.g. only allow requests to specific domains).
+- **Retry & Scheduling**: Just like other messages, web requests can be scheduled, retried, or routed to specific environments.
+
+This design ensures that even side-effects like webhooks or API calls are safe, observable, and testable — without giving up on declarative modeling.
+
+
+### Testing task notifications
+
+Let's add a test to ensure that the Slack message goes out when a task deadline is missed.
+
+We'll use Fluxzero's time-based testing features to simulate time advancing to the deadline. We'll also verify that a
+`WebRequest` is sent to Slack using the expected payload:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+// src/test/java/io/fluxzero/todo/project/TaskNotificationTest.java
+class TaskNotificationTest {
+
+    Instant deadline = Instant.now().plusHours(2);
+    AddTask addTaskWithDeadline = JsonUtils.fromFileWith(
+        "/project/add-task.json", Map.of("details.deadline", deadline)
+    );
+
+    TestFixture fixture = TestFixture.create(
+        new ProjectCommandHandler(),
+        new TaskScheduler(),
+        new SlackNotifier()
+    );
+
+    @Test
+    void notifyAssigneeWhenDeadlineIsMissed() {
+        fixture
+            .givenCommands(
+                "/project/create-project.json",
+                addTaskWithDeadline
+            )
+            .whenTimeAdvancesTo(deadline)
+            .expectWebRequests(
+                WebRequest.post("http://slack.test")
+                          .payload("/project/slack-notification.json")
+                          .build()
+            );
+    }
+
+    @Test
+    void doNotNotifyIfTaskWasCompletedBeforeDeadline() {
+        fixture
+            .givenCommands(
+                "/project/create-project.json",
+                addTaskWithDeadline,
+                "/project/complete-task.json"
+            )
+            .whenTimeAdvancesTo(deadline)
+            .expectNoWebRequests();
+    }
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+// src/test/kotlin/io/fluxzero/todo/project/TaskNotificationTest.kt
+class TaskNotificationTest {
+
+    private val deadline: Instant = Instant.now().plusHours(2)
+    private val addTaskWithDeadline: AddTask = JsonUtils.fromFileWith(
+        "/project/add-task.json",
+        mapOf("details.deadline" to deadline)
+    )
+
+    private val fixture = TestFixture.create(
+        ProjectCommandHandler(),
+        TaskScheduler(),
+        SlackNotifier()
+    )
+
+    @Test
+    fun notifyAssigneeWhenDeadlineIsMissed() {
+        fixture
+            .givenCommands(
+                "/project/create-project.json",
+                addTaskWithDeadline
+            )
+            .whenTimeAdvancesTo(deadline)
+            .expectWebRequests(
+                WebRequest.post("http://slack.test")
+                    .payload("/project/slack-notification.json")
+                    .build()
+            )
+    }
+
+    @Test
+    fun doNotNotifyIfTaskWasCompletedBeforeDeadline() {
+        fixture
+            .givenCommands(
+                "/project/create-project.json",
+                addTaskWithDeadline,
+                "/project/complete-task.json"
+            )
+            .whenTimeAdvancesTo(deadline)
+            .expectNoWebRequests()
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+With the following example JSON files:
+
+```json
+// src/test/resources/io/fluxzero/todo/project/add-task.json
+{
+  "@class": "AddTask",
+  "projectId": "p1",
+  "taskId": "t1",
+  "details": {
+    "name": "Submit tutorial"
+  }
+}
+```
+
+```json
+// src/test/resources/io/fluxzero/todo/project/slack-notification.json
+{
+  "text": "Task: 'Submit tutorial' has expired!"
+}
+```
+
+```json
+// src/test/resources/io/fluxzero/todo/project/complete-task.json
+{
+  "@class": "CompleteTask",
+  "projectId": "p1",
+  "taskId": "t1"
+}
+```
+
+This setup ensures your task expiration logic and Slack integration are fully testable using clean, reusable JSON definitions.
+
+## Wrapping up
+
+That’s it! You’ve just built your first Fluxzero app — complete with:
+
+- ✅ Creating and updating projects
+- ✅ Adding nested tasks
+- ✅ Defining business rules and assertions
+- ✅ Querying data with filters and full-text search
+- ✅ Exposing commands and queries as HTTP endpoints
+- ✅ Scheduling future actions
+- ✅ Sending Slack notifications
+- ✅ Writing clean, declarative tests for everything
+
+All of this using simple message classes and a handful of handlers in a clean, domain-driven design.
+
+---
+
+### What’s next?
+
+Want to keep exploring?
+
+- Check out more examples in the <a href="https://github.com/fluxzero-io/fluxzero-examples" target="_blank" rel="noopener noreferrer">Fluxzero examples repo <span aria-hidden="true">↗</span></a>
+- Learn how to [deploy your app in Fluxzero Cloud](/docs/tutorials/cloud-deployment)
+- Dive deeper into Fluxzero using [our guides](/docs/guides/guides-intro)
+- Try building more features into the to-do app — like task progress or checklists.
+
+---
+
+Fluxzero is designed to help you move fast, without giving up on clean architecture or observability.
+
+[Let us know what you build](/contact) — and if you have questions or feedback, we’d love to hear. We built this for developers like you. Let’s make it the best it can be.
