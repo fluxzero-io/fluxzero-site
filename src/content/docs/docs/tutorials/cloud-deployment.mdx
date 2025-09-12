@@ -5,9 +5,96 @@ sidebar:
    order: 40
 ---
 
+import { Image } from 'astro:assets';
+import {Aside, TabItem, Tabs} from '@astrojs/starlight/components';
+
+import cloudDashboard from '~/assets/cloud/dashboard-eb.png';
+
+# Fluxzero Cloud
+
+Fluxzero Cloud is a fully managed hosting and observability platform for Fluxzero applications. It handles infrastructure, deployment, monitoring, scaling, and logs—so you can stay focused on writing clean business logic.
+
+> ⚠️ Fluxzero Cloud is currently in private beta. [Request access](/contact) if you’d like to be part of the early adopters.
+
+---
+
 ## Why Fluxzero Cloud?
 
-Fluxzero primary goal is to improve developer productivity. It does that by providing an SDK which allows you to focus on writing business logic.
-However, writing the software is only half of the job. Deploying and monitoring it is the other half.
-Fluxzero Cloud is a fully managed service that takes care of the deployment and monitoring of your Fluxzero projects.
+Fluxzero’s primary goal is to make backend development radically simpler and more productive.
 
+The SDK helps you build clean, observable applications. But writing the code is only part of the story—deploying, running, and monitoring your app is just as important.
+
+Fluxzero Cloud gives you:
+
+- GitHub-based deployments (or deploy via API)
+- Full audit trail of all incoming and outgoing messages
+- Automatic scaling and zero-downtime deployments
+- Real-time insights into usage and performance
+- Live inspection of application state
+- Managed clusters, backups, secrets, and tenant routing
+
+---
+
+## Deploying from GitHub
+
+To deploy your app, all you need is a GitHub Actions workflow and your Fluxzero API key.
+
+Here’s an example:
+
+```yaml
+steps:
+  - name: Generate Fluxzero JWT
+    id: jwt
+    uses: fluxzero-io/fluxzero-jwt-action@v1
+    with:
+      api-key: ${{ secrets.FLUXZERO_API_KEY }}
+
+  # Build and push your docker image...
+
+  - name: Deploy app to Fluxzero Cloud
+    uses: fluxzero-io/fluxzero-deploy-action@v1
+    with:
+      cluster-name: "Production"
+      application-name: "To Do"
+      image-name: ${{ env.image_name }}
+      version: ${{ env.image_version }}
+      token: ${{ steps.jwt.outputs.token }}
+```
+
+<Aside type="note">
+    You can also deploy via API using your generated JWT token.
+</Aside>
+
+---
+
+## Dashboard Preview
+
+Below is a snapshot of the Fluxzero Cloud dashboard, showing running applications in a production cluster.
+
+<Image src={cloudDashboard} alt="Fluxzero Cloud Dashboard" style="border-radius: 1.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);"/>
+
+The dashboard already supports:
+
+- ✅ Organization & cluster management
+- ✅ App deployments and versioning
+- ✅ Secrets and environment variables
+- ✅ Logs, schedules, and web request inspection
+- ✅ Usage monitoring and task breakdowns
+- ✅ Multi-tenant routing and domain config
+- ✅ User access control and invoicing
+- ✅ Data backups and restores
+
+---
+
+## What’s Coming Next
+
+While many features are already live in the private beta, here’s a quick look at what’s on the way:
+
+- Configure endpoints, routing, and tenants directly from the dashboard
+- Roll back deployments with a single click
+- Auto-scale trackers and applications
+- Common admin queries and commands
+
+---
+
+Let us know what you build—and if you have questions or ideas, don’t hesitate to [reach out](/contact). We built this for you!

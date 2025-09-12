@@ -1,7 +1,16 @@
 {
-  "lastUpdated": "2025-09-10T13:26:24.139Z",
-  "latestVersion": "1.0.0",
+  "lastUpdated": "2025-09-12T05:09:55.352Z",
+  "latestVersion": "1.0.1",
   "releases": [
+    {
+      "version": "1.0.1",
+      "date": "2025-09-11",
+      "body": "##### [1.0.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.0.0...1.0.1) (2025-09-11)\n\n\n##### Bug Fixes\n\n* **modeling:** return old aggregate when an apply should be blocked ([ed5a30e](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/ed5a30ed0cdcf403d6276a96eec39f9c17b2b416))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.0.1",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
     {
       "version": "1.0.0",
       "date": "2025-09-10",

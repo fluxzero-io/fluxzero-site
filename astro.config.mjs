@@ -57,16 +57,16 @@ export default defineConfig({
               autogenerate: { directory: 'docs/tutorials' },
           },
           {
-              label: 'Foundation',
-              autogenerate: { directory: 'docs/foundation' },
-          },
-          {
               label: 'Guides',
               autogenerate: { directory: 'docs/guides' },
           },
           {
               label: 'Reference',
               autogenerate: { directory: 'docs/reference' },
+          },
+          {
+              label: 'Foundation',
+              autogenerate: { directory: 'docs/foundation' },
           },
       ],
     }),
