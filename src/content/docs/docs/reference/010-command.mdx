@@ -1,6 +1,5 @@
 ---
-title: Commands
-description: Understanding Commands in Flux
+title: Command
 sidebar:
    order: 10
 ---
@@ -155,9 +154,3 @@ When you dispatch a command, Flux goes through the following pipeline:
 3. **Serialization** - The message is converted to a `SerializedMessage`
 4. **Dispatch Interceptors (Post-Serialization)** - Final modifications after serialization
 5. **Forwarding to Flux Platform** - The command is sent to the platform for processing
-
-## See Also
-
-- [Message Handling](/docs/reference/core-components/message-handling) - Learn how to handle commands
-- [Metadata](/docs/reference/core-components/message#metadata) - Add context to your commands
-- [Testing](/docs/guides/testing) - How to test command handlers 

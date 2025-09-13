@@ -2,162 +2,262 @@
 title: Message handling
 description: Message handling
 sidebar:
-   order: 20
+  order: 20
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-Fluxzero is centered around sending and receiving messages — such as __commands__, __events__, __queries__, and
-__web requests__. These messages can originate from your own application or any other client connected to the same
-Fluxzero Runtime.
+Fluxzero is centered around sending and receiving messages — such as **commands**, **events**, **queries**, and **web requests**. These messages can originate from your own application or any other client connected to the same Fluxzero Runtime.
 
-Handlers are simply methods annotated with `@HandleCommand`, `@HandleEvent`, `@HandleQuery`, etc. Here’s a basic example
-of an event handler that dispatches a command to send a welcome email when a user is created:
+Handlers are simply methods annotated with `@HandleCommand`, `@HandleEvent`, `@HandleQuery`, etc. Here’s a basic example of an event handler that dispatches a command to send a welcome email when a user is created:
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
 class UserEventHandler {
     @HandleEvent
     void handle(CreateUser event) {
-        Fluxzero.sendCommand(
-                new SendWelcomeEmail(event.getUserProfile()));
+        Fluxzero.sendCommand(new SendWelcomeEmail(event.getUserProfile()));
     }
 }
 ```
 
-This handler uses the static `sendCommand` method on Fluxzero, which works because the client is automatically
-injected into the thread-local context before message handling begins. This approach eliminates the need to inject
-`Fluxzero` into every handler.
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
 
-To receive that command, you would define a corresponding command handler:
+```kotlin
+class UserEventHandler {
+    @HandleEvent
+    fun handle(event: CreateUser) {
+        Fluxzero.sendCommand(SendWelcomeEmail(event.userProfile))
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+This handler uses the static `sendCommand` method on Fluxzero, which works because the client is automatically injected into the thread-local context before message handling begins. This eliminates the need to inject `Fluxzero` into every handler.
+
+---
+
+To receive that command, define a corresponding command handler:
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
 class EmailCommandHandler {
     @HandleCommand
     void handle(SendWelcomeEmail command) {
-        //send welcome email to user
+        // send welcome email to user
     }
 }
 ```
 
-Handlers can return a result (e.g. from queries or commands), which will automatically be published as a __Result__
-message and sent back to the originating client:
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+class EmailCommandHandler {
+    @HandleCommand
+    fun handle(command: SendWelcomeEmail) {
+        // send welcome email to user
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+Handlers can return a result (e.g., from queries or commands). The result is automatically published as a **Result** message and sent back to the originating client:
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
 class UserQueryHandler {
     @HandleQuery
     UserProfile handle(GetUserProfile query) {
-        //return the user profile
+        // return the user profile
+        return new UserProfile(...);
     }
 }
 ```
 
-To perform a query and wait for its result synchronously, you can use:
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+class UserQueryHandler {
+    @HandleQuery
+    fun handle(query: GetUserProfile): UserProfile {
+        // return the user profile
+        return UserProfile(...)
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+To perform a query and wait synchronously for its result:
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
-class UserEventHandler {
+class PasswordEventHandler {
     @HandleEvent
     void handle(ResetPassword event) {
-        UserProfile userProfile = Fluxzero
-                .queryAndWait(new GetUserProfile(event.getUserId()));
-        // Perform reset using userProfile
+        UserProfile user = Fluxzero.queryAndWait(new GetUserProfile(event.getUserId()));
+        // perform reset using user
     }
 }
 ```
 
-## Returning Futures
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
 
-Handler methods may also return a `CompletableFuture<T>` instead of a direct value. In that case, Fluxzero will
-publish the result to the result log once the future completes:
-
-```java
-
-@HandleQuery
-CompletableFuture<UserProfile> handle(GetUserProfile query) {
-    return userService.fetchAsync(query.getUserId());
-}
-```
-
-This can be useful when calling asynchronous services (e.g. via HTTP or database drivers).
-
-> ⚠️ **Caution:** While supported, returning a future means Flux will consider the message *handled* as soon as the
-> handler returns the future—not when the future completes. This can be problematic if:
->
-> - The operation must be guaranteed to complete (e.g. business-critical updates),
-> - You rely on message acknowledgment for progress tracking,
-> - Or you need back-pressure to avoid overloading the system.
->
-> For most handlers, **synchronous return types are recommended**, or use `.join()` to explicitly block when necessary.
-
-This pattern works best for non-critical side effects or purely read-oriented queries that can tolerate eventual
-completion.
-
-## Handler Matching and Passive Handlers
-
-Fluxzero dynamically resolves which handler method(s) should respond to a message based on **handler specificity**
-and **message type**. This resolution behavior is consistent across all message types — including **commands**,
-**queries**, **events**, **errors**, **metrics**, and more.
-
-### Most Specific Handler Wins (Per Class)
-
-If multiple handler methods in the *same class* can handle a message (e.g. a `CreateUser` event), **only the most
-specific method** is invoked. This allows you to define fallback methods at a more general level if no exact match is
-found.
-
-```java
-
-@HandleEvent
-void handle(Object event) {
-    log.info("Generic fallback");
-}
-
-@HandleEvent
-void handle(CreateUser event) {
-    log.info("Handling specific CreateUser event");
-}
-```
-
-➡️ In this example, only the `handle(CreateUser)` method runs when a `CreateUser` event is dispatched.
-
-### Multiple Handler Classes Are Invoked
-
-When the same message is handled by **different classes**, all eligible handlers are invoked independently.
-
-```java
-public class BusinessHandler {
+```kotlin
+class PasswordEventHandler {
     @HandleEvent
-    void handle(CreateUser event) {
-        // perform business logic
-    }
-}
-
-public class LoggingHandler {
-    @HandleEvent
-    void logEvent(Object event) {
-        log.info("Observed event {}", event);
+    fun handle(event: ResetPassword) {
+        val user = Fluxzero.queryAndWait(GetUserProfile(event.userId))
+        // perform reset using user
     }
 }
 ```
 
-➡️ Here, both handlers are invoked when a `CreateUser` event is dispatched.
+</TabItem>
+</Tabs>
 
-### Requests Prefer a Single Active Handler
+## Returning futures
 
-For **request-like messages** — such as commands, queries and web requests — only **one handler** class is
-expected to produce a response. If multiple are eligible, only the ones marked as **non-passive** will be considered for
-producing the result.
+Handler methods may also return a `CompletableFuture<T>` instead of a direct value. Fluxzero will publish the result when the future completes:
 
-Additional handlers may still be registered using `passive = true`, e.g., for logging, auditing, metrics, or outbox
-patterns.
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
-public class UserHandler {
+class AsyncUserQueryHandler {
+    @HandleQuery
+    CompletableFuture<UserProfile> handle(GetUserProfile query) {
+        return userService.fetchAsync(query.getUserId());
+    }
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+class AsyncUserQueryHandler {
+    @HandleQuery
+    fun handle(query: GetUserProfile): java.util.concurrent.CompletableFuture<UserProfile> {
+        return userService.fetchAsync(query.userId)
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+<Aside type="caution">
+    Returning a future means Fluxzero considers the message *handled* when the future is returned, not when it completes. For business-critical flows, prefer synchronous returns (or `join()` explicitly) to keep back-pressure and acknowledgment semantics straightforward.
+</Aside>
+
+## Handler matching & passive handlers
+
+Fluxzero resolves which handler(s) should run based on **message type** and **specificity**.
+
+### Most specific handler wins (per class)
+
+If multiple methods in the *same class* match a message, only the most specific one is invoked.
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+class SpecificityExample {
+    @HandleEvent
+    void handle(Object event) { /* generic fallback */ }
+
+    @HandleEvent
+    void handle(CreateUser event) { /* specific handler */ }
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+class SpecificityExample {
+    @HandleEvent
+    fun handle(event: Any) { /* generic fallback */ }
+
+    @HandleEvent
+    fun handle(event: CreateUser) { /* specific handler */ }
+}
+```
+
+</TabItem>
+</Tabs>
+
+### Multiple classes are all invoked (for events)
+
+When different classes handle the same **event**, each eligible handler runs independently.
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+class BusinessHandler {
+    @HandleEvent
+    void handle(CreateUser event) { /* business logic */ }
+}
+
+class LoggingHandler {
+    @HandleEvent
+    void log(Object event) { /* audit/metrics */ }
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+class BusinessHandler {
+    @HandleEvent
+    fun handle(event: CreateUser) { /* business logic */ }
+}
+
+class LoggingHandler {
+    @HandleEvent
+    fun log(event: Any) { /* audit/metrics */ }
+}
+```
+
+</TabItem>
+</Tabs>
+
+### Requests prefer a single active handler
+
+For **commands**, **queries**, and **web requests**, a single non-passive handler should produce the response. Additional passive handlers can observe for metrics/auditing.
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+class UserHandler {
     @HandleQuery
     UserAccount handle(GetUser query) {
         return userRepository.find(query.getUserId());
     }
 }
 
-public class QueryMetricsHandler {
+class QueryMetricsHandler {
     @HandleQuery(passive = true)
     void record(Object query) {
         metrics.increment("queries." + query.getClass().getSimpleName());
@@ -165,39 +265,84 @@ public class QueryMetricsHandler {
 }
 ```
 
-➡️ In this case:
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
 
-- The `handle(...)` method produces the result.
-- The `record(...)` method logs the query,
+```kotlin
+class UserHandler {
+    @HandleQuery
+    fun handle(query: GetUser): UserAccount {
+        return userRepository.find(query.userId)
+    }
+}
 
-By combining **handler specificity**, **class-level isolation**, and the `passive` flag, Fluxzero gives you
-precise control over how messages are processed — even across mixed concerns like logging, read models, business logic,
-and cross-cutting concerns.
+class QueryMetricsHandler {
+    @HandleQuery(passive = true)
+    fun record(query: Any) {
+        metrics.increment("queries.${query::class.simpleName}")
+    }
+}
+```
 
-## Metadata Support
+</TabItem>
+</Tabs>
 
-Messages can include **metadata**, which are contextual key-value pairs (typically of a technical nature). These are
-useful for passing user context, correlation IDs, request info, etc.
+## Metadata
 
-For example, sending a command with metadata:
+Messages can include **metadata** (key–value context like user agent, correlation IDs, etc.).
 
-[//]: # (@formatter:off)
+Send metadata with a command:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
 ```java
 Fluxzero.sendCommand(
     new CreateUser(...),
     Metadata.of("userAgent", userAgent)
 );
 ```
-[//]: # (@formatter:on)
 
-Reading metadata in a handler is just as easy:
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+Fluxzero.sendCommand(
+    CreateUser(...),
+    Metadata.of("userAgent", userAgent)
+)
+```
+
+</TabItem>
+</Tabs>
+
+Read metadata in a handler:
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
 class UserCommandHandler {
     @HandleCommand
     void handle(CreateUser command, Metadata metadata) {
-        String userAgent = metadata.get("userAgent");
-        ...
+        String agent = metadata.get("userAgent");
+        // ...
     }
 }
 ```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+class UserCommandHandler {
+    @HandleCommand
+    fun handle(command: CreateUser, metadata: Metadata) {
+        val agent = metadata.get("userAgent")
+        // ...
+    }
+}
+```
+
+</TabItem>
+</Tabs>

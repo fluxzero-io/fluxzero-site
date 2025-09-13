@@ -1,7 +1,43 @@
 {
-  "lastUpdated": "2025-09-12T05:09:55.352Z",
-  "latestVersion": "1.0.1",
+  "lastUpdated": "2025-09-13T09:04:22.036Z",
+  "latestVersion": "1.3.2",
   "releases": [
+    {
+      "version": "1.3.2",
+      "date": "2025-09-13",
+      "body": "##### [1.3.2](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.3.1...1.3.2) (2025-09-13)\n\n\n##### Bug Fixes\n\n* **scheduling:** update `scheduleId` parameter in Fluxzero functions to support `Object` type ([704e163](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/704e163c26a54d23ddb463c4bc1e649ec1eb9ce6))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.3.2",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.3.1",
+      "date": "2025-09-12",
+      "body": "##### [1.3.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.3.0...1.3.1) (2025-09-12)\n\n\n##### Bug Fixes\n\n* **properties:** correct optional property key for `runtimeBaseUrl` ([7d6b70c](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/7d6b70c91bf2ec89e1d905fb1fedb6f2889223a8))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.3.1",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.3.0",
+      "date": "2025-09-12",
+      "body": "#### [1.3.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.2.0...1.3.0) (2025-09-12)",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.3.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.1.0",
+      "date": "2025-09-12",
+      "body": "#### [1.1.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.0.1...1.1.0) (2025-09-12)",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.1.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
     {
       "version": "1.0.1",
       "date": "2025-09-11",

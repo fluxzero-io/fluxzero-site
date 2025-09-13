@@ -2,48 +2,79 @@
 title: Message replays
 description: Message replays
 sidebar:
-   order: 40
+  order: 40
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
-Fluxzero allows you to **replay past messages** by tracking from an earlier index in the message log.
-This is useful for:
+Fluxzero allows you to **replay past messages** by tracking from an earlier index in the message log. This is useful for:
 
 - Rebuilding projections or read models
 - Repairing missed or failed messages
 - Retrospectively introducing new functionality
 
-Since message logs — including **commands**, **events**, **errors**, etc. — are durably stored (with **events** retained
-indefinitely by default), replays are usually available.
+Since message logs — including **commands**, **events**, **errors**, etc. — are durably stored (with **events** retained indefinitely by default), replays are usually available.
 
 ## Replaying from the Past
 
-The most common way to initiate a replay is to define a **new consumer** using the `@Consumer` annotation with a
-`minIndex`.
+The most common way to initiate a replay is to define a **new consumer** using the `@Consumer` annotation with a `minIndex`.
+
+<Tabs>
+  <TabItem value="Java" label="Java">
 
 ```java
-
 @Consumer(name = "auditReplay", minIndex = 111677748019200000L)
 public class AuditReplayHandler {
 
     @HandleEvent
     void on(CreateUser event) {
-        ...
+        // ... rebuild projections, audit, etc.
     }
 }
 ```
 
-In this example, the consumer `auditReplay` will process all events starting from **January 1st, 2024**.
+  </TabItem>
+  <TabItem value="Kotlin" label="Kotlin">
 
-> ℹ️ The `minIndex` value specifies the *inclusive* starting point for the message log.
-> Index values are based on time and can be derived using `IndexUtils`:
+```kotlin
+@Consumer(name = "auditReplay", minIndex = 111677748019200000L)
+class AuditReplayHandler {
+
+    @HandleEvent
+    fun on(event: CreateUser) {
+        // ... rebuild projections, audit, etc.
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<Aside type="note">
+  <code>minIndex</code> is the <em>inclusive</em> starting position in the log. You can derive it from a timestamp using <code>IndexUtils</code>.
+</Aside>
+
+<Tabs>
+  <TabItem value="Java" label="Java">
 
 ```java
 long index = IndexUtils.indexFromTimestamp(
-        Instant.parse("2024-01-01T00:00:00Z"));
-// returns: 111677748019200000L
+    Instant.parse("2024-01-01T00:00:00Z"));
+// -> 111677748019200000L
 ```
+
+  </TabItem>
+  <TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+val index = IndexUtils.indexFromTimestamp(
+    Instant.parse("2024-01-01T00:00:00Z"))
+// -> 111677748019200000L
+```
+
+  </TabItem>
+</Tabs>
 
 This approach is perfect for:
 
@@ -55,111 +86,216 @@ This approach is perfect for:
 
 If you want to reset an existing consumer to an earlier point in the log:
 
-[//]: # (@formatter:off)
+<Tabs>
+  <TabItem value="Java" label="Java">
+
 ```java
 long replayIndex = 111677748019200000L;
+
 Fluxzero.client()
     .getTrackingClient(MessageType.EVENT)
     .resetPosition("myConsumer", replayIndex, Guarantee.STORED);
 ```
-[//]: # (@formatter:on)
 
-This restarts the consumer from the given index and causes old messages to be redelivered and reprocessed.
+  </TabItem>
+  <TabItem value="Kotlin" label="Kotlin">
 
-> ⚠️ Replaying over existing handlers may require extra caution (e.g. to avoid duplicating side effects).
+```kotlin
+val replayIndex = 111677748019200000L
 
-## 🔁 Parallel Replays with `exclusive = false`
+Fluxzero.client()
+    .getTrackingClient(MessageType.EVENT)
+    .resetPosition("myConsumer", replayIndex, Guarantee.STORED)
+```
 
-Sometimes you want to **re-use the same handler class** for both:
+  </TabItem>
+</Tabs>
 
-- **Live processing** (e.g. default consumer)
-- **Replaying past messages** (e.g. rebuilding projections)
+<Aside type="caution">
+  Be careful when replaying on existing handlers to avoid **duplicating side effects** (emails, HTTP calls, etc.). Consider idempotency checks or a dedicated replay consumer.
+</Aside>
 
-To achieve this, annotate the handler with `exclusive = false`. This tells Flux that the handler may participate in
-**multiple consumers simultaneously**:
+## Parallel replays with <code>exclusive = false</code>
+
+Sometimes you want the **same handler class** to do both live processing and a historical replay (e.g., to rebuild read models).
+
+Mark the handler’s consumer as <code>exclusive = false</code>:
+
+<Tabs>
+  <TabItem value="Java" label="Java">
 
 ```java
-
 @Consumer(name = "live", exclusive = false)
 public class OrderProcessor {
+
     @HandleCommand
     void handle(SendOrder command) {
-        //submit an order
+        // submit an order
     }
 }
 ```
 
-Now, register a **second consumer** at runtime for the **same handler** using a different tracking position:
+  </TabItem>
+  <TabItem value="Kotlin" label="Kotlin">
 
-[//]: # (@formatter:off)
+```kotlin
+@Consumer(name = "live", exclusive = false)
+class OrderProcessor {
+
+    @HandleCommand
+    fun handle(command: SendOrder) {
+        // submit an order
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+Then register a **second consumer** at runtime that targets the same handler but a different index window:
+
+<Tabs>
+  <TabItem value="Java" label="Java">
+
 ```java
 fluxzeroBuilder.addConsumerConfiguration(
     ConsumerConfiguration.builder()
-        .name("replay") // A new consumer
-        .handlerFilter(handler -> handler instanceof OrderProcessor) // same class
-        .minIndex(111677748019200000L) // Start of replay window
-        .maxIndex(111853279641600000L) // End of replay window
+        .name("replay")                                  // new consumer
+        .handlerFilter(h -> h instanceof OrderProcessor) // same class
+        .minIndex(111677748019200000L)                   // start of window
+        .maxIndex(111853279641600000L)                   // end of window
         .build(),
     MessageType.COMMAND
 );
 ```
-[//]: # (@formatter:on)
 
-This will spin up a **parallel tracker** that replays all commands since **2024-01-01T00:00:00Z**
-until **2024-02-01T00:00:00Z**, while the original `live` consumer continues uninterrupted. In this example, orders
-sent during the month of January 2024 will be resubmitted.
+  </TabItem>
+  <TabItem value="Kotlin" label="Kotlin">
 
-> ✅ This is ideal for **bootstrapping read models** or **running repair jobs** without affecting production flow
-> or duplicating a handler class.
+```kotlin
+fluxzeroBuilder.addConsumerConfiguration(
+    ConsumerConfiguration.builder()
+        .name("replay")                             // new consumer
+        .handlerFilter { it is OrderProcessor }     // same class
+        .minIndex(111677748019200000L)              // start of window
+        .maxIndex(111853279641600000L)              // end of window
+        .build(),
+    MessageType.COMMAND
+)
+```
+
+  </TabItem>
+</Tabs>
+
+This spins up a **parallel tracker** that replays messages between the two indices while the original `live` consumer continues uninterrupted.
+
+<Aside type="tip">
+  Great for **bootstrapping read models** or **repair jobs** without disrupting production flow or duplicating classes.
+</Aside>
 
 ---
 
-## Handling Failures by Replaying from the Error Log
+## Handling failures by replaying from the error log
 
-Fluxzero automatically logs **all message handling errors** to a dedicated **error log**. This includes failures
-for:
+Fluxzero automatically logs **all handler failures** to a dedicated **error log** — including commands, queries, web requests, schedules, and events. Each error contains the stack trace, metadata, and a reference to the **original message**.
 
-- Commands
-- Queries
-- WebRequests
-- Schedule messages
-- Events (if a handler throws)
-- And more
+### Error handling with <code>@HandleError</code>
 
-Each error message includes detailed **stack traces**, **metadata**, and most importantly, a **reference to the original
-message** that caused the failure.
+React to failures programmatically:
 
-## Error Handling with `@HandleError`
-
-To react to failures programmatically, define a handler method with the `@HandleError` annotation:
+<Tabs>
+  <TabItem value="Java" label="Java">
 
 ```java
+class ErrorHandler {
 
-@HandleError
-void onError(Throwable error) {
-    log.warn("Something went wrong!", error);
+    @HandleError
+    void onError(Throwable error) {
+        log.warn("Something went wrong!", error);
+    }
 }
 ```
 
-You can inject the **failed message** using the `@Trigger` annotation:
+  </TabItem>
+  <TabItem value="Kotlin" label="Kotlin">
 
-```java
+```kotlin
+class ErrorHandler {
 
-@HandleError
-void onError(Throwable error, @Trigger SomeCommand failedCommand) {
-    log.warn("Failed to process {}: {}", failedCommand, error.getMessage());
+    @HandleError
+    fun onError(error: Throwable) {
+        log.warn("Something went wrong!", error)
+    }
 }
 ```
 
-> ℹ️ The trigger can be the payload, or a full `Message` or `DeserializingMessage`.
+  </TabItem>
+</Tabs>
 
-You can also **filter** error handlers by trigger type, message type, or originating consumer:
+Inject the **failed message** using <code>@Trigger</code>:
+
+<Tabs>
+  <TabItem value="Java" label="Java">
 
 ```java
+class ErrorHandler {
 
-@HandleError
-@Trigger(messageType = MessageType.COMMAND, consumer = "my-app")
-void retryFailedCommand(MyCommand failed) {
-    Fluxzero.sendCommand(failed);
+    @HandleError
+    void onError(Throwable error, @Trigger SomeCommand failedCommand) {
+        log.warn("Failed to process {}: {}", failedCommand, error.getMessage());
+    }
 }
 ```
+
+  </TabItem>
+  <TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+class ErrorHandler {
+
+    @HandleError
+    fun onError(error: Throwable, @Trigger failedCommand: SomeCommand) {
+        log.warn("Failed to process {}: {}", failedCommand, error.message)
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<Aside type="note">
+  The <code>@Trigger</code> parameter can be the payload (e.g., <code>SomeCommand</code>) or a full <code>Message</code>/<code>DeserializingMessage</code>.
+</Aside>
+
+Filter by trigger type, message type, or originating consumer — for example, to **retry failed commands** from a specific consumer:
+
+<Tabs>
+  <TabItem value="Java" label="Java">
+
+```java
+class ErrorHandler {
+
+    @HandleError
+    @Trigger(messageType = MessageType.COMMAND, consumer = "my-app")
+    void retryFailedCommand(MyCommand failed) {
+        Fluxzero.sendCommand(failed);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+class ErrorHandler {
+
+    @HandleError
+    @Trigger(messageType = MessageType.COMMAND, consumer = "my-app")
+    fun retryFailedCommand(failed: MyCommand) {
+        Fluxzero.sendCommand(failed)
+    }
+}
+```
+
+  </TabItem>
+</Tabs>

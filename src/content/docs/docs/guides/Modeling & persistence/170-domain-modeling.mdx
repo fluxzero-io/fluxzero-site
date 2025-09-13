@@ -4,7 +4,7 @@ sidebar:
    order: 170
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 Fluxzero allows you to model the state of your domain using entities that evolve over time by applying updates.
 These entities — such as users, orders, etc. — maintain state and enforce invariants through controlled updates,
@@ -202,6 +202,20 @@ data integrity and simplifying update logic.
 | `@Apply`          | Apply state transformation                     | Execution    |
 
 Together, these annotations offer full control over your entity update lifecycle — with a clean, declarative style.
+
+<Aside type="note">
+  You may notice we don’t define a separate event class here (like <code>UserCreated</code>).
+  In Fluxzero, the same payload often serves as both the command and the published event.
+
+  This has a few advantages:
+  - **No duplication**: you don’t have to maintain two nearly identical classes.
+  - **Accuracy**: the event log contains exactly what was applied, not a translation of it.
+  - **Less drift**: command and event definitions can’t silently diverge over time.
+
+  If you need to enrich or transform the event before it’s published, you can still do so with
+  <code>@InterceptApply</code>. But for most cases, reusing the same class keeps your model simpler
+  and your audit trail more honest.
+</Aside>
 
 ---
 

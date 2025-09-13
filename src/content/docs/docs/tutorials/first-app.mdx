@@ -31,6 +31,10 @@ Open your project in
   <a href="https://www.jetbrains.com/idea/" target="_blank" rel="noopener noreferrer">IntelliJ IDEA <span aria-hidden="true">↗</span></a>
   for the best experience.
 
+<Aside type="note">
+    This tutorial was written with Fluxzero SDK version `1.3.2`.
+</Aside>
+
 ---
 
 ## App structure
@@ -119,11 +123,49 @@ class ProjectId(id: String) : Id<Project>(id)
   </TabItem>
 </Tabs>
 
-This id class references its entity class Project. We’ll get to the entity in a bit.
-
 <Aside type="tip">
   The `Id<T>` class is a handy way to create strongly typed ids. They serialize simply as strings and can be
   made case-insensitive and given a prefix to prevent potential clashes.
+</Aside>
+
+---
+
+This id class references its entity class Project. Let's create that now and get back to it in a bit:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+// src/main/java/io/fluxzero/todo/project/model/Project.java
+@Aggregate
+public record Project(@EntityId ProjectId id,
+                      ProjectDetails details,
+                      UserId ownerId) {
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// src/main/kotlin/io/fluxzero/todo/project/model/Project.kt
+@Aggregate
+data class Project(
+    @EntityId val id: ProjectId,
+    val details: ProjectDetails,
+    val ownerId: UserId
+)
+```
+
+  </TabItem>
+</Tabs>
+
+Here:
+- the `@Aggregate` annotation tells Fluxzero that Project is the base point of a group of related entities. For instance our Project will later be given a list of Task entities.
+- the `@EntityId` marks the field that uniquely identifies each Project.
+
+<Aside type="note">
+  Most entity classes are immutable. With each evolution of the entity we simply return a new instance.
 </Aside>
 
 ---
@@ -205,13 +247,13 @@ This makes sure every Project has a name and an optional description, up to 1000
 
 #### Control user access
 
-To limit who can create projects we can require users to have the role of manager:
+To limit who can create projects we can require users to have the role of MANAGER:
 
 <Tabs>
   <TabItem value="java" label="Java">
 
 ```java
-@RequiresRole(manager)
+@RequiresRole(Role.MANAGER)
 public record CreateProject(@NotNull ProjectId projectId,
                             @NotNull @Valid ProjectDetails details) {
 }
@@ -221,7 +263,7 @@ public record CreateProject(@NotNull ProjectId projectId,
   <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-@RequiresRole(manager)
+@RequiresRole(Role.MANAGER)
 data class CreateProject(
     @field:NotNull val projectId: ProjectId,
     @field:NotNull @field:Valid val details: ProjectDetails
@@ -231,7 +273,7 @@ data class CreateProject(
   </TabItem>
 </Tabs>
 
-You can define any roles. For more info on user and role based access see [user access control](/docs/guides/user-access).
+You can define any roles. For more info on user and role based access see [user access control](/docs/guides/messaging/071-role-based-access-control).
 
 ---
 
@@ -275,7 +317,7 @@ class ProjectCommandHandler {
 What this method tells Fluxzero is that this handler is interested in commands of type CreateProject. These commands
 may have been published in the same app or any other service connected to the Fluxzero runtime.
 
-You can inject all kinds of parameters into handler methods, like the command sender, metadata, or full command message. For more info on handlers see [message handlers](/docs/guides/message-handling).
+You can inject all kinds of parameters into handler methods, like the command sender, metadata, or full command message. For more info on handlers see [message handlers](/docs/guides/messaging/020-message-handling).
 
 <Aside type="note">
   Handlers can be Spring components. This way they will get auto-registered with Fluxzero.
@@ -328,12 +370,10 @@ works even if the entity does not yet exist.
 
 #### What gets published?
 
-In the last example, the command payload (CreateProject is applied to the entity.
+In the last example, the command payload (CreateProject) is applied to the entity.
 If that succeeds, the same payload is wrapped in a new message which gets published as event.
 
-You don't need a separate ProjectCreated class — this avoids duplication and ensures the event log contains what *actually* happened.
-
-Want to understand why we recommend reusing the same payload in both command and event? See [Applying entity updates](/docs/guides/applying-entity-updates).
+Want to understand why we recommend reusing the same payload in both command and event? See [Applying entity updates](/docs/guides/modeling--persistence/170-domain-modeling).
 
 ---
 
@@ -345,6 +385,7 @@ Now let's have the command create a new Project when it gets applied:
   <TabItem value="java" label="Java">
 
 ```java
+@RequiresRole(Role.MANAGER)
 public record CreateProject(@NotNull ProjectId projectId,
                             @NotNull @Valid ProjectDetails details) {
 
@@ -359,6 +400,7 @@ public record CreateProject(@NotNull ProjectId projectId,
   <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
+@RequiresRole(Role.MANAGER)
 data class CreateProject(
     @field:NotNull val projectId: ProjectId,
     @field:NotNull @field:Valid val details: ProjectDetails
@@ -381,6 +423,7 @@ command and make it the owner of the Project:
   <TabItem value="java" label="Java">
 
 ```java
+@RequiresRole(Role.MANAGER)
 public record CreateProject(@NotNull ProjectId projectId,
                             @NotNull @Valid ProjectDetails details) {
 
@@ -395,6 +438,7 @@ public record CreateProject(@NotNull ProjectId projectId,
   <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
+@RequiresRole(Role.MANAGER)
 data class CreateProject(
     @field:NotNull val projectId: ProjectId,
     @field:NotNull @field:Valid val details: ProjectDetails
@@ -421,6 +465,7 @@ For our CreateProject command we want to ensure that no Project exists having th
   <TabItem value="java" label="Java">
 
 ```java
+@RequiresRole(Role.MANAGER)
 public record CreateProject(@NotNull ProjectId projectId,
                             @NotNull @Valid ProjectDetails details) {
 
@@ -442,6 +487,7 @@ public record CreateProject(@NotNull ProjectId projectId,
   <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
+@RequiresRole(Role.MANAGER)
 data class CreateProject(
     @field:NotNull val projectId: ProjectId,
     @field:NotNull @field:Valid val details: ProjectDetails
@@ -506,13 +552,12 @@ when a parameter may be `null`, add `@Nullable` to the parameter (or `?` in Kotl
 
 ### The Project entity
 
-Okay, that concludes our command and handler. Let’s now have a look at the Project entity that will hold our Project's state:
+Okay, that concludes our command and handler. Let’s now have a closer look at the Project entity we created earlier:
 
 <Tabs>
   <TabItem value="java" label="Java">
 
 ```java
-// src/main/java/io/fluxzero/todo/project/model/Project.java
 @Aggregate
 public record Project(@EntityId ProjectId id,
                       ProjectDetails details,
@@ -524,7 +569,6 @@ public record Project(@EntityId ProjectId id,
   <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-// src/main/kotlin/io/fluxzero/todo/project/model/Project.kt
 @Aggregate
 data class Project(
     @EntityId val id: ProjectId,
@@ -535,14 +579,6 @@ data class Project(
 
   </TabItem>
 </Tabs>
-
-Here:
-- the `@Aggregate` annotation tells Fluxzero that Project is the base point of a group of related entities. For instance our Project will later be given a list of Task entities.
-- the `@EntityId` marks the field that uniquely identifies each Project.
-
-<Aside type="note">
-  Most entity classes are immutable. With each evolution of the entity we simply return a new instance.
-</Aside>
 
 To configure the way a Project is to be persisted you can use the `@Aggregate` annotation. For instance, to make Projects
 available for search, simply enable it:
@@ -573,7 +609,7 @@ data class Project(
   </TabItem>
 </Tabs>
 
-**By default, Fluxzero enables event-sourcing for aggregates.** When an event-sourced entity is loaded and applied to, the following happens:
+By default, Fluxzero enables event-sourcing for aggregates. When an event-sourced entity is loaded and applied to, the following happens:
 
 1. **Rehydrates** the entity from events or snapshots.
 2. **Runs `@AssertLegal` methods** to validate business rules.
@@ -586,44 +622,8 @@ This ensures that business rules are enforced before anything is persisted, and 
 
 <Aside type="tip">
   Want to dive deeper into persistence models and aggregate lifecycles?
-  See [Entity persistence](/docs/guides/entity-persistence).
+  See [Entity persistence](/docs/guides/modeling--persistence/200-model-persistence).
 </Aside>
-
-To disable event-sourcing just configure it:
-
-<Tabs>
-  <TabItem value="java" label="Java">
-
-```java
-@Aggregate(searchable = true, eventSourced = false)
-public record Project(@EntityId ProjectId id,
-                      ProjectDetails details,
-                      UserId ownerId) {
-}
-```
-
-  </TabItem>
-  <TabItem value="kotlin" label="Kotlin">
-
-```kotlin
-@Aggregate(searchable = true, eventSourced = false)
-data class Project(
-    @EntityId val id: ProjectId,
-    val details: ProjectDetails,
-    val ownerId: UserId
-)
-```
-
-  </TabItem>
-</Tabs>
-
-This would cause the following changes in how the entity is loaded and updated:
-
-1. **Loads the entity document** from the document store.
-2. **Runs `@AssertLegal` methods** to validate business rules.
-3. **Calls the `@Apply` method** to produce the next state.
-4. **Persists the update** to the event log.
-5. **Stores the entity** in the document store.
 
 ---
 
@@ -635,7 +635,7 @@ Fluxzero makes it easy to write behavior tests as you go. Here’s our first one
   <TabItem value="java" label="Java">
 
 ```java
-// src/test/java/io/fluxzero/todo/project/CreateProjectTest.java
+// src/test/java/io/fluxzero/todo/project/command/CreateProjectTest.java
 class CreateProjectTest {
     TestFixture fixture = TestFixture.create(new ProjectCommandHandler());
 
@@ -655,7 +655,7 @@ class CreateProjectTest {
   <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-// src/test/kotlin/io/fluxzero/todo/project/CreateProjectTest.kt
+// src/test/kotlin/io/fluxzero/todo/project/command/CreateProjectTest.kt
 class CreateProjectTest {
     private val fixture = TestFixture.create(ProjectCommandHandler())
 
@@ -675,6 +675,8 @@ class CreateProjectTest {
 </Tabs>
 
 This test checks that when we send a CreateProject command, the same payload is applied and published as an event.
+
+---
 
 #### Testing with JSON
 
@@ -706,7 +708,7 @@ fun creatingProjectSucceeds() {
 </Tabs>
 
 ```json
-// src/test/resources/io/fluxzero/todo/project/create-project.json
+// src/test/resources/project/create-project.json
 {
   "@class": "CreateProject",
   "projectId": "p1",
@@ -718,6 +720,35 @@ fun creatingProjectSucceeds() {
 ```
 
 Adding `"@class": "CreateProject"` is needed for deserialization of the JSON.
+
+#### Checkpoint: Does it work?
+
+At this point you should be able to run your very first test and see it pass.
+
+Run your test suite with:
+
+```bash
+./mvnw test
+# or
+./gradlew test
+```
+
+You should see CreateProjectTest succeed — confirming that:
+
+- Your command and entity classes compile correctly,
+- Fluxzero loads your Project aggregate,
+- The CreateProject command is applied and published as an event.
+
+If the test fails, check the following:
+
+- **Handler registration**: Did you register ProjectCommandHandler with the `TestFixture`?
+- **Test resources**: Is your JSON test file in `src/test/resources/project/` with the correct `@class` field?
+- **Imports**: Make sure you’re importing the correct classes (not Spring or Jakarta equivalents).
+
+Once this test passes, you’ve verified that your Fluxzero app is wired up correctly.
+From here, you can confidently move on to extending your model with updates, queries, and endpoints.
+
+---
 
 #### Creating the same Project twice
 
@@ -759,11 +790,12 @@ be used by the command and in tests:
 ```java
 // src/main/java/io/fluxzero/todo/project/ProjectErrors.java
 public interface ProjectErrors {
-    IllegalCommandException alreadyExists = illegalCommandException("Project already exists");
-
-    static IllegalCommandException illegalCommandException(String message) {
-        return new IllegalCommandException(message);
-    }
+    FunctionalException
+            alreadyExists = new IllegalCommandException("Project already exists"),
+            notFound = new IllegalCommandException("Project not found"),
+            unauthorized = new UnauthorizedException("Unauthorized for action"),
+            taskNotFound = new IllegalCommandException("Task not found"),
+            taskCompleted = new IllegalCommandException("Task has already completed");
 }
 ```
 
@@ -773,16 +805,18 @@ public interface ProjectErrors {
 ```kotlin
 // src/main/kotlin/io/fluxzero/todo/project/ProjectErrors.kt
 object ProjectErrors {
-    val alreadyExists: IllegalCommandException = illegalCommandException("Project already exists")
-
-    @JvmStatic
-    fun illegalCommandException(message: String): IllegalCommandException =
-        IllegalCommandException(message)
+    val alreadyExists: IllegalCommandException = IllegalCommandException("Project already exists")
+    val notFound: IllegalCommandException = IllegalCommandException("Project not found")
+    val unauthorized: UnauthorizedException = UnauthorizedException("Unauthorized for action")
+    val taskNotFound: IllegalCommandException = IllegalCommandException("Task not found")
+    val taskCompleted: IllegalCommandException = IllegalCommandException("Task has already completed")
 }
 ```
 
   </TabItem>
 </Tabs>
+
+For convenience, we've already added some errors needed later on.
 
 We can now improve both our command and test:
 
@@ -790,6 +824,7 @@ We can now improve both our command and test:
   <TabItem value="java" label="Java">
 
 ```java
+@RequiresRole(Role.MANAGER)
 public record CreateProject(@NotNull ProjectId projectId,
                             @NotNull @Valid ProjectDetails details) {
 
@@ -809,6 +844,7 @@ public record CreateProject(@NotNull ProjectId projectId,
   <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
+@RequiresRole(Role.MANAGER)
 data class CreateProject(
     @field:NotNull val projectId: ProjectId,
     @field:NotNull @field:Valid val details: ProjectDetails
@@ -866,6 +902,7 @@ Start by introducing a new command:
 <TabItem value="Java" label="Java">
 
 ```java
+// src/main/java/io/fluxzero/todo/project/command/ProjectErrors.java
 public record UpdateProject(@NotNull ProjectId projectId,
                             @NotNull @Valid ProjectDetails details) {
 
@@ -885,7 +922,7 @@ public record UpdateProject(@NotNull ProjectId projectId,
 
     @Apply
     Project apply(Project project) {
-        return project.withUpdate(details);
+        return project.withDetails(details);
     }
 }
 ```
@@ -915,7 +952,7 @@ data class UpdateProject(
 
     @Apply
     fun apply(project: Project): Project {
-        return project.withUpdate(details)
+        return project.copy(details = details)
     }
 }
 ```
@@ -954,7 +991,7 @@ data class Project(
 </Tabs>
 
 <Aside type="tip">
-  Fluxzero plays great with Lombok — use <code>@With</code>, <code>@Value</code>, <code>@Builder</code>, or anything else that fits your style.
+  Fluxzero plays great with <a href="https://projectlombok.org" target="_blank" rel="noopener noreferrer">Lombok <span aria-hidden="true">↗</span></a> — use <code>@With</code>, <code>@Value</code>, <code>@Builder</code>, or anything else that fits your style.
 </Aside>
 
 ---
@@ -993,6 +1030,7 @@ And implement this interface:
 <TabItem value="Java" label="Java">
 
 ```java
+@RequiresRole(Role.MANAGER)
 public record CreateProject(ProjectId projectId,
                             @NotNull @Valid ProjectDetails details)
         implements ProjectCommand { ... }
@@ -1006,6 +1044,7 @@ public record UpdateProject(ProjectId projectId,
 <TabItem value="Kotlin" label="Kotlin">
 
 ```kotlin
+@RequiresRole(Role.MANAGER)
 data class CreateProject(
     val projectId: ProjectId,
     @field:Valid val details: ProjectDetails
@@ -1065,7 +1104,7 @@ Let’s ensure that our UpdateProject command succeeds:
 <TabItem value="Java" label="Java">
 
 ```java
-// src/test/java/io/fluxzero/todo/project/UpdateProjectTest.java
+// src/test/java/io/fluxzero/todo/project/command/UpdateProjectTest.java
 class UpdateProjectTest {
     TestFixture fixture = TestFixture.create(new ProjectCommandHandler());
 
@@ -1082,7 +1121,7 @@ class UpdateProjectTest {
 <TabItem value="Kotlin" label="Kotlin">
 
 ```kotlin
-// src/test/kotlin/io/fluxzero/todo/project/UpdateProjectTest.kt
+// src/test/kotlin/io/fluxzero/todo/project/command/UpdateProjectTest.kt
 class UpdateProjectTest {
     private val fixture = TestFixture.create(ProjectCommandHandler())
 
@@ -1099,7 +1138,7 @@ class UpdateProjectTest {
 </Tabs>
 
 ```json
-// src/test/resources/io/fluxzero/todo/project/rename-project.json
+// src/test/resources/project/rename-project.json
 {
   "@class": "UpdateProject",
   "projectId": "p1",
@@ -1165,11 +1204,13 @@ You can handle queries directly inside the query class. This keeps your logic cl
   <TabItem label="Java">
 
   ```java
-  public record GetProject(@NotNull ProjectId projectId) {
+  // src/main/java/io/fluxzero/todo/project/query/GetProject.java
+  public record GetProject(@NotNull ProjectId projectId) implements Request<Project> {
 
       @HandleQuery
       Project handle(Sender sender) {
           return Fluxzero.search(Project.class)
+                         .match(projectId, "id")
                          .match(sender.isAdmin() ? null : sender.userId(), "ownerId")
                          .fetchFirstOrNull();
       }
@@ -1180,11 +1221,13 @@ You can handle queries directly inside the query class. This keeps your logic cl
   <TabItem label="Kotlin">
 
   ```kotlin
-  data class GetProject(val projectId: ProjectId) {
+  // src/main/kotlin/io/fluxzero/todo/project/query/GetProject.kt
+  data class GetProject(val projectId: ProjectId) : Request<Project> {
 
       @HandleQuery
       fun handle(sender: Sender): Project? {
           return Fluxzero.search(Project::class.java)
+              .match(projectId, "id")
               .match(if (sender.isAdmin()) null else sender.userId(), "ownerId")
               .fetchFirstOrNull()
       }
@@ -1201,7 +1244,7 @@ admins to view all results.
 <Aside type="note">
     Using a separate handler class for queries is possible too of course. There are some subtleties to take into
     account however. For now, we recommend keeping the handler method inside the query class.
-    To read more, check out [Message handling](/logs/guides/message-handling).
+    To read more, check out [Message handling](/logs/guides/messaging/020-message-handling).
 </Aside>
 
 ### Specifying return type
@@ -1213,7 +1256,8 @@ handlers return the correct types. It also improves test clarity and lets callin
   <TabItem label="Java">
 
   ```java
-  public record FindMyProjects() implements Request<List<Project>> {
+  // src/main/java/io/fluxzero/todo/project/query/GetMyProjects.java
+  public record GetMyProjects() implements Request<List<Project>> {
 
       @HandleQuery
       List<Project> find(Sender sender) {
@@ -1228,7 +1272,8 @@ handlers return the correct types. It also improves test clarity and lets callin
   <TabItem label="Kotlin">
 
   ```kotlin
-  data class FindMyProjects() : Request<List<Project>> {
+  // src/main/kotlin/io/fluxzero/todo/project/query/GetMyProjects.kt
+  data class GetMyProjects() : Request<List<Project>> {
 
       @HandleQuery
       fun find(sender: Sender): List<Project> {
@@ -1255,10 +1300,11 @@ Fluxzero’s search is full-text and autocomplete-ready from day one. Here's how
   <TabItem label="Java">
 
   ```java
+  // src/main/java/io/fluxzero/todo/project/query/SearchProjects.java
   public record SearchProjects(String term) implements Request<List<Project>> {
 
       @HandleQuery
-      List<Project> search() {
+      List<Project> search(Sender sender) {
           return Fluxzero.search(Project.class)
                          .lookAhead(term)
                          .match(sender.isAdmin() ? null : sender.userId(), "ownerId")
@@ -1271,10 +1317,11 @@ Fluxzero’s search is full-text and autocomplete-ready from day one. Here's how
   <TabItem label="Kotlin">
 
   ```kotlin
+  // src/main/kotlin/io/fluxzero/todo/project/query/SearchProjects.kt
   data class SearchProjects(val term: String) : Request<List<Project>> {
 
       @HandleQuery
-      fun search(): List<Project> {
+      fun search(sender: Sender): List<Project> {
           return Fluxzero.search(Project::class.java)
                          .lookAhead(term)
                          .match(if (sender.isAdmin()) null else sender.userId(), "ownerId")
@@ -1327,14 +1374,14 @@ class ProjectQueryTest {
     @Test
     fun gettingProjectSucceeds() {
         fixture.givenCommands("/project/create-project.json")
-            .whenCommand("/project/rename-project.json")
-            .expectEvents("/project/rename-project.json")
+               .whenQuery(GetProject(ProjectId("p1")))
+               .expectResult(Project::class)
     }
 
     @Test
     fun otherUserCannotGetProject() {
         fixture.givenCommands("/project/create-project.json")
-            .whenCommandByUser("someRandomUser", "/project/rename-project.json")
+            .whenQueryByUser("someRandomUser", GetProject(ProjectId("p1")))
             .expectNoResult()
     }
 }
@@ -1350,9 +1397,9 @@ Let's also add tests for our other queries:
 
 ```java
 @Test
-void findMyProjects() {
+void getMyProjects() {
     fixture.givenCommands("/project/create-project.json")
-           .whenQuery(new FindMyProjects())
+           .whenQuery(new GetMyProjects())
            .expectResult(projects -> projects.size() == 1);
 }
 
@@ -1372,9 +1419,9 @@ void searchProjects() {
 
 ```kotlin
 @Test
-fun findMyProjects() {
+fun getMyProjects() {
     fixture.givenCommands("/project/create-project.json")
-           .whenQuery(FindMyProjects())
+           .whenQuery(GetMyProjects())
            .expectResult { projects -> projects.size == 1 }
 }
 
@@ -1502,8 +1549,8 @@ Fluxzero makes it easy to test HTTP endpoint behavior — just like with command
 <TabItem value="Java" label="Java">
 
 ```java
-// src/test/java/io/fluxzero/todo/project/ProjectEndpointTests.java
-class ProjectEndpointTests {
+// src/test/java/io/fluxzero/todo/project/ProjectEndpointTest.java
+class ProjectEndpointTest {
 
     TestFixture fixture = TestFixture.create(new ProjectCommandHandler(),
                                              new ProjectEndpoint());
@@ -1520,8 +1567,8 @@ class ProjectEndpointTests {
 <TabItem value="Kotlin" label="Kotlin">
 
 ```kotlin
-// src/test/kotlin/io/fluxzero/todo/project/ProjectEndpointTests.kt
-class ProjectEndpointTests {
+// src/test/kotlin/io/fluxzero/todo/project/ProjectEndpointTest.kt
+class ProjectEndpointTest {
 
     val fixture = TestFixture.create(ProjectCommandHandler(), ProjectEndpoint())
 
@@ -1537,7 +1584,7 @@ class ProjectEndpointTests {
 </Tabs>
 
 ```json
-// src/test/resources/io/fluxzero/todo/project/create-project-request.json
+// src/test/resources/project/create-project-request.json
 {
   "name": "My first project",
   "description": "Tutorial starter"
@@ -1558,7 +1605,7 @@ You can also mix commands and HTTP calls within the same test:
 @Test
 void renameProjectViaHttp() {
     fixture.givenCommands("/project/create-project.json")
-           .whenPost("/projects/p1", "/project/rename-project-request.json")
+           .whenPut("/projects/p1", "/project/rename-project-request.json")
            .expectEvents("/project/rename-project.json");
 }
 ```
@@ -1569,7 +1616,7 @@ void renameProjectViaHttp() {
 @Test
 fun renameProjectViaHttp() {
     fixture.givenCommands("/project/create-project.json")
-           .whenPost("/projects/p1", "/project/rename-project-request.json")
+           .whenPut("/projects/p1", "/project/rename-project-request.json")
            .expectEvents("/project/rename-project.json")
 }
 ```
@@ -1577,7 +1624,7 @@ fun renameProjectViaHttp() {
 </Tabs>
 
 ```json
-// src/test/resources/io/fluxzero/todo/project/rename-project-request.json
+// src/test/resources/project/rename-project-request.json
 {
   "name": "Renamed project",
   "description": "Tutorial starter"
@@ -1653,7 +1700,7 @@ fun listProjectsViaGet() {
 
 ---
 
-You can also test error scenarios:
+You can also test error scenarios of course:
 
 <Tabs>
 <TabItem value="Java" label="Java">
@@ -1661,15 +1708,8 @@ You can also test error scenarios:
 ```java
 @Test
 void renamingNonExistentProjectFails() {
-    fixture.whenPost("/projects/p1", "/project/rename-project-request.json")
+    fixture.whenPut("/projects/p1", "/project/rename-project-request.json")
            .expectExceptionalResult(ProjectErrors.notFound);
-}
-
-@Test
-void renamingProjectByNonOwnerFails() {
-    fixture.givenCommands("/project/create-project.json")
-           .whenPostByUser("somebodyElse", "/projects/p1", "/project/rename-project-request.json")
-           .expectExceptionalResult(ProjectErrors.unauthorized);
 }
 ```
 </TabItem>
@@ -1678,15 +1718,8 @@ void renamingProjectByNonOwnerFails() {
 ```kotlin
 @Test
 fun renamingNonExistentProjectFails() {
-    fixture.whenPost("/projects/p1", "/project/rename-project-request.json")
+    fixture.whenPut("/projects/p1", "/project/rename-project-request.json")
            .expectExceptionalResult(ProjectErrors.notFound)
-}
-
-@Test
-fun renamingProjectByNonOwnerFails() {
-    fixture.givenCommands("/project/create-project.json")
-           .whenPostByUser("somebodyElse", "/projects/p1", "/project/rename-project-request.json")
-           .expectExceptionalResult(ProjectErrors.unauthorized)
 }
 ```
 </TabItem>
@@ -1694,7 +1727,7 @@ fun renamingProjectByNonOwnerFails() {
 
 <Aside type="note">
   The default user in tests is the system user. To simulate user-specific access in endpoint tests, pass an access header or cookie to the `TestFixture`, e.g. using `.withHeader("Authorization", "Bearer xyz")`.
-  See [User providers](/docs/guides/user-providers) for more info.
+  See [User providers](/docs/guides/messaging/071-role-based-access-control) for more info.
 </Aside>
 
 ## Adding Tasks to a Project
@@ -1740,7 +1773,7 @@ data class AddTask(
 </TabItem>
 </Tabs>
 
-Let’s define the supporting types:
+Let’s also define the supporting types:
 
 <Tabs>
 <TabItem value="Java" label="Java">
@@ -1806,9 +1839,9 @@ public record Task(@EntityId TaskId taskId,
 // src/main/kotlin/io/fluxzero/todo/project/model/Task.kt
 data class Task(
     @EntityId val taskId: TaskId,
-    @With val details: TaskDetails,
-    @With val assignee: UserId,
-    @With val completed: boolean
+    val details: TaskDetails,
+    val assignee: UserId,
+    val completed: Boolean
 )
 ```
 
@@ -1855,10 +1888,31 @@ data class Project(
   When using Java records, remember to include <code>@With</code> on the member field. If you prefer, you can also define your aggregate as a regular class instead of a record.
 </Aside>
 
-<Aside type="tip">
-  You can test task-related commands and endpoints the same way as with projects.
-  Just use the same fixture-based approach shown earlier.
-</Aside>
+Now simply initialize the tasks list as empty when creating a new Project in CreateProject.
+This guarantees that every Project starts without tasks.
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+@Apply
+Project create(Sender sender) {
+    return new Project(projectId, details, sender.userId(), List.of());
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+@Apply
+fun create(sender: Sender): Project {
+    return Project(projectId, details, sender.userId, emptyList())
+}
+```
+
+  </TabItem>
+</Tabs>
 
 ### Reusing business behavior
 
@@ -1931,7 +1985,7 @@ public record UpdateProject(@NotNull ProjectId projectId,
 
     @Apply
     Project apply(Project project) {
-        return project.withUpdate(details);
+        return project.withDetails(details);
     }
 }
 ```
@@ -1959,7 +2013,7 @@ data class UpdateProject(
 
     @Apply
     fun apply(project: Project): Project {
-        return project.withUpdate(details)
+        return project.copy(details = details)
     }
 }
 ```
@@ -2112,7 +2166,7 @@ data class AssignTask(
 
     @Apply
     fun assign(task: Task): Task {
-        return task.withAssignee(newAssignee)
+        return task.copy(assignee = newAssignee)
     }
 }
 ```
@@ -2153,7 +2207,7 @@ data class CompleteTask(
 
     @Apply
     fun complete(task: Task): Task {
-        return task.withCompleted(true)
+        return task.copy(completed = true)
     }
 }
 ```
@@ -2175,6 +2229,13 @@ To cancel a task and delete it from the Project, simply return `null` from your 
 public record CancelTask(ProjectId projectId,
                          @NotNull TaskId taskId) implements TaskUpdate {
 
+    @AssertLegal
+    void assertNotCompleted(Task task) {
+        if (task.completed()) {
+            throw ProjectErrors.taskCompleted;
+        }
+    }
+
     @Apply
     Task delete(Task task) {
         return null;
@@ -2192,6 +2253,13 @@ data class CancelTask(
     val taskId: TaskId
 ) : TaskUpdate {
 
+    @AssertLegal
+    fun assertNotCompleted(Task task) {
+        if (task.completed()) {
+            throw ProjectErrors.taskCompleted;
+        }
+    }
+
     @Apply
     fun delete(task: Task): Task? {
         return null
@@ -2208,9 +2276,99 @@ Returning <code>null</code> in an <code>@Apply</code> method tells Fluxzero to r
 
 ---
 
-### Indexing tasks as separate documents
+### Testing task updates
 
-While tasks are modeled as sub-entities within a project, you may want to **index them separately** for fast querying or UI rendering.
+Let's verify that tasks can be added and then removed again using the CancelTask command:
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+// src/test/java/io/fluxzero/todo/project/command/CancelTaskTest.java
+class CancelTaskTest {
+    TestFixture fixture = TestFixture.create(new ProjectCommandHandler());
+
+    @Test
+    void addTask() {
+        fixture.givenCommands("/project/create-project.json")
+                .whenCommand("/project/add-task.json")
+                .expectEvents("/project/add-task.json");
+    }
+
+    @Test
+    void addAndRemoveTask() {
+        fixture.givenCommands("/project/create-project.json", "/project/add-task.json")
+                .whenQuery(new GetProject(new ProjectId("p1")))
+                .expectResult(project -> project.tasks().size() == 1)
+                .andThen()
+                .givenCommands("/project/cancel-task.json")
+                .whenQuery(new GetProject(new ProjectId("p1")))
+                .expectResult(project -> project.tasks().isEmpty());
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// src/test/kotlin/io/fluxzero/todo/project/command/CancelTaskTest.kt
+class CancelTaskTest {
+    private val fixture = TestFixture.create(ProjectCommandHandler())
+
+    @Test
+    fun addTask() {
+        fixture.givenCommands("/project/create-project.json")
+            .whenCommand("/project/add-task.json")
+            .expectEvents("/project/add-task.json")
+    }
+
+    @Test
+    fun addAndRemoveTask() {
+        fixture.givenCommands("/project/create-project.json", "/project/add-task.json")
+            .whenQuery(GetProject(ProjectId("p1")))
+            .expectResult { project -> project.tasks.size == 1 }
+            .andThen()
+            .givenCommands("/project/cancel-task.json")
+            .whenQuery(GetProject(ProjectId("p1")))
+            .expectResult { project -> project.tasks.isEmpty() }
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+```json
+// src/test/resources/project/add-task.json
+{
+  "@class": "AddTask",
+  "projectId": "p1",
+  "taskId": "t1",
+  "details": {
+    "name": "Submit tutorial"
+  }
+}
+```
+
+```json
+// src/test/resources/project/cancel-task.json
+{
+  "@class": "CancelTask",
+  "projectId": "p1",
+  "taskId": "t1"
+}
+```
+
+
+The first test checks that adding a task succeeds.
+The second test confirms that after cancelling, the project no longer contains the task.
+
+---
+
+## Indexing tasks separately
+
+While tasks are modeled as sub-entities within a project, you may want to index them separately for fast querying or UI rendering.
 This is especially useful when you need:
 
 - A flat view of all tasks,
@@ -2223,12 +2381,18 @@ Here’s how you can create a simple event handler to index tasks as top-level d
 <TabItem value="Java" label="Java">
 
 ```java
+// src/main/java/io/fluxzero/todo/project/TaskIndexer.java
 @Component
 public class TaskIndexer {
 
     @HandleEvent
-    void handle(ProjectUpdate event, Entity<Task> taskEntity) {
-        Fluxzero.index(taskEntity);
+    void handle(AddTask event) {
+        Fluxzero.index(Fluxzero.loadEntity(event.taskId()));
+    }
+
+    @HandleEvent
+    void handle(TaskUpdate event) {
+        Fluxzero.index(Fluxzero.loadEntity(event.taskId()));
     }
 
     @HandleEvent
@@ -2242,12 +2406,18 @@ public class TaskIndexer {
 <TabItem value="Kotlin" label="Kotlin">
 
 ```kotlin
+// src/main/kotlin/io/fluxzero/todo/project/TaskIndexer.kt
 @Component
 class TaskIndexer {
 
     @HandleEvent
-    fun handle(event: ProjectUpdate, taskEntity: Entity<Task>) {
-        Fluxzero.index(taskEntity)
+    fun handle(event: AddTask) {
+        Fluxzero.index(Fluxzero.loadEntity(event.taskId()))
+    }
+
+    @HandleEvent
+    fun handle(event: TaskUpdate) {
+        Fluxzero.index(Fluxzero.loadEntity(event.taskId()))
     }
 
     @HandleEvent
@@ -2317,7 +2487,7 @@ And expose this query via a simple endpoint:
 ```java
 @HandleGet("tasks")
 List<Task> getMyTasks() {
-    return FluxCapacitor.queryAndWait(new FindMyTasks());
+    return Fluxzero.queryAndWait(new FindMyTasks());
 }
 ```
 
@@ -2327,11 +2497,82 @@ List<Task> getMyTasks() {
 ```kotlin
 @HandleGet("tasks")
 fun getMyTasks(): List<Task> {
-    return FluxCapacitor.queryAndWait(FindMyTasks())
+    return Fluxzero.queryAndWait(FindMyTasks())
 }
 ```
 
 </TabItem>
+</Tabs>
+
+### Testing the indexer
+
+Now let’s verify that the TaskIndexer correctly maintains a flat task view.
+The following tests check that after adding a task it becomes available via the `/projects/tasks` endpoint,
+and that cancelling the task removes it from the indexed results.
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+// src/test/java/io/fluxzero/todo/project/TaskIndexerTest.java
+class TaskIndexerTest {
+    TestFixture fixture = TestFixture.create(
+        new ProjectCommandHandler(),
+        new ProjectEndpoint(),
+        new TaskIndexer()
+    );
+
+    @Test
+    void queryTaskAfterAdding() {
+        fixture.givenCommands("/project/create-project.json",
+                              "/project/add-task.json")
+               .whenGet("/projects/tasks")
+               .<List<Task>>expectResult(tasks -> tasks.size() == 1);
+    }
+
+    @Test
+    void queryTaskAfterCanceling() {
+        fixture.givenCommands("/project/create-project.json",
+                              "/project/add-task.json",
+                              "/project/cancel-task.json")
+               .whenGet("/projects/tasks")
+               .<List<Task>>expectResult(List::isEmpty);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// src/test/kotlin/io/fluxzero/todo/project/TaskIndexerTest.kt
+class TaskIndexerTest {
+    private val fixture = TestFixture.create(
+        ProjectCommandHandler(),
+        ProjectEndpoint(),
+        TaskIndexer()
+    )
+
+    @Test
+    fun queryTaskAfterAdding() {
+        fixture.givenCommands("/project/create-project.json",
+                              "/project/add-task.json")
+            .whenGet("/projects/tasks")
+            .expectResult<List<Task>> { tasks -> tasks.size == 1 }
+    }
+
+    @Test
+    fun queryTaskAfterCanceling() {
+        fixture.givenCommands("/project/create-project.json",
+                              "/project/add-task.json",
+                              "/project/cancel-task.json")
+            .whenGet("/projects/tasks")
+            .expectResult<List<Task>> { it.isEmpty() }
+    }
+}
+```
+
+  </TabItem>
 </Tabs>
 
 ## Scheduling a notification
@@ -2370,11 +2611,12 @@ Now let’s create a handler that listens for Task events and is responsible for
 <TabItem value="Java" label="Java">
 
 ```java
+// src/main/java/io/fluxzero/todo/project/TaskScheduler.java
 @Component
 public class TaskScheduler {
 
     @HandleEvent
-    void handle(AddTask event, Entity<Task> taskEntity) {
+    void handle(AddTask event) {
         if (event.details().deadline() != null) {
             Fluxzero.schedule(new TaskExpiry(event.taskId()),
                               event.details().deadline());
@@ -2392,11 +2634,12 @@ public class TaskScheduler {
 <TabItem value="Kotlin" label="Kotlin">
 
 ```kotlin
+// src/main/kotlin/io/fluxzero/todo/project/TaskScheduler.kt
 @Component
 class TaskScheduler {
 
     @HandleEvent
-    fun handle(event: AddTask, taskEntity: Entity<Task>) {
+    fun handle(event: AddTask) {
         event.details.deadline?.let {
             Fluxzero.schedule(TaskExpiry(event.taskId), it)
         }
@@ -2418,6 +2661,7 @@ The scheduled object, TaskExpiry, looks like this:
 <TabItem value="Java" label="Java">
 
 ```java
+// src/main/java/io/fluxzero/todo/project/notifications/TaskExpiry.java
 public record TaskExpiry(TaskId taskId) {
 }
 ```
@@ -2426,6 +2670,7 @@ public record TaskExpiry(TaskId taskId) {
 <TabItem value="Kotlin" label="Kotlin">
 
 ```kotlin
+// src/main/kotlin/io/fluxzero/todo/project/notifications/TaskExpiry.kt
 data class TaskExpiry(val taskId: TaskId)
 ```
 
@@ -2444,6 +2689,7 @@ We’ll do this in a separate handler to keep responsibilities clear. This handl
 <TabItem value="Java" label="Java">
 
 ```java
+// src/main/java/io/fluxzero/todo/project/notifications/SlackNotifier.java
 @Component
 @ConditionalOnProperty("slack.webhook.url")
 public class SlackNotifier {
@@ -2468,6 +2714,7 @@ public class SlackNotifier {
 <TabItem value="Kotlin" label="Kotlin">
 
 ```kotlin
+// src/main/kotlin/io/fluxzero/todo/project/notifications/SlackNotifier.kt
 @Component
 @ConditionalOnProperty("slack.webhook.url")
 class SlackNotifier {
@@ -2543,45 +2790,37 @@ We'll use Fluxzero's time-based testing features to simulate time advancing to t
 <TabItem value="Java" label="Java">
 
 ```java
-// src/test/java/io/fluxzero/todo/project/TaskNotificationTest.java
-class TaskNotificationTest {
-
-    Instant deadline = Instant.now().plusHours(2);
-    AddTask addTaskWithDeadline = JsonUtils.fromFileWith(
-        "/project/add-task.json", Map.of("details.deadline", deadline)
-    );
+// src/test/java/io/fluxzero/todo/project/notifications/SlackNotifierTest.java
+class SlackNotifierTest {
+    String slackWebhookUrl = "http://slack.test";
 
     TestFixture fixture = TestFixture.create(
-        new ProjectCommandHandler(),
-        new TaskScheduler(),
-        new SlackNotifier()
-    );
+            new ProjectCommandHandler(),
+            new TaskScheduler(),
+            new SlackNotifier()
+    ).withProperty("slack.webhook.url", slackWebhookUrl);
 
     @Test
     void notifyAssigneeWhenDeadlineIsMissed() {
         fixture
-            .givenCommands(
-                "/project/create-project.json",
-                addTaskWithDeadline
-            )
-            .whenTimeAdvancesTo(deadline)
-            .expectWebRequests(
-                WebRequest.post("http://slack.test")
-                          .payload("/project/slack-notification.json")
-                          .build()
-            );
+                .givenCommands(
+                        "/project/create-project.json",
+                        "/project/add-task-30day-timeout.json"
+                )
+                .whenTimeElapses(Duration.ofDays(30))
+                .expectWebRequests("/project/slack-notification.json");
     }
 
     @Test
     void doNotNotifyIfTaskWasCompletedBeforeDeadline() {
         fixture
-            .givenCommands(
-                "/project/create-project.json",
-                addTaskWithDeadline,
-                "/project/complete-task.json"
-            )
-            .whenTimeAdvancesTo(deadline)
-            .expectNoWebRequests();
+                .givenCommands(
+                        "/project/create-project.json",
+                        "/project/add-task-30day-timeout.json",
+                        "/project/complete-task.json"
+                )
+                .whenTimeElapses(Duration.ofDays(30))
+                .expectNoWebRequests();
     }
 }
 ```
@@ -2590,34 +2829,26 @@ class TaskNotificationTest {
 <TabItem value="Kotlin" label="Kotlin">
 
 ```kotlin
-// src/test/kotlin/io/fluxzero/todo/project/TaskNotificationTest.kt
-class TaskNotificationTest {
+// src/test/kotlin/io/fluxzero/todo/project/SlackNotifierTest.kt
+class SlackNotifierTest {
 
-    private val deadline: Instant = Instant.now().plusHours(2)
-    private val addTaskWithDeadline: AddTask = JsonUtils.fromFileWith(
-        "/project/add-task.json",
-        mapOf("details.deadline" to deadline)
-    )
+    private val slackWebhookUrl = "http://slack.test"
 
     private val fixture = TestFixture.create(
         ProjectCommandHandler(),
         TaskScheduler(),
         SlackNotifier()
-    )
+    ).withProperty("slack.webhook.url", slackWebhookUrl)
 
     @Test
     fun notifyAssigneeWhenDeadlineIsMissed() {
         fixture
             .givenCommands(
                 "/project/create-project.json",
-                addTaskWithDeadline
+                "/project/add-task-30day-timeout.json"
             )
-            .whenTimeAdvancesTo(deadline)
-            .expectWebRequests(
-                WebRequest.post("http://slack.test")
-                    .payload("/project/slack-notification.json")
-                    .build()
-            )
+            .whenTimeElapses(Duration.ofDays(30))
+            .expectWebRequests("/project/slack-notification.json")
     }
 
     @Test
@@ -2625,10 +2856,10 @@ class TaskNotificationTest {
         fixture
             .givenCommands(
                 "/project/create-project.json",
-                addTaskWithDeadline,
+                "/project/add-task-30day-timeout.json",
                 "/project/complete-task.json"
             )
-            .whenTimeAdvancesTo(deadline)
+            .whenTimeElapses(Duration.ofDays(30))
             .expectNoWebRequests()
     }
 }
@@ -2640,26 +2871,28 @@ class TaskNotificationTest {
 With the following example JSON files:
 
 ```json
-// src/test/resources/io/fluxzero/todo/project/add-task.json
+// src/test/resources/project/add-task-30day-timeout.json
 {
   "@class": "AddTask",
   "projectId": "p1",
   "taskId": "t1",
   "details": {
-    "name": "Submit tutorial"
+    "name": "Submit tutorial",
+    "timeout": "P30D"
   }
 }
 ```
 
 ```json
-// src/test/resources/io/fluxzero/todo/project/slack-notification.json
+// src/test/resources/project/slack-notification.json
 {
-  "text": "Task: 'Submit tutorial' has expired!"
+  "@class" : "com.fasterxml.jackson.databind.node.ObjectNode",
+  "text": "Task 'Submit tutorial' has expired!"
 }
 ```
 
 ```json
-// src/test/resources/io/fluxzero/todo/project/complete-task.json
+// src/test/resources/project/complete-task.json
 {
   "@class": "CompleteTask",
   "projectId": "p1",
@@ -2692,7 +2925,7 @@ Want to keep exploring?
 
 - Check out more examples in the <a href="https://github.com/fluxzero-io/fluxzero-examples" target="_blank" rel="noopener noreferrer">Fluxzero examples repo <span aria-hidden="true">↗</span></a>
 - Learn how to [deploy your app in Fluxzero Cloud](/docs/tutorials/cloud-deployment)
-- Dive deeper into Fluxzero using [our guides](/docs/guides/guides-intro)
+- Dive deeper into Fluxzero using [our guides](/docs/guides/010-overview)
 - Try building more features into the to-do app — like task progress or checklists.
 
 ---

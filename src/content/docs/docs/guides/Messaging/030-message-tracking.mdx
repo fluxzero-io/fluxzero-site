@@ -2,7 +2,7 @@
 title: Message tracking
 description: Message tracking
 sidebar:
-   order: 30
+  order: 30
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
@@ -17,33 +17,69 @@ Fluxzero handles message dispatch asynchronously by default. When a message such
 
 By default, handlers join the **default consumer** for a given message type. For example:
 
+<Tabs>
+<TabItem value="Java" label="Java">
+
 ```java
 class MyHandler {
     @HandleCommand
     void handle(SomeCommand command) {
-        ...
+        // business logic here
     }
 }
 ```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+class MyHandler {
+    @HandleCommand
+    fun handle(command: SomeCommand) {
+        // business logic here
+    }
+}
+```
+
+</TabItem>
+</Tabs>
 
 This handler joins the default **command consumer** automatically.
 
 ## Custom Consumers with @Consumer
 
-You can override the default behavior using the @Consumer annotation:
+You can override the default behavior using the `@Consumer` annotation:
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
-
 @Consumer(name = "MyConsumer")
 class MyHandler {
     @HandleCommand
     void handle(SomeCommand command) {
-        ...
+        // business logic
     }
 }
 ```
 
-To apply this to an entire package (and its subpackages), add a package-info.java file:
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+@Consumer(name = "MyConsumer")
+class MyHandler {
+    @HandleCommand
+    fun handle(command: SomeCommand) {
+        // business logic
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+To apply this to an entire package (and its subpackages), add a `package-info.java` file:
 
 ```java
 @Consumer(name = "MyConsumer")
@@ -52,30 +88,47 @@ package com.example.handlers;
 
 ## Customizing Consumer Configuration
 
-You can tune the behavior using additional attributes on the @Consumer annotation:
+You can tune the behavior using additional attributes on the `@Consumer` annotation:
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
-
 @Consumer(name = "MyConsumer", threads = 2, maxFetchSize = 100)
 class MyHandler {
     @HandleCommand
     void handle(SomeCommand command) {
-        ...
+        // business logic
     }
 }
 ```
 
-- threads = 2: Two threads per application instance will fetch commands.
-- maxFetchSize = 100: Up to 100 messages fetched per request, helping apply backpressure.
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
 
-Each thread runs a **tracker**. If you deploy the app multiple times, Flux automatically load-balances messages across
-all available trackers.
+```kotlin
+@Consumer(name = "MyConsumer", threads = 2, maxFetchSize = 100)
+class MyHandler {
+    @HandleCommand
+    fun handle(command: SomeCommand) {
+        // business logic
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+- `threads = 2`: Two threads per application instance will fetch commands.
+- `maxFetchSize = 100`: Up to 100 messages fetched per request, helping apply backpressure.
+
+Each thread runs a **tracker**. If you deploy the app multiple times, Fluxzero automatically load-balances messages across all available trackers.
 
 ## Default Consumer Settings
 
 | Setting      | Default Value |
 |--------------|---------------|
-| threads      | 1             |
-| maxFetchSize | 1024          |
+| `threads`      | 1             |
+| `maxFetchSize` | 1024          |
 
 These defaults are sufficient for most scenarios. You can always override them for improved performance or control.
