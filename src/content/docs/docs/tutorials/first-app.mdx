@@ -721,6 +721,13 @@ fun creatingProjectSucceeds() {
 
 Adding `"@class": "CreateProject"` is needed for deserialization of the JSON.
 
+<Aside type="note">
+    Deserialization using just a simple class name is sufficient in Java projects, but not yet in Kotlin,
+    which requires the fully qualified name:
+
+    `"@class": "io.fluxzero.todo.project.command.CreateProject"`.
+</Aside>
+
 #### Checkpoint: Does it work?
 
 At this point you should be able to run your very first test and see it pass.
