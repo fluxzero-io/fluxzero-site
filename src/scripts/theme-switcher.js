@@ -32,11 +32,10 @@
 
   const showActiveTheme = (theme) => {
     const themeSwitcher = document.querySelector('[data-bs-toggle="mode"]')
-    const themeSwitcherCheck = themeSwitcher.querySelector('input[type="checkbox"]')
-
     if (!themeSwitcher) {
       return
     }
+    const themeSwitcherCheck = themeSwitcher.querySelector('input[type="checkbox"]')
 
     if (theme === 'dark') {
       themeSwitcherCheck.checked = 'checked'

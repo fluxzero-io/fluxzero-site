@@ -2,8 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Sdk from './Sdk.astro';
 import '../styles/main.scss';
 import '../styles/fluxzero.css';
+import Runtime from './Runtime.astro';
+import Cloud from './Cloud.astro';
+import BringYourOwn from './BringYourOwn.astro';
 ---
 
 <BaseLayout 
@@ -30,25 +34,25 @@ import '../styles/fluxzero.css';
       <!-- Nav tabs -->
       <ul class="nav nav-tabs justify-content-center overflow-auto pb-2 mb-3 mb-lg-4" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link text-nowrap active" id="project-management-tab" data-bs-toggle="tab" data-bs-target="#project-management" type="button" role="tab" aria-controls="project-management" aria-selected="true">
+          <button class="nav-link text-nowrap active" id="sdk-tab" data-bs-toggle="tab" data-bs-target="#sdk" type="button" role="tab" aria-controls="sdk" aria-selected="true">
             <i class="bi bi-code-slash fs-lg opacity-60 me-2"></i>
             Fluxzero SDK
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link text-nowrap" id="remote-work-tab" data-bs-toggle="tab" data-bs-target="#remote-work" type="button" role="tab" aria-controls="remote-work" aria-selected="false">
+          <button class="nav-link text-nowrap" id="runtime-tab" data-bs-toggle="tab" data-bs-target="#runtime" type="button" role="tab" aria-controls="runtime" aria-selected="false">
             <i class="bi bi-boxes fs-lg opacity-60 me-2"></i>
             Fluxzero Runtime
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link text-nowrap" id="product-release-tab" data-bs-toggle="tab" data-bs-target="#product-release" type="button" role="tab" aria-controls="product-release" aria-selected="false">
+          <button class="nav-link text-nowrap" id="cloud-tab" data-bs-toggle="tab" data-bs-target="#cloud" type="button" role="tab" aria-controls="cloud" aria-selected="false">
             <i class="bi bi-cloud-check fs-lg opacity-60 me-2"></i>
             Fluxzero Cloud
           </button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link text-nowrap" id="campaign-planning-tab" data-bs-toggle="tab" data-bs-target="#campaign-planning" type="button" role="tab" aria-controls="campaign-planning" aria-selected="false">
+          <button class="nav-link text-nowrap" id="bring-your-own-tab" data-bs-toggle="tab" data-bs-target="#bring-your-own" type="button" role="tab" aria-controls="bring-your-own" aria-selected="false">
             <i class="bi bi-cloud-upload fs-lg opacity-60 me-2"></i>
             Bring-you-own cloud
           </button>
@@ -57,313 +61,23 @@ import '../styles/fluxzero.css';
 
       <div class="tab-content bg-secondary rounded-3 p-4 p-lg-5">
         <!-- Fluxzero SDK -->
-        <div class="tab-pane fade show active" id="project-management" role="tabpanel" aria-labelledby="project-management-tab">
-          <div class="row gx-5 gy-2">
-            <div class="col-md-6">
-              <h3 class="mb-lg-4">Fluxzero SDK</h3>
-              <p>The fastest way to build and scale rock‑solid backends without boilerplate or compromises.</p>
-
-              <p>
-                The Fluxzero SDK was designed from the ground up to let you build complete backend applications — quickly
-                and joyfully — without touching infrastructure or reinventing plumbing.
-              </p>
-
-              <p>
-                You write code that matters to your domain. Fluxzero handles the 50 things you'd rather not implement.
-              </p>
-
-            </div>
-
-            <div class="col-md-6 mb-3 align-self-center text-center">
-              <img src="/assets/fluxzero/fluxzero-product-sdk.svg" alt="Fluxzero SDK" width="502">
-            </div>
-
-            <div class="col-md-3"><a href="#" class="btn w-100 btn-outline-dark btn-lg">View Sample Apps</a></div>
-            <div class="col-md-3"><a href="#" class="btn w-100 btn-primary btn-lg">Start building</a></div>
-
-            <hr class="mt-5" />
-
-            <div class="col-md-12 text-center py-4">
-              <img src="/assets/fluxzero/fluxzero-sdk-features.webp" alt="Fluxzero SDK features">
-            </div>
-
-            <hr class="my-1" />
-
-            <div class="col-md-12">
-              <h3 class="h3 mt-5">Core advantages</h3>
-            </div>
-
-            <div class="col-md-6">
-              <ul class="list-unstyled pb-lg-3">
-                <li class="d-flex my-3">
-                  <i class="bx bx-check-circle me-2 fs-5 text-primary"></i>
-                  <div>
-                    <strong>Blazing Developer Velocity</strong>
-                    <div class="mt-1">
-                      Build complete backends in hours, not weeks — fewer moving parts, less code.
-                    </div>
-                  </div>
-                </li>
-                <li class="d-flex my-3">
-                  <i class="bx bx-check-circle me-2 fs-5 text-primary"></i>
-                  <div>
-                    <strong>Non‑Functionals at Max by Design</strong>
-                    <div class="mt-1">
-                      Scalability, observability, resilience, and security aren't just bundled — they're baked into the
-                      core architecture. You get them at full strength without trade‑offs, while still moving fast.
-                    </div>
-                  </div>
-                </li>
-              </ul>
-
-            </div>
-
-            <div class="col-md-6">
-              <ul class="list-unstyled pb-lg-3">
-                <li class="d-flex center my-3">
-                  <i class="bx bx-check-circle me-2 fs-5 text-primary"></i>
-                  <div>
-                    <strong>Single Mental Model</strong>
-                    <div class="mt-1">
-                      One unified API for commands, queries, events, workflows, scheduling, persistence — no juggling
-                      frameworks or paradigms.
-                    </div>
-                  </div>
-                </li>
-                <li class="d-flex center my-3">
-                  <i class="bx bx-check-circle me-2 fs-5 text-primary"></i>
-                  <div>
-                    <strong>Cloud‑Native by Default</strong>
-                    <div class="mt-1">
-                      Develop locally, deploy seamlessly to <a class="link-primary link-underline-opacity-0"
-                                                               href="#cloud">Fluxzero Cloud</a> or your own
-                      infrastructure.
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            <hr class="my-3" />
-
-            <div class="col-md">
-
-              <div class="swiper-slider mx-auto my-5" style="max-width: 900px;">
-                <div class="swiper" data-swiper-options='{
-                    "slidesPerView": 1,
-                    "effect": "cube",
-                    "centeredSlides": false,
-                    "loop": true,
-                    "speed": 650,
-                    "autoHeight": true,
-                    "coverflowEffect": {
-                      "rotate": 0,
-                      "stretch": 0,
-                      "depth": 900,
-                      "modifier": 1,
-                      "slideShadows": true
-                    },
-                    "autoplay": false,
-                    "pagination": {
-                      "el": ".swiper-pagination",
-                      "type": "fraction"
-                    },
-                    "navigation": {
-                      "prevEl": ".btn-prev",
-                      "nextEl": ".btn-next"
-                    }
-                  }'>
-                  <div class="swiper-wrapper">
-
-                    <div class="swiper-slide">
-                      <div data-bs-theme="dark" class="d-block mx-auto rounded-3" style="max-width: 800px;">
-<pre class="bg-dark"><code><span class="keyword">public record</span> UpdateProject(<span class="annotation">@EntityId</span> ProjectId <span class="field">projectId</span>, ProjectDetails <span class="field">details</span>) {`{`}
-  <span class="annotation">@AssertLegal</span>
-  <span class="keyword">void</span> <span class="method">assertAuthorized</span>(Project project, Sender sender) {`{`}
-     <span class="keyword">if</span> (!sender.authorizedFor(project.owner())) {`{`}
-       <span class="keyword">throw</span> ProjectErrors.unauthorized;
-     {`}`}
-  {`}`}
-
-  <span class="annotation">@Apply</span>
-  <span class="keyword">Project</span> <span class="method">apply</span>(Project project) {`{`}
-     <span class="keyword">return</span> project.withDetails(<span class="field">details</span>);
-  {`}`}
-{`}`}
-
-<span class="comment">// Business rules and updates all in one place — declarative and safe.</span></code></pre>
-                      </div>
-                    </div>
-
-                    <div class="swiper-slide position-relative" style="top: 150px">
-                      <div data-bs-theme="dark" class="d-block mx-auto rounded-3" style="max-width: 800px;">
-<pre class="bg-dark"><code><span class="keyword">public record</span> FindOrders(String <span class="field">term</span>) <span class="keyword">implements</span> Request&lt;List&lt;Order&gt;&gt; {`{`}
-  <span class="annotation">@HandleQuery</span>
-  List&lt;Order&gt; <span class="method">handle</span>() {`{`}
-     <span class="keyword">return</span> Fluxzero.search(Order.<span class="keyword">class</span>).lookAhead(<span class="field">term</span>).fetch(<span class="keyword">100</span>);
-  {`}`}
-{`}`}
-
-<span class="comment">// This query handles itself, external handlers optional.</span></code></pre>
-                      </div>
-                    </div>
-
-                    <div class="swiper-slide position-relative" style="top: 150px">
-                      <div data-bs-theme="dark" class="d-block mx-auto rounded-3" style="max-width: 800px;">
-<pre class="bg-dark"><code><span class="annotation">@Test</span>
-<span class="keyword">void</span> openCaseTwiceFails() {`{`}
-  fixture.givenCommands(<span class="string">"/case/open-case.json"</span>)
-         .whenCommand(<span class="string">"/case/open-case.json"</span>)
-         .expectExceptionalResult(CaseErrors.<span class="field">alreadyExists</span>);
-{`}`}
-
-<span class="comment">// Built-in behavioral testing — no mocks, no setup.</span></code></pre>
-                      </div>
-                    </div>
-
-                    <div class="swiper-slide position-relative" style="top: 130px">
-                      <div data-bs-theme="dark" class="d-block mx-auto rounded-3" style="max-width: 800px;">
-<pre class="bg-dark"><code><span class="annotation">@HandleSchedule</span>
-<span class="annotation">@Periodic(cron = <span class="string">"0 * * * MON-FRI"</span>)</span>
-<span class="keyword">void</span> handle(PollNewsFeed schedule) {`{`}
-  <span class="keyword">var</span> feed = Fluxzero.sendWebRequestAndWait(
-      WebRequest.get(<span class="string">"https://example.org/feed"</span>).build()).getPayloadAs(Feed.<span class="keyword">class</span>);
-  <span class="comment">// Store new headlines or trigger notification</span>
-{`}`}
-
-<span class="comment">// Auto-started schedules. Durable, distributed, and code-first.</span></code></pre>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  <!-- Prev/Next buttons + count -->
-                  <div class="d-flex justify-content-center align-items-center pb-3 pt-4 mt-3">
-                    <button type="button" class="btn btn-prev btn-icon position-relative top-0 mt-0 ms-0 me-2"
-                            style="transform: none;" aria-label="Previous">
-                      <i class="bx bx-chevron-left"></i>
-                    </button>
-                    <div class="swiper-pagination opacity-70 fs-sm fw-medium position-relative top-0 w-auto"
-                         style="min-width: 70px;"></div>
-                    <button type="button" class="btn btn-next btn-icon position-relative top-0 mt-0 ms-2 me-0"
-                            style="transform: none;" aria-label="Next">
-                      <i class="bx bx-chevron-right"></i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-
-            <hr class="mb-5" />
-
-            <div class="col-md-6">
-
-              <h3 class="h3">Where Fluxzero shines</h3>
-
-              <p>Fluxzero is ideal for any business application — from simple internal tools to complex, high-scale
-                systems.</p>
-
-              <p>Whether you're building a proof-of-concept or a mission-critical platform, Fluxzero lets you move fast
-                without sacrificing quality. You never need to rewrite, re-architect, or rethink how to scale, evolve, or
-                monitor your app.</p>
-
-            </div>
-
-            <div class="col-md-6">
-
-              <h3 class="h3">Some examples:</h3>
-
-              <div class="row">
-                <div class="col-sm">
-                  <ul class="list-unstyled pb-lg-3">
-                    <li class="my-1"><span class="me-1">🚗</span> Ride-sharing platforms</li>
-                    <li class="my-1"><span class="me-1">🎮</span> Game servers</li>
-                    <li class="my-1"><span class="me-1">🏥</span> Healthcare systems</li>
-                    <li class="my-1"><span class="me-1">🏛️</span> Government portals</li>
-                    <li class="my-1"><span class="me-1">🎫</span> Ticketing systems</li>
-                  </ul>
-                </div>
-                <div class="col-sm">
-                  <ul class="list-unstyled pb-lg-3">
-                    <li class="my-1"><span class="me-1">🏨</span> Booking systems</li>
-                    <li class="my-1"><span class="me-1">📦</span> Supply-chain platforms</li>
-                    <li class="my-1"><span class="me-1">🎓</span> University systems</li>
-                    <li class="my-1"><span class="me-1">🛍️</span> E-commerce apps</li>
-                    <li class="my-1"><span class="me-1">🏦</span> Banking systems</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-
-            <div class="col-md-6">
-              <h3>JVM First. More to Come.</h3>
-
-              <p>Fluxzero SDK is currently available for Java, Kotlin, and Scala — with full idiomatic support. More
-                languages are on the roadmap, making Fluxzero the go-to backend platform for polyglot teams and
-                future-proof apps.</p>
-            </div>
-
-            <div class="col-md-6">
-              <h3>Missing something?</h3>
-
-              <p>If you're wondering "Can Fluxzero do X?", the answer is probably yes. But if not — we want to know. We're
-                building this for you. <a class="link-primary link-underline-opacity-0" href="#cloud">Let us know what
-                  else you'd love to see</a>.</p>
-            </div>
-
-
-            <div class="text-center mt-5">
-              <h2 class="h1 mb-4">Ready to Get Started?</h2>
-              <p class="lead pb-3 mb-3">Build your first app or check out examples</p>
-
-              <div class="row justify-content-center g-4">
-                <div class="col-md-3"><a href="#" class="btn w-100 btn-outline-dark btn-lg">See Code Samples</a></div>
-                <div class="col-md-3"><a href="#" class="btn w-100 btn-primary btn-lg">Start building</a></div>
-              </div>
-            </div>
-
-          </div>
+        <div class="tab-pane fade show active" id="sdk" role="tabpanel" aria-labelledby="sdk-tab">
+          <Sdk/>
         </div>
 
         <!-- Fluxzero Runtime -->
-        <div class="tab-pane fade" id="remote-work" role="tabpanel" aria-labelledby="remote-work-tab">
-          <div class="row align-items-center pt-3 pb-2 pb-sm-3 pt-sm-4 pt-md-0 px-3 px-sm-4 px-lg-0">
-            <div class="col-lg-4 col-md-5 offset-lg-1 text-center text-md-start">
-              <h3 class="mb-lg-4">Fluxzero Runtime</h3>
-              <p>Run your applications anywhere with zero operational overhead. The Fluxzero Runtime handles scaling, persistence, and infrastructure so you can focus on building features.</p>
-            </div>
-            <div class="col-lg-6 col-md-7 mt-md-4">
-              <img src="/assets/fluxzero/fluxzero-engine-features2.png" class="d-block my-lg-2 mx-auto me-md-0" width="502" alt="Fluxzero Runtime">
-            </div>
-          </div>
+        <div class="tab-pane fade" id="runtime" role="tabpanel" aria-labelledby="runtime-tab">
+          <Runtime/>
         </div>
 
         <!-- Fluxzero Cloud -->
-        <div class="tab-pane fade" id="product-release" role="tabpanel" aria-labelledby="product-release-tab">
-          <div class="row align-items-center pt-3 pt-sm-4 pt-md-0 px-3 pe-sm-4 pe-md-0 ps-sm-4 ps-lg-0">
-            <div class="col-lg-4 col-md-5 offset-lg-1 text-center text-md-start">
-              <h3 class="mb-lg-4">Fluxzero Cloud</h3>
-              <p>Fully managed backend platform with built-in monitoring, auto-scaling, and global deployment. Let us handle the infrastructure while you focus on your application.</p>
-            </div>
-            <div class="col-lg-6 col-md-7 mt-n3 mt-md-1">
-              <img src="/assets/fluxzero/fluxzero-engine-features3.png" class="d-block mb-lg-2 mx-auto me-md-0" width="525" alt="Fluxzero Cloud">
-            </div>
-          </div>
+        <div class="tab-pane fade" id="cloud" role="tabpanel" aria-labelledby="cloud-tab">
+          <Cloud/>
         </div>
 
         <!-- Bring-your-own Cloud -->
-        <div class="tab-pane fade" id="campaign-planning" role="tabpanel" aria-labelledby="campaign-planning-tab">
-          <div class="row align-items-center pt-3 pt-sm-4 pt-md-0 px-3 pe-sm-4 pe-md-0 ps-sm-4 ps-lg-0">
-            <div class="col-lg-4 col-md-5 offset-lg-1 text-center text-md-start">
-              <h3 class="mb-lg-4">Bring-you-own cloud</h3>
-              <p>Deploy Fluxzero to your own infrastructure. Full control, complete flexibility, with all the benefits of the Fluxzero platform.</p>
-            </div>
-            <div class="col-lg-6 col-md-7 mt-n3 mt-md-1">
-              <img src="/assets/fluxzero/fluxzero-engine-features3.png" class="d-block mb-lg-2 mx-auto me-md-0" width="525" alt="Bring-your-own cloud">
-            </div>
-          </div>
+        <div class="tab-pane fade" id="bring-your-own" role="tabpanel" aria-labelledby="bring-your-own-tab">
+          <BringYourOwn/>
         </div>
       </div>
     </section>
@@ -377,10 +91,10 @@ import '../styles/fluxzero.css';
       
       // Map hash to tab IDs
       const hashToTabId = {
-        '#sdk': '#project-management',
-        '#runtime': '#remote-work', 
-        '#cloud': '#product-release',
-        '#bring-your-own': '#campaign-planning'
+        '#sdk': '#sdk',
+        '#runtime': '#runtime', 
+        '#cloud': '#cloud',
+        '#bring-your-own': '#bring-your-own'
       };
       
       if (hash && hashToTabId[hash]) {
@@ -402,15 +116,7 @@ import '../styles/fluxzero.css';
       button.addEventListener('shown.bs.tab', event => {
         const target = event.target.getAttribute("data-bs-target");
         
-        // Map tab IDs back to meaningful hashes
-        const tabIdToHash = {
-          '#project-management': '#sdk',
-          '#remote-work': '#runtime',
-          '#product-release': '#cloud', 
-          '#campaign-planning': '#bring-your-own'
-        };
-        
-        const hash = tabIdToHash[target] || target;
+        const hash = target;
         if (hash && history.replaceState) {
           history.replaceState(null, null, hash);
         }
