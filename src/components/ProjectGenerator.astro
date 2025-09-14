@@ -38,18 +38,18 @@ export interface ApiPayload {
 }
 
 const templates: Record<string, Template> = {
-  'flux-java-single': {
+  'flux-basic-java': {
     name: 'Basic Java Starter',
     description: 'A minimal Fluxzero setup for getting started.',
     language: 'java'
   },
-  'flux-kotlin-single': {
+  'flux-basic-kotlin': {
     name: 'Basic Kotlin Starter',
     description: 'A minimal Fluxzero setup for getting started.',
     language: 'kotlin'
   },
   'gamerental': {
-    name: 'Gamerental Example',
+    name: 'Game Rental Example',
     description: 'Complete application for game rentals.',
     language: 'java'
   },
@@ -241,7 +241,7 @@ const templates: Record<string, Template> = {
       projectName: 'demo',
       artifactId: 'demo',
       groupId: 'com.example',
-      selectedTemplate: 'flux-java-single',
+      selectedTemplate: 'flux-basic-java',
       buildTool: 'gradle',
       artifactIdManuallyEdited: false,
       buttonState: 'idle',
