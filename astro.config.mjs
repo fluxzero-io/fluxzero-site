@@ -42,7 +42,7 @@ export default defineConfig({
                 dark: './src/assets/flux-logo-white.png',
                 alt: 'Flux Logo'
             },
-            favicon: './src/assets/favicon/fluxzero-logo.png',
+            favicon: '/assets/fluxzero/fluxzero-logo.png',
             editLink: {
                 baseUrl: 'https://github.com/fluxzero-io/flux-docs/edit/main',
             },
