@@ -1,0 +1,236 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Sdk from './Sdk.astro';
+import '../styles/main.scss';
+import '../styles/fluxzero.css';
+import Runtime from './Runtime.astro';
+import Cloud from './Cloud.astro';
+import BringYourOwn from './BringYourOwn.astro';
+---
+
+<BaseLayout
+        title="About | Fluxzero"
+        description="Fluxzero is the fastest way to build scalable, message-driven apps. One unified SDK, zero boilerplate, full observability, and deploy anywhere."
+>
+    <!-- Bootstrap icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+          slot="head">
+
+    <style slot="head">
+        .keyword {
+            color: #569cd6;
+        }
+
+        .field {
+            color: #9cdcfe;
+        }
+
+        .method {
+            color: #dcdcaa;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .annotation {
+            color: #4fc1ff;
+        }
+    </style>
+
+    <!-- Page wrapper for sticky footer -->
+    <main class="page-wrapper">
+        <div class="bg-dark" style="height: 75px">
+            <Header/>
+        </div>
+
+
+        <!-- Links + Contact form -->
+        <section class="position-relative bg-secondary pt-5">
+            <div class="container position-relative zindex-2 pt-5">
+
+                <div class="row">
+
+                    <!-- Contact links -->
+                    <div class="col-xl-4 col-lg-5 pb-4 pb-sm-5 mb-2 mb-sm-0">
+                        <div class="pe-lg-4 pe-xl-0">
+                            <h1 class="pb-3 pb-md-4 mb-lg-5">Contact Us</h1>
+                            <div class="d-flex align-items-start pb-3 mb-sm-1 mb-md-3">
+                                <div class="bg-light text-primary rounded-circle flex-shrink-0 fs-3 lh-1 p-3">
+                                    <i class="bx bx-envelope"></i>
+                                </div>
+                                <div class="ps-3 ps-sm-4">
+                                    <h2 class="h4 pb-1 mb-2">Email us</h2>
+                                    <p class="mb-2">Please feel free to drop us a line. We will respond as soon as possible.</p>
+                                    <a href="mailto:info&#64;fluxzero.io" class="btn btn-link btn-lg px-0">
+                                        Leave a message
+                                        <i class="bx bx-right-arrow-alt lead ms-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-start">
+                                <div class="bg-light text-primary rounded-circle flex-shrink-0 fs-3 lh-1 p-3">
+                                    <i class="bx bx-group"></i>
+                                </div>
+                                <div class="ps-3 ps-sm-4">
+                                    <h2 class="h4 pb-1 mb-2">Careers</h2>
+                                    <p class="mb-2">Excited to join us and change the way software is developed?</p>
+                                    <a href="mailto:info&#64;fluxzero.io" class="btn btn-link btn-lg px-0">
+                                        Send an application
+                                        <i class="bx bx-right-arrow-alt lead ms-2"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact form -->
+                    <div class="col-xl-6 col-lg-7 offset-xl-2">
+                        <div class="card border-light shadow-lg py-3 p-sm-4 p-md-5">
+                            <div class="bg-dark position-absolute top-0 start-0 w-100 h-100 rounded-3 d-none d-dark-mode-block"></div>
+                            <div class="card-body position-relative zindex-2">
+                                <h2 class="card-title pb-3 mb-4">Get in touch</h2>
+                                <form action="https://getform.io/f/bejeorxa" id="contactForm" method="POST" class="row g-4 needs-validation" novalidate>
+                                    <input type="hidden" name="_gotcha" style="display:none !important">
+                                    <div class="col-12">
+                                        <label for="fn" class="form-label fs-base">Full name</label>
+                                        <input name="name" type="text" class="form-control form-control-lg" id="fn" required>
+                                        <div class="invalid-feedback">Please enter your full name!</div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="email" class="form-label fs-base">Email address</label>
+                                        <input name="email" type="email" class="form-control form-control-lg" id="email" required>
+                                        <div class="invalid-feedback">Please provide a valid email address!</div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="message" class="form-label fs-base">Message</label>
+                                        <textarea name="message" type="text" class="form-control form-control-lg" id="message" required></textarea>
+                                        <div class="invalid-feedback">Please provide a message!</div>
+                                    </div>
+                                    <div class="col-auto ms-auto pt-2 pt-sm-3">
+                                        <button type="submit" id="submitButton" class="btn btn-lg btn-primary w-100 w-sm-auto">Send</button>
+                                    </div>
+                                </form>
+
+                                <div id="formStatus"></div>
+
+                                <script>
+                                    const form = document.getElementById("contactForm");
+                                    const status = document.getElementById("formStatus");
+                                    const submitButton = document.getElementById("submitButton");
+                                    const originalButtonText = submitButton.innerHTML;
+
+                                    form.addEventListener("submit", async (e) => {
+                                        e.preventDefault();
+
+                                        if (!form.checkValidity()) {
+                                            form.reportValidity();
+                                            return;
+                                        }
+
+                                        // Disable button & show spinner
+                                        submitButton.disabled = true;
+                                        submitButton.innerHTML = `
+      <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+      Sending...
+    `;
+
+                                        const formData = new FormData(form);
+
+                                        try {
+                                            const response = await fetch("https://getform.io/f/bejeorxa", {
+                                                method: "POST",
+                                                body: formData,
+                                            });
+
+                                            if (response.ok) {
+                                                status.textContent = "✅ Thanks, your message was sent!";
+                                                form.reset();
+                                                form.classList.remove("was-validated");
+                                                form.querySelectorAll(".is-invalid, .is-valid").forEach((el) => {
+                                                    el.classList.remove("is-invalid", "is-valid");
+                                                });
+                                            } else {
+                                                status.textContent = "❌ Something went wrong. Please try again.";
+                                            }
+                                        } catch (err) {
+                                            status.textContent = "⚠️ Network error. Please try again later.";
+                                        } finally {
+                                            // Re-enable button & restore text
+                                            submitButton.disabled = false;
+                                            submitButton.innerHTML = originalButtonText;
+                                        }
+                                    });
+                                </script>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="position-absolute bottom-0 start-0 w-100 bg-light" style="height: 8rem;"></div>
+        </section>
+
+
+        <!-- Branches -->
+        <section class="container py-2 py-lg-4 py-xl-5 mb-2 mb-md-3">
+            <div class="row py-5">
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <div class="d-flex flex-column h-100 shadow-sm rounded-3 overflow-hidden">
+                        <iframe class="d-block h-100" src="https://maps.google.com/maps?width=600&amp;height=400&amp;hl=en&amp;q=Wilhelminakade 81, Rotterdam&amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed" style="border: 0; min-height: 300px;" allowfullscreen="" loading="lazy" title="Map"></iframe>
+                    </div>
+                </div>
+                <div class="col-lg-5 offset-lg-1">
+                    <h2 class="h4 mb-4">Our office</h2>
+                    <ul class="list-unstyled pb-2 pb-lg-0 mb-4 mb-lg-5">
+                        <li class="d-flex pb-1 mb-2">
+                            <i class="bx bx-map text-primary fs-xl me-2" style="margin-top: .125rem;"></i>
+                            Wilhelminakade 81, 3072 AP Rotterdam, The Netherlands
+                        </li>
+                        <li class="d-flex pb-1 mb-2">
+                            <i class="bx bx-building text-primary fs-xl me-2" style="margin-top: .125rem;"></i>
+                            <span>Maastoren, 33<sup>rd</sup> floor</span>
+                        </li>
+                        <li class="d-flex pb-1 mb-2">
+                            <i class="bx bx-phone-call text-primary fs-xl me-2" style="margin-top: .125rem;"></i>
+                            +31 (0)10 307 2119
+                        </li>
+                        <li class="d-flex">
+                            <i class="bx bx-time-five text-primary fs-xl me-2" style="margin-top: .125rem;"></i>
+                            <div><strong class="text-nav">Open</strong>: 24/7</div>
+                        </li>
+                    </ul>
+                    <h2 class="h4 mb-4">Postal address</h2>
+                    <ul class="list-unstyled pb-2 pb-lg-0 mb-4 mb-lg-5">
+                        <li class="d-flex pb-1 mb-2">
+                            <i class="bx bx-map text-primary fs-xl me-2" style="margin-top: .125rem;"></i>
+                            Posthoornstraat 17, 3011 WD Rotterdam, The Netherlands
+                        </li>
+                        <li class="d-flex">
+                            <i class="bx bx-time-five text-primary fs-xl me-2" style="margin-top: .125rem;"></i>
+                            <div>
+                                <strong class="text-nav">Mon - Fri</strong>: 9:00 am - 18:00 pm
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="d-flex pt-1 pt-md-3 pt-xl-4">
+                        <a href="https://github.com/fluxzero-io" class="btn btn-icon btn-secondary btn-instagram mx-1" aria-label="GitHub" target="_blank" rel="noopener">
+                            <i class="bx bxl-github"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@fluxzero-io" class="btn btn-icon btn-secondary btn-youtube mx-1" aria-label="YouTube" target="_blank" rel="noopener">
+                            <i class="bx bxl-youtube"></i>
+                        </a>
+                        <a href="https://x.com/fluxzero_io" class="btn btn-icon btn-secondary btn-instagram mx-1" aria-label="X.com" target="_blank" rel="noopener">
+                            <i class="bi bi-twitter-x"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    <Footer/>
+
+</BaseLayout>
