@@ -19,24 +19,8 @@ import BringYourOwn from './BringYourOwn.astro';
           slot="head">
 
     <style slot="head">
-        .keyword {
-            color: #569cd6;
-        }
-
-        .field {
-            color: #9cdcfe;
-        }
-
-        .method {
-            color: #dcdcaa;
-        }
-
-        .comment {
-            color: #6a9955;
-        }
-
-        .annotation {
-            color: #4fc1ff;
+        .name-tooltip {
+            text-align: left !important;
         }
     </style>
 
@@ -51,8 +35,10 @@ import BringYourOwn from './BringYourOwn.astro';
         <section class="pt-2 pt-sm-0 pb-lg-4" style="margin-top: 100px">
             <div class="container pb-2">
                 <h2 class="h1 text-center">Why we exist</h2>
-                <p class="fs-lg text-center pb-4">We believe software development should be effortless, even at enterprise scale.
-                    <br/> Our goal is simple: you ship the business logic, and we make everything else just work.</p>
+                <p class="fs-lg text-center pb-4">We believe software development can be effortless, regardless of scale.
+                    <br/> The potential of software is unlimited, yet much of it remains locked behind complexity.
+                    <br/> Imagine a world where all that potential is finally set free.
+                </p>
 
                 <hr class="my-5"/>
 
@@ -60,7 +46,7 @@ import BringYourOwn from './BringYourOwn.astro';
                     <h2 class="h1 pb-4 pb-lg-2 text-center">Meet our team</h2>
 
                     <p class="fs-lg text-center pb-4 pb-lg-5 mb-2 mb-sm-3 mb-xl-4">
-                        We are are small team based in Rotterdam, The Netherlands. <br/> We imagine how things <em>should</em> work, and then make it happen by working backwards.
+                        Our team is based in Rotterdam, The Netherlands. <br/> We imagine how things <em>should</em> work, and then make it happen by working backwards.
                     </p>
 
                     <div class="row">
@@ -106,12 +92,14 @@ import BringYourOwn from './BringYourOwn.astro';
                             <h3 class="h5 pb-1 mb-2">Michel Tiemens</h3>
                             <p class="fs-sm">Developer</p>
                         </div>
-                        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
+                        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4" >
                             <div class="d-inline-block">
-                                <img src="/assets/fluxzero/rene.png" class="d-inline-block rounded-circle" width="80" alt="Avatar" >
+                                <div class="d-inline-block">
+                                    <img src="/assets/fluxzero/rene.png" class="d-inline-block rounded-circle" width="80" alt="Avatar" >
+                                </div>
+                                <h3 class="h5 pb-1 mb-2">René de Waele</h3>
+                                <p class="fs-sm">Co-founder + CEO</p>
                             </div>
-                            <h3 class="h5 pb-1 mb-2">René de Waele</h3>
-                            <p class="fs-sm">Co-founder + CEO</p>
                         </div>
 
                         <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
@@ -135,48 +123,24 @@ import BringYourOwn from './BringYourOwn.astro';
 
                 <!--Partnering to build Europe’s developer cloud-->
 
-                <section class="px-lg-5">
-                    <h1 class="text-center my-5">Partnering to build Europe’s developer cloud</h1>
-                    <p class="fs-lg text-center pb-4">
+                <section class="px-lg-5 mx-auto text-center" style="max-width: 700px;">
+                    <h1 class="my-5">For investors</h1>
+                    <p class="fs-lg pb-4">
                         Fluxzero is building something bold: a radically simplified cloud platform that removes DevOps and lets developers focus entirely on business logic. We’re not just accelerating software development—we’re reimagining the infrastructure it runs on.
                         <br/><br/>
                         We believe the next foundational platform company won’t come from Silicon Valley. It will come from Europe. And it will be product-led, developer-first, and built for scale from day one.
                     </p>
 
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h3 class="h2 text-center">What We’re Looking For</h3>
-                            <ul class="fs-lg pb-4 list-unstyled text-center">
-                                <li>European VCs who believe the next AWS can be born here</li>
-                                <li>Partners with enterprise reach and strong dev networks</li>
-                                <li>Teams with a record of backing category-defining infra</li>
-                                <li>Investors who know platform adoption takes time</li>
-                                <li>Backers who support product-led growth and durable ecosystems</li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6">
-                            <h3 class="h2 text-center">What We’re Not Looking For</h3>
-                            <ul class="fs-lg pb-4 list-unstyled text-center">
-                                <li>US-centric funds pushing premature global expansion</li>
-                                <li>Short-term or flip-focused capital</li>
-                                <li>Hype-driven investors without conviction</li>
-                                <li>Pressure for vanity metrics over real adoption</li>
-                                <li>Capital that values speed over trust and resilience</li>
-                            </ul>
-                        </div>
-                    </div>
+                    <h3 class="h2">Where we’re headed</h3>
 
-                    <h3 class="h2 text-center">Where We’re Headed</h3>
-
-                    <p class="fs-lg text-center py-4">
+                    <p class="fs-lg py-4">
                         Fluxzero is live in production and already powering critical applications. As we prepare for our next chapter—including our public launch — we’re choosing partners who share our long-term vision.
                         <br/><br/>
                         We’re not raising publicly, but we’re always open to conversations with aligned, thoughtful investors who understand this kind of journey.
                     </p>
 
                     <div class="text-center fs-lg">
-                        <p><span class="me-2">✉️</span>Reach us at <br/>
-                            <strong><a href="mailto:invest&#64;fluxzero.io">invest&#64;fluxzero.io</a></strong></p>
+                        <p><span class="me-2">✉️</span>Reach us at: <strong class="ms-1"><a href="mailto:invest&#64;fluxzero.io">invest&#64;fluxzero.io</a></strong></p>
                         <p>Or connect with one of our founders directly.</p>
                     </div>
                 </section>
