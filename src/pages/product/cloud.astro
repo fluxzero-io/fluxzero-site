@@ -1,0 +1,129 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import '../../styles/main.scss';
+import '../../styles/fluxzero.css';
+---
+
+<BaseLayout
+        title="Cloud | Fluxzero"
+        description="Fluxzero is the fastest way to build scalable, message-driven apps. One unified SDK, zero boilerplate, full observability, and deploy anywhere."
+>
+    <!-- Bootstrap icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" slot="head">
+
+    <style slot="head">
+        .keyword { color: #569cd6; }
+        .field { color: #9cdcfe; }
+        .method { color: #dcdcaa; }
+        .comment { color: #6a9955; }
+        .annotation { color: #4fc1ff; }
+    </style>
+
+    <!-- Page wrapper for sticky footer -->
+    <main class="page-wrapper">
+        <div class="bg-dark" style="height: 75px"><Header /></div>
+
+
+        <section class="container fluxzero-product pt-5 pb-2 mt-3 mt-sm-4 mt-xl-5">
+
+            <div class="row gx-5 gy-2">
+
+                <div class="col-md-6">
+                    <h1 class="mb-lg-4">Fluxzero Cloud</h1>
+                    <p>Fluxzero Cloud is a fully managed hosting and observability platform for Fluxzero applications. It handles infrastructure, deployment, monitoring, scaling, and logs—so you can stay focused on writing clean business logic.</p>
+
+                    <p>
+                        With GitHub-based deployments, real-time observability, and zero-downtime scaling built in, Fluxzero Cloud turns your apps into production-ready systems without extra ops overhead.
+                    </p>
+
+                    <p class="fw-bold">
+                        Deploy fast, run with confidence, and see everything that matters in one place — with zero ops.
+                    </p>
+                </div>
+
+                <div class="col-md-6 mb-3 align-self-center text-center">
+                    <img src="/assets/fluxzero/fluxzero-product-cloud.svg" alt="Fluxzero Cloud" width="500">
+                </div>
+
+                <div class="col-md-3"><a href="/docs" class="btn w-100 btn-outline-dark btn-lg">Read the docs</a></div>
+                <div class="col-md-3"><a href="/contact" class="btn w-100 btn-primary btn-lg">Request access</a></div>
+
+                <hr class="my-5"/>
+
+                <div class="col-md-12">
+                    <h2 class="mb-lg-4">Why Fluxzero Cloud?</h2>
+                </div>
+
+                <div class="col-md-6">
+                    <ul class="list-unstyled pb-lg-3">
+                        <li class="d-flex my-3">
+                            <i class="bx bx-check-circle me-2 fs-5 text-primary"></i>
+                            <div>
+                                <strong>Secure by Default</strong>
+                                <div class="mt-1">
+                                    Managed clusters, backups, secrets, tenant routing, and access control out of the box.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="d-flex my-3">
+                            <i class="bx bx-check-circle me-2 fs-5 text-primary"></i>
+                            <div>
+                                <strong>Observability Built In</strong>
+                                <div class="mt-1">
+                                    See logs, schedules, web requests, metrics, and state directly in the dashboard.
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-6">
+                    <ul class="list-unstyled pb-lg-3">
+                        <li class="d-flex my-3">
+                            <i class="bx bx-check-circle me-2 fs-5 text-primary"></i>
+                            <div>
+                                <strong>Zero-Downtime Scaling</strong>
+                                <div class="mt-1">
+                                    Automatic scaling, blue/green deployments, and seamless rollouts.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="d-flex my-3">
+                            <i class="bx bx-check-circle me-2 fs-5 text-primary"></i>
+                            <div>
+                                <strong>GitHub Deployments</strong>
+                                <div class="mt-1">
+                                    Push to main, run your workflow, and Fluxzero Cloud handles the rest.
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <hr class="mb-5"/>
+
+                <div class="col-md-12 mb-3 align-self-center text-center">
+                    <img src="/assets/fluxzero/dashboard-eb.png" alt="Fluxzero Cloud Preview" class="rounded shadow">
+                </div>
+
+                <hr class="my-5"/>
+
+                <div class="col-md-12 text-center">
+                    <h2 class="h1 mb-4">Cloud, minus the ops</h2>
+                    <p class="lead pb-3 mb-3">
+                        Code, push, and go live.<br/>
+                        Fluxzero Cloud handles the rest — monitoring, scaling, and reliability with zero ops.
+                    </p>
+                </div>
+
+            </div>
+
+
+        </section>
+    </main>
+
+    <Footer />
+
+</BaseLayout>
