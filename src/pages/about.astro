@@ -49,69 +49,116 @@ import BringYourOwn from './BringYourOwn.astro';
                         Our team is based in Rotterdam, The Netherlands. <br/> We imagine how things <em>should</em> work, and then make it happen by working backwards.
                     </p>
 
-                    <div class="row">
-                        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-                            <div class="d-inline-block">
-                                <img src="/assets/fluxzero/jeroen.png" class="d-inline-block rounded-circle" width="80" alt="Avatar">
-                            </div>
-                            <h3 class="h5 pb-1 mb-2">Jeroen Bruinink</h3>
-                            <p class="fs-sm">Developer</p>
-                        </div>
-                        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-                            <div class="d-inline-block">
-                                <img src="/assets/fluxzero/erhan.png" class="d-inline-block rounded-circle" width="80" alt="Avatar" >
-                            </div>
-                            <h3 class="h5 pb-1 mb-2">Erhan Demirel</h3>
-                            <p class="fs-sm">Co-founder + COO</p>
-                        </div>
-                        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-                            <div class="d-inline-block">
-                                <img src="/assets/fluxzero/ramon-gs.png" class="d-inline-block rounded-circle" width="80" alt="Avatar" >
-                            </div>
-                            <h3 class="h5 pb-1 mb-2">Ramón Esteve Cuevas</h3>
-                            <p class="fs-sm">Developer</p>
-                        </div>
-                        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-                            <div class="d-inline-block">
-                                <img src="/assets/fluxzero/sander.webp" class="d-inline-block rounded-circle" width="80" alt="Avatar" style="filter: grayscale(100%) brightness(130%) contrast(70%);">
-                            </div>
-                            <h3 class="h5 pb-1 mb-2">Sander de Groot</h3>
-                            <p class="fs-sm">Developer</p>
-                        </div>
-                        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-                            <div class="d-inline-block">
-                                <img src="/assets/fluxzero/alen.png" class="d-inline-block rounded-circle" width="80" alt="Avatar" >
-                            </div>
-                            <h3 class="h5 pb-1 mb-2">Alen Stjepanovic</h3>
-                            <p class="fs-sm">Co-founder + CCO</p>
-                        </div>
-                        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-                            <div class="d-inline-block">
-                                <img src="/assets/fluxzero/michel.png" class="d-inline-block rounded-circle" width="80" alt="Avatar">
-                            </div>
-                            <h3 class="h5 pb-1 mb-2">Michel Tiemens</h3>
-                            <p class="fs-sm">Developer</p>
-                        </div>
-                        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4" >
-                            <div class="d-inline-block">
-                                <div class="d-inline-block">
-                                    <img src="/assets/fluxzero/rene.png" class="d-inline-block rounded-circle" width="80" alt="Avatar" >
+                    <div class="row text-start gy-5">
+
+                        <!-- Example card -->
+                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
+                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
+                                <img src="/assets/fluxzero/jeroen.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
+                                <div>
+                                    <h3 class="h5 mb-1">Jeroen Bruinink</h3>
+                                    <p class="fs-sm mb-2">Developer</p>
+                                    <div>
+                                        <a href="#" class="text-decoration-none mx-1"><i class="bi bi-github text-muted"></i></a>
+                                        <a href="#" class=" mx-1 text-decoration-none"><i class="bi bi-linkedin text-muted"></i></a>
+                                        <a href="#" class=" mx-1 text-decoration-none"><i class="bi bi-twitter-x text-muted"></i></a>
+                                    </div>
                                 </div>
-                                <h3 class="h5 pb-1 mb-2">René de Waele</h3>
-                                <p class="fs-sm">Co-founder + CEO</p>
                             </div>
                         </div>
 
-                        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-                            <a href="/contact" class="link-dark text-decoration-none">
-                                <div class="d-inline-block">
+                        <!-- Repeat for each team member -->
+
+                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
+                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
+                                <img src="/assets/fluxzero/erhan.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
+                                <div>
+                                    <h3 class="h5 mb-1">Erhan Demirel</h3>
+                                    <p class="fs-sm mb-2">Co-founder + COO</p>
+                                    <div>
+                                        <!-- social icons -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
+                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
+                                <img src="/assets/fluxzero/ramon-gs.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
+                                <div>
+                                    <h3 class="h5 mb-1">Ramón Esteve Cuevas</h3>
+                                    <p class="fs-sm mb-2">Developer</p>
+                                    <div>
+                                        <!-- social icons -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
+                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
+                                <img src="/assets/fluxzero/sander.webp" class="rounded-circle me-3 mt-1" width="80" alt="Avatar" style="filter: grayscale(100%) brightness(130%) contrast(70%);">
+                                <div>
+                                    <h3 class="h5 mb-1">Sander de Groot</h3>
+                                    <p class="fs-sm mb-2">Developer</p>
+                                    <div>
+                                        <!-- social icons -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
+                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
+                                <img src="/assets/fluxzero/alen.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
+                                <div>
+                                    <h3 class="h5 mb-1">Alen Stjepanovic</h3>
+                                    <p class="fs-sm mb-2">Co-founder + CCO</p>
+                                    <div>
+                                        <!-- social icons -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
+                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
+                                <img src="/assets/fluxzero/michel.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
+                                <div>
+                                    <h3 class="h5 mb-1">Michel Tiemens</h3>
+                                    <p class="fs-sm mb-2">Developer</p>
+                                    <div>
+                                        <!-- social icons -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-sm-6 d-flex justify-content-center mb-4">
+                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
+                                <img src="/assets/fluxzero/rene.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
+                                <div>
+                                    <h3 class="h5 mb-1">René de Waele</h3>
+                                    <p class="fs-sm mb-2">Co-founder + CEO</p>
+                                    <div>
+                                        <!-- social icons -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
+                            <a href="/contact" class="d-flex align-items-start text-decoration-none text-dark w-100" style="max-width: 320px;">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center me-3 mt-1" style="width: 80px; height: 80px; border: 2px solid currentColor;">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="80" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
                                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
                                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                                     </svg>
                                 </div>
-                                <h3 class="h5 my-2 text-center">Want to join?</h3>
-                                <p class="fs-sm">Contact us</p>
+                                <div>
+                                    <h3 class="h5 mb-1">Want to join?</h3>
+                                    <p class="fs-sm mb-0">Contact us</p>
+                                </div>
                             </a>
                         </div>
 
@@ -123,21 +170,19 @@ import BringYourOwn from './BringYourOwn.astro';
 
                 <!--Partnering to build Europe’s developer cloud-->
 
-                <section class="px-lg-5 mx-auto text-center" style="max-width: 700px;">
+                <section class="px-lg-5 mx-auto text-center fs-lg" style="max-width: 700px;">
                     <h1 class="my-5">For investors</h1>
-                    <p class="fs-lg pb-4">
-                        Fluxzero is building something bold: a radically simplified cloud platform that removes DevOps and lets developers focus entirely on business logic. We’re not just accelerating software development—we’re reimagining the infrastructure it runs on.
-                        <br/><br/>
-                        We believe the next foundational platform company won’t come from Silicon Valley. It will come from Europe. And it will be product-led, developer-first, and built for scale from day one.
+                    <p class="pb-4">
+                        Fluxzero is building something bold. We’re not just accelerating software development—we’re reimagining the infrastructure it runs on.
                     </p>
 
                     <h3 class="h2">Where we’re headed</h3>
 
-                    <p class="fs-lg py-4">
-                        Fluxzero is live in production and already powering critical applications. As we prepare for our next chapter—including our public launch — we’re choosing partners who share our long-term vision.
-                        <br/><br/>
-                        We’re not raising publicly, but we’re always open to conversations with aligned, thoughtful investors who understand this kind of journey.
+                    <p>
+                        Fluxzero is live in production and already powering business-critical applications at enterprise-level.
                     </p>
+
+                    <p>As we prepare for our next chapter—including our public launch — we’re choosing partners who share our long-term vision.</p>
 
                     <div class="text-center fs-lg">
                         <p><span class="me-2">✉️</span>Reach us at: <strong class="ms-1"><a href="mailto:invest&#64;fluxzero.io">invest&#64;fluxzero.io</a></strong></p>
