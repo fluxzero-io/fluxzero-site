@@ -1,0 +1,186 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Sdk from './Sdk.astro';
+import '../styles/main.scss';
+import '../styles/fluxzero.css';
+import Runtime from './Runtime.astro';
+import Cloud from './Cloud.astro';
+import BringYourOwn from './BringYourOwn.astro';
+---
+
+<BaseLayout
+        title="Customers | Fluxzero"
+        description="Fluxzero is the fastest way to build scalable, message-driven apps. One unified SDK, zero boilerplate, full observability, and deploy anywhere."
+>
+    <!-- Bootstrap icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+          slot="head">
+
+    <style slot="head">
+        .keyword {
+            color: #569cd6;
+        }
+
+        .field {
+            color: #9cdcfe;
+        }
+
+        .method {
+            color: #dcdcaa;
+        }
+
+        .comment {
+            color: #6a9955;
+        }
+
+        .annotation {
+            color: #4fc1ff;
+        }
+    </style>
+
+    <!-- Page wrapper for sticky footer -->
+    <main class="page-wrapper">
+        <div class="bg-dark" style="height: 75px">
+            <Header/>
+        </div>
+
+
+        <!-- Testimonials -->
+        <section class="pt-2 pt-sm-0 pb-lg-4" style="margin-top: 100px">
+            <div class="container pb-2">
+                <h2 class="h1 text-center">Our customers</h2>
+                <p class="fs-lg text-center pb-4 pb-lg-5 mb-2 mb-sm-3 mb-xl-4">Fluxzero is running in production today —
+                    powering logistics, healthcare, and energy systems, where failure isn’t an option.</p>
+                <div class="masonry-grid row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 g-sm-3 g-md-4">
+
+                    <!-- Item -->
+                    <div class="masonry-grid-item col-lg col-md-6 col-sm-12">
+                        <div class="card border-0 bg-secondary p-1 p-sm-0 p-md-2">
+                            <img src="/assets/fluxzero/portbase.svg" class="d-block d-dark-mode-none mx-auto py-4"
+                                 width="160" alt="Portbase">
+                            <img src="/assets/fluxzero/portbase-dark.svg" class="d-none d-dark-mode-block mx-auto py-4"
+                                 width="160" alt="Portbase">
+                            <div class="card-body pt-1">
+                                <p class="pb-3 mb-3 text">Backbone of Dutch logistics. Mission-critical systems. Zero
+                                    downtime.</p>
+                                <ul class="pb-3 mb-3 text-left">
+                                    <li>Cleared 9 years of backlog in 13 months, saving €17M</li>
+                                    <li>Achieved >90% code reduction, while adding dozens of new features</li>
+                                    <li>From 2 deployments per month → 80 per day</li>
+                                </ul>
+                                <div class="pt-2 mt-1 text-center">
+                                    <a href="/assets/fluxzero/use-case-portbase.pdf" target="_blank"
+                                       class="btn btn-lg btn-primary shadow-primary">Read more</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item -->
+                    <div class="masonry-grid-item col-lg col-md-6 col-sm-12">
+                        <div class="card border-0 bg-secondary p-1 p-sm-0 p-md-2">
+                            <img src="/assets/fluxzero/moxi.svg" class="d-block d-dark-mode-none mx-auto py-4"
+                                 width="120" alt="Moxi">
+                            <img src="/assets/fluxzero/moxi-dark.svg" class="d-none d-dark-mode-block mx-auto py-4"
+                                 width="120" alt="Moxi">
+                            <div class="card-body pt-1">
+                                <p class="pb-3 mb-3 text">Rebuilt patient transport platform. Small team, global
+                                    ambitions. Game-changing speed.</p>
+                                <ul class="pb-3 mb-3 text-left">
+                                    <li>Launched new version of the platform in just six weeks</li>
+                                    <li>Integrated with outdated client system in minutes vs weeks</li>
+                                    <li>Outperforming larger competitors with a lean team</li>
+                                </ul>
+                                <div class="pt-2 mt-1 text-center">
+                                    <a href="/assets/fluxzero/use-case-moxi.pdf" target="_blank"
+                                       class="btn btn-lg btn-primary shadow-primary">Read more</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Item -->
+                    <div class="masonry-grid-item col-lg col-md-6 col-sm-12">
+                        <div class="card border-0 bg-secondary p-1 p-sm-0 p-md-2">
+                            <img src="/assets/fluxzero/flowmaps.svg" class="d-block d-dark-mode-none mx-auto py-4"
+                                 width="160" alt="Flowmaps">
+                            <img src="/assets/fluxzero/flowmaps-dark.svg" class="d-none d-dark-mode-block mx-auto py-4"
+                                 width="160" alt="Flowmaps">
+                            <div class="card-body pt-1">
+                                <p class="pb-3 mb-3 text">Modern energy monitoring platform for customers of Van Dorp.
+                                    Feature velocity unlocked.</p>
+                                <ul class="pb-3 mb-3 text-left">
+                                    <li>Replaced outdated vendor software in just 10 weeks</li>
+                                    <li>Launched on schedule with seamless user migration</li>
+                                    <li>50% customer growth in first year</li>
+                                </ul>
+                                <div class="pt-2 mt-1 text-center">
+                                    <a href="/assets/fluxzero/use-case-flowmaps.pdf" target="_blank"
+                                       class="btn btn-lg btn-primary shadow-primary">Read more</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- CTA -->
+        <section class="container mt-4">
+            <div class="bg-dark bg-size-cover bg-position-center bg-repeat-0 position-relative overflow-hidden rounded-3 py-lg-3 py-xl-5 px-4 px-lg-5 px-xl-0" style="background-image: url(assets/img/landing/saas-3/cta-bg.jpg);" data-bs-theme="dark">
+                <div class="row position-relative zindex-2 py-5 my-1 my-md-3">
+                    <div class="col-md-6">
+                        <div class="mx-auto" style="max-width: 440px;">
+                            <h2 class="h1 pb-1 pb-md-3 pb-lg-4">Get started with Fluxzero yourself.</h2>
+                            <ul class="list-unstyled fs-lg d-md-none pb-3">
+                                <li class="d-flex text-body mb-2">
+                                    <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
+                                    Stop fighting frameworks — focus on your logic
+                                </li>
+                                <li class="d-flex text-body mb-2">
+                                    <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
+                                    95% less code, 10M+ requests/sec
+                                </li>
+                                <li class="d-flex text-body">
+                                    <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
+                                    Enterprise-ready from day one
+                                </li>
+                            </ul>
+                            <div class="row">
+                                <div class="col-6">
+                                    <a href="/docs/tutorials/first-app" class="btn btn-lg btn-primary shadow-primary w-100 w-lg-auto">Build your first app</a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="/docs/getting-started/introduction" class="btn btn-lg btn-secondary shadow-secondary w-100 w-lg-auto">See quickstart guide</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 pt-lg-3 pt-xl-4">
+                        <ul class="list-unstyled fs-lg d-none d-md-block">
+                            <li class="d-flex text-body mb-2">
+                                <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
+                                Proven in large-scale production environments
+                            </li>
+                            <li class="d-flex text-body mb-2">
+                                <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
+                                From idea to scale in no time
+                            </li>
+                            <li class="d-flex text-body">
+                                <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
+                                Enterprise-ready from the very beginning
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+    </main>
+    <Footer/>
+
+</BaseLayout>
