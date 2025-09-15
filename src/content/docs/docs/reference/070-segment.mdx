@@ -753,7 +753,7 @@ public class ConsumerConfigurationService {
             .build();
         
         // Register consumer for specific message types
-        FluxCapacitor.client()
+        Fluxzero.client()
             .addConsumerConfiguration(replayConfig, MessageType.EVENT);
             
         log.info("Configured replay consumer {} for period {} to {}", 
@@ -767,7 +767,7 @@ public class ConsumerConfigurationService {
             .threads(newThreadCount)
             .build();
             
-        FluxCapacitor.client()
+        Fluxzero.client()
             .updateConsumerConfiguration(newConfig);
             
         log.info("Updated consumer {} to use {} threads", consumerName, newThreadCount);
@@ -859,7 +859,7 @@ class ConsumerConfigurationService {
             .build()
         
         // Register consumer for specific message types
-        FluxCapacitor.client()
+        Fluxzero.client()
             .addConsumerConfiguration(replayConfig, MessageType.EVENT)
             
         log.info("Configured replay consumer $consumerName for period $replayFrom to $replayTo")
@@ -872,7 +872,7 @@ class ConsumerConfigurationService {
             .threads(newThreadCount)
             .build()
             
-        FluxCapacitor.client()
+        Fluxzero.client()
             .updateConsumerConfiguration(newConfig)
             
         log.info("Updated consumer $consumerName to use $newThreadCount threads")

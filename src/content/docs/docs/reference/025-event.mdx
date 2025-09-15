@@ -213,7 +213,7 @@ data class EnergyThresholdExceeded(val homeId: HomeId, val currentUsage: Double,
 
 ## Publishing Events
 
-Events are published using `FluxCapacitor.publishEvent()`:
+Events are published using `Fluxzero.publishEvent()`:
 
 <Tabs>
 <TabItem label="Java">
@@ -225,7 +225,7 @@ public class DeviceService {
         Device device = deviceRepository.updateOnlineStatus(deviceId, true);
         
         // Publish event to notify other parts of the system
-        FluxCapacitor.publishEvent(
+        Fluxzero.publishEvent(
             new DeviceOnline(deviceId, device.getIpAddress(), Instant.now())
         );
         
@@ -244,7 +244,7 @@ public class DeviceService {
             calculateConfidenceLevel(sensorId)
         );
         
-        FluxCapacitor.publishEvent(motionEvent);
+        Fluxzero.publishEvent(motionEvent);
         
         // The security system, lighting automation, and activity
         // tracking will all receive and process this event
@@ -259,7 +259,7 @@ public class DeviceService {
             "Motion detected in secured area after armed"
         );
         
-        FluxCapacitor.publishEvent(alert);
+        Fluxzero.publishEvent(alert);
         
         // Multiple handlers will process this:
         // - Notification service (send push notifications)
@@ -279,7 +279,7 @@ class DeviceService {
         val device = deviceRepository.updateOnlineStatus(deviceId, true)
         
         // Publish event to notify other parts of the system
-        FluxCapacitor.publishEvent(
+        Fluxzero.publishEvent(
             DeviceOnline(deviceId, device.ipAddress, Instant.now())
         )
         
@@ -298,7 +298,7 @@ class DeviceService {
             calculateConfidenceLevel(sensorId)
         )
         
-        FluxCapacitor.publishEvent(motionEvent)
+        Fluxzero.publishEvent(motionEvent)
         
         // The security system, lighting automation, and activity
         // tracking will all receive and process this event
@@ -313,7 +313,7 @@ class DeviceService {
             "Motion detected in secured area after armed"
         )
         
-        FluxCapacitor.publishEvent(alert)
+        Fluxzero.publishEvent(alert)
         
         // Multiple handlers will process this:
         // - Notification service (send push notifications)
@@ -344,7 +344,7 @@ public class SecurityEventHandler {
         
         if (home.isSecurityArmed()) {
             // Trigger security alert
-            FluxCapacitor.publishEvent(new SecurityBreach(
+            Fluxzero.publishEvent(new SecurityBreach(
                 home.homeId(), 
                 event.sensorId(), 
                 "motion_while_armed",
@@ -367,7 +367,7 @@ public class SecurityEventHandler {
         
         // Check if this is during restricted hours
         if (isDuringRestrictedHours()) {
-            FluxCapacitor.publishEvent(new UnauthorizedAccess(
+            Fluxzero.publishEvent(new UnauthorizedAccess(
                 getHomeId(event.lockId()),
                 event.lockId(),
                 "Access during restricted hours",
@@ -389,7 +389,7 @@ public class LightingAutomationHandler {
         for (DeviceId lightId : lightsInRoom) {
             if (!isLightOn(lightId)) {
                 // Send command to turn on light
-                FluxCapacitor.sendCommand(new TurnOnLight(
+                Fluxzero.sendCommand(new TurnOnLight(
                     lightId, 
                     getOptimalBrightness(event.roomId(), Instant.now())
                 ));
@@ -406,7 +406,7 @@ public class LightingAutomationHandler {
             // Schedule light turn-off after delay
             scheduleDelayedAction(() -> {
                 lightsInRoom.forEach(lightId -> 
-                    FluxCapacitor.sendCommand(new TurnOffLight(lightId))
+                    Fluxzero.sendCommand(new TurnOffLight(lightId))
                 );
             }, Duration.ofMinutes(2));
         }
@@ -466,7 +466,7 @@ class SecurityEventHandler {
         
         if (home.isSecurityArmed) {
             // Trigger security alert
-            FluxCapacitor.publishEvent(SecurityBreach(
+            Fluxzero.publishEvent(SecurityBreach(
                 home.homeId, 
                 event.sensorId, 
                 "motion_while_armed",
@@ -489,7 +489,7 @@ class SecurityEventHandler {
         
         // Check if this is during restricted hours
         if (isDuringRestrictedHours()) {
-            FluxCapacitor.publishEvent(UnauthorizedAccess(
+            Fluxzero.publishEvent(UnauthorizedAccess(
                 getHomeId(event.lockId),
                 event.lockId,
                 "Access during restricted hours",
@@ -511,7 +511,7 @@ class LightingAutomationHandler {
         lightsInRoom.forEach { lightId ->
             if (!isLightOn(lightId)) {
                 // Send command to turn on light
-                FluxCapacitor.sendCommand(TurnOnLight(
+                Fluxzero.sendCommand(TurnOnLight(
                     lightId, 
                     getOptimalBrightness(event.roomId, Instant.now())
                 ))
@@ -528,7 +528,7 @@ class LightingAutomationHandler {
             // Schedule light turn-off after delay
             scheduleDelayedAction({
                 lightsInRoom.forEach { lightId ->
-                    FluxCapacitor.sendCommand(TurnOffLight(lightId))
+                    Fluxzero.sendCommand(TurnOffLight(lightId))
                 }
             }, Duration.ofMinutes(2))
         }
@@ -618,20 +618,20 @@ public class EmergencyResponseHandler {
         HomeId homeId = getHomeId(event.sourceDevice());
         
         // Cascade 1: Activate all security devices
-        FluxCapacitor.sendCommand(new ActivateSecurityProtocol(
+        Fluxzero.sendCommand(new ActivateSecurityProtocol(
             homeId, 
             event.severity()
         ));
         
         // Cascade 2: Send emergency notifications
-        FluxCapacitor.sendCommand(new SendEmergencyNotification(
+        Fluxzero.sendCommand(new SendEmergencyNotification(
             homeId,
             "Security breach detected: " + event.breachType(),
             List.of("SMS", "PUSH", "EMAIL")
         ));
         
         // Cascade 3: Start recording on all cameras
-        FluxCapacitor.sendCommand(new StartEmergencyRecording(homeId));
+        Fluxzero.sendCommand(new StartEmergencyRecording(homeId));
     }
 }
 
@@ -640,7 +640,7 @@ public record ActivateSecurityProtocol(HomeId homeId, String severity) {
     @Apply
     SmartHome apply(SmartHome home) {
         // This publishes SecurityProtocolActivated event
-        FluxCapacitor.publishEvent(new SecurityProtocolActivated(
+        Fluxzero.publishEvent(new SecurityProtocolActivated(
             homeId, severity, Instant.now()
         ));
         
@@ -662,20 +662,20 @@ class EmergencyResponseHandler {
         val homeId = getHomeId(event.sourceDevice)
         
         // Cascade 1: Activate all security devices
-        FluxCapacitor.sendCommand(ActivateSecurityProtocol(
+        Fluxzero.sendCommand(ActivateSecurityProtocol(
             homeId, 
             event.severity
         ))
         
         // Cascade 2: Send emergency notifications
-        FluxCapacitor.sendCommand(SendEmergencyNotification(
+        Fluxzero.sendCommand(SendEmergencyNotification(
             homeId,
             "Security breach detected: ${event.breachType}",
             listOf("SMS", "PUSH", "EMAIL")
         ))
         
         // Cascade 3: Start recording on all cameras
-        FluxCapacitor.sendCommand(StartEmergencyRecording(homeId))
+        Fluxzero.sendCommand(StartEmergencyRecording(homeId))
     }
 }
 
@@ -684,7 +684,7 @@ data class ActivateSecurityProtocol(val homeId: HomeId, val severity: String) {
     @Apply
     fun apply(home: SmartHome): SmartHome {
         // This publishes SecurityProtocolActivated event
-        FluxCapacitor.publishEvent(SecurityProtocolActivated(
+        Fluxzero.publishEvent(SecurityProtocolActivated(
             homeId, severity, Instant.now()
         ))
         
@@ -708,7 +708,7 @@ public class SecurityService {
         String correlationId = UUID.randomUUID().toString();
         
         // Start coordinated security check
-        FluxCapacitor.publishEvent(
+        Fluxzero.publishEvent(
             new SecurityCheckStarted(homeId, correlationId),
             Metadata.of("correlationId", correlationId)
         );
@@ -717,7 +717,7 @@ public class SecurityService {
         List<DeviceId> securityDevices = getSecurityDevices(homeId);
         
         for (DeviceId deviceId : securityDevices) {
-            FluxCapacitor.sendCommand(
+            Fluxzero.sendCommand(
                 new CheckDeviceSecurity(deviceId),
                 Metadata.of("correlationId", correlationId)
             );
@@ -739,7 +739,7 @@ public class SecurityService {
         if (securityCheckTracker.allDevicesChecked(correlationId)) {
             boolean allSecure = securityCheckTracker.areAllDevicesSecure(correlationId);
             
-            FluxCapacitor.publishEvent(
+            Fluxzero.publishEvent(
                 new SecurityCheckCompleted(event.homeId(), allSecure),
                 Metadata.of("correlationId", correlationId)
             );
@@ -756,7 +756,7 @@ class SecurityService {
         val correlationId = UUID.randomUUID().toString()
         
         // Start coordinated security check
-        FluxCapacitor.publishEvent(
+        Fluxzero.publishEvent(
             SecurityCheckStarted(homeId, correlationId),
             Metadata.of("correlationId", correlationId)
         )
@@ -765,7 +765,7 @@ class SecurityService {
         val securityDevices = getSecurityDevices(homeId)
         
         securityDevices.forEach { deviceId ->
-            FluxCapacitor.sendCommand(
+            Fluxzero.sendCommand(
                 CheckDeviceSecurity(deviceId),
                 Metadata.of("correlationId", correlationId)
             )
@@ -787,7 +787,7 @@ class SecurityService {
         if (securityCheckTracker.allDevicesChecked(correlationId)) {
             val allSecure = securityCheckTracker.areAllDevicesSecure(correlationId)
             
-            FluxCapacitor.publishEvent(
+            Fluxzero.publishEvent(
                 SecurityCheckCompleted(event.homeId, allSecure),
                 Metadata.of("correlationId", correlationId)
             )
@@ -815,7 +815,7 @@ public class HomeAnalyticsService {
         analyticsRepository.clearHome(homeId);
         
         // Replay all events for this home from the beginning
-        FluxCapacitor.replayEvents()
+        Fluxzero.replayEvents()
             .from(Instant.EPOCH)
             .to(Instant.now())
             .filter(event -> isHomeRelatedEvent(event, homeId))
@@ -827,7 +827,7 @@ public class HomeAnalyticsService {
         Instant dayStart = date.atStartOfDay(ZoneOffset.UTC).toInstant();
         Instant dayEnd = dayStart.plus(Duration.ofDays(1));
         
-        List<Object> dayEvents = FluxCapacitor.getEvents()
+        List<Object> dayEvents = Fluxzero.getEvents()
             .from(dayStart)
             .to(dayEnd)
             .filter(event -> isHomeRelatedEvent(event, homeId))
@@ -845,7 +845,7 @@ public class HomeAnalyticsService {
     
     // Time-travel: see what the home state was at any point
     public SmartHome getHomeStateAt(HomeId homeId, Instant timestamp) {
-        return FluxCapacitor.replayAggregateAt(homeId, SmartHome.class, timestamp);
+        return Fluxzero.replayAggregateAt(homeId, SmartHome.class, timestamp);
     }
 }
 ```
@@ -862,7 +862,7 @@ class HomeAnalyticsService {
         analyticsRepository.clearHome(homeId)
         
         // Replay all events for this home from the beginning
-        FluxCapacitor.replayEvents()
+        Fluxzero.replayEvents()
             .from(Instant.EPOCH)
             .to(Instant.now())
             .filter { event -> isHomeRelatedEvent(event, homeId) }
@@ -874,7 +874,7 @@ class HomeAnalyticsService {
         val dayStart = date.atStartOfDay(ZoneOffset.UTC).toInstant()
         val dayEnd = dayStart.plus(Duration.ofDays(1))
         
-        val dayEvents = FluxCapacitor.getEvents()
+        val dayEvents = Fluxzero.getEvents()
             .from(dayStart)
             .to(dayEnd)
             .filter { event -> isHomeRelatedEvent(event, homeId) }
@@ -892,7 +892,7 @@ class HomeAnalyticsService {
     
     // Time-travel: see what the home state was at any point
     fun getHomeStateAt(homeId: HomeId, timestamp: Instant): SmartHome {
-        return FluxCapacitor.replayAggregateAt(homeId, SmartHome::class.java, timestamp)
+        return Fluxzero.replayAggregateAt(homeId, SmartHome::class.java, timestamp)
     }
 }
 ```
@@ -1115,7 +1115,7 @@ Multiple handlers subscribe to the same event type:
 
 ```java
 // One event, multiple subscribers
-FluxCapacitor.publishEvent(new MotionDetected(sensorId, roomId, Instant.now(), 95));
+Fluxzero.publishEvent(new MotionDetected(sensorId, roomId, Instant.now(), 95));
 
 // Subscriber 1: Security system
 @HandleEvent void on(MotionDetected event) { checkSecurity(event); }

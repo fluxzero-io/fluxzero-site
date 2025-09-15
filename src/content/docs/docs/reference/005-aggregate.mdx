@@ -158,13 +158,13 @@ Fluxzero provides several ways to load aggregates and their entities:
 <TabItem label="Java">
 ```java
 // Load complete smart home aggregate
-Entity<SmartHome> home = FluxCapacitor.loadAggregate(homeId);
+Entity<SmartHome> home = Fluxzero.loadAggregate(homeId);
 ```
 </TabItem>
 <TabItem label="Kotlin">
 ```kotlin
 // Load complete smart home aggregate
-val homeAggregate = FluxCapacitor.loadAggregate(homeId)
+val homeAggregate = Fluxzero.loadAggregate(homeId)
 ```
 </TabItem>
 </Tabs>
@@ -175,25 +175,25 @@ val homeAggregate = FluxCapacitor.loadAggregate(homeId)
 <TabItem label="Java">
 ```java
 // Load aggregate containing a specific room
-SmartHome home = FluxCapacitor.loadAggregateFor(roomId).get();
+SmartHome home = Fluxzero.loadAggregateFor(roomId).get();
 
 // Load just the room entity
-Room room = FluxCapacitor.loadEntity(roomId).get();
+Room room = Fluxzero.loadEntity(roomId).get();
 
 // Load just the device entity
-Device device = FluxCapacitor.loadEntity(deviceId).get();
+Device device = Fluxzero.loadEntity(deviceId).get();
 ```
 </TabItem>
 <TabItem label="Kotlin">
 ```kotlin
 // Load aggregate containing a specific room
-val home = FluxCapacitor.loadAggregateFor(roomId).get()
+val home = Fluxzero.loadAggregateFor(roomId).get()
 
 // Load just the room entity
-val room = FluxCapacitor.loadEntity(roomId).get()
+val room = Fluxzero.loadEntity(roomId).get()
 
 // Load just the device entity
-val device = FluxCapacitor.loadEntity(deviceId).get()
+val device = Fluxzero.loadEntity(deviceId).get()
 ```
 </TabItem>
 </Tabs>

@@ -51,12 +51,12 @@ public class DeviceCommandHandler {
         validateDevice(command.device());
         
         // Add device to home
-        SmartHome home = FluxCapacitor.loadAggregate(command.homeId(), SmartHome.class);
+        SmartHome home = Fluxzero.loadAggregate(command.homeId(), SmartHome.class);
         Device newDevice = command.device().toBuilder()
             .deviceId(DeviceId.generate())
             .build();
             
-        FluxCapacitor.sendCommand(new UpdateSmartHome(
+        Fluxzero.sendCommand(new UpdateSmartHome(
             command.homeId(),
             home.toBuilder()
                 .devices(addToList(home.devices(), newDevice))
@@ -64,7 +64,7 @@ public class DeviceCommandHandler {
         ));
         
         // Publish event
-        FluxCapacitor.publishEvent(new DeviceAdded(
+        Fluxzero.publishEvent(new DeviceAdded(
             command.homeId(), 
             newDevice, 
             Instant.now()
@@ -75,7 +75,7 @@ public class DeviceCommandHandler {
     
     @HandleCommand
     public void handle(TurnOnLight command) {
-        Device light = FluxCapacitor.loadEntity(command.lightId());
+        Device light = Fluxzero.loadEntity(command.lightId());
         
         if (light.type() != DeviceType.LIGHT) {
             throw new IllegalCommandException("Device is not a light");
@@ -97,10 +97,10 @@ public class DeviceCommandHandler {
             ))
             .build();
             
-        FluxCapacitor.updateEntity(updatedLight);
+        Fluxzero.updateEntity(updatedLight);
         
         // Publish event
-        FluxCapacitor.publishEvent(new LightTurnedOn(
+        Fluxzero.publishEvent(new LightTurnedOn(
             command.lightId(),
             getRoomForDevice(command.lightId()),
             command.brightness()
@@ -109,7 +109,7 @@ public class DeviceCommandHandler {
     
     @HandleCommand
     public void handle(SetThermostatTemperature command) {
-        Device thermostat = FluxCapacitor.loadEntity(command.thermostatId());
+        Device thermostat = Fluxzero.loadEntity(command.thermostatId());
         
         // Validate temperature range
         if (command.temperature() < 10.0 || command.temperature() > 35.0) {
@@ -134,10 +134,10 @@ public class DeviceCommandHandler {
             )))
             .build();
             
-        FluxCapacitor.updateEntity(updatedThermostat);
+        Fluxzero.updateEntity(updatedThermostat);
         
         // Publish event
-        FluxCapacitor.publishEvent(new ThermostatTemperatureChanged(
+        Fluxzero.publishEvent(new ThermostatTemperatureChanged(
             command.thermostatId(),
             oldTemperature,
             command.temperature(),
@@ -158,16 +158,16 @@ class DeviceCommandHandler {
         validateDevice(command.device)
         
         // Add device to home
-        val home = FluxCapacitor.loadAggregate(command.homeId, SmartHome::class.java)
+        val home = Fluxzero.loadAggregate(command.homeId, SmartHome::class.java)
         val newDevice = command.device.copy(deviceId = DeviceId.generate())
         
-        FluxCapacitor.sendCommand(UpdateSmartHome(
+        Fluxzero.sendCommand(UpdateSmartHome(
             command.homeId,
             home.copy(devices = home.devices + newDevice)
         ))
         
         // Publish event
-        FluxCapacitor.publishEvent(DeviceAdded(
+        Fluxzero.publishEvent(DeviceAdded(
             command.homeId, 
             newDevice, 
             Instant.now()
@@ -178,7 +178,7 @@ class DeviceCommandHandler {
     
     @HandleCommand
     fun handle(command: TurnOnLight) {
-        val light = FluxCapacitor.loadEntity<Device>(command.lightId)
+        val light = Fluxzero.loadEntity<Device>(command.lightId)
         
         require(light.type == DeviceType.LIGHT) { "Device is not a light" }
         require(light.isOnline) { "Light is offline" }
@@ -195,10 +195,10 @@ class DeviceCommandHandler {
             )
         )
         
-        FluxCapacitor.updateEntity(updatedLight)
+        Fluxzero.updateEntity(updatedLight)
         
         // Publish event
-        FluxCapacitor.publishEvent(LightTurnedOn(
+        Fluxzero.publishEvent(LightTurnedOn(
             command.lightId,
             getRoomForDevice(command.lightId),
             command.brightness
@@ -207,7 +207,7 @@ class DeviceCommandHandler {
     
     @HandleCommand
     fun handle(command: SetThermostatTemperature) {
-        val thermostat = FluxCapacitor.loadEntity<Device>(command.thermostatId)
+        val thermostat = Fluxzero.loadEntity<Device>(command.thermostatId)
         
         // Validate temperature range
         require(command.temperature in 10.0..35.0) {
@@ -227,10 +227,10 @@ class DeviceCommandHandler {
             )
         )
         
-        FluxCapacitor.updateEntity(updatedThermostat)
+        Fluxzero.updateEntity(updatedThermostat)
         
         // Publish event
-        FluxCapacitor.publishEvent(ThermostatTemperatureChanged(
+        Fluxzero.publishEvent(ThermostatTemperatureChanged(
             command.thermostatId,
             oldTemperature,
             command.temperature,
@@ -267,7 +267,7 @@ public class SecurityEventHandler {
                 .build());
             
             // Trigger security breach
-            FluxCapacitor.publishEvent(new SecurityBreach(
+            Fluxzero.publishEvent(new SecurityBreach(
                 home.homeId(),
                 event.sensorId(),
                 "motion_while_armed",
@@ -275,7 +275,7 @@ public class SecurityEventHandler {
             ));
             
             // Send immediate notification
-            FluxCapacitor.sendCommand(new SendNotification(
+            Fluxzero.sendCommand(new SendNotification(
                 home.homeId(),
                 "Security Alert: Motion detected while system armed",
                 NotificationPriority.URGENT
@@ -285,13 +285,13 @@ public class SecurityEventHandler {
     
     @HandleEvent
     public void on(DeviceOffline event) {
-        Device device = FluxCapacitor.loadEntity(event.deviceId());
+        Device device = Fluxzero.loadEntity(event.deviceId());
         
         // Check if it's a critical security device
         if (isSecurityDevice(device)) {
-            SmartHome home = FluxCapacitor.loadAggregateFor(event.deviceId());
+            SmartHome home = Fluxzero.loadAggregateFor(event.deviceId());
             
-            FluxCapacitor.publishEvent(new SecurityDeviceOffline(
+            Fluxzero.publishEvent(new SecurityDeviceOffline(
                 home.homeId(),
                 event.deviceId(),
                 device.type(),
@@ -300,7 +300,7 @@ public class SecurityEventHandler {
             
             // If offline too long, trigger maintenance alert
             if (event.offlineDuration().toHours() > 24) {
-                FluxCapacitor.sendCommand(new ScheduleMaintenance(
+                Fluxzero.sendCommand(new ScheduleMaintenance(
                     home.homeId(),
                     event.deviceId(),
                     "Device offline for extended period"
@@ -324,7 +324,7 @@ public class SecurityEventHandler {
         
         // Check if access is during restricted hours
         if (isRestrictedHours()) {
-            FluxCapacitor.publishEvent(new UnauthorizedAccess(
+            Fluxzero.publishEvent(new UnauthorizedAccess(
                 getHomeId(event.lockId()),
                 event.lockId(),
                 "Access during restricted hours: " + event.unlockMethod(),
@@ -345,12 +345,12 @@ public class AutomationEventHandler {
         List<DeviceId> roomLights = deviceRepository.findLightsByRoom(roomId);
         
         for (DeviceId lightId : roomLights) {
-            Device light = FluxCapacitor.loadEntity(lightId);
+            Device light = Fluxzero.loadEntity(lightId);
             
             if (light.isOnline() && !isLightOn(light)) {
                 int brightness = calculateOptimalBrightness(roomId);
                 
-                FluxCapacitor.sendCommand(new TurnOnLight(lightId, brightness));
+                Fluxzero.sendCommand(new TurnOnLight(lightId, brightness));
             }
         }
         
@@ -361,7 +361,7 @@ public class AutomationEventHandler {
         
         for (AutomationRule rule : motionRules) {
             if (rule.isEnabled()) {
-                FluxCapacitor.sendCommand(new ExecuteAutomationRule(
+                Fluxzero.sendCommand(new ExecuteAutomationRule(
                     rule.ruleId(),
                     Map.of("triggeredBy", event)
                 ));
@@ -375,7 +375,7 @@ public class AutomationEventHandler {
         List<DeviceId> thermostats = deviceRepository.findThermostatsByRoom(event.roomId());
         
         for (DeviceId thermostatId : thermostats) {
-            Device thermostat = FluxCapacitor.loadEntity(thermostatId);
+            Device thermostat = Fluxzero.loadEntity(thermostatId);
             
             if (thermostat.isOnline()) {
                 double targetTemp = (Double) thermostat.settings()
@@ -383,7 +383,7 @@ public class AutomationEventHandler {
                 
                 // If room is too hot/cold, adjust thermostat
                 if (Math.abs(event.temperature() - targetTemp) > 2.0) {
-                    FluxCapacitor.sendCommand(new AutoAdjustThermostat(
+                    Fluxzero.sendCommand(new AutoAdjustThermostat(
                         thermostatId,
                         event.temperature(),
                         targetTemp
@@ -415,7 +415,7 @@ class SecurityEventHandler {
             ))
             
             // Trigger security breach
-            FluxCapacitor.publishEvent(SecurityBreach(
+            Fluxzero.publishEvent(SecurityBreach(
                 home.homeId,
                 event.sensorId,
                 "motion_while_armed",
@@ -423,7 +423,7 @@ class SecurityEventHandler {
             ))
             
             // Send immediate notification
-            FluxCapacitor.sendCommand(SendNotification(
+            Fluxzero.sendCommand(SendNotification(
                 home.homeId,
                 "Security Alert: Motion detected while system armed",
                 NotificationPriority.URGENT
@@ -433,13 +433,13 @@ class SecurityEventHandler {
     
     @HandleEvent
     fun on(event: DeviceOffline) {
-        val device = FluxCapacitor.loadEntity<Device>(event.deviceId)
+        val device = Fluxzero.loadEntity<Device>(event.deviceId)
         
         // Check if it's a critical security device
         if (isSecurityDevice(device)) {
-            val home = FluxCapacitor.loadAggregateFor(event.deviceId)
+            val home = Fluxzero.loadAggregateFor(event.deviceId)
             
-            FluxCapacitor.publishEvent(SecurityDeviceOffline(
+            Fluxzero.publishEvent(SecurityDeviceOffline(
                 home.homeId,
                 event.deviceId,
                 device.type,
@@ -448,7 +448,7 @@ class SecurityEventHandler {
             
             // If offline too long, trigger maintenance alert
             if (event.offlineDuration.toHours() > 24) {
-                FluxCapacitor.sendCommand(ScheduleMaintenance(
+                Fluxzero.sendCommand(ScheduleMaintenance(
                     home.homeId,
                     event.deviceId,
                     "Device offline for extended period"
@@ -472,7 +472,7 @@ class SecurityEventHandler {
         
         // Check if access is during restricted hours
         if (isRestrictedHours()) {
-            FluxCapacitor.publishEvent(UnauthorizedAccess(
+            Fluxzero.publishEvent(UnauthorizedAccess(
                 getHomeId(event.lockId),
                 event.lockId,
                 "Access during restricted hours: ${event.unlockMethod}",
@@ -493,12 +493,12 @@ class AutomationEventHandler {
         val roomLights = deviceRepository.findLightsByRoom(roomId)
         
         roomLights.forEach { lightId ->
-            val light = FluxCapacitor.loadEntity<Device>(lightId)
+            val light = Fluxzero.loadEntity<Device>(lightId)
             
             if (light.isOnline && !isLightOn(light)) {
                 val brightness = calculateOptimalBrightness(roomId)
                 
-                FluxCapacitor.sendCommand(TurnOnLight(lightId, brightness))
+                Fluxzero.sendCommand(TurnOnLight(lightId, brightness))
             }
         }
         
@@ -506,7 +506,7 @@ class AutomationEventHandler {
         val motionRules = getAutomationRulesForTrigger(roomId, "motion_detected")
         
         motionRules.filter { it.isEnabled }.forEach { rule ->
-            FluxCapacitor.sendCommand(ExecuteAutomationRule(
+            Fluxzero.sendCommand(ExecuteAutomationRule(
                 rule.ruleId,
                 mapOf("triggeredBy" to event)
             ))
@@ -519,14 +519,14 @@ class AutomationEventHandler {
         val thermostats = deviceRepository.findThermostatsByRoom(event.roomId)
         
         thermostats.forEach { thermostatId ->
-            val thermostat = FluxCapacitor.loadEntity<Device>(thermostatId)
+            val thermostat = Fluxzero.loadEntity<Device>(thermostatId)
             
             if (thermostat.isOnline) {
                 val targetTemp = thermostat.settings["targetTemperature"] as? Double ?: 22.0
                 
                 // If room is too hot/cold, adjust thermostat
                 if (kotlin.math.abs(event.temperature - targetTemp) > 2.0) {
-                    FluxCapacitor.sendCommand(AutoAdjustThermostat(
+                    Fluxzero.sendCommand(AutoAdjustThermostat(
                         thermostatId,
                         event.temperature,
                         targetTemp
@@ -552,12 +552,12 @@ public class SmartHomeQueryHandler {
     
     @HandleQuery
     public SmartHome handle(GetSmartHome query) {
-        return FluxCapacitor.loadAggregate(query.homeId(), SmartHome.class);
+        return Fluxzero.loadAggregate(query.homeId(), SmartHome.class);
     }
     
     @HandleQuery
     public List<Device> handle(GetDevicesByRoom query) {
-        SmartHome home = FluxCapacitor.loadAggregateFor(query.roomId());
+        SmartHome home = Fluxzero.loadAggregateFor(query.roomId());
         
         return home.devices().stream()
             .filter(device -> {
@@ -569,7 +569,7 @@ public class SmartHomeQueryHandler {
     
     @HandleQuery
     public List<Device> handle(GetOnlineDevices query) {
-        SmartHome home = FluxCapacitor.loadAggregate(query.homeId(), SmartHome.class);
+        SmartHome home = Fluxzero.loadAggregate(query.homeId(), SmartHome.class);
         
         return home.devices().stream()
             .filter(Device::isOnline)
@@ -578,7 +578,7 @@ public class SmartHomeQueryHandler {
     
     @HandleQuery
     public DeviceStatus handle(GetDeviceStatus query) {
-        Device device = FluxCapacitor.loadEntity(query.deviceId());
+        Device device = Fluxzero.loadEntity(query.deviceId());
         
         return DeviceStatus.builder()
             .deviceId(device.deviceId())
@@ -630,7 +630,7 @@ public class SecurityQueryHandler {
     
     @HandleQuery
     public SecurityStatus handle(GetSecurityStatus query) {
-        SmartHome home = FluxCapacitor.loadAggregate(query.homeId(), SmartHome.class);
+        SmartHome home = Fluxzero.loadAggregate(query.homeId(), SmartHome.class);
         
         return SecurityStatus.builder()
             .homeId(query.homeId())
@@ -679,12 +679,12 @@ class SmartHomeQueryHandler {
     
     @HandleQuery
     fun handle(query: GetSmartHome): SmartHome {
-        return FluxCapacitor.loadAggregate(query.homeId, SmartHome::class.java)
+        return Fluxzero.loadAggregate(query.homeId, SmartHome::class.java)
     }
     
     @HandleQuery
     fun handle(query: GetDevicesByRoom): List<Device> {
-        val home = FluxCapacitor.loadAggregateFor(query.roomId)
+        val home = Fluxzero.loadAggregateFor(query.roomId)
         
         return home.devices.filter { device ->
             val deviceRoom = getRoomForDevice(device.deviceId)
@@ -694,13 +694,13 @@ class SmartHomeQueryHandler {
     
     @HandleQuery
     fun handle(query: GetOnlineDevices): List<Device> {
-        val home = FluxCapacitor.loadAggregate(query.homeId, SmartHome::class.java)
+        val home = Fluxzero.loadAggregate(query.homeId, SmartHome::class.java)
         return home.devices.filter { it.isOnline }
     }
     
     @HandleQuery
     fun handle(query: GetDeviceStatus): DeviceStatus {
-        val device = FluxCapacitor.loadEntity<Device>(query.deviceId)
+        val device = Fluxzero.loadEntity<Device>(query.deviceId)
         
         return DeviceStatus(
             deviceId = device.deviceId,
@@ -746,7 +746,7 @@ class SecurityQueryHandler {
     
     @HandleQuery
     fun handle(query: GetSecurityStatus): SecurityStatus {
-        val home = FluxCapacitor.loadAggregate(query.homeId, SmartHome::class.java)
+        val home = Fluxzero.loadAggregate(query.homeId, SmartHome::class.java)
         
         return SecurityStatus(
             homeId = query.homeId,
@@ -809,7 +809,7 @@ public class SmartHomeErrorHandler {
         
         if (originalMessage instanceof TurnOnLight command) {
             // Try fallback - maybe device needs firmware update
-            FluxCapacitor.sendCommand(new ScheduleDeviceUpdate(command.lightId()));
+            Fluxzero.sendCommand(new ScheduleDeviceUpdate(command.lightId()));
         }
     }
     
@@ -819,7 +819,7 @@ public class SmartHomeErrorHandler {
         commandRetryService.scheduleRetry(command, Duration.ofMinutes(5));
         
         // Notify user about offline device
-        FluxCapacitor.sendCommand(new SendNotification(
+        Fluxzero.sendCommand(new SendNotification(
             getHomeId(command.lightId()),
             "Device " + getDeviceName(command.lightId()) + " is offline",
             NotificationPriority.NORMAL
@@ -839,7 +839,7 @@ public class SmartHomeErrorHandler {
         );
         
         // Alert administrators
-        FluxCapacitor.sendCommand(new SendAdminAlert(
+        Fluxzero.sendCommand(new SendAdminAlert(
             "Security violation detected: " + error.getMessage(),
             command
         ));
@@ -886,7 +886,7 @@ class SmartHomeErrorHandler {
         when (originalMessage) {
             is TurnOnLight -> {
                 // Try fallback - maybe device needs firmware update
-                FluxCapacitor.sendCommand(ScheduleDeviceUpdate(originalMessage.lightId))
+                Fluxzero.sendCommand(ScheduleDeviceUpdate(originalMessage.lightId))
             }
         }
     }
@@ -897,7 +897,7 @@ class SmartHomeErrorHandler {
         commandRetryService.scheduleRetry(command, Duration.ofMinutes(5))
         
         // Notify user about offline device
-        FluxCapacitor.sendCommand(SendNotification(
+        Fluxzero.sendCommand(SendNotification(
             getHomeId(command.lightId),
             "Device ${getDeviceName(command.lightId)} is offline",
             NotificationPriority.NORMAL
@@ -915,7 +915,7 @@ class SmartHomeErrorHandler {
         ))
         
         // Alert administrators
-        FluxCapacitor.sendCommand(SendAdminAlert(
+        Fluxzero.sendCommand(SendAdminAlert(
             "Security violation detected: ${error.message}",
             command
         ))
@@ -1149,7 +1149,7 @@ public class AdvancedHandlerExamples {
             .filter(device -> device.type() == DeviceType.LIGHT)
             .filter(device -> !isLightOn(device))
             .forEach(light -> {
-                FluxCapacitor.sendCommand(new TurnOnLight(
+                Fluxzero.sendCommand(new TurnOnLight(
                     light.deviceId(),
                     calculateBrightness(room, event.detectedAt())
                 ));
@@ -1232,7 +1232,7 @@ class AdvancedHandlerExamples {
             .filter { it.type == DeviceType.LIGHT }
             .filter { !isLightOn(it) }
             .forEach { light ->
-                FluxCapacitor.sendCommand(TurnOnLight(
+                Fluxzero.sendCommand(TurnOnLight(
                     light.deviceId,
                     calculateBrightness(room, event.detectedAt)
                 ))
@@ -1351,7 +1351,7 @@ public class RemoteDeviceHandler {
         hardwareControlService.turnOnLight(command.lightId(), command.brightness());
         
         // Update device state
-        Device device = FluxCapacitor.loadEntity(command.lightId());
+        Device device = Fluxzero.loadEntity(command.lightId());
         Device updatedDevice = device.toBuilder()
             .settings(updateSettings(device.settings(), Map.of(
                 "isOn", true,
@@ -1359,10 +1359,10 @@ public class RemoteDeviceHandler {
             )))
             .build();
             
-        FluxCapacitor.updateEntity(updatedDevice);
+        Fluxzero.updateEntity(updatedDevice);
         
         // Publish event
-        FluxCapacitor.publishEvent(new LightTurnedOn(
+        Fluxzero.publishEvent(new LightTurnedOn(
             command.lightId(), 
             getRoomForDevice(command.lightId()), 
             command.brightness()
@@ -1387,7 +1387,7 @@ class RemoteDeviceHandler {
         hardwareControlService.turnOnLight(command.lightId, command.brightness)
         
         // Update device state
-        val device = FluxCapacitor.loadEntity<Device>(command.lightId)
+        val device = Fluxzero.loadEntity<Device>(command.lightId)
         val updatedDevice = device.copy(
             settings = device.settings + mapOf(
                 "isOn" to true,
@@ -1395,10 +1395,10 @@ class RemoteDeviceHandler {
             )
         )
         
-        FluxCapacitor.updateEntity(updatedDevice)
+        Fluxzero.updateEntity(updatedDevice)
         
         // Publish event
-        FluxCapacitor.publishEvent(LightTurnedOn(
+        Fluxzero.publishEvent(LightTurnedOn(
             command.lightId, 
             getRoomForDevice(command.lightId), 
             command.brightness

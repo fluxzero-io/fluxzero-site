@@ -129,7 +129,7 @@ public class GetRoomTemperature {
     @HandleQuery
     TemperatureReading handle() {
         // Load the room and get current temperature
-        Room room = FluxCapacitor.loadEntity(roomId);
+        Room room = Fluxzero.loadEntity(roomId);
         
         // Find the thermostat in this room
         Device thermostat = room.devices().stream()
@@ -156,7 +156,7 @@ data class GetRoomTemperature(val roomId: RoomId) {
     @HandleQuery
     fun handle(): TemperatureReading {
         // Load the room and get current temperature
-        val room = FluxCapacitor.loadEntity<Room>(roomId)
+        val room = Fluxzero.loadEntity<Room>(roomId)
         
         // Find the thermostat in this room
         val thermostat = room.devices.find { it.type == DeviceType.THERMOSTAT }
@@ -198,16 +198,16 @@ public class SmartHomeService {
     
     public DeviceStatus checkDevice(DeviceId deviceId) {
         // Type-safe query - returns DeviceStatus
-        return FluxCapacitor.queryAndWait(new GetDeviceStatus(deviceId));
+        return Fluxzero.queryAndWait(new GetDeviceStatus(deviceId));
     }
     
     public SecurityStatus getSecurityStatus(HomeId homeId) {
         // Compile-time type checking ensures correct return type
-        return FluxCapacitor.queryAndWait(new GetHomeSecurityStatus(homeId));
+        return Fluxzero.queryAndWait(new GetHomeSecurityStatus(homeId));
     }
     
     public List<Device> findLights(HomeId homeId) {
-        return FluxCapacitor.queryAndWait(
+        return Fluxzero.queryAndWait(
             new SearchDevices(homeId, "light", DeviceType.LIGHT));
     }
 }
@@ -229,16 +229,16 @@ class SmartHomeService {
     
     fun checkDevice(deviceId: DeviceId): DeviceStatus {
         // Type-safe query - returns DeviceStatus
-        return FluxCapacitor.queryAndWait(GetDeviceStatus(deviceId))
+        return Fluxzero.queryAndWait(GetDeviceStatus(deviceId))
     }
     
     fun getSecurityStatus(homeId: HomeId): SecurityStatus {
         // Compile-time type checking ensures correct return type
-        return FluxCapacitor.queryAndWait(GetHomeSecurityStatus(homeId))
+        return Fluxzero.queryAndWait(GetHomeSecurityStatus(homeId))
     }
     
     fun findLights(homeId: HomeId): List<Device> {
-        return FluxCapacitor.queryAndWait(
+        return Fluxzero.queryAndWait(
             SearchDevices(homeId, "light", DeviceType.LIGHT))
     }
 }
@@ -259,19 +259,19 @@ public class SmartHomeDashboardService {
         // Synchronous queries - block until results are available
         
         // Get current security status
-        SecurityStatus security = FluxCapacitor.queryAndWait(
+        SecurityStatus security = Fluxzero.queryAndWait(
             new GetHomeSecurityStatus(homeId));
         
         // Get all online devices
-        List<Device> onlineDevices = FluxCapacitor.queryAndWait(
+        List<Device> onlineDevices = Fluxzero.queryAndWait(
             new GetOnlineDevices(homeId));
         
         // Get today's energy usage
-        EnergyUsageSummary energyUsage = FluxCapacitor.queryAndWait(
+        EnergyUsageSummary energyUsage = Fluxzero.queryAndWait(
             new GetEnergyUsageSummary(homeId, LocalDate.now()));
         
         // Get recent alerts
-        List<SecurityAlert> alerts = FluxCapacitor.queryAndWait(
+        List<SecurityAlert> alerts = Fluxzero.queryAndWait(
             new GetRecentSecurityAlerts(homeId, Duration.ofHours(24)));
         
         return new DashboardData(security, onlineDevices, energyUsage, alerts);
@@ -287,19 +287,19 @@ class SmartHomeDashboardService {
         // Synchronous queries - block until results are available
         
         // Get current security status
-        val security = FluxCapacitor.queryAndWait(
+        val security = Fluxzero.queryAndWait(
             GetHomeSecurityStatus(homeId))
         
         // Get all online devices
-        val onlineDevices = FluxCapacitor.queryAndWait(
+        val onlineDevices = Fluxzero.queryAndWait(
             GetOnlineDevices(homeId))
         
         // Get today's energy usage
-        val energyUsage = FluxCapacitor.queryAndWait(
+        val energyUsage = Fluxzero.queryAndWait(
             GetEnergyUsageSummary(homeId, LocalDate.now()))
         
         // Get recent alerts
-        val alerts = FluxCapacitor.queryAndWait(
+        val alerts = Fluxzero.queryAndWait(
             GetRecentSecurityAlerts(homeId, Duration.ofHours(24)))
         
         return DashboardData(security, onlineDevices, energyUsage, alerts)
@@ -320,16 +320,16 @@ public class AsyncSmartHomeService {
         // Execute all queries in parallel for better performance
         
         CompletableFuture<SecurityStatus> securityFuture = 
-            FluxCapacitor.query(new GetHomeSecurityStatus(homeId));
+            Fluxzero.query(new GetHomeSecurityStatus(homeId));
             
         CompletableFuture<List<Device>> devicesFuture = 
-            FluxCapacitor.query(new GetOnlineDevices(homeId));
+            Fluxzero.query(new GetOnlineDevices(homeId));
             
         CompletableFuture<EnergyUsageSummary> energyFuture = 
-            FluxCapacitor.query(new GetEnergyUsageSummary(homeId, LocalDate.now()));
+            Fluxzero.query(new GetEnergyUsageSummary(homeId, LocalDate.now()));
             
         CompletableFuture<List<SecurityAlert>> alertsFuture = 
-            FluxCapacitor.query(new GetRecentSecurityAlerts(homeId, Duration.ofHours(24)));
+            Fluxzero.query(new GetRecentSecurityAlerts(homeId, Duration.ofHours(24)));
         
         // Combine all results when complete
         return CompletableFuture.allOf(securityFuture, devicesFuture, energyFuture, alertsFuture)
@@ -343,14 +343,14 @@ public class AsyncSmartHomeService {
     
     public CompletableFuture<DeviceControlResponse> controlDeviceAsync(DeviceId deviceId, boolean turnOn) {
         // First query current state, then issue command
-        return FluxCapacitor.query(new GetDeviceStatus(deviceId))
+        return Fluxzero.query(new GetDeviceStatus(deviceId))
             .thenCompose(status -> {
                 if (status.isOnline()) {
                     if (turnOn) {
-                        return FluxCapacitor.sendAndWait(new TurnOnDevice(deviceId))
+                        return Fluxzero.sendAndWait(new TurnOnDevice(deviceId))
                             .thenApply(result -> DeviceControlResponse.success());
                     } else {
-                        return FluxCapacitor.sendAndWait(new TurnOffDevice(deviceId))
+                        return Fluxzero.sendAndWait(new TurnOffDevice(deviceId))
                             .thenApply(result -> DeviceControlResponse.success());
                     }
                 } else {
@@ -369,10 +369,10 @@ class AsyncSmartHomeService {
     fun loadDashboardAsync(homeId: HomeId): CompletableFuture<DashboardData> {
         // Execute all queries in parallel for better performance
         
-        val securityFuture = FluxCapacitor.query(GetHomeSecurityStatus(homeId))
-        val devicesFuture = FluxCapacitor.query(GetOnlineDevices(homeId))
-        val energyFuture = FluxCapacitor.query(GetEnergyUsageSummary(homeId, LocalDate.now()))
-        val alertsFuture = FluxCapacitor.query(GetRecentSecurityAlerts(homeId, Duration.ofHours(24)))
+        val securityFuture = Fluxzero.query(GetHomeSecurityStatus(homeId))
+        val devicesFuture = Fluxzero.query(GetOnlineDevices(homeId))
+        val energyFuture = Fluxzero.query(GetEnergyUsageSummary(homeId, LocalDate.now()))
+        val alertsFuture = Fluxzero.query(GetRecentSecurityAlerts(homeId, Duration.ofHours(24)))
         
         // Combine all results when complete
         return CompletableFuture.allOf(securityFuture, devicesFuture, energyFuture, alertsFuture)
@@ -388,14 +388,14 @@ class AsyncSmartHomeService {
     
     fun controlDeviceAsync(deviceId: DeviceId, turnOn: Boolean): CompletableFuture<DeviceControlResponse> {
         // First query current state, then issue command
-        return FluxCapacitor.query(GetDeviceStatus(deviceId))
+        return Fluxzero.query(GetDeviceStatus(deviceId))
             .thenCompose { status ->
                 if (status.isOnline) {
                     if (turnOn) {
-                        FluxCapacitor.sendAndWait(TurnOnDevice(deviceId))
+                        Fluxzero.sendAndWait(TurnOnDevice(deviceId))
                             .thenApply { DeviceControlResponse.success() }
                     } else {
-                        FluxCapacitor.sendAndWait(TurnOffDevice(deviceId))
+                        Fluxzero.sendAndWait(TurnOffDevice(deviceId))
                             .thenApply { DeviceControlResponse.success() }
                     }
                 } else {
@@ -634,7 +634,7 @@ public record AnalyzeUsagePatterns(HomeId homeId, Duration period)
 public class ReportService {
     
     public CompletableFuture<EnergyReport> generateReportWithTimeout(HomeId homeId) {
-        return FluxCapacitor.query(new GenerateEnergyReport(homeId, 
+        return Fluxzero.query(new GenerateEnergyReport(homeId,
                 LocalDate.now().minusDays(30), LocalDate.now()))
             .orTimeout(10, TimeUnit.SECONDS);
     }
@@ -654,7 +654,7 @@ data class AnalyzeUsagePatterns(val homeId: HomeId, val period: Duration) : Requ
 class ReportService {
     
     fun generateReportWithTimeout(homeId: HomeId): CompletableFuture<EnergyReport> {
-        return FluxCapacitor.query(GenerateEnergyReport(homeId, 
+        return Fluxzero.query(GenerateEnergyReport(homeId,
                 LocalDate.now().minusDays(30), LocalDate.now()))
             .orTimeout(10, TimeUnit.SECONDS)
     }
@@ -675,7 +675,7 @@ public class OptimizedDeviceQueryHandler {
     @HandleQuery
     List<Device> searchDevices(SearchDevicesByFeatures query) {
         // Use document store for fast search with faceted filters
-        return FluxCapacitor
+        return Fluxzero
             .search(Device.class)
             .match(query.homeId().toString(), "homeId")
             .matchFacet("status", "ONLINE")
@@ -687,7 +687,7 @@ public class OptimizedDeviceQueryHandler {
     @HandleQuery
     List<EnergyReading> getEnergyUsageInRange(GetEnergyUsageInRange query) {
         // Time-range optimized query
-        return FluxCapacitor
+        return Fluxzero
             .search(EnergyReading.class)
             .match(query.deviceId().toString(), "deviceId")
             .between(query.startTime(), query.endTime(), "timestamp")
@@ -698,7 +698,7 @@ public class OptimizedDeviceQueryHandler {
     @HandleQuery
     Map<String, Long> getDeviceTypeCounts(GetDeviceTypeCounts query) {
         // Faceted aggregation for analytics
-        return FluxCapacitor
+        return Fluxzero
             .search(Device.class)
             .match(query.homeId().toString(), "homeId")
             .match("true", "isOnline")
@@ -715,7 +715,7 @@ class OptimizedDeviceQueryHandler {
     @HandleQuery
     fun searchDevices(query: SearchDevicesByFeatures): List<Device> {
         // Use document store for fast search with faceted filters
-        return FluxCapacitor
+        return Fluxzero
             .search(Device::class.java)
             .match(query.homeId.toString(), "homeId")
             .matchFacet("status", "ONLINE")
@@ -727,7 +727,7 @@ class OptimizedDeviceQueryHandler {
     @HandleQuery
     fun getEnergyUsageInRange(query: GetEnergyUsageInRange): List<EnergyReading> {
         // Time-range optimized query
-        return FluxCapacitor
+        return Fluxzero
             .search(EnergyReading::class.java)
             .match(query.deviceId.toString(), "deviceId")
             .between(query.startTime, query.endTime, "timestamp")
@@ -738,7 +738,7 @@ class OptimizedDeviceQueryHandler {
     @HandleQuery
     fun getDeviceTypeCounts(query: GetDeviceTypeCounts): Map<String, Long> {
         // Faceted aggregation for analytics
-        return FluxCapacitor
+        return Fluxzero
             .search(Device::class.java)
             .match(query.homeId.toString(), "homeId")
             .match("true", "isOnline")
@@ -1009,7 +1009,7 @@ public class SmartHomeWebController {
     @Path("/homes/{homeId}/dashboard")
     CompletableFuture<DashboardData> getDashboard(@PathVariable HomeId homeId) {
         // Web endpoint directly handles query
-        return FluxCapacitor.query(new GetDashboardData(homeId));
+        return Fluxzero.query(new GetDashboardData(homeId));
     }
     
     @HandleGet  
@@ -1017,7 +1017,7 @@ public class SmartHomeWebController {
     CompletableFuture<List<Device>> searchDevices(@QueryParam String term,
                                                  @QueryParam DeviceType type,
                                                  @QueryParam HomeId homeId) {
-        return FluxCapacitor.query(new SearchDevices(homeId, term, type));
+        return Fluxzero.query(new SearchDevices(homeId, term, type));
     }
     
     @HandleGet
@@ -1026,7 +1026,7 @@ public class SmartHomeWebController {
                                      @QueryParam LocalDate date) {
         // Synchronous query for immediate response
         LocalDate queryDate = date != null ? date : LocalDate.now();
-        return FluxCapacitor.queryAndWait(new GetEnergyUsageSummary(homeId, queryDate));
+        return Fluxzero.queryAndWait(new GetEnergyUsageSummary(homeId, queryDate));
     }
 }
 ```
@@ -1040,7 +1040,7 @@ class SmartHomeWebController {
     @Path("/homes/{homeId}/dashboard")
     fun getDashboard(@PathVariable homeId: HomeId): CompletableFuture<DashboardData> {
         // Web endpoint directly handles query
-        return FluxCapacitor.query(GetDashboardData(homeId))
+        return Fluxzero.query(GetDashboardData(homeId))
     }
     
     @HandleGet  
@@ -1048,7 +1048,7 @@ class SmartHomeWebController {
     fun searchDevices(@QueryParam term: String,
                      @QueryParam type: DeviceType,
                      @QueryParam homeId: HomeId): CompletableFuture<List<Device>> {
-        return FluxCapacitor.query(SearchDevices(homeId, term, type))
+        return Fluxzero.query(SearchDevices(homeId, term, type))
     }
     
     @HandleGet
@@ -1057,7 +1057,7 @@ class SmartHomeWebController {
                       @QueryParam date: LocalDate?): EnergyUsageSummary {
         // Synchronous query for immediate response
         val queryDate = date ?: LocalDate.now()
-        return FluxCapacitor.queryAndWait(GetEnergyUsageSummary(homeId, queryDate))
+        return Fluxzero.queryAndWait(GetEnergyUsageSummary(homeId, queryDate))
     }
 }
 ```
@@ -1165,7 +1165,7 @@ public record GetDeviceStatus(DeviceId deviceId) {}
 ### 2. Use Appropriate Synchronization
 ```java
 // Sync for simple, fast queries
-DeviceStatus status = FluxCapacitor.queryAndWait(new GetDeviceStatus(deviceId));
+DeviceStatus status = Fluxzero.queryAndWait(new GetDeviceStatus(deviceId));
 
 // Async for complex queries or when combining multiple queries
 CompletableFuture<DashboardData> dashboard = loadDashboardAsync(homeId);
@@ -1174,7 +1174,7 @@ CompletableFuture<DashboardData> dashboard = loadDashboardAsync(homeId);
 ### 3. Optimize with Document Store
 ```java
 // Use search capabilities for complex queries
-List<Device> devices = FluxCapacitor.search(Device.class)
+List<Device> devices = Fluxzero.search(Device.class)
     .match("true", "isOnline")
     .matchFacet("type", "LIGHT")
     .fetch(50);
@@ -1206,19 +1206,19 @@ public class SmartHomeDashboardService {
     public CompletableFuture<SmartHomeDashboard> loadDashboard(HomeId homeId) {
         // Parallel queries for dashboard data
         CompletableFuture<SecurityStatus> securityFuture = 
-            FluxCapacitor.query(new GetSecurityStatus(homeId));
+            Fluxzero.query(new GetSecurityStatus(homeId));
             
         CompletableFuture<List<Device>> devicesFuture = 
-            FluxCapacitor.query(new GetOnlineDevices(homeId));
+            Fluxzero.query(new GetOnlineDevices(homeId));
             
         CompletableFuture<EnergyUsageSummary> energyFuture = 
-            FluxCapacitor.query(new GetTodaysEnergyUsage(homeId));
+            Fluxzero.query(new GetTodaysEnergyUsage(homeId));
             
         CompletableFuture<List<AutomationRule>> rulesFuture = 
-            FluxCapacitor.query(new GetActiveAutomationRules(homeId));
+            Fluxzero.query(new GetActiveAutomationRules(homeId));
             
         CompletableFuture<WeatherForecast> weatherFuture = 
-            FluxCapacitor.query(new GetLocalWeatherForecast(homeId));
+            Fluxzero.query(new GetLocalWeatherForecast(homeId));
         
         return CompletableFuture.allOf(securityFuture, devicesFuture, 
                                      energyFuture, rulesFuture, weatherFuture)
@@ -1240,11 +1240,11 @@ class SmartHomeDashboardService {
     
     fun loadDashboard(homeId: HomeId): CompletableFuture<SmartHomeDashboard> {
         // Parallel queries for dashboard data
-        val securityFuture = FluxCapacitor.query(GetSecurityStatus(homeId))
-        val devicesFuture = FluxCapacitor.query(GetOnlineDevices(homeId))
-        val energyFuture = FluxCapacitor.query(GetTodaysEnergyUsage(homeId))
-        val rulesFuture = FluxCapacitor.query(GetActiveAutomationRules(homeId))
-        val weatherFuture = FluxCapacitor.query(GetLocalWeatherForecast(homeId))
+        val securityFuture = Fluxzero.query(GetSecurityStatus(homeId))
+        val devicesFuture = Fluxzero.query(GetOnlineDevices(homeId))
+        val energyFuture = Fluxzero.query(GetTodaysEnergyUsage(homeId))
+        val rulesFuture = Fluxzero.query(GetActiveAutomationRules(homeId))
+        val weatherFuture = Fluxzero.query(GetLocalWeatherForecast(homeId))
         
         return CompletableFuture.allOf(securityFuture, devicesFuture, 
                                      energyFuture, rulesFuture, weatherFuture)

@@ -36,7 +36,7 @@ graph LR
 Let's break down what happens when you send a message in Fluxzero:
 
 ### 1. Message Dispatch
-When you call `FluxCapacitor.sendCommand(new CreateUser("Alice"))`, your message is:
+When you call `Fluxzero.sendCommand(new CreateUser("Alice"))`, your message is:
 - Serialized and given metadata (timestamps, correlation IDs, etc.)
 - Sent to the **Message Log** - Fluxzero's distributed message storage
 - Immediately returns control to your application
@@ -96,7 +96,7 @@ Fluxzero supports different types of messages for different purposes:
 **Commands** represent a request to change something in the system.
 
 ```java
-FluxCapacitor.sendCommand(new CreateUser("Alice"));
+Fluxzero.sendCommand(new CreateUser("Alice"));
 ```
 
 - **Intent**: "Please do something"
@@ -109,7 +109,7 @@ FluxCapacitor.sendCommand(new CreateUser("Alice"));
 **Events** represent something that has happened in the system.
 
 ```java
-FluxCapacitor.publishEvent(new UserCreated("Alice", userId));
+Fluxzero.publishEvent(new UserCreated("Alice", userId));
 ```
 
 - **Intent**: "Something happened"
@@ -122,7 +122,7 @@ FluxCapacitor.publishEvent(new UserCreated("Alice", userId));
 **Queries** represent a request for information.
 
 ```java
-User user = FluxCapacitor.queryAndWait(new GetUser(userId));
+User user = Fluxzero.queryAndWait(new GetUser(userId));
 ```
 
 - **Intent**: "Please tell me something"
@@ -207,7 +207,7 @@ To build applications with this architecture:
 
 1. **Define your messages** - Create simple POJOs for commands, events, and queries
 2. **Write handlers** - Annotate methods with `@HandleCommand`, `@HandleEvent`, etc.
-3. **Send messages** - Use `FluxCapacitor.sendCommand()`, `publishEvent()`, etc.
+3. **Send messages** - Use `Fluxzero.sendCommand()`, `publishEvent()`, etc.
 4. **Let Fluxzero handle the rest** - Scaling, routing, and reliability are automatic
 
 The beauty of this architecture is that you can start simple and scale up without changing your code. Whether you're building a small application or a large distributed system, the patterns remain the same.

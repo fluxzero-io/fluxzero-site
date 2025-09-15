@@ -189,21 +189,21 @@ public class SmartHomeIntegrationService {
     
     // Publish to custom home automation log
     public void logThirdPartyEvent(String deviceId, String eventType, Map<String, Object> data) {
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("home-automation-events")
             .sendAndForget(new ThirdPartyDeviceEvent(deviceId, eventType, data, Instant.now()));
     }
     
     // Publish security audit events
     public void logSecurityAudit(String userId, String action, String details) {
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("security-audit")
             .sendAndForget(new SecurityAuditEvent(userId, action, details, Instant.now()));
     }
     
     // Log energy consumption data
     public void logEnergyUsage(DeviceId deviceId, double kwh, Instant timestamp) {
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("energy-monitoring")
             .sendAndForget(new EnergyUsageLog(deviceId, kwh, timestamp));
     }
@@ -211,7 +211,7 @@ public class SmartHomeIntegrationService {
     // Set retention policy for custom log
     public void configureRetention() {
         // Energy data retained for 2 years
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("energy-monitoring")
             .setRetentionTime(Duration.ofDays(730));
             
@@ -235,21 +235,21 @@ class SmartHomeIntegrationService {
     
     // Publish to custom home automation log
     fun logThirdPartyEvent(deviceId: String, eventType: String, data: Map<String, Any>) {
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("home-automation-events")
             .sendAndForget(ThirdPartyDeviceEvent(deviceId, eventType, data, Instant.now()))
     }
     
     // Publish security audit events
     fun logSecurityAudit(userId: String, action: String, details: String) {
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("security-audit")
             .sendAndForget(SecurityAuditEvent(userId, action, details, Instant.now()))
     }
     
     // Log energy consumption data
     fun logEnergyUsage(deviceId: DeviceId, kwh: Double, timestamp: Instant) {
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("energy-monitoring")
             .sendAndForget(EnergyUsageLog(deviceId, kwh, timestamp))
     }
@@ -257,7 +257,7 @@ class SmartHomeIntegrationService {
     // Set retention policy for custom log
     fun configureRetention() {
         // Energy data retained for 2 years
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("energy-monitoring")
             .setRetentionTime(Duration.ofDays(730))
             
@@ -333,7 +333,7 @@ public class ReplayHelper {
             .threads(2)
             .build();
             
-        FluxCapacitor.client().getTrackingClient(MessageType.EVENT)
+        Fluxzero.client().getTrackingClient(MessageType.EVENT)
             .startTracking(config);
     }
 }
@@ -387,7 +387,7 @@ class ReplayHelper {
                 .threads(2)
                 .build()
                 
-            FluxCapacitor.client().getTrackingClient(MessageType.EVENT)
+            Fluxzero.client().getTrackingClient(MessageType.EVENT)
                 .startTracking(config)
         }
     }
@@ -419,7 +419,7 @@ public class CommandRecoveryHandler {
             Thread.sleep(1000);  // Simple backoff
             
             // Re-execute the command
-            FluxCapacitor.get(CommandGateway.class)
+            Fluxzero.get(CommandGateway.class)
                 .sendAndWait(failedCommand);
                 
             log.info("Successfully retried command: {}", failedCommand);
@@ -437,14 +437,14 @@ public class CommandRecoveryHandler {
         DeviceId deviceId = failedCommand.deviceId();
         
         // Check if device is online before retrying
-        Device device = FluxCapacitor.loadEntity(deviceId);
+        Device device = Fluxzero.loadEntity(deviceId);
         if (!device.isOnline()) {
             log.warn("Device {} still offline, skipping retry", deviceId);
             return;
         }
         
         try {
-            FluxCapacitor.get(CommandGateway.class)
+            Fluxzero.get(CommandGateway.class)
                 .sendAndWait(failedCommand);
         } catch (Exception e) {
             // Escalate to manual intervention
@@ -464,7 +464,7 @@ public class SystemRecoveryService {
         log.info("Starting recovery for period {} to {}", outageStart, outageEnd);
         
         // Reset error consumer to replay failed messages
-        FluxCapacitor.client()
+        Fluxzero.client()
             .getTrackingClient(MessageType.ERROR)
             .resetPosition("command-recovery", startIndex, Guarantee.STORED);
     }
@@ -472,7 +472,7 @@ public class SystemRecoveryService {
     public void resetConsumerPosition(String consumerName, Instant replayFrom) {
         long replayIndex = IndexUtils.indexFromTimestamp(replayFrom);
         
-        FluxCapacitor.client()
+        Fluxzero.client()
             .getTrackingClient(MessageType.EVENT)
             .resetPosition(consumerName, replayIndex, Guarantee.STORED);
             
@@ -499,7 +499,7 @@ class CommandRecoveryHandler {
             Thread.sleep(1000)  // Simple backoff
             
             // Re-execute the command
-            FluxCapacitor.get(CommandGateway::class.java)
+            Fluxzero.get(CommandGateway::class.java)
                 .sendAndWait(failedCommand)
                 
             log.info("Successfully retried command: $failedCommand")
@@ -517,14 +517,14 @@ class CommandRecoveryHandler {
         val deviceId = failedCommand.deviceId
         
         // Check if device is online before retrying
-        val device = FluxCapacitor.loadEntity<Device>(deviceId)
+        val device = Fluxzero.loadEntity<Device>(deviceId)
         if (!device.isOnline) {
             log.warn("Device $deviceId still offline, skipping retry")
             return
         }
         
         try {
-            FluxCapacitor.get(CommandGateway::class.java)
+            Fluxzero.get(CommandGateway::class.java)
                 .sendAndWait(failedCommand)
         } catch (e: Exception) {
             // Escalate to manual intervention
@@ -544,7 +544,7 @@ class SystemRecoveryService {
         log.info("Starting recovery for period $outageStart to $outageEnd")
         
         // Reset error consumer to replay failed messages
-        FluxCapacitor.client()
+        Fluxzero.client()
             .getTrackingClient(MessageType.ERROR)
             .resetPosition("command-recovery", startIndex, Guarantee.STORED)
     }
@@ -552,7 +552,7 @@ class SystemRecoveryService {
     fun resetConsumerPosition(consumerName: String, replayFrom: Instant) {
         val replayIndex = IndexUtils.indexFromTimestamp(replayFrom)
         
-        FluxCapacitor.client()
+        Fluxzero.client()
             .getTrackingClient(MessageType.EVENT)
             .resetPosition(consumerName, replayIndex, Guarantee.STORED)
             
@@ -705,17 +705,17 @@ public class MessageLogRetentionService {
         // Custom logs with specific retention needs
         
         // Energy monitoring: 2 years for compliance
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("energy-monitoring")
             .setRetentionTime(Duration.ofDays(730));
             
         // Device diagnostics: 90 days for troubleshooting
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("device-diagnostics")
             .setRetentionTime(Duration.ofDays(90));
             
         // Third-party integration logs: 30 days
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("third-party-events")
             .setRetentionTime(Duration.ofDays(30));
             
@@ -725,7 +725,7 @@ public class MessageLogRetentionService {
     }
     
     public void adjustRetentionForCompliance(String customLogName, Duration newRetention) {
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway(customLogName)
             .setRetentionTime(newRetention);
             
@@ -748,17 +748,17 @@ class MessageLogRetentionService {
         // Custom logs with specific retention needs
         
         // Energy monitoring: 2 years for compliance
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("energy-monitoring")
             .setRetentionTime(Duration.ofDays(730))
             
         // Device diagnostics: 90 days for troubleshooting
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("device-diagnostics")
             .setRetentionTime(Duration.ofDays(90))
             
         // Third-party integration logs: 30 days
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway("third-party-events")
             .setRetentionTime(Duration.ofDays(30))
             
@@ -768,7 +768,7 @@ class MessageLogRetentionService {
     }
     
     fun adjustRetentionForCompliance(customLogName: String, newRetention: Duration) {
-        FluxCapacitor.get()
+        Fluxzero.get()
             .customGateway(customLogName)
             .setRetentionTime(newRetention)
             
@@ -929,11 +929,11 @@ class EnergyAnalysisReplayHandler {
 // Default behavior - no explicit retention needed
 
 // Custom logs: Set retention based on business needs
-FluxCapacitor.get().customGateway("analytics")
+Fluxzero.get().customGateway("analytics")
     .setRetentionTime(Duration.ofDays(90));
 
 // Compliance data: Long retention periods
-FluxCapacitor.get().customGateway("compliance-audit")
+Fluxzero.get().customGateway("compliance-audit")
     .setRetentionTime(Duration.ofDays(2555));  // 7 years
 ```
 
@@ -1005,7 +1005,7 @@ public class DisasterRecoveryService {
         long startIndex = IndexUtils.indexFromTimestamp(start);
         long endIndex = IndexUtils.indexFromTimestamp(end);
         
-        FluxCapacitor.client()
+        Fluxzero.client()
             .getTrackingClient(MessageType.EVENT)
             .resetPosition(consumerName, startIndex, Guarantee.STORED);
     }
@@ -1036,7 +1036,7 @@ class DisasterRecoveryService {
         val startIndex = IndexUtils.indexFromTimestamp(start)
         val endIndex = IndexUtils.indexFromTimestamp(end)
         
-        FluxCapacitor.client()
+        Fluxzero.client()
             .getTrackingClient(MessageType.EVENT)
             .resetPosition(consumerName, startIndex, Guarantee.STORED)
     }

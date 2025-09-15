@@ -38,12 +38,12 @@ When you don't need a response from the command, use `sendAndForgetCommand()`:
 <Tabs>
 <TabItem label="Java">
 ```java
-FluxCapacitor.sendAndForgetCommand(new CreateUser("Alice"));
+Fluxzero.sendAndForgetCommand(new CreateUser("Alice"));
 ```
 </TabItem>
 <TabItem label="Kotlin">
 ```kotlin
-FluxCapacitor.sendAndForgetCommand(CreateUser("Alice"))
+Fluxzero.sendAndForgetCommand(CreateUser("Alice"))
 ```
 </TabItem>
 </Tabs>
@@ -65,10 +65,10 @@ When you need to wait for a response, you can use either asynchronous or blockin
 ```java
 // Asynchronous - returns CompletableFuture
 CompletableFuture<UserId> future 
-        = FluxCapacitor.sendCommand(new AddLight("Living Room #1"));
+        = Fluxzero.sendCommand(new AddLight("Living Room #1"));
 
 // Blocking - waits for result
-LightId id = FluxCapacitor.sendCommandAndWait(
+LightId id = Fluxzero.sendCommandAndWait(
         new AddLight("Living Room #1"));
 ```
 </TabItem>
@@ -76,10 +76,10 @@ LightId id = FluxCapacitor.sendCommandAndWait(
 ```kotlin
 // Asynchronous - returns CompletableFuture
 val future: CompletableFuture<LightId> 
-        = FluxCapacitor.sendCommand(AddLight("Living Room #1"))
+        = Fluxzero.sendCommand(AddLight("Living Room #1"))
 
 // Blocking - waits for result
-val id: LightId = FluxCapacitor.sendCommandAndWait(
+val id: LightId = Fluxzero.sendCommandAndWait(
         AddLight("Living Room #1"))
 ```
 </TabItem>
@@ -92,7 +92,7 @@ You can add metadata to commands to provide additional context, such as the sour
 <Tabs>
 <TabItem label="Java">
 ```java
-FluxCapacitor.sendCommand(
+Fluxzero.sendCommand(
     new AddLight("Living Room #1"),
     Metadata.of("source", "admin-ui")
 );
@@ -100,7 +100,7 @@ FluxCapacitor.sendCommand(
 </TabItem>
 <TabItem label="Kotlin">
 ```kotlin
-FluxCapacitor.sendCommand(
+Fluxzero.sendCommand(
     AddLight("Living Room #1"),
     Metadata.of("source", "admin-ui")
 )
@@ -124,7 +124,7 @@ The `@Timeout` annotation allows you to specify how long Flux should wait for a 
 public record CalculatePremium(UserProfile profile) implements Request<BigDecimal> {}
 
 // When sending this command, the timeout is respected
-BigDecimal result = FluxCapacitor
+BigDecimal result = Fluxzero
         .sendAndWait(new CalculatePremium(user));
 ```
 </TabItem>
@@ -134,7 +134,7 @@ BigDecimal result = FluxCapacitor
 data class CalculatePremium(val profile: UserProfile) : Request<BigDecimal>
 
 // When sending this command, the timeout is respected
-val result: BigDecimal = FluxCapacitor
+val result: BigDecimal = Fluxzero
         .sendAndWait(CalculatePremium(user))
 ```
 </TabItem>

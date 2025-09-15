@@ -474,23 +474,23 @@ graph TD
 <TabItem label="Loading Performance">
 ```java
 // Without snapshot: O(n) where n = total events
-SmartHome home1 = FluxCapacitor.loadAggregate(homeId, SmartHome.class);
+SmartHome home1 = Fluxzero.loadAggregate(homeId, SmartHome.class);
 // Must replay all 10,000 events
 
 // With snapshot: O(k) where k = events since last snapshot  
 @Aggregate(snapshotPeriod = 1000)
-SmartHome home2 = FluxCapacitor.loadAggregate(homeId, SmartHome.class);
+SmartHome home2 = Fluxzero.loadAggregate(homeId, SmartHome.class);
 // Loads snapshot + replays only 500 recent events
 ```
 </TabItem>
 <TabItem label="Memory Usage">
 ```java
 // Event sourcing: Memory scales with aggregate complexity
-SmartHome home = FluxCapacitor.loadAggregate(homeId, SmartHome.class);
+SmartHome home = Fluxzero.loadAggregate(homeId, SmartHome.class);
 // Memory: Current state only (devices, rooms, schedules)
 
 // Document storage: Memory scales with document size
-DeviceCatalog catalog = FluxCapacitor.loadAggregate(catalogId, DeviceCatalog.class);  
+DeviceCatalog catalog = Fluxzero.loadAggregate(catalogId, DeviceCatalog.class);
 // Memory: Full document content
 ```
 </TabItem>

@@ -29,7 +29,7 @@ Organize documents into logical collections (like database tables) with custom i
 </Card>
 
 <Card title="Automatic Indexing" icon="setting">
-Documents can be automatically indexed when marked as `@Searchable`, or manually indexed using the FluxCapacitor API.
+Documents can be automatically indexed when marked as `@Searchable`, or manually indexed using the Fluxzero API.
 </Card>
 </CardGrid>
 
@@ -191,7 +191,7 @@ data class HomeConfiguration(
 
 ## Manual Document Indexing
 
-You can manually index documents using the FluxCapacitor API:
+You can manually index documents using the Fluxzero API:
 
 <Tabs>
 <TabItem label="Java">
@@ -200,12 +200,12 @@ public class DeviceCatalogService {
     
     // Index a single device
     public void addDeviceTocatalog(DeviceCatalogEntry device) {
-        FluxCapacitor.index(device, device.catalogId(), "device-catalog");
+        Fluxzero.index(device, device.catalogId(), "device-catalog");
     }
     
     // Index with conditional logic
     public void addDeviceIfNew(DeviceCatalogEntry device) {
-        CompletableFuture<Void> future = FluxCapacitor
+        CompletableFuture<Void> future = Fluxzero
             .indexIfAbsent(device, device.catalogId(), "device-catalog");
         
         future.thenRun(() -> 
@@ -214,12 +214,12 @@ public class DeviceCatalogService {
     
     // Bulk indexing
     public void importDeviceCatalog(List<DeviceCatalogEntry> devices) {
-        FluxCapacitor.index(devices);
+        Fluxzero.index(devices);
     }
     
     // Index with time-based constraints
     public void addTemporaryPromotion(PromotionalDevice promotion) {
-        FluxCapacitor.index(
+        Fluxzero.index(
             promotion, 
             promotion.deviceId(), 
             "promotions",
@@ -236,12 +236,12 @@ class DeviceCatalogService {
     
     // Index a single device
     fun addDeviceToCalog(device: DeviceCatalogEntry) {
-        FluxCapacitor.index(device, device.catalogId, "device-catalog")
+        Fluxzero.index(device, device.catalogId, "device-catalog")
     }
     
     // Index with conditional logic
     fun addDeviceIfNew(device: DeviceCatalogEntry) {
-        val future = FluxCapacitor
+        val future = Fluxzero
             .indexIfAbsent(device, device.catalogId, "device-catalog")
         
         future.thenRun { 
@@ -251,12 +251,12 @@ class DeviceCatalogService {
     
     // Bulk indexing
     fun importDeviceCatalog(devices: List<DeviceCatalogEntry>) {
-        FluxCapacitor.index(devices)
+        Fluxzero.index(devices)
     }
     
     // Index with time-based constraints
     fun addTemporaryPromotion(promotion: PromotionalDevice) {
-        FluxCapacitor.index(
+        Fluxzero.index(
             promotion, 
             promotion.deviceId, 
             "promotions",
@@ -296,7 +296,7 @@ public class ReviewService {
     
     public void addReview(DeviceReview review) {
         // This will automatically trigger indexing
-        // No explicit FluxCapacitor.index() call needed
+        // No explicit Fluxzero.index() call needed
         reviewRepository.save(review);
     }
 }
@@ -324,7 +324,7 @@ class ReviewService {
     
     fun addReview(review: DeviceReview) {
         // This will automatically trigger indexing
-        // No explicit FluxCapacitor.index() call needed
+        // No explicit Fluxzero.index() call needed
         reviewRepository.save(review)
     }
 }
@@ -345,7 +345,7 @@ public class DeviceSearchService {
     
     // Simple text search
     public List<DeviceCatalogEntry> searchByBrand(String brand) {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry.class)
             .match(brand, "brand")
             .fetchAll();
@@ -353,7 +353,7 @@ public class DeviceSearchService {
     
     // Multi-field search
     public List<DeviceCatalogEntry> searchSmartLights() {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry.class)
             .match("SMART_LIGHT", "type")
             .match("true", "inStock")
@@ -367,7 +367,7 @@ public class DeviceSearchService {
         double maxPrice, 
         List<String> requiredFeatures) {
         
-        var search = FluxCapacitor.search(DeviceCatalogEntry.class);
+        var search = Fluxzero.search(DeviceCatalogEntry.class);
         
         if (searchTerm != null && !searchTerm.isEmpty()) {
             search = search.lookAhead(searchTerm, "name", "description");
@@ -392,7 +392,7 @@ public class DeviceSearchService {
     public List<DeviceReview> findRecentReviews(String deviceId) {
         Instant oneMonthAgo = Instant.now().minus(30, ChronoUnit.DAYS);
         
-        return FluxCapacitor
+        return Fluxzero
             .search("device-reviews")
             .match(deviceId, "deviceCatalogId")
             .since(oneMonthAgo)
@@ -408,7 +408,7 @@ class DeviceSearchService {
     
     // Simple text search
     fun searchByBrand(brand: String): List<DeviceCatalogEntry> {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry::class.java)
             .match(brand, "brand")
             .fetchAll()
@@ -416,7 +416,7 @@ class DeviceSearchService {
     
     // Multi-field search
     fun searchSmartLights(): List<DeviceCatalogEntry> {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry::class.java)
             .match("SMART_LIGHT", "type")
             .match("true", "inStock")
@@ -430,7 +430,7 @@ class DeviceSearchService {
         maxPrice: Double, 
         requiredFeatures: List<String>?): List<DeviceCatalogEntry> {
         
-        var search = FluxCapacitor.search(DeviceCatalogEntry::class.java)
+        var search = Fluxzero.search(DeviceCatalogEntry::class.java)
         
         if (!searchTerm.isNullOrEmpty()) {
             search = search.lookAhead(searchTerm, "name", "description")
@@ -453,7 +453,7 @@ class DeviceSearchService {
     fun findRecentReviews(deviceId: String): List<DeviceReview> {
         val oneMonthAgo = Instant.now().minus(30, ChronoUnit.DAYS)
         
-        return FluxCapacitor
+        return Fluxzero
             .search("device-reviews")
             .match(deviceId, "deviceCatalogId")
             .since(oneMonthAgo)
@@ -474,7 +474,7 @@ public class AdvancedDeviceSearch {
     
     // Wildcard and pattern matching
     public List<DeviceCatalogEntry> findPhilipsDevices() {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry.class)
             .query("philips*", "brand")  // Wildcard search
             .fetchAll();
@@ -482,7 +482,7 @@ public class AdvancedDeviceSearch {
     
     // Complex boolean queries
     public List<DeviceCatalogEntry> findAffordableSecurityDevices() {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry.class)
             .query("(SECURITY_CAMERA or MOTION_SENSOR) and inStock:true", 
                    "type", "inStock")
@@ -493,7 +493,7 @@ public class AdvancedDeviceSearch {
     
     // Lookahead search (autocomplete)
     public List<String> getDeviceNameSuggestions(String partial) {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry.class)
             .lookAhead(partial, "name")
             .fetch(10)
@@ -505,7 +505,7 @@ public class AdvancedDeviceSearch {
     
     // Search with facet aggregation
     public Map<String, Long> getBrandCounts() {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry.class)
             .match("true", "inStock")
             .facet("brand")
@@ -518,7 +518,7 @@ public class AdvancedDeviceSearch {
         double longitude, 
         double radiusKm) {
         
-        return FluxCapacitor
+        return Fluxzero
             .search(HomeConfiguration.class)
             .near(latitude, longitude, radiusKm)
             .fetchAll();
@@ -532,7 +532,7 @@ class AdvancedDeviceSearch {
     
     // Wildcard and pattern matching
     fun findPhilipsDevices(): List<DeviceCatalogEntry> {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry::class.java)
             .query("philips*", "brand")  // Wildcard search
             .fetchAll()
@@ -540,7 +540,7 @@ class AdvancedDeviceSearch {
     
     // Complex boolean queries
     fun findAffordableSecurityDevices(): List<DeviceCatalogEntry> {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry::class.java)
             .query("(SECURITY_CAMERA or MOTION_SENSOR) and inStock:true", 
                    "type", "inStock")
@@ -551,7 +551,7 @@ class AdvancedDeviceSearch {
     
     // Lookahead search (autocomplete)
     fun getDeviceNameSuggestions(partial: String): List<String> {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry::class.java)
             .lookAhead(partial, "name")
             .fetch(10)
@@ -561,7 +561,7 @@ class AdvancedDeviceSearch {
     
     // Search with facet aggregation
     fun getBrandCounts(): Map<String, Long> {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry::class.java)
             .match("true", "inStock")
             .facet("brand")
@@ -574,7 +574,7 @@ class AdvancedDeviceSearch {
         longitude: Double, 
         radiusKm: Double): List<HomeConfiguration> {
         
-        return FluxCapacitor
+        return Fluxzero
             .search(HomeConfiguration::class.java)
             .near(latitude, longitude, radiusKm)
             .fetchAll()
@@ -639,7 +639,7 @@ DeviceCatalogEntry device = new DeviceCatalogEntry(
 <TabItem label="Java">
 ```java
 // Use specific field searches for better performance
-List<DeviceCatalogEntry> devices = FluxCapacitor
+List<DeviceCatalogEntry> devices = Fluxzero
     .search(DeviceCatalogEntry.class)
     .match("Philips", "brand")           // Field-specific search
     .match("SMART_LIGHT", "type")        // Much faster than full-text
@@ -649,7 +649,7 @@ List<DeviceCatalogEntry> devices = FluxCapacitor
 
 // Avoid full-text search when possible
 // Slower:
-List<DeviceCatalogEntry> slow = FluxCapacitor
+List<DeviceCatalogEntry> slow = Fluxzero
     .search(DeviceCatalogEntry.class)
     .query("Philips SMART_LIGHT under 100")  // Full-text search
     .fetchAll();
@@ -658,7 +658,7 @@ List<DeviceCatalogEntry> slow = FluxCapacitor
 <TabItem label="Kotlin">
 ```kotlin
 // Use specific field searches for better performance
-val devices = FluxCapacitor
+val devices = Fluxzero
     .search(DeviceCatalogEntry::class.java)
     .match("Philips", "brand")           // Field-specific search
     .match("SMART_LIGHT", "type")        // Much faster than full-text
@@ -668,7 +668,7 @@ val devices = FluxCapacitor
 
 // Avoid full-text search when possible
 // Slower:
-val slow = FluxCapacitor
+val slow = Fluxzero
     .search(DeviceCatalogEntry::class.java)
     .query("Philips SMART_LIGHT under 100")  // Full-text search
     .fetchAll()
@@ -696,7 +696,7 @@ public record DeviceUsageLog(
 
 // Index with time range
 public void logDeviceUsage(DeviceUsageLog usage) {
-    FluxCapacitor.index(
+    Fluxzero.index(
         usage, 
         usage.logId(), 
         "device-usage",
@@ -711,7 +711,7 @@ public List<DeviceUsageLog> findUsageInPeriod(
     Instant from, 
     Instant to) {
     
-    return FluxCapacitor
+    return Fluxzero
         .search("device-usage")
         .match(deviceId.toString(), "deviceId")
         .between(from, to)
@@ -735,7 +735,7 @@ data class DeviceUsageLog(
 
 // Index with time range
 fun logDeviceUsage(usage: DeviceUsageLog) {
-    FluxCapacitor.index(
+    Fluxzero.index(
         usage, 
         usage.logId, 
         "device-usage",
@@ -750,7 +750,7 @@ fun findUsageInPeriod(
     from: Instant, 
     to: Instant): List<DeviceUsageLog> {
     
-    return FluxCapacitor
+    return Fluxzero
         .search("device-usage")
         .match(deviceId.toString(), "deviceId")
         .between(from, to)
@@ -830,20 +830,20 @@ public class DeviceCatalogManager {
     
     public void importCatalog(List<DeviceCatalogEntry> devices) {
         // Bulk import
-        FluxCapacitor.index(devices);
+        Fluxzero.index(devices);
         log.info("Imported {} devices to catalog", devices.size());
     }
     
     public List<DeviceCatalogEntry> searchDevices(String query, int limit) {
         if (query.isEmpty()) {
-            return FluxCapacitor
+            return Fluxzero
                 .search(DeviceCatalogEntry.class)
                 .match("true", "inStock")
                 .sortBy("name")
                 .fetch(limit);
         }
         
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry.class)
             .lookAhead(query, "name", "description", "brand")
             .match("true", "inStock")
@@ -852,7 +852,7 @@ public class DeviceCatalogManager {
     }
     
     public Map<String, Long> getCategoryStats() {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry.class)
             .match("true", "inStock")
             .facet("type")
@@ -867,19 +867,19 @@ class DeviceCatalogManager {
     
     fun importCatalog(devices: List<DeviceCatalogEntry>) {
         // Bulk import
-        FluxCapacitor.index(devices)
+        Fluxzero.index(devices)
         log.info("Imported ${devices.size} devices to catalog")
     }
     
     fun searchDevices(query: String, limit: Int): List<DeviceCatalogEntry> {
         return if (query.isEmpty()) {
-            FluxCapacitor
+            Fluxzero
                 .search(DeviceCatalogEntry::class.java)
                 .match("true", "inStock")
                 .sortBy("name")
                 .fetch(limit)
         } else {
-            FluxCapacitor
+            Fluxzero
                 .search(DeviceCatalogEntry::class.java)
                 .lookAhead(query, "name", "description", "brand")
                 .match("true", "inStock")
@@ -889,7 +889,7 @@ class DeviceCatalogManager {
     }
     
     fun getCategoryStats(): Map<String, Long> {
-        return FluxCapacitor
+        return Fluxzero
             .search(DeviceCatalogEntry::class.java)
             .match("true", "inStock")
             .facet("type")

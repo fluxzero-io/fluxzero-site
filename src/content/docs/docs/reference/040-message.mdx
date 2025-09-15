@@ -34,7 +34,7 @@ You can pass metadata when sending commands, events, or queries. For example:
 <TabItem label="Java">  
 
 ```java
-FluxCapacitor.sendCommand(
+Fluxzero.sendCommand(
     new AddLight("Living Room #1"),
     Metadata.of("source", "admin-ui")
 );
@@ -42,7 +42,7 @@ FluxCapacitor.sendCommand(
 </TabItem>
 <TabItem label="Kotlin">
 ```kotlin
-FluxCapacitor.sendCommand(
+Fluxzero.sendCommand(
       AddLight("Living Room #1"),   
       Metadata.of("source", "admin-ui")
 )
