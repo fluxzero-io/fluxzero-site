@@ -11,19 +11,14 @@ import '../../styles/fluxzero.css';
         description="Fluxzero is the fastest way to build scalable, message-driven apps. One unified SDK, zero boilerplate, full observability, and deploy anywhere."
 >
     <!-- Bootstrap icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" slot="head">
-
-    <style slot="head">
-        .keyword { color: #569cd6; }
-        .field { color: #9cdcfe; }
-        .method { color: #dcdcaa; }
-        .comment { color: #6a9955; }
-        .annotation { color: #4fc1ff; }
-    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+          slot="head">
 
     <!-- Page wrapper for sticky footer -->
     <main class="page-wrapper">
-        <div class="bg-dark" style="height: 75px"><Header /></div>
+        <div class="bg-dark" style="height: 75px">
+            <Header/>
+        </div>
 
 
         <section class="container fluxzero-product pt-5 pb-2 mt-3 mt-sm-4 mt-xl-5">
@@ -34,12 +29,14 @@ import '../../styles/fluxzero.css';
                     <p>The fastest way to build and scale rock‑solid backends without boilerplate or compromises.</p>
 
                     <p>
-                        The Fluxzero SDK was designed from the ground up to let you build complete backend applications — quickly
+                        The Fluxzero SDK was designed from the ground up to let you build complete backend applications
+                        — quickly
                         and joyfully — without touching infrastructure or reinventing plumbing.
                     </p>
 
                     <p class="fw-bold">
-                        You write code that matters to your domain. Fluxzero handles the 50 things you'd rather not implement.
+                        You write code that matters to your domain. Fluxzero handles the 50 things you'd rather not
+                        implement.
                     </p>
 
                 </div>
@@ -49,15 +46,16 @@ import '../../styles/fluxzero.css';
                 </div>
 
                 <div class="col-md-3"><a href="/docs" class="btn w-100 btn-outline-dark btn-lg">Read the docs</a></div>
-                <div class="col-md-3"><a href="/docs/tutorials/first-app" class="btn w-100 btn-primary btn-lg">Build your first app</a></div>
+                <div class="col-md-3"><a href="/docs/tutorials/first-app" class="btn w-100 btn-primary btn-lg">Build
+                    your first app</a></div>
 
-                <hr class="mt-5" />
+                <hr class="mt-5"/>
 
                 <div class="col-md-12 text-center py-4">
                     <img src="/assets/fluxzero/fluxzero-sdk-features.webp" alt="Fluxzero SDK features">
                 </div>
 
-                <hr class="my-1" />
+                <hr class="my-1"/>
 
                 <div class="col-md-12">
                     <h3 class="h3 mt-5">Core advantages</h3>
@@ -79,8 +77,10 @@ import '../../styles/fluxzero.css';
                             <div>
                                 <strong>Non‑Functionals at Max by Design</strong>
                                 <div class="mt-1">
-                                    Scalability, observability, resilience, and security aren't just bundled — they're baked into the
-                                    core architecture. You get them at full strength without trade‑offs, while still moving fast.
+                                    Scalability, observability, resilience, and security aren't just bundled — they're
+                                    baked into the
+                                    core architecture. You get them at full strength without trade‑offs, while still
+                                    moving fast.
                                 </div>
                             </div>
                         </li>
@@ -95,7 +95,8 @@ import '../../styles/fluxzero.css';
                             <div>
                                 <strong>Single Mental Model</strong>
                                 <div class="mt-1">
-                                    One unified API for commands, queries, events, workflows, scheduling, persistence — no juggling
+                                    One unified API for commands, queries, events, workflows, scheduling, persistence —
+                                    no juggling
                                     frameworks or paradigms.
                                 </div>
                             </div>
@@ -105,8 +106,9 @@ import '../../styles/fluxzero.css';
                             <div>
                                 <strong>Cloud‑Native by Default</strong>
                                 <div class="mt-1">
-                                    Develop locally, deploy seamlessly to <a class="link-primary link-underline-opacity-0"
-                                                                             href="#cloud">Fluxzero Cloud</a> or your own
+                                    Develop locally, deploy seamlessly to <a
+                                        class="link-primary link-underline-opacity-0"
+                                        href="#cloud">Fluxzero Cloud</a> or your own
                                     infrastructure.
                                 </div>
                             </div>
@@ -114,7 +116,7 @@ import '../../styles/fluxzero.css';
                     </ul>
                 </div>
 
-                <hr class="my-3" />
+                <hr class="my-3"/>
 
                 <div class="col-md">
 
@@ -145,23 +147,25 @@ import '../../styles/fluxzero.css';
                   }'>
                             <div class="swiper-wrapper">
 
+                                <!-- @formatter:off -->
                                 <div class="swiper-slide">
                                     <div data-bs-theme="dark" class="d-block mx-auto rounded-3" style="max-width: 800px;">
-<pre class="bg-dark"><code><span class="keyword">public record</span> UpdateProject(<span class="annotation">@EntityId</span> ProjectId <span class="field">projectId</span>, ProjectDetails <span class="field">details</span>) {`{`}
+<pre class="bg-dark"><code>
+<span class="keyword">public record</span> UpdateProject(<span class="annotation">@EntityId</span> ProjectId <span class="field">projectId</span>, ProjectDetails <span class="field">details</span>) {`{`}
     <span class="annotation">@AssertLegal</span>
     <span class="keyword">void</span> <span class="method">assertAuthorized</span>(Project project, Sender sender) {`{`}
     <span class="keyword">if</span> (!sender.authorizedFor(project.owner())) {`{`}
-    <span class="keyword">throw</span> ProjectErrors.unauthorized;
-    {`}`}
+        <span class="keyword">throw</span> ProjectErrors.unauthorized;
+        {`}`}
     {`}`}
 
     <span class="annotation">@Apply</span>
     <span class="keyword">Project</span> <span class="method">apply</span>(Project project) {`{`}
-    <span class="keyword">return</span> project.withDetails(<span class="field">details</span>);
+        <span class="keyword">return</span> project.withDetails(<span class="field">details</span>);
     {`}`}
-    {`}`}
+{`}`}
 
-    <span class="comment">// Business rules and updates all in one place — declarative and safe.</span></code></pre>
+<span class="comment">// Business rules and updates all in one place — declarative and safe.</span></code></pre>
                                     </div>
                                 </div>
 
@@ -170,11 +174,11 @@ import '../../styles/fluxzero.css';
 <pre class="bg-dark"><code><span class="keyword">public record</span> FindOrders(String <span class="field">term</span>) <span class="keyword">implements</span> Request&lt;List&lt;Order&gt;&gt; {`{`}
     <span class="annotation">@HandleQuery</span>
     List&lt;Order&gt; <span class="method">handle</span>() {`{`}
-    <span class="keyword">return</span> Fluxzero.search(Order.<span class="keyword">class</span>).lookAhead(<span class="field">term</span>).fetch(<span class="keyword">100</span>);
+        <span class="keyword">return</span> Fluxzero.search(Order.<span class="keyword">class</span>).lookAhead(<span class="field">term</span>).fetch(<span class="keyword">100</span>);
     {`}`}
-    {`}`}
+{`}`}
 
-    <span class="comment">// This query handles itself, external handlers optional.</span></code></pre>
+<span class="comment">// This query handles itself, external handlers optional.</span></code></pre>
                                     </div>
                                 </div>
 
@@ -182,12 +186,12 @@ import '../../styles/fluxzero.css';
                                     <div data-bs-theme="dark" class="d-block mx-auto rounded-3" style="max-width: 800px;">
 <pre class="bg-dark"><code><span class="annotation">@Test</span>
 <span class="keyword">void</span> openCaseTwiceFails() {`{`}
-    fixture.givenCommands(<span class="string">"/case/open-case.json"</span>)
+    <span class="field">fixture</span>.givenCommands(<span class="string">"/case/open-case.json"</span>)
            .whenCommand(<span class="string">"/case/open-case.json"</span>)
            .expectExceptionalResult(CaseErrors.<span class="field">alreadyExists</span>);
-    {`}`}
+{`}`}
 
-    <span class="comment">// Built-in behavioral testing — no mocks, no setup.</span></code></pre>
+<span class="comment">// Built-in behavioral testing — no mocks, no setup.</span></code></pre>
                                     </div>
                                 </div>
 
@@ -200,23 +204,26 @@ import '../../styles/fluxzero.css';
         .sendWebRequestAndWait(WebRequest.get(<span class="string">"https://example.org/feed"</span>).build())
         .getPayloadAs(Feed.<span class="keyword">class</span>);
     <span class="comment">// Store new headlines or trigger notification</span>
-    {`}`}
+{`}`}
 
-    <span class="comment">// Auto-started schedules. Durable, distributed, and code-first.</span></code></pre>
+<span class="comment">// Auto-started schedules. Durable, distributed, and code-first.</span></code></pre>
                                     </div>
                                 </div>
+<!-- @formatter:on -->
 
                             </div>
 
                             <!-- Prev/Next buttons + count -->
                             <div class="d-flex justify-content-center align-items-center pb-3 pt-4 mt-3">
-                                <button type="button" class="btn btn-prev btn-icon position-relative top-0 mt-0 ms-0 me-2"
+                                <button type="button"
+                                        class="btn btn-prev btn-icon position-relative top-0 mt-0 ms-0 me-2"
                                         style="transform: none;" aria-label="Previous">
                                     <i class="bx bx-chevron-left"></i>
                                 </button>
                                 <div class="swiper-pagination opacity-70 fs-sm fw-medium position-relative top-0 w-auto"
                                      style="min-width: 70px;"></div>
-                                <button type="button" class="btn btn-next btn-icon position-relative top-0 mt-0 ms-2 me-0"
+                                <button type="button"
+                                        class="btn btn-next btn-icon position-relative top-0 mt-0 ms-2 me-0"
                                         style="transform: none;" aria-label="Next">
                                     <i class="bx bx-chevron-right"></i>
                                 </button>
@@ -226,17 +233,20 @@ import '../../styles/fluxzero.css';
 
                 </div>
 
-                <hr class="mb-5" />
+                <hr class="mb-5"/>
 
                 <div class="col-md-6">
 
                     <h3 class="h3">Where Fluxzero shines</h3>
 
-                    <p>Fluxzero is ideal for any business application — from simple internal tools to complex, high-scale
+                    <p>Fluxzero is ideal for any business application — from simple internal tools to complex,
+                        high-scale
                         systems.</p>
 
-                    <p>Whether you're building a proof-of-concept or a mission-critical platform, Fluxzero lets you move fast
-                        without sacrificing quality. You never need to rewrite, re-architect, or rethink how to scale, evolve, or
+                    <p>Whether you're building a proof-of-concept or a mission-critical platform, Fluxzero lets you move
+                        fast
+                        without sacrificing quality. You never need to rewrite, re-architect, or rethink how to scale,
+                        evolve, or
                         monitor your app.</p>
 
                 </div>
@@ -271,7 +281,8 @@ import '../../styles/fluxzero.css';
                 <div class="col-md-6">
                     <h3>JVM First. More to Come.</h3>
 
-                    <p>Fluxzero SDK is currently available for Java, Kotlin, and Scala — with full idiomatic support. More
+                    <p>Fluxzero SDK is currently available for Java, Kotlin, and Scala — with full idiomatic support.
+                        More
                         languages are on the roadmap, making Fluxzero the go-to backend platform for polyglot teams and
                         future-proof apps.</p>
                 </div>
@@ -279,20 +290,24 @@ import '../../styles/fluxzero.css';
                 <div class="col-md-6">
                     <h3>Missing something?</h3>
 
-                    <p>If you're wondering "Can Fluxzero do X?", the answer is probably yes. But if not — we want to know. We're
-                        building this for you. <a class="link-primary link-underline-opacity-0" href="#cloud">Let us know what
+                    <p>If you're wondering "Can Fluxzero do X?", the answer is probably yes. But if not — we want to
+                        know. We're
+                        building this for you. <a class="link-primary link-underline-opacity-0" href="#cloud">Let us
+                            know what
                             else you'd love to see</a>.</p>
                 </div>
 
-                <hr class="mt-4" />
+                <hr class="mt-4"/>
 
                 <div class="text-center mt-5">
                     <h2 class="h1 mb-4">Ready to Get Started?</h2>
                     <p class="lead pb-3 mb-3">Check out our docs or build your first app</p>
 
                     <div class="row justify-content-center g-4">
-                        <div class="col-md-3"><a href="/docs" class="btn w-100 btn-outline-dark btn-lg">Read the docs</a></div>
-                        <div class="col-md-3"><a href="/docs/tutorials/first-app" class="btn w-100 btn-primary btn-lg">Build your first app</a></div>
+                        <div class="col-md-3"><a href="/docs" class="btn w-100 btn-outline-dark btn-lg">Read the
+                            docs</a></div>
+                        <div class="col-md-3"><a href="/docs/tutorials/first-app" class="btn w-100 btn-primary btn-lg">Build
+                            your first app</a></div>
                     </div>
                 </div>
 
@@ -302,14 +317,14 @@ import '../../styles/fluxzero.css';
         </section>
     </main>
 
-    <Footer />
+    <Footer/>
 
     <script>
-        import { Swiper } from 'swiper/bundle';
+        import {Swiper} from 'swiper/bundle';
         import 'swiper/swiper-bundle.css';
 
         // Initialize Swiper
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const swiperEl = document.querySelector('.swiper');
             if (swiperEl) {
                 const swiperOptions = JSON.parse(swiperEl.getAttribute('data-swiper-options') || '{}');
