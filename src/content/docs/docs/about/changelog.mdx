@@ -2,10 +2,12 @@
 title: Changelog
 description: Complete release history for fluxzero-sdk-java
 sidebar:
-  order: 45
+  order: 05
 ---
 
 import { getCollection } from 'astro:content';
+
+import { marked } from 'marked';
 
 export const releases = await getCollection('changelogReleases');
 
@@ -106,7 +108,7 @@ This changelog is automatically generated from the [GitHub releases](https://git
         {releases.map((release) => (
           <details key={release.version}>
             <summary>{release.version} ({release.date})</summary>
-            <div set:html={release.body} />
+            <div set:html={marked.parse(release.body)} />
           </details>
         ))}
       </div>
