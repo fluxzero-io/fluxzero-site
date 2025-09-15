@@ -26,7 +26,7 @@ import '../styles/fluxzero.css';
     <Header />
 
     <!-- Hero -->
-    <section class="bg-dark bg-size-cover bg-repeat-0 bg-position-center position-relative overflow-hidden py-5 mb-2" style="background-image: url(assets/img/landing/saas-3/hero/hero-bg.jpg);" data-bs-theme="dark">
+    <section class="bg-dark bg-size-cover bg-repeat-0 bg-position-center position-relative overflow-hidden pt-5 pb-3 pb-md-5 mb-2" style="background-image: url(assets/img/landing/saas-3/hero/hero-bg.jpg);" data-bs-theme="dark">
       <div class="container position-relative zindex-2 pt-5 pb-md-2 pb-lg-4 pb-xl-5">
         <div class="row pt-3 pb-2 py-md-4">
 
@@ -35,11 +35,18 @@ import '../styles/fluxzero.css';
             <h1 class="display-3 pb-2 pb-sm-3">Write Business Logic.
               Skip Everything Else.</h1>
             <p class="text-body fs-lg d-md-none d-xl-block pb-2 pb-md-0 mb-4 mb-md-5">The only platform where your code scales from MVP to enterprise
-              without rebuilds, ops, or backend complexity.</p>
-            <div class="d-flex justify-content-center justify-content-md-start pb-2 pt-lg-2 pt-xl-0">
-                            <a href="/docs/getting-started/hello-world" class="btn btn-lg btn-primary shadow-primary me-3 me-sm-4">Try locally in 2 mins</a>
-                            <a href="/docs/tutorials/first-app" class="btn btn-lg btn-outline-secondary">Build your first app</a>
-                          </div>
+              without rebuilds, ops, or backend complexity.
+            </p>
+
+            <!--CTA buttons-->
+            <div class="d-grid gap-2 d-md-flex">
+              <a href="/docs/getting-started/hello-world" class="btn btn-lg btn-primary shadow-primary">Try locally in 2 mins</a>
+              <a href="/docs/tutorials/first-app" class="btn btn-lg btn-outline-secondary">Build your first app</a>
+            </div>
+            <!--<div class="d-flex justify-content-center justify-content-md-start pb-2 pt-lg-2 pt-xl-0">-->
+            <!--                <a href="/docs/getting-started/hello-world" class="btn btn-lg btn-primary shadow-primary me-3 me-sm-4">Try locally in 2 mins</a>-->
+            <!--                <a href="/docs/tutorials/first-app" class="btn btn-lg btn-outline-secondary">Build your first app</a>-->
+            <!--              </div>-->
           </div>
 
            <!-- Parallax gfx -->
@@ -148,7 +155,7 @@ import '../styles/fluxzero.css';
       <div class="row align-items-center pt-2 pb-3">
 
         <!-- Text -->
-        <div class="col-md-6 col-xl-5 text-center text-md-start mb-5 mb-md-0">
+        <div class="col-md-6 col-xl-5 text-center text-md-start mb-md-5 mb-md-0">
           <h2 class="h1 pb-2 pb-lg-3">Build serious software at side-project speed.</h2>
           <p class="pb-2">It's not a framework. It's not just a cloud platform. It's a new default for how you build apps — where messaging, storage, search, scheduling, observability, and deployment all just work together.</p>
           <p class="pb-2 mb-4 mb-lg-5">Build your MVP in hours. Scale to national infrastructure without rewriting a line.
@@ -167,9 +174,9 @@ import '../styles/fluxzero.css';
         </div>
 
         <!-- Parallax gfx -->
-        <div class="col-md-6 offset-xl-1">
+        <div class="col-md-6 d-none d-md-block offset-xl-1">
           <div class="parallax ratio ratio-1x1 mx-auto" style="max-width: 550px; translate: 0px -75px">
-            <div class="parallax-layer position-absolute zindex-2" data-depth="-0.55">
+            <div class="parallax-layer position-absolute zindex-2" data-depth="-0.25">
               <img src="/assets/fluxzero/fluxzero-engine-features4.png" alt="Features">
             </div>
             <div class="parallax-layer d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100" data-depth="0.1">
@@ -189,6 +196,9 @@ import '../styles/fluxzero.css';
           </div>
         </div>
       </div>
+
+      <hr class="mt-5"/>
+
     </section>
 
     <section class="container py-5 my-md-2 my-lg-4 my-xl-5">
@@ -386,14 +396,13 @@ import '../styles/fluxzero.css';
                   Enterprise-ready from day one
                 </li>
               </ul>
-              <div class="row">
-                <div class="col-6">
-                  <a href="/docs/getting-started/hello-world" class="btn btn-lg btn-primary shadow-primary w-100 w-lg-auto">Try locally in 2 mins</a>
-                </div>
-                <div class="col-6">
-                  <a href="/docs/tutorials/first-app" class="btn btn-lg btn-secondary shadow-secondary w-100 w-lg-auto">Build your first app</a>
-                </div>
+
+              <!--CTA-->
+              <div class="d-grid gap-3 d-md-flex">
+                <a href="/docs/getting-started/hello-world" class="btn btn-lg btn-primary shadow-primary">Try locally in 2 mins</a>
+                <a href="/docs/tutorials/first-app" class="btn btn-lg btn-outline-secondary">Build your first app</a>
               </div>
+
             </div>
           </div>
           <div class="col-md-6 pt-lg-3 pt-xl-4">
