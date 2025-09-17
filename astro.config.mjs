@@ -43,10 +43,7 @@ export default defineConfig({
                 alt: 'Flux Logo'
             },
             favicon: '/assets/fluxzero/fluxzero-logo.png',
-            editLink: {
-                baseUrl: 'https://github.com/fluxzero-io/flux-docs/edit/main',
-            },
-            social: [{icon: 'github', label: 'GitHub', href: 'https://github.com/fluxzero-io/flux-docs'}],
+            social: [{icon: 'github', label: 'GitHub', href: 'https://github.com/fluxzero-io'}],
             customCss: ['./src/styles/global.css'],
             sidebar: [
                 {
