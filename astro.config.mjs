@@ -34,7 +34,7 @@ export default defineConfig({
     integrations: [
         starlight({
             components: {
-                Header: './src/components/DocsHeader.astro',
+               //  Header: './src/components/DocsHeader.astro', // disabled as we haven't gotten this right yet
             },
             title: 'Fluxzero documentation',
             logo: {
