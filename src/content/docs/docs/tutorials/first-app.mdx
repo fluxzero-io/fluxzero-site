@@ -25,20 +25,7 @@ To familiarize yourself with core concepts in Fluxzero, first [check them out](/
 
 ## Getting started
 
-Create a new project called 'Todo' (see [Installation](/docs/getting-started/installation) for how).
-
-Open your project in
-  <a href="https://www.jetbrains.com/idea/" target="_blank" rel="noopener noreferrer">IntelliJ IDEA <span aria-hidden="true">↗</span></a>
-  for the best experience.
-
-<Aside type="note">
-    This tutorial was written with Fluxzero SDK version `1.3.2`.
-</Aside>
-
----
-
-## App structure
-
+Create a new project called 'Todo' using the Basic Starter for Java or Kotlin (see [Installation](/docs/getting-started/installation) for how).
 We’ll use the following package layout:
 
 ```text
@@ -49,6 +36,10 @@ io.fluxzero.todo
     ├── model         // Entities, value objects, ID types
     └── handler classes
 ```
+
+Open your project in
+  <a href="https://www.jetbrains.com/idea/" target="_blank" rel="noopener noreferrer">IntelliJ IDEA <span aria-hidden="true">↗</span></a>
+  for the best experience.
 
 ---
 
@@ -320,7 +311,16 @@ may have been published in the same app or any other service connected to the Fl
 You can inject all kinds of parameters into handler methods, like the command sender, metadata, or full command message. For more info on handlers see [message handlers](/docs/guides/messaging/020-message-handling).
 
 <Aside type="note">
-  Handlers can be Spring components. This way they will get auto-registered with Fluxzero.
+  Behind the scenes, messages like commands are consumed from the command log in Fluxzero by your app’s
+  default command consumer.
+
+  If you want more control, you can also create an isolated consumer with <code>@Consumer</code>.
+  For details on consumer behavior, tuning, and tracking positions, see
+  [Message tracking](/docs/guides/messaging/030-message-tracking/).
+</Aside>
+
+<Aside type="tip">
+  Handlers can be <a href="https://spring.io/projects/spring-framework" target="_blank" rel="noopener noreferrer">Spring <span aria-hidden="true">↗</span></a> components. This way they will get auto-registered with Fluxzero.
 </Aside>
 
 #### Applying to an entity
@@ -373,7 +373,7 @@ works even if the entity does not yet exist.
 In the last example, the command payload (CreateProject) is applied to the entity.
 If that succeeds, the same payload is wrapped in a new message which gets published as event.
 
-Want to understand why we recommend reusing the same payload in both command and event? See [Applying entity updates](/docs/guides/modeling--persistence/170-domain-modeling).
+Want to understand why we recommend reusing the same payload in both command and event? See [Applying entity updates](/docs/guides/modeling--persistence/170-domain-modeling#applying-updates-to-entities).
 
 ---
 
@@ -391,7 +391,7 @@ public record CreateProject(@NotNull ProjectId projectId,
 
     @Apply
     Project create() {
-        return new Project(projectId, details);
+        return new Project(projectId, details, null);
     }
 }
 ```
@@ -406,7 +406,7 @@ data class CreateProject(
     @field:NotNull @field:Valid val details: ProjectDetails
 ) {
     @Apply
-    fun create(): Project = Project(projectId, details)
+    fun create(): Project = Project(projectId, details, null)
 }
 ```
 
@@ -609,7 +609,7 @@ data class Project(
   </TabItem>
 </Tabs>
 
-By default, Fluxzero enables event-sourcing for aggregates. When an event-sourced entity is loaded and applied to, the following happens:
+By default, Fluxzero enables event-sourcing for aggregates (to disable set `eventSourced = false`). When an event-sourced entity is loaded and applied to, the following happens:
 
 1. **Rehydrates** the entity from events or snapshots.
 2. **Runs `@AssertLegal` methods** to validate business rules.
@@ -1101,6 +1101,8 @@ class ProjectCommandHandler {
 </TabItem>
 </Tabs>
 
+This single command handler method will now be able to handle all current and future Project commands.
+
 ---
 
 ### Testing Project updates
@@ -1196,7 +1198,7 @@ fun renamingProjectByNonOwnerFails() {
 </Tabs>
 
 <Aside type="note">
-  The default user in tests is the system user. For more info on how users get injected in production and in tests, see <a href="/docs/guides/user-providers">User Providers →</a>
+  The default user in tests is the system user. For more info on how users get injected in production and in tests, see <a href="/docs/guides/messaging/071-role-based-access-control/#where-does-user-info-come-from">User Providers</a>
 </Aside>
 
 ## Querying Projects
@@ -1206,6 +1208,46 @@ So far we've shown how you can create and modify state using commands. Let's now
 Just like commands, queries are their own objects.
 
 You can handle queries directly inside the query class. This keeps your logic close to where it's defined:
+
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  // src/main/java/io/fluxzero/todo/project/query/GetProject.java
+  public record GetProject(@NotNull ProjectId projectId) implements Request<Project> {
+
+      @HandleQuery
+      Project handle() {
+          return Fluxzero.search(Project.class)
+                         .match(projectId, "id")
+                         .fetchFirstOrNull();
+      }
+  }
+  ```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  // src/main/kotlin/io/fluxzero/todo/project/query/GetProject.kt
+  data class GetProject(val projectId: ProjectId) : Request<Project> {
+
+      @HandleQuery
+      fun handle(): Project? {
+          return Fluxzero.search(Project::class.java)
+              .match(projectId, "id")
+              .fetchFirstOrNull()
+      }
+  }
+  ```
+
+  </TabItem>
+</Tabs>
+
+Fluxzero Search makes queries like this effortless. See the [search docs](/docs/guides/modeling--persistence/220-document-index-and-search/) for details.
+
+You can inject the Sender just like with commands, and implement filtering or authorization logic as needed. Let's use this to make sure only authorized
+users get access to a Project:
 
 <Tabs>
   <TabItem label="Java">
@@ -1244,20 +1286,23 @@ You can handle queries directly inside the query class. This keeps your logic cl
   </TabItem>
 </Tabs>
 
-You can inject the Sender just like with commands, and implement filtering or authorization logic as needed. This
+This
 query shows how to fetch a Project, with logic to restrict access based on the sender. Passing `null` in `.match()` removes the filter, allowing
 admins to view all results.
 
 <Aside type="note">
-    Using a separate handler class for queries is possible too of course. There are some subtleties to take into
-    account however. For now, we recommend keeping the handler method inside the query class.
+    Queries can live in their own handler classes if you prefer, and commands can be self-handling too. Just keep in mind there are some subtleties in how they behave.
+    For now, we recommend keeping the handler method inside the query class.
     To read more, check out [Message handling](/logs/guides/messaging/020-message-handling).
 </Aside>
 
 ### Specifying return type
 
-Here’s an example implementing `Request<R>`, which defines the return type. Fluxzero checks this at compile time, ensuring all
-handlers return the correct types. It also improves test clarity and lets calling code safely rely on the return type.
+The GetProject query implements `Request<R>`, where `R` is the expected return type. Fluxzero validates this at
+compile time, ensuring handlers always return the correct type. This strengthens test clarity and
+lets calling code safely rely on the result.
+
+Let's specify another query:
 
 <Tabs>
   <TabItem label="Java">
@@ -1537,11 +1582,14 @@ These annotations:
 - `@PathParam`
   → Binds a path segment (like <code>\{projectId\}</code>) to a method parameter.
 
-Your handler methods can return results or `void`. Under the hood, Fluxzero:
+Your handler methods can return results or `void`. Fluxzero manages the flow transparently:
 
-1. **Logs the HTTP request** like any other message.
-2. **Calls your handler method** to handle the request.
-3. **Serializes and returns the result** (if any) wrapped in a `WebResponse` message back to the client.
+1. **HTTP request is logged** — captured by Fluxzero's web proxy as a `WebRequest` message.
+2. **App consumes it** — delivered like any other message.
+3. **Handler runs** — your method processes the request.
+4. **Response returned** — the result is sent back as a `WebResponse` to the client.
+
+For more details, see the [handling web requests guide](/docs/guides/messaging/120-handling-web-requests/).
 
 <Aside type="tip">
   Just like with other message handlers, you can inject the current user, full message, or message metadata into your
@@ -1640,7 +1688,7 @@ fun renameProjectViaHttp() {
 
 ---
 
-You can also reference the result of a previous step using `.andThen()`:
+With `.andThen()` you can extend a test beyond a single `when...()` phase. Each additional phase runs in sequence, and results from earlier steps are automatically available to later ones:
 
 <Tabs>
 <TabItem value="Java" label="Java">
@@ -1734,14 +1782,14 @@ fun renamingNonExistentProjectFails() {
 
 <Aside type="note">
   The default user in tests is the system user. To simulate user-specific access in endpoint tests, pass an access header or cookie to the `TestFixture`, e.g. using `.withHeader("Authorization", "Bearer xyz")`.
-  See [User providers](/docs/guides/messaging/071-role-based-access-control) for more info.
+  See [User providers](/docs/guides/messaging/071-role-based-access-control/#where-does-user-info-come-from) for more info.
 </Aside>
 
 ## Adding Tasks to a Project
 
 Let’s now extend our to-do app by adding support for tasks inside a project.
 
-We’ll start with a command to add a task. Let’s define it the way we’d like it to work:
+We’ll start with a command to add a task:
 
 <Tabs>
 <TabItem value="Java" label="Java">
@@ -1779,6 +1827,12 @@ data class AddTask(
 
 </TabItem>
 </Tabs>
+
+That’s how simple we’d like this command to be. Fluxzero takes care of the details behind the scenes — for example, automatically returning a new `Project` instance with an updated task list when this command is applied.
+
+<Aside type='tip'>
+This is the core idea: Fluxzero is built to let you focus on the simplest, most natural code. If you ever find a case where it doesn’t, [let us know](/contact) — that’s exactly the kind of feedback we love.
+</Aside>
 
 Let’s also define the supporting types:
 
@@ -2437,15 +2491,15 @@ class TaskIndexer {
 </TabItem>
 </Tabs>
 
+The `Fluxzero.index(...)` call turns the current entity state into a searchable document in the document store.
+
+By storing the Task **entity** (`Entity<Task>`) instead of the Task value, a reference to its parent Project is automatically added as metadata, so tasks can be filtered by projectId.
+
 <Aside type="note">
-  `Entity<Task>` is automatically loaded and injected by Fluxzero and represents the updated task entity that triggered the event.
+  When loading an event-sourced <code>Entity</code> inside a handler method, Fluxzero automatically replays it up to
+  the time of the handled message — not the present. This ensures you're always working with the entity state as it
+  was when the message occurred. See [Entity loading](/docs/guides/modeling--persistence/180-entity-loading/) for more info.
 </Aside>
-
-This works because Fluxzero:
-
-- Can load sub-entities based on the currently handled event,
-- Allows you to react to the current entity state, not just the raw event,
-- Lets you freely index, project, or discard documents on your own terms.
 
 ### Querying your tasks
 
@@ -2586,7 +2640,8 @@ class TaskIndexerTest {
 
 To wrap up this tutorial, let's add support for task deadlines.
 
-When a task has a deadline, we want to notify the assignee if it's not completed in time. If the task is completed before the deadline, the scheduled notification should be cancelled automatically.
+When a task has a deadline, we want to send a notification if it's not completed in time.
+If the task is completed before the deadline, the scheduled notification should be cancelled automatically.
 
 First, we extend TaskDetails to include an optional deadline:
 
@@ -2745,6 +2800,8 @@ class SlackNotifier {
 
 <Aside type="note">
   If your app is running in a secure environment, make sure to inject secrets like `slack.webhook.url` via environment variables or secret stores.
+
+  For more information on injecting application properties, [see here](/docs/guides/configuration--support/280-application-properties/).
 </Aside>
 
 This pattern keeps things clean:
@@ -2754,8 +2811,6 @@ This pattern keeps things clean:
 - You could easily add other notifiers (e.g. email, WebSocket) that also react to the TaskExpiry schedule.
 
 This design keeps your logic clean and your system honest: expiry is only acted on when the schedule triggers — and always based on the **latest task state**.
-
-Let us know if you want to take this even further!
 
 ### Outgoing API calls
 
@@ -2771,7 +2826,7 @@ Fluxzero.sendWebRequest(
 );
 ```
 
-Fluxzero does not send the request immediately from your app. Instead, the request is:
+Fluxzero does not use a web client to send the request directly from your app. Instead, the request is:
 
 1. **Logged to the WebRequest log**, just like a regular command or event.
 2. **Picked up and executed by Fluxzero’s proxy**, which handles all outbound traffic.
@@ -2928,12 +2983,14 @@ All of this using simple message classes and a handful of handlers in a clean, d
 
 ### What’s next?
 
-Want to keep exploring?
+You’ve now seen how Fluxzero helps you build powerful apps with simple, expressive code — but this is just the start.
 
-- Check out more examples in the <a href="https://github.com/fluxzero-io/fluxzero-examples" target="_blank" rel="noopener noreferrer">Fluxzero examples repo <span aria-hidden="true">↗</span></a>
-- Learn how to [deploy your app in Fluxzero Cloud](/docs/tutorials/cloud-deployment)
-- Dive deeper into Fluxzero using [our guides](/docs/guides/010-overview)
-- Try building more features into the to-do app — like task progress or checklists.
+Want to keep going?
+
+- Dive deeper with our [developer guides](/docs/guides/010-overview)
+- Learn how to [deploy to Fluxzero Cloud](/docs/tutorials/cloud-deployment)
+- Explore real-world patterns in the <a href="https://github.com/fluxzero-io/fluxzero-examples" target="_blank" rel="noopener noreferrer">Fluxzero examples repo <span aria-hidden="true">↗</span></a>
+- Try extending the to-do app — maybe add task checklists, due dates, or progress tracking
 
 ---
 
