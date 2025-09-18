@@ -36,7 +36,7 @@ export default defineConfig({
             components: {
                //  Header: './src/components/DocsHeader.astro', // disabled as we haven't gotten this right yet
             },
-            title: 'Fluxzero documentation',
+            title: 'Fluxzero docs',
             logo: {
                 light: './src/assets/fluxzero-logo.png',
                 dark: './src/assets/fluxzero-logo.png',

@@ -5,55 +5,46 @@ sidebar:
     order: 10
 ---
 
-# What is Fluxzero?
+import {Aside} from '@astrojs/starlight/components';
+
+Most developers don’t struggle because their product is complex — they struggle because everything around it is.
+Before you can even start, you’re knee-deep in infrastructure, boilerplate, and ceremony that has nothing to do with your idea.
+
+Fluxzero was born out of that frustration. We wanted a way to write only the logic that drives a product, without drowning in the scaffolding around it. After years of pushing technology to serve that goal, we built the platform we wished existed from the start.
+
+---
+
+## What is Fluxzero?
 
 Fluxzero is a cloud runtime for building backends without infrastructure overhead.
 
-It’s designed to help you move fast by writing only your product’s business logic — no boilerplate or distractions.
-It’s the right fit whether you’re building an MVP or aiming for planet-scale.
+It’s designed to help you move fast by writing only your product’s business logic — no boilerplate or distractions. Whether you’re building an MVP or aiming for planet-scale, Fluxzero gives you a clean, consistent way to express your ideas in code.
 
-Instead of gluing together tools, layering service code, mapping models, and wiring up infrastructure, **you just write messages and handlers**.
-Fluxzero takes care of everything around them — delivery, routing, persistence, retries, observability, and scale.
+Instead of gluing together tools, layering service code, mapping models, and wiring up infrastructure, **you just write messages and handlers**. Fluxzero takes care of everything else: delivery, routing, persistence, retries, observability, and scale.
 
-Whether you’re running a single instance of your app or hundreds of distributed services, your code stays the same — no rewrites or migrations needed.
-Just expressive business logic that scales from day one.
+Whether you’re running a single instance or hundreds of distributed services, your code stays the same — no rewrites, no migrations. Just expressive business logic that scales from day one.
 
-And because Fluxzero is designed for this, you get full-strength performance, security, and observability from day one — without doing any of the heavy lifting.
-
-Fluxzero delivers:
-
-- **High throughput by design** – Handle millions of messages per second without tuning brokers or scaling logic.
-- **Secure-by-default architecture** – No public exposure, built-in backpressure, and strong isolation between services.
-- **Complete observability** – Functional logs, metrics, and audit trails — all integrated and traceable in one place.
-
-All without setting up infrastructure, monitoring, or custom integrations.
-
-> **Build 10× faster with 10× less code — Fluxzero handles the heavy lifting so you can focus on your product.**
+<Aside type="note">
+    Fluxzero handles the heavy lifting so you can focus on your product. You build 10× faster with 10× less code.
+</Aside>
 
 ---
 
 ## Why we built it
 
-Modern backend development often means spending more time on plumbing than product.
+Fluxzero exists because backend development was stuck in a loop.
+Every project started with the same plumbing: infrastructure setup, service wiring, layers of boilerplate. None of it was product logic — but it consumed most of the time.
 
-You’re not just stitching together tools — you’re managing brittle architectures, writing boilerplate for every feature, and fighting frameworks that were meant to help.
+We wanted a different foundation. Not another framework, but a **runtime**: a complete environment where code and infrastructure are inseparable, and business logic is the only thing you write.
 
-Even simple features demand layers of ceremony: data models, service layers, validation, routing, persistence, object mapping, access control, database migrations, test scaffolding — just to get started. Believe us, we've been there.
+Fluxzero flips the model. You focus entirely on messages and handlers, while the runtime takes care of everything around them — messaging, persistence, scheduling, observability, deployment. No scaffolding, no rewrites.
 
-Most of your time is spent on technicalities — not your product.
+These capabilities aren’t bolted on. They’re part of the core design, refined over years to deliver the performance, security, and observability that production demands.
 
-**Fluxzero flips that around.**
+<Aside type="note">
+    Fluxzero isn’t a workaround. It’s a runtime built to make clean, expressive code the default.
+</Aside>
 
-We designed it to put your business logic front and center — clean, expressive, and testable from day one.
-
-Everything else — messaging, persistence, routing, scheduling, observability, deployment — works in service of that goal.
-
-No wiring. No fighting.
-You just write code that drives your product — and Fluxzero ensures it runs, scales, and thrives in production.
-
-These capabilities aren’t bolted on — they’re built into the core design and refined through years of iteration to deliver performance, security, and observability at the highest level.
-
-> **You get code that’s joyful to write — yet built on battle-tested foundations.**
 
 ---
 
@@ -77,41 +68,40 @@ Fluxzero was designed so you can write scalable business applications with zero 
 import {Tabs, TabItem} from '@astrojs/starlight/components';
 
 <Tabs>
-    <TabItem label="Java">
-        ```java
-        public record DepositMoney(AccountId accountId, @Positive BigDecimal amount) {
-            @Apply
-            BankAccount deposit(BankAccount account) {
-                return account.withBalance(account.balance().add(amount));
-            }
+  <TabItem label="Java">
+    ```java
+    public record RenameDocument(DocumentId documentId, @NotBlank String newTitle) {
+        @Apply
+        Document rename(Document document) {
+            return document.withTitle(newTitle);
         }
-        ```
-    </TabItem>
-    <TabItem label="Kotlin">
-        ```kotlin
-        data class DepositMoney(val accountId: AccountId, @field:Positive val amount: BigDecimal) {
-            @Apply
-            fun deposit(account: BankAccount): BankAccount {
-                return account.copy(balance = account.balance + amount)
-            }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    data class RenameDocument(val documentId: DocumentId, @field:NotBlank val newTitle: String) {
+        @Apply
+        fun rename(document: Document): Document {
+            return document.copy(title = newTitle)
         }
-        ```
-    </TabItem>
+    }
+    ```
+  </TabItem>
 </Tabs>
 
-Now compare this to traditional backend development, where handling a simple update like this typically requires:
+Now compare this to traditional backend development, where even a tiny update like this often means:
 
-- A service layer with dependency injection
-- A repository with SQL queries or ORM mappings
-- Database connection and transaction management
-- Request/response serialization and validation
-- Manual error handling and concurrency safeguards
-- Infrastructure to route the request to the right service
+- Writing a service layer with dependency injection
+- Building a repository with SQL queries or ORM mappings
+- Managing database connections and transactions
+- Handling request/response serialization and validation
+- Adding error handling, concurrency safeguards, and routing logic
 
 With Fluxzero, you don’t need any of that.
 
 You just write the business logic — clean, expressive, and testable.
-Everything else — delivery, persistence, retries, routing, metrics, and auditing — is handled for you.
+Everything else — delivery, persistence, retries, routing, metrics, and auditing — is built in.
 
 ---
 
@@ -126,7 +116,9 @@ With Fluxzero Cloud, you can go from local dev to full production with a single 
 - **Reproducible environments** — Define your apps and clusters once, then deploy them anywhere.
 - **Self-host or Cloud** — Run on Fluxzero Cloud or bring your own infrastructure — your code doesn’t change.
 
-> **From laptop to production in minutes. No YAML. No Terraform. No cloud console. Just your code.**
+<Aside type="note">
+ From laptop to production in minutes. No YAML. No Terraform. No cloud console. Just your existing code.
+</Aside>
 
 ---
 
@@ -159,7 +151,10 @@ This changes how teams work:
 - **Deploy With Confidence** — Entire business flows can be tested end-to-end. No mocks. No gaps. No surprises in production.
 - **Less Process** — Teams work on isolated features without stepping on each other’s toes, requiring less process overhead.
 
-> **Fluxzero shortens the path from idea to feature — and makes your team faster, calmer, and more effective.**
+
+<Aside type="note">
+    Fluxzero shortens the path from idea to feature — and makes your team faster, calmer, and more effective.
+</Aside>
 
 ### Works well with AI
 
@@ -169,7 +164,9 @@ Fluxzero’s design makes it easy for LLMs to generate code that actually works.
 - **Less Configuration** – Fewer files, fewer settings, and fewer places to go wrong.
 - **Consistent Structure** – Every feature follows the same clean pattern — easy to generate, understand, and evolve.
 
-> **Fluxzero pairs naturally with LLMs — making AI a real coding partner, not just a copy-paste tool.**
+<Aside type="note">
+ Fluxzero pairs naturally with LLMs — making AI a real coding partner, not just a copy-paste tool.
+</Aside>
 
 ---
 
@@ -188,11 +185,10 @@ It’s especially well suited for:
 - **AI-assisted developers** – Generate real, working features — not boilerplate scaffolding or mock stubs.
 - **Modern Java/Kotlin shops** – Leverage your existing skills and ecosystem — but with far less code.
 
-> Whether you’re building something small or massive — if your product has business logic, Fluxzero is for you.
-
-
-import {Aside} from '@astrojs/starlight/components';
+<Aside type="note">
+    Whether you’re building something small or massive — if your product has business logic, Fluxzero is for you.
+</Aside>
 
 <Aside type="tip">
-    Skeptical? [Try it out yourself](/docs/getting-started/installation).
+    Excited or doubtful? [Try building your first app](/docs/tutorials/first-app).
 </Aside>
