@@ -1,7 +1,7 @@
 ---
 title: Domain modeling
 sidebar:
-   order: 170
+  order: 170
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
@@ -10,12 +10,16 @@ Fluxzero allows you to model the state of your domain using entities that evolve
 These entities — such as users, orders, etc. — maintain state and enforce invariants through controlled updates,
 typically driven by commands.
 
-## Defining the Aggregate Entity
+---
 
-To define a stateful domain object, annotate it with `@Aggregate`:
+## Defining the aggregate entity
+
+To define a stateful domain object, annotate it with @Aggregate:
+
+<Tabs>
+  <TabItem label="Java">
 
 ```java
-
 @Aggregate
 @Builder(toBuilder = true)
 public record UserAccount(@EntityId UserId userId,
@@ -24,23 +28,33 @@ public record UserAccount(@EntityId UserId userId,
 }
 ```
 
-This `UserAccount` class models an aggregate with state such as `profile` and `accountClosed`. Each entity may contain a
-field
-annotated with `@EntityId` that acts as a unique identifier. For aggregates, this is optional — the aggregate itself is
-typically loaded using `Fluxzero.loadAggregate(id)`.
+  </TabItem>
+  <TabItem label="Kotlin">
 
-An **aggregate** is a specialized root entity that serves as an entry point into a domain model. It may contain nested
-child entities (modeled via `@Member`), but represents a single unit of consistency.
+```kotlin
+@Aggregate
+@Builder(toBuilder = true)
+data class UserAccount(
+    @EntityId val userId: UserId,
+    val profile: UserProfile,
+    val accountClosed: Boolean
+)
+```
 
-## 💡 **Tip:** Use strongly typed identifiers
+  </TabItem>
+</Tabs>
 
-While `@EntityId` can be placed on any object (e.g. a `String` or `UUID`), consider using a strongly typed `Id<T>` class
-instead. This lets you:
+This class models an aggregate with fields like `profile` and `accountClosed`.
 
-- Enforce consistent ID prefixes (e.g. `"user-"`)
-- Avoid collisions between entities with the same functional ID
-- Enable case-insensitive matching (optional)
-- Retain type information for safer entity loading and deserialization
+An aggregate is a root entity that may contain nested child entities (via `@Member`) and acts as a unit of consistency.
+Although an `@EntityId` is optional for aggregates, you’ll usually load them with `Fluxzero.loadAggregate(...)`.
+
+<Aside type="tip">
+Use strongly typed ID classes for better safety and traceability.
+</Aside>
+
+<Tabs>
+  <TabItem label="Java">
 
 ```java
 class UserId extends Id<UserAccount> {
@@ -54,23 +68,37 @@ public record UserAccount(@EntityId UserId userId) {
 }
 ```
 
-Now you can easily load the entity via:
-
 ```java
 Entity<UserAccount> user = Fluxzero.loadAggregate(new UserId("1234"));
 ```
 
+  </TabItem>
+  <TabItem label="Kotlin">
+
+```kotlin
+class UserId(value: String) : Id<UserAccount>(value, "user-")
+
+@Aggregate
+data class UserAccount(@EntityId val userId: UserId)
+
+val user = Fluxzero.loadAggregate(UserId("1234"))
+```
+
+  </TabItem>
+</Tabs>
+
 ---
 
-## Applying Updates to entities
+## Applying updates to entities
 
-Entities evolve in response to **updates** — typically the payload of a command. Updates define what change should
-happen and contain the logic to validate and apply those changes.
+Updates typically originate from commands and evolve entities by applying validated changes.
 
-Here’s an example using two commands — one to create a user, and another to update their profile.
+Here’s an example of two commands — one to create a user and another to update their profile:
+
+<Tabs>
+  <TabItem label="Java">
 
 ```java
-
 public record CreateUser(UserId userId,
                          UserProfile profile) {
 
@@ -86,10 +114,7 @@ public record CreateUser(UserId userId,
 }
 ```
 
-This update creates a new `UserAccount` entity after checking that no user with the same ID currently exists.
-
 ```java
-
 public record UpdateProfile(UserId userId,
                             UserProfile profile) {
 
@@ -114,82 +139,75 @@ public record UpdateProfile(UserId userId,
 }
 ```
 
-This update first ensures the user exists and their account isn’t closed before applying the change.
+  </TabItem>
+</Tabs>
 
-> **Note**: Handler method parameters (like `UserAccount current`) are only injected if non-null. Use `@Nullable`
-> to allow for missing values.
+<Aside type="note">
+Handler method parameters like `UserAccount current` are injected automatically. Use `@Nullable` to indicate optional injection.
+</Aside>
 
 ---
 
-## Intercepting and Transforming Updates
+## Intercepting and transforming updates
 
-In addition to applying and validating updates, you can also **intercept** them *before* they reach the legal or apply
-phase.
+Use @InterceptApply to modify or suppress updates *before* validation and application.
 
-Use `@InterceptApply` to:
-
-- Suppress updates that are irrelevant or no-ops
-- Rewrite updates that would otherwise be invalid
-- Split a single update into multiple smaller updates
+<Tabs>
+  <TabItem label="Java">
 
 ```java
-
 @InterceptApply
 Object ignoreNoChange(UserAccount current) {
     if (current.getProfile().equals(profile)) {
-        return null; // suppress update, nothing to change
+        return null; // no-op
     }
     return this;
 }
 ```
 
-You can even rewrite the update entirely:
-
 ```java
-
 @InterceptApply
 UpdateProfile downgradeCommand(CreateUser command, UserAccount current) {
-    //the current account could be injected, hence it already exists
     return new UpdateProfile(command.getUserId(), command.getProfile());
 }
 ```
 
-Or expand a bulk command into many atomic ones:
-
 ```java
-
 @InterceptApply
 List<CreateTask> expandBulk(BulkCreateTasks bulk) {
     return bulk.getTasks();
 }
 ```
 
-> 🔁 Flux will apply interceptors **recursively** until the final update no longer changes.
+  </TabItem>
+</Tabs>
+
+<Aside type="tip">
+Flux recursively applies interceptors until no further transformation is needed.
+</Aside>
 
 ---
 
-## Invocation Order
+## Invocation order
 
-The update lifecycle flows as follows:
+Update lifecycle steps:
 
-1. **Intercept** using `@InterceptApply`
-2. **Assert legality** using `@AssertLegal`
-3. **Apply changes** using `@Apply`
+1. Intercept using @InterceptApply
+2. Assert preconditions using @AssertLegal
+3. Apply state using @Apply
 
-This allows you to rewrite or suppress updates *before* they’re validated or stored — a powerful tool for protecting
-data integrity and simplifying update logic.
+### Return types for interceptors:
 
-### Return Values
+| Return value                 | Effect                                 |
+|-----------------------------|----------------------------------------|
+| `null` or `void`            | Suppress update                        |
+| `this`                      | No change                              |
+| New update object           | Rewrite the update                     |
+| Collection / Stream / Optional | Emit multiple updates              |
 
-`@InterceptApply` supports flexible return types:
-
-- `null` or `void` → suppress the update
-- `this` → no change
-- A **new update object** → rewrites the update
-- A **Collection**, `Stream`, or `Optional` → emits zero or more new updates
-
-> 📌 You typically don’t need to intercept just to avoid storing no-ops. Instead, annotate the `@Aggregate` or `@Apply`
-> method with `eventPublication = IF_MODIFIED` to avoid persisting unchanged state.
+<Aside type="tip">
+You can avoid storing unchanged updates by setting `eventPublication = IF_MODIFIED` on the aggregate or apply method.
+</Aside>
 
 ---
 
@@ -201,46 +219,41 @@ data integrity and simplifying update logic.
 | `@AssertLegal`    | Validate preconditions                         | Validation   |
 | `@Apply`          | Apply state transformation                     | Execution    |
 
-Together, these annotations offer full control over your entity update lifecycle — with a clean, declarative style.
-
 <Aside type="note">
   You may notice we don’t define a separate event class here (like <code>UserCreated</code>).
   In Fluxzero, the same payload often serves as both the command and the published event.
 
   This has a few advantages:
-  - **No duplication**: you don’t have to maintain two nearly identical classes.
-  - **Accuracy**: the event log contains exactly what was applied, not a translation of it.
-  - **Less drift**: command and event definitions can’t silently diverge over time.
+  - <strong>No duplication</strong>: you don’t maintain two almost-identical classes.
+  - <strong>Accuracy</strong>: the event log stores exactly what was applied.
+  - <strong>Less drift</strong>: command and event logic stay in sync.
 
-  If you need to enrich or transform the event before it’s published, you can still do so with
-  <code>@InterceptApply</code>. But for most cases, reusing the same class keeps your model simpler
-  and your audit trail more honest.
+  If you need to enrich or transform the event before publication, you can still do so in <code>@InterceptApply</code>.
 </Aside>
 
 ---
 
-## Why Keep Logic in the Updates?
+## Why keep logic in the updates?
 
-While it’s possible to implement domain logic inside entities, this is **generally discouraged**. Instead, it is best
-practice to define business logic directly inside **command payloads** — the updates themselves.
+While it’s possible to implement domain logic in entities, it's usually best to keep validation and transformation logic inside update classes (typically commands).
 
-This update-driven approach has several advantages:
+**Advantages of update-based logic:**
 
-- **Behavior stays with the update** – each update class (e.g. `CreateUser`, `UpdateProfile`) encapsulates its own
-  validation and transformation logic.
-- **Entities stay focused** – entities remain concise, responsible only for maintaining state and enforcing invariants.
-- **Easy feature cleanup** – removing an update class cleanly disables that feature.
-- **Traceable domain behavior** – it’s clear what each update does and how it affects the system.
+- Each update owns its behavior
+- Entities remain focused on holding state
+- Features are easier to isolate and remove
+- Tests are simpler and more targeted
 
 ---
 
-## Alternative: Logic in the Entity
+## Alternative: logic in the entity
 
-Although possible, modeling behavior inside the aggregate can quickly become unmanageable. Here's a glimpse of what that
-looks like:
+It’s possible to put validation and logic inside the aggregate itself — but this often leads to bloat:
+
+<Tabs>
+  <TabItem label="Java">
 
 ```java
-
 @Aggregate
 @Builder(toBuilder = true)
 public record UserAccount(@EntityId UserId userId,
@@ -280,17 +293,21 @@ public record UserAccount(@EntityId UserId userId,
 }
 ```
 
-In this model, the `UserAccount` aggregate handles all validation and transformation logic. Over time, this
-centralization leads to bloat and tight coupling — especially in larger systems with many features.
+  </TabItem>
+</Tabs>
+
+<Aside type="caution">
+Embedding all behavior into the aggregate increases coupling and reduces testability. Avoid unless needed.
+</Aside>
 
 ---
 
 ## Mixing strategies
 
-Fluxzero allows **mixed approaches**. You can define:
+Fluxzero supports mixing both styles:
 
-- `@AssertLegal` methods on the command payload
-- `@Apply` methods inside the entity
-- or vice versa
+- Use @AssertLegal on the update (command)
+- Use @Apply on the entity
+- Or vice versa
 
-Just keep in mind: logic that lives in updates is **easier to test, extend, and remove**.
+That said, keeping logic in the update tends to result in simpler, more testable, and easier-to-maintain code.

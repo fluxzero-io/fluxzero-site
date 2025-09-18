@@ -6,9 +6,11 @@ sidebar:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
-Fluxzero automatically validates incoming request payloads using [JSR 380](https://beanvalidation.org/2.0/)
-(Bean Validation 2.0) annotations.
+Fluxzero automatically validates incoming request payloads using
+<a href="https://beanvalidation.org/2.0/" target="_blank" rel="noopener noreferrer">JSR 380 <span aria-hidden="true">↗</span></a>
+ (Bean Validation 2.0) annotations.
 
 This includes support for:
 
@@ -16,29 +18,53 @@ This includes support for:
 - `@Valid` on nested objects
 - Constraint violations in command/query/webrequest payloads
 
-If a constraint is violated, the handler method is **never called**. Instead, a `ValidationException`,
-is thrown before the handler is invoked.
+If a constraint is violated, the handler method is **never called**. Instead, a `ValidationException` is thrown before the handler is invoked.
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
-
 public record CreateUser(@NotBlank String userId,
                          @NotNull @Valid UserProfile profile) {
 }
 ```
 
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+data class CreateUser(
+    @field:NotBlank val userId: String,
+    @field:NotNull @field:Valid val profile: UserProfile
+)
+```
+
+</TabItem>
+</Tabs>
+
 You can disable this validation entirely by calling:
 
-[//]: # (@formatter:off)
+<Tabs>
+<TabItem value="Java" label="Java">
+
 ```java
-DefaultFluxzero.builder().disablePayloadValidation();
+FluxzeroBuilder.disablePayloadValidation();
 ```
-[//]: # (@formatter:on)
 
-Of course, it is also easy to provide your own validation if desired. For how to do that, please refer to the section
-on `HandlerInterceptors`.
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
 
-> 💡 **Tip**: Fluxzero automatically correlates errors with the triggering message (e.g.: command or event).
->
-> This means you don’t need to log extra context like the message payload or user ID — that information is already
-> available in the audit trail in Fluxzero Runtime. This also encourages using **clear, user-facing error messages**
-> without leaking internal details.
+```kotlin
+FluxzeroBuilder.disablePayloadValidation()
+```
+
+</TabItem>
+</Tabs>
+
+Of course, it's also easy to provide your own validation if desired. For how to do that, refer to the section on `HandlerInterceptors`.
+
+<Aside type="tip">
+  Fluxzero automatically correlates errors with the triggering message (e.g., a command or event).
+  This means you don’t need to log extra context like the message payload or user ID — that information is already available in the audit trail in Fluxzero Runtime.
+  It also encourages using <strong>clear, user-facing error messages</strong> without leaking internal details.
+</Aside>

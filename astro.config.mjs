@@ -38,8 +38,8 @@ export default defineConfig({
             },
             title: 'Fluxzero documentation',
             logo: {
-                light: './src/assets/flux-logo-black.png',
-                dark: './src/assets/flux-logo-white.png',
+                light: './src/assets/fluxzero-logo.png',
+                dark: './src/assets/fluxzero-logo.png',
                 alt: 'Flux Logo'
             },
             favicon: '/assets/fluxzero/fluxzero-logo.png',

@@ -1,116 +1,202 @@
 ---
 title: Metrics messages
 sidebar:
-   order: 160
+  order: 160
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 Fluxzero supports a built-in message type for metrics: `MessageType.METRICS`.
+
 These messages provide a powerful way to observe and trace system behavior across clients, handlers, and infrastructure.
 
 Metrics messages are:
 
 - Lightweight, structured, and traceable
 - Logged like any other message
-- Routable to handlers (via `@HandleMetrics`)
+- Routable to handlers (via @HandleMetrics)
 - Stored by default for **1 month** due to volume
 
 ---
 
-## Publishing Metrics
+## Publishing metrics
 
-You can publish metrics manually using the `Fluxzero.publishMetrics(...)` method:
+You can publish metrics manually using `Fluxzero.publishMetrics(...)`:
+
+<Tabs>
+  <TabItem label="Java">
 
 ```java
 Fluxzero.publishMetrics(new SystemMetrics("slowProjection", "thresholdExceeded"));
 ```
 
+  </TabItem>
+  <TabItem label="Kotlin">
+
+```kotlin
+Fluxzero.publishMetrics(SystemMetrics("slowProjection", "thresholdExceeded"))
+```
+
+  </TabItem>
+</Tabs>
+
 This emits a structured metrics message to the metrics topic.
 
 All metrics are wrapped in a regular `Message`, so you can include metadata or delivery guarantees:
 
-[//]: # (@formatter:off)
+<Tabs>
+  <TabItem label="Java">
+
 ```java
 Fluxzero.get()
     .metricsGateway()
     .publish(new MyMetric("foo"),
-             Metadata.of("critical","true"),
+             Metadata.of("critical", "true"),
              Guarantee.STORED);
 ```
-[//]: # (@formatter:off)
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+```kotlin
+Fluxzero.get()
+    .metricsGateway()
+    .publish(MyMetric("foo"),
+             Metadata.of("critical", "true"),
+             Guarantee.STORED)
+```
+
+  </TabItem>
+</Tabs>
 
 ---
 
-## Automatic Metrics from Clients
+## Automatic metrics from clients
 
-Many metrics are automatically emitted by the Flux Java client:
+Many metrics are emitted automatically by the Flux Java client:
 
-- **Connect / Disconnect events** when clients (re)connect
-- **Tracking updates** (throughput, handler times, latency)
-- **Search / state / document store operations**
-- **Web request round-trip timings**
+- Connect/disconnect events when clients start or stop
+- Tracking stats (throughput, latency, handler timing)
+- Search, state, or document store usage
+- Web request round-trip timings
 
-These are particularly helpful in troubleshooting or auditing system performance.
+<Aside type="note">
+These built-in metrics help diagnose issues and improve observability with minimal effort.
+</Aside>
 
 ---
 
-## Consuming Metrics
+## Consuming metrics
 
-You can treat metrics like any other message type:
+You can handle metrics just like other message types:
+
+<Tabs>
+  <TabItem label="Java">
 
 ```java
-
 @HandleMetrics
 void on(MetricEvent event) {
     log.debug("Observed metric: {}", event);
 }
 ```
 
-Use this to power custom dashboards, counters, diagnostics, or trigger alerts.
+  </TabItem>
+  <TabItem label="Kotlin">
 
----
-
-## Disabling Metrics
-
-To reduce noise or overhead, you can selectively disable automatic metrics:
-
-### Disable per handler or batch using an interceptor
-
-```java
-
-@Consumer(handlerInterceptors = DisableMetrics.class)
-public class SilentHandler {
-    @HandleEvent
-    void on(MyEvent event) { ... }
+```kotlin
+@HandleMetrics
+fun on(event: MetricEvent) {
+    log.debug("Observed metric: {}", event)
 }
 ```
 
-You can also use `batchInterceptors` to disable metrics for an entire consumer instance.
+  </TabItem>
+</Tabs>
 
-### Disable globally per client
+Use this to feed dashboards, update counters, or trigger alerts.
 
-If you're instantiating a `WebSocketClient`, you can pass `disableMetrics = true` via the client config.
+---
 
-### Use programmatic interceptors
+## Disabling metrics
 
-If needed, you can suppress metric dispatch programmatically using:
+To reduce noise or overhead, you can disable automatic metric publishing:
 
-[//]: # (@formatter:off)
+### Option 1: Disable via handler or batch interceptors
+
+<Tabs>
+  <TabItem label="Java">
+
+```java
+@Consumer(handlerInterceptors = DisableMetrics.class)
+public class SilentHandler {
+    @HandleEvent
+    void on(MyEvent event) {
+        // ...
+    }
+}
+```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+```kotlin
+@Consumer(handlerInterceptors = [DisableMetrics::class])
+class SilentHandler {
+
+    @HandleEvent
+    fun on(event: MyEvent) {
+        // ...
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+You can also disable metrics for an entire consumer by using `batchInterceptors`.
+
+### Option 2: Disable globally in the client config
+
+When creating a WebSocket client, set `disableMetrics = true` in the configuration.
+
+### Option 3: Disable dynamically using a dispatch interceptor
+
+<Tabs>
+  <TabItem label="Java">
+
 ```java
 AdhocDispatchInterceptor.runWithAdhocInterceptor(() -> {
     // your code here
 }, (message, messageType, topic) -> null, MessageType.METRICS);
 ```
-[//]: # (@formatter:on)
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+```kotlin
+AdhocDispatchInterceptor.runWithAdhocInterceptor(
+    { /* your code here */ },
+    { _, _, _ -> null },
+    MessageType.METRICS
+)
+```
+
+  </TabItem>
+</Tabs>
+
+<Aside type="tip">
+This is useful if you want to temporarily suppress metric logging within a specific code block.
+</Aside>
 
 ---
 
-## Common Use Cases
+## Common use cases
 
 - **Audit debugging**: trace which handler caused a slowdown
-- **Observability**: track real-time stats like search throughput
-- **Dashboards**: expose per-entity or per-consumer metrics
-- **Trigger alerting**: when retries or handler delays exceed thresholds
+- **Observability**: track search throughput or handler lag
+- **Dashboards**: surface per-entity or per-consumer stats
+- **Alerting**: trigger alerts on retries, delays, or timeouts
 
-Metrics messages provide lightweight hooks into system behavior — use them for visibility without overhead.
+<Aside type="note">
+Metrics messages offer low-overhead insight into runtime behavior—use them to light up your observability stack.
+</Aside>

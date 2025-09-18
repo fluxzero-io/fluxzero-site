@@ -1,10 +1,10 @@
 ---
 title: Handling web requests
 sidebar:
-   order: 120
+  order: 120
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 Fluxzero supports first-class **WebRequest handling** via the `@HandleWeb` annotation and its HTTP-specific
 variants such as `@HandleGet`, `@HandlePost`, `@HandleDelete`, etc.
@@ -16,33 +16,49 @@ HTTP(S) and WebSocket traffic into the Runtime as `WebRequest` messages**. These
 - **Routed to client applications** using the same handler system as for commands, events, and queries
 - **Handled by consumer applications** which return a `WebResponse`
 
-## Why This Design?
+## Why this design?
 
 This architecture enables several key benefits:
 
-- ✅ **Zero exposure**: client apps do not require a public-facing HTTP server and are thus *invisible* to attackers
-- ✅ **Back-pressure support**: applications control load by polling their own messages
-- ✅ **Audit-friendly**: every incoming request is automatically logged and correlated to its response
-- ✅ **Multiple consumers possible**: multiple handlers can react to a WebRequest, though typically only one produces the
+- **Zero exposure**: client apps do not require a public-facing HTTP server and are thus *invisible* to attackers
+- **Back-pressure support**: applications control load by polling their own messages
+- **Audit-friendly**: every incoming request is automatically logged and correlated to its response
+- **Multiple consumers possible**: multiple handlers can react to a `WebRequest`, though typically only one produces the
   response (others use `passive = true`)
 
 ### Example
 
-```java
+<Tabs>
+  <TabItem label="Java">
 
+```java
 @HandleGet("/users")
 public List<UserAccount> listUsers() {
     return userService.getAllUsers();
 }
 ```
 
-This will match incoming GET requests to `/users` and return a list of users. The response is published back as a
-`WebResponse`.
+  </TabItem>
+  <TabItem label="Kotlin">
 
-You can use the general `@HandleWeb` if you want to match multiple paths or methods or define a custom HTTP method:
+```kotlin
+@HandleGet("/users")
+fun listUsers(): List<UserAccount> {
+    return userService.getAllUsers()
+}
+```
+
+  </TabItem>
+</Tabs>
+
+This will match incoming `GET /users` requests and return a list of users. The response is published as a `WebResponse`.
+
+Use the general-purpose `@HandleWeb` annotation if you want to support multiple paths, multiple methods, or define a custom method:
+
+<Tabs>
+  <TabItem label="Java">
 
 ```java
-
 @HandleWeb(value = "/users/{userId}", method = {"GET", "DELETE"})
 public CompletableFuture<?> handleUserRequest(WebRequest request, @PathParam String userId) {
     return switch (request.getMethod()) {
@@ -53,68 +69,131 @@ public CompletableFuture<?> handleUserRequest(WebRequest request, @PathParam Str
 }
 ```
 
-> 💡 **Tip:** To match any HTTP method without listing them explicitly, use `HttpRequestMethod.ANY`.
-> This is equivalent to `"*"` and will match all incoming requests for the given path.
+  </TabItem>
+  <TabItem label="Kotlin">
+
+```kotlin
+@HandleWeb(value = ["/users/{userId}"], method = ["GET", "DELETE"])
+fun handleUserRequest(request: WebRequest, @PathParam userId: String): CompletableFuture<*> {
+    return when (request.method) {
+        "GET" -> Fluxzero.query(GetUser(userId))
+        "DELETE" -> Fluxzero.sendCommand(DeleteUser(userId))
+        else -> throw UnsupportedOperationException()
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+<Aside type="tip">
+To match all HTTP methods for a given path, use `HttpRequestMethod.ANY`. This is equivalent to `"*"` and will match any method.
+</Aside>
+
+<Tabs>
+  <TabItem label="Java">
 
 ```java
-
 @HandleWeb(value = "/users/{userId}", method = HttpRequestMethod.ANY)
-public CompletableFuture<?> handleAllUserMethods(
-        WebRequest request, @PathParam String userId) {
+public CompletableFuture<?> handleAllUserMethods(WebRequest request, @PathParam String userId) {
     // Handle any method (GET, POST, DELETE, etc.)
     ...
 }
 ```
 
-### Suppressing a Response
+  </TabItem>
+  <TabItem label="Kotlin">
 
-If you want to listen to a WebRequest without generating a response (e.g. for auditing or monitoring), use
-`passive = true`:
+```kotlin
+@HandleWeb(value = ["/users/{userId}"], method = HttpRequestMethod.ANY)
+fun handleAllUserMethods(request: WebRequest, @PathParam userId: String): CompletableFuture<*> {
+    // Handle any method (GET, POST, DELETE, etc.)
+    ...
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Suppressing a response
+
+If you want to listen to a `WebRequest` without returning a response—e.g. for monitoring or audit logging—use `passive = true`:
+
+<Tabs>
+  <TabItem label="Java">
 
 ```java
-
 @HandlePost(value = "/log", passive = true)
 public void log(WebRequest request) {
     logService.store(request);
 }
 ```
 
-### Dynamic Path Parameters
+  </TabItem>
+  <TabItem label="Kotlin">
 
-Use the `@PathParam` annotation to extract dynamic segments from the URI path into handler method parameters:
+```kotlin
+@HandlePost(value = "/log", passive = true)
+fun log(request: WebRequest) {
+    logService.store(request)
+}
+```
+
+  </TabItem>
+</Tabs>
+
+### Dynamic path parameters
+
+Use `@PathParam` to extract dynamic segments from the URI:
+
+<Tabs>
+  <TabItem label="Java">
 
 ```java
-
 @HandleGet("/users/{id}")
 public UserAccount getUser(@PathParam String id) {
     return userService.get(id);
 }
 ```
 
-If the `value` is left empty, the framework will use the parameter name (`id` in this case).
+  </TabItem>
+  <TabItem label="Kotlin">
 
-### Other Parameter Annotations
+```kotlin
+@HandleGet("/users/{id}")
+fun getUser(@PathParam id: String): UserAccount {
+    return userService.get(id)
+}
+```
 
-In addition to `@PathParam`, you can extract other values from the request using:
+  </TabItem>
+</Tabs>
+
+If no name is provided to `@PathParam`, the parameter name is used by default.
+
+### Other parameter annotations
+
+You can also use these to extract other parts of the request:
 
 - `@QueryParam` – extract query string values
-- `@HeaderParam` – extract HTTP headers
-- `@CookieParam` – extract cookie values
-- `@FormParam` – extract form-encoded values (for POST/PUT)
+- `@HeaderParam` – extract headers
+- `@CookieParam` – extract cookies
+- `@FormParam` – extract form-encoded values (e.g., from POST body)
 
-Each of these annotations supports the same rules:
+<Aside type="note">
+All of these annotations support implicit naming and type conversion.
+</Aside>
 
-- If no name is given, the method parameter name is used
-- Values are automatically converted to the target parameter type
+### URI prefixing and composition with @Path
 
-### URI Prefixing and Composition with `@Path`
+Use `@Path` on packages, classes, methods, and properties to construct URI paths. Paths are composed from outermost to innermost.
 
-The `@Path` annotation can be used at the **package**, **class**, **method**, or **property** level to construct URI
-path segments. Paths are chained together from the outermost package to the innermost handler method. If a path segment
-starts with `/`, it resets the chain from that point downward.
+- A path starting with `/` resets the chain
+- Empty paths use the simple name of the enclosing package or class
+- If applied to a property (field or getter), its value is used as a dynamic segment
 
-- Empty path values use the simple name of the package.
-- If placed on a field or getter, the property value is used as the path segment (enabling dynamic routing).
+<Tabs>
+  <TabItem label="Java">
 
 ```java
 @Path
@@ -125,101 +204,100 @@ public class UserHandler {
 
     @Path("{id}")
     @HandleGet
-    public User getUser(@PathParam String id) { ...}
+    public User getUser(@PathParam String id) { ... }
 }
 ```
 
-This matches `/api/users/{id}`. If the class annotation had started with a `/`, i.e.: had been `@Path("/users")`, the
-pattern would have become `/users/{id}`.
+  </TabItem>
+</Tabs>
+
+This matches `/api/users/{id}`. If `@Path("/users")` had been used on the class instead, it would reset the prefix and match `/users/{id}`.
 
 ---
 
-## Serving Static Files
+## Serving static files
 
-Fluxzero supports serving static files directly from a handler class by using the `@ServeStatic` annotation.
-This allows client applications to expose static resources (HTML, JS, CSS, images, etc.) without needing an external web
-server.
+Use `@ServeStatic` to serve static content directly from your app without an external web server:
+
+<Tabs>
+  <TabItem label="Java">
 
 ```java
-
 @ServeStatic(value = "/web", resourcePath = "/static")
 public class WebAssets {
 }
 ```
 
-This will serve all files under `/static` (from the classpath or file system) under the URI path `/web`.
+  </TabItem>
+</Tabs>
+
+This serves files from `/static` (in classpath or filesystem) under the URI path `/web/**`.
 
 ### Features
 
-- Supports both **file system** and **classpath** resources
-- Optional **fallback file** (e.g. for single-page apps)
-- Automatic `Cache-Control` headers
-- Compression via Brotli and GZIP (if precompressed variants exist)
+- Supports classpath and file system resources
+- Optional fallback file (e.g. for SPAs)
+- Smart `Cache-Control` headers
+- GZIP and Brotli compression (if precompressed assets are present)
 
-### Annotation Reference
+### Full annotation example
 
 ```java
 @ServeStatic(
-        value = "/assets",
-        resourcePath = "/public",
-        fallbackFile = "index.html",
-        immutableCandidateExtensions = {"js", "css", "svg"},
-        maxAgeSeconds = 86400
+    value = "/assets",
+    resourcePath = "/public",
+    fallbackFile = "index.html",
+    immutableCandidateExtensions = {"js", "css", "svg"},
+    maxAgeSeconds = 86400
 )
 ```
 
 #### Parameters:
 
-- `value`: Web path(s) where static content is served. Relative paths are prefixed by `@Path` values.
-- `resourcePath`: The resource root (either on the file system or classpath).
-- `fallbackFile`: A file to serve when the requested path doesn’t exist (e.g. `index.html`). Set to `""` to disable.
-- `immutableCandidateExtensions`: Extensions that are eligible for aggressive caching if fingerprinted (e.g.
-  `main.123abc.js`).
-- `maxAgeSeconds`: Default cache duration for non-immutable resources.
+- `value`: Web URI path(s) to expose
+- `resourcePath`: Filesystem or classpath root
+- `fallbackFile`: Fallback for unknown paths (e.g. `index.html`)
+- `immutableCandidateExtensions`: Enables long-lived caching for fingerprinted assets
+- `maxAgeSeconds`: Cache duration for other resources
 
-### Example: Serving a React App
+### Example: serving a React app
 
 ```java
-
 @ServeStatic(value = "/app", resourcePath = "/static", fallbackFile = "index.html")
-public class WebFrontend { ...
+public class WebFrontend {
 }
 ```
 
-This will serve files under `/app/**` and fallback to `index.html` for unknown paths—ideal for single-page apps.
+This serves:
 
-> 📁 Files in `/static` on the classpath (e.g. under `resources/static/`) or `/static` on disk will be served.
+- `/app/index.html`, `/app/main.js`, etc. from `/static`
+- Falls back to `index.html` for client-side routing
 
-> When both file system and classpath contain a file, the **file system takes precedence**.
+<Aside type="tip">
+Files are resolved from both the file system and classpath. File system files take precedence if both exist.
+</Aside>
 
-> If the `resourcePath` starts with `classpath:`, **only classpath resources** are served.
-> If it starts with `file:`, **only file system resources** are served.
+To restrict resolution:
 
-This allows precise control over where content is loaded from and ensures classpath-only or file-system-only resolution
-depending on the use case.
+- Use `classpath:/...` to only serve classpath files
+- Use `file:/...` to only serve local files
 
-### Combining Static and Dynamic Handlers
+### Combining static and dynamic handlers
 
-You can freely combine `@ServeStatic` with dynamic handler methods in the same class or package.
-
-This is especially useful when your application serves a combination of:
-
-- **Static assets** like HTML, JS, CSS
-- **Dynamic endpoints** like REST APIs or view-rendered pages
+You can mix `@ServeStatic` with dynamic handlers:
 
 ```java
-
 @Path("/app")
-@ServeStatic("static") // serves static files from the /static resource directory for web paths /app/static/**
+@ServeStatic("static")
 public class AppController {
 
     @HandleGet("/status")
-    Status getStatus() {
+    public Status getStatus() {
         return new Status("OK", Instant.now());
     }
 
     @HandlePost("/submit")
-    SubmissionResult submitForm(FormData data) {
+    public SubmissionResult submitForm(FormData data) {
         return formService.handle(data);
     }
 }
@@ -227,8 +305,9 @@ public class AppController {
 
 This will:
 
-- Serve `/app/static/index.html`, `/app/static/styles.css`, etc. from the `static/` resource directory
-- Also respond to `/app/status` and `/app/submit` dynamically
+- Serve `/app/static/**` from the `static/` directory
+- Also handle `/app/status` and `/app/submit` dynamically
 
-The static file handling applies to all routes **not matched** by other methods in the class. This makes it ideal for
-combining SPAs or hybrid web apps with API endpoints under a shared route prefix.
+<Aside type="note">
+Static routes apply only to unmatched paths and can coexist with dynamic APIs in the same class or package.
+</Aside>

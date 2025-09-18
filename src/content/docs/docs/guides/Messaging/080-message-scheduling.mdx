@@ -5,18 +5,21 @@ sidebar:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
 Fluxzero allows scheduling messages for future delivery using the `MessageScheduler`.
 
-Here’s an example that schedules a termination event 30 days after an account is closed:
+Here's an example that schedules a termination event 30 days after an account is closed:
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
 class UserLifecycleHandler {
     @HandleEvent
     void handle(AccountClosed event) {
         Fluxzero.schedule(
-                new TerminateAccount(
-                        event.getUserId()),
+                new TerminateAccount(event.getUserId()),
                 "AccountClosed-" + event.getUserId(),
                 Duration.ofDays(30)
         );
@@ -24,8 +27,7 @@ class UserLifecycleHandler {
 
     @HandleEvent
     void handle(AccountReopened event) {
-        Fluxzero.cancelSchedule(
-                "AccountClosed-" + event.getUserId());
+        Fluxzero.cancelSchedule("AccountClosed-" + event.getUserId());
     }
 
     @HandleSchedule
@@ -35,15 +37,51 @@ class UserLifecycleHandler {
 }
 ```
 
-Alternatively, you can schedule commands using `scheduleCommand`:
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+class UserLifecycleHandler {
+
+    @HandleEvent
+    fun handle(event: AccountClosed) {
+        Fluxzero.schedule(
+            TerminateAccount(event.userId),
+            "AccountClosed-${event.userId}",
+            Duration.ofDays(30)
+        )
+    }
+
+    @HandleEvent
+    fun handle(event: AccountReopened) {
+        Fluxzero.cancelSchedule("AccountClosed-${event.userId}")
+    }
+
+    @HandleSchedule
+    fun handle(schedule: TerminateAccount) {
+        // Perform termination
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+## Scheduling commands
+
+You can also schedule commands directly using `scheduleCommand(...)`.
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
 class UserLifecycleHandler {
     @HandleEvent
     void handle(AccountClosed event) {
         Fluxzero.scheduleCommand(
-                new TerminateAccount(
-                        event.getUserId()),
+                new TerminateAccount(event.getUserId()),
                 "AccountClosed-" + event.getUserId(),
                 Duration.ofDays(30));
     }
@@ -55,26 +93,49 @@ class UserLifecycleHandler {
 }
 ```
 
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+class UserLifecycleHandler {
+
+    @HandleEvent
+    fun handle(event: AccountClosed) {
+        Fluxzero.scheduleCommand(
+            TerminateAccount(event.userId),
+            "AccountClosed-${event.userId}",
+            Duration.ofDays(30)
+        )
+    }
+
+    @HandleEvent
+    fun handle(event: AccountReopened) {
+        Fluxzero.cancelSchedule("AccountClosed-${event.userId}")
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+---
+
 ## Periodic scheduling
 
-Fluxzero supports recurring message schedules via the `@Periodic` annotation. This makes it easy to run tasks on a
-fixed interval or cron-based schedule — useful for polling, maintenance, background processing, and more.
+Fluxzero supports recurring message schedules via the `@Periodic` annotation. This makes it easy to run background tasks on a fixed interval or cron schedule.
 
-You can apply `@Periodic` to either a `Schedule` payload or a `@HandleSchedule` method:
+You can apply `@Periodic` to a schedule payload or a `@HandleSchedule` method.
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
-
 @Periodic(delay = 5, timeUnit = TimeUnit.MINUTES)
 public record RefreshData(String index) {
 }
 ```
 
-This schedules RefreshData to run every 5 minutes.
-
-Or, to use a cron expression:
-
 ```java
-
 @Periodic(cron = "0 0 * * MON", timeZone = "Europe/Amsterdam")
 @HandleSchedule
 void weeklySync(PollData schedule) {
@@ -82,27 +143,54 @@ void weeklySync(PollData schedule) {
 }
 ```
 
-This example triggers the `weeklySync` method every Monday at 00:00 in the Amsterdam time zone.
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
 
-### Behavior and advanced options
+```kotlin
+@Periodic(delay = 5, timeUnit = TimeUnit.MINUTES)
+data class RefreshData(val index: String)
+```
 
-- `@Periodic` works only for scheduled messages (see `@HandleSchedule`).
-- The schedule **automatically reschedules** itself after each invocation unless canceled.
-- You may:
-    - Return `void` or `null` to continue with the same schedule.
-    - Return a `Duration` or `Instant` to override the next deadline.
-    - Return a new payload or `Schedule` to customize the next cycle.
-- If an error occurs:
-    - The schedule continues by default (`continueOnError = true`).
-    - You may specify a fallback delay via `delayAfterError`.
-    - Throw `CancelPeriodic` from the handler to stop the schedule completely.
-- To prevent startup activation, use `@Periodic(autoStart = false)`.
-- The schedule ID defaults to the class name, but can be customized with `scheduleId`.
+```kotlin
+@Periodic(cron = "0 0 * * MON", timeZone = "Europe/Amsterdam")
+@HandleSchedule
+fun weeklySync(schedule: PollData) {
+    ...
+}
+```
 
-Here's an example of robust polling with error fallback:
+</TabItem>
+</Tabs>
+
+<Aside type="tip">
+  Cron expressions use UTC by default. Use the <code>timeZone</code> parameter to run tasks in your local time zone.
+</Aside>
+
+---
+
+## Behavior and advanced options
+
+- `@Periodic` only applies to scheduled messages (used with `@HandleSchedule`)
+- The schedule **automatically reschedules** itself after every execution unless cancelled
+- You can:
+  - Return `void` or `null` to use the same delay next time
+  - Return a `Duration` or `Instant` to customize the next deadline
+  - Return a new `Schedule` payload to completely redefine the next cycle
+- On error:
+  - The default is to continue (`continueOnError = true`)
+  - Use `delayAfterError` to delay retries after failure
+  - Throw `CancelPeriodic` to stop the schedule completely
+- Use `@Periodic(autoStart = false)` to prevent the schedule from activating on startup
+- The schedule ID defaults to the payload class name but can be customized using `scheduleId`
+
+---
+
+## Example: polling with error fallback
+
+<Tabs>
+<TabItem value="Java" label="Java">
 
 ```java
-
 @Periodic(delay = 60, timeUnit = TimeUnit.MINUTES, delayAfterError = 10)
 @HandleSchedule
 void pollExternalService(PollTask pollTask) {
@@ -115,8 +203,31 @@ void pollExternalService(PollTask pollTask) {
 }
 ```
 
-In this case:
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
 
-- The task runs every hour normally.
-- If it fails, it retries after 10 minutes.
-- It resumes the original schedule if the next invocation succeeds.
+```kotlin
+@Periodic(delay = 60, timeUnit = TimeUnit.MINUTES, delayAfterError = 10)
+@HandleSchedule
+fun pollExternalService(task: PollTask) {
+    try {
+        externalService.fetchData()
+    } catch (e: Exception) {
+        log.warn("Polling failed, will retry in 10 minutes", e)
+        throw e
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+In this example:
+
+- The task runs every hour
+- If it fails, it retries after 10 minutes
+- If it succeeds, it returns to the hourly schedule
+
+<Aside type="tip">
+  Schedules are fully auditable, correlated to the original event, and can be canceled or monitored like any other message. You can use them for cleanup, retries, reminders, or long-lived workflows.
+</Aside>

@@ -1,99 +1,106 @@
 ---
 title: Sending messages
 sidebar:
-   order: 100
+  order: 100
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
-Fluxzero provides a unified and transparent way to send messages of all types—**commands**, **events**,
-**queries**, **schedules**, **web requests**, **metrics**, and more. All message types are routed through a shared
-dispatch
-infrastructure, with built-in support for:
+Fluxzero provides a unified way to send all types of messages — **commands**, **events**, **queries**, **schedules**, **web requests**, **metrics**, and more.
 
-- **Location transparency**: Message destinations are resolved dynamically. Handlers may live within the current
-  process or in a remote application across the globe—as long as it's connected to the same Fluxzero Runtime.
-- **Dispatch interceptors** for metadata enrichment, authorization, logging, or suppression.
-- **Local-first handling**: If a handler exists in the local process, it will receive the message immediately.
-- **Automatic forwarding** to the Fluxzero Runtime when no local handlers consume the message.
-- **Serialization and correlation**: All messages are serialized, tagged with tracing data, and routed by type and
-  topic.
+All messages are routed through the same infrastructure, with built-in support for:
 
-## Sending a Message
+- **Location transparency** — handlers may run locally or remotely, but behave the same
+- **Dispatch interceptors** — for enriching, logging, suppressing, or validating messages
+- **Local-first handling** — handlers in the current process are invoked directly
+- **Automatic forwarding** to the Fluxzero Runtime if no local handler is present
+- **Serialization and correlation** — all messages carry metadata for tracing, retries, and audit
 
-The easiest way to dispatch messages is via static methods on the `Fluxzero` class:
+---
 
-[//]: # (@formatter:off)
+## Sending a message
+
+The simplest way to send messages is via static methods on the `Fluxzero` class:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
 ```java
-Fluxzero.sendCommand(new CreateUser("Alice"));  // Asynchronously send a command
-Fluxzero.queryAndWait(new GetUserById("user-123"));  // Query and block for response
-Fluxzero.publishEvent(new UserSignUp(...));  // Fire-and-forget event
-Fluxzero.schedule(new RetryPayment(...), Duration.ofMinutes(5));  // Delayed message
+Fluxzero.sendCommand(new CreateUser("Alice")); // Async command
+Fluxzero.queryAndWait(new GetUser("user-123")); // Blocking query
+Fluxzero.publishEvent(new UserSignedUp(...)); // Fire-and-forget event
+Fluxzero.schedule(new RetryPayment(...), Duration.ofMinutes(5)); // Delayed schedule
 ```
-[//]: # (@formatter:on)
 
-Each message can also include optional metadata:
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
 
-[//]: # (@formatter:off)
+```kotlin
+Fluxzero.sendCommand(CreateUser("Alice"))
+Fluxzero.queryAndWait(GetUser("user-123"))
+Fluxzero.publishEvent(UserSignedUp(...))
+Fluxzero.schedule(RetryPayment(...), Duration.ofMinutes(5))
+```
+
+</TabItem>
+</Tabs>
+
+Messages can include metadata:
+
 ```java
 Fluxzero.sendCommand(new CreateUser("Bob"),
-                          Metadata.of("source","admin-ui"));
+                     Metadata.of("source", "admin-ui"));
 ```
-[//]: # (@formatter:on)
 
-> ⚠️ Messages are **not routed to a specific destination**. Instead, any number of matching handlers may receive the
-> message, whether they run locally or remotely. Fluxzero abstracts the transport so that handler location is
-> irrelevant.
-
-For a deeper look at message handling, see the [Message Handling](#message-handling) section.
+<Aside type="tip">
+  Messages are not addressed to specific destinations. Fluxzero handles routing based on message type, not location.
+</Aside>
 
 ---
 
 ## Commands
 
-Commands are used to trigger state changes or domain logic. They may return a result or be fire-and-forget.
+Commands trigger domain behavior and optionally return a result.
 
-**Send and forget:**
+**Fire-and-forget:**
 
-[//]: # (@formatter:off)
 ```java
 Fluxzero.sendAndForgetCommand(new CreateUser("Alice"));
 ```
-[//]: # (@formatter:on)
 
-**Send and wait (async or blocking):**
+**Send and wait:**
 
-[//]: # (@formatter:off)
 ```java
-CompletableFuture<UserId> future
-        = Fluxzero.sendCommand(new CreateUser("Bob"));
-
-UserId id = Fluxzero.sendCommandAndWait(
-        new CreateUser("Charlie"));
+UserId id = Fluxzero.sendCommandAndWait(new CreateUser("Charlie"));
 ```
-[//]: # (@formatter:on)
+
+**Async:**
+
+```java
+CompletableFuture<UserId> future =
+    Fluxzero.sendCommand(new CreateUser("Bob"));
+```
 
 ---
 
 ## Queries
 
-Queries retrieve data from read models or projections.
-
-**Async:**
-
-[//]: # (@formatter:off)
-```java
-CompletableFuture<UserProfile> result = Fluxzero.query(new GetUserProfile("user123"));
-```
-[//]: # (@formatter:on)
+Queries retrieve state from read models or projections.
 
 **Blocking:**
 
-[//]: # (@formatter:off)
 ```java
-UserProfile profile = Fluxzero.queryAndWait(new GetUserProfile("user456"));
+UserProfile profile =
+    Fluxzero.queryAndWait(new GetUserProfile("user456"));
 ```
-[//]: # (@formatter:on)
+
+**Async:**
+
+```java
+CompletableFuture<UserProfile> result =
+    Fluxzero.query(new GetUserProfile("user123"));
+```
 
 ---
 
@@ -101,151 +108,114 @@ UserProfile profile = Fluxzero.queryAndWait(new GetUserProfile("user456"));
 
 Events can be published via:
 
-[//]: # (@formatter:off)
 ```java
 Fluxzero.publishEvent(new UserLoggedIn("user789"));
 ```
-[//]: # (@formatter:on)
 
 By default:
 
-- ✅ **Events are persisted** in the global event log, making them available for downstream processing, projections, or
-  analytics.
-- ⚠️ **Exception:** If a **local handler** exists the event will not be forwarded or stored, unless
-  `@LocalHandler(logMessage = true)`.
+- ✅ Events are **persisted** in the event log for downstream processing.
+- ⚠️ If a **local handler exists**, the event will not be forwarded unless `@LocalHandler(logMessage = true)`.
 
-> For aggregate-related domain events, use `Entity#apply(...)` instead. This ensures the event is applied to the entity
-> and conditionally published and logged, depending on the aggregate configuration.
+<Aside type="tip">
+  To publish an event for an entity, use <code>entity.apply(...)</code>. This ensures the event is conditionally logged and published according to entity configuration.
+</Aside>
 
 ---
 
 ## Schedules
 
-You can schedule messages or commands for later delivery:
+Schedule messages for future delivery:
 
-[//]: # (@formatter:off)
 ```java
-// Schedule a message to be handled in 5 minutes using @HandleSchedule
 Fluxzero.schedule(new ReminderFired(), Duration.ofMinutes(5));
+```
 
-// Fire a periodic schedule every hour
+Schedule periodic tasks:
+
+```java
 Fluxzero.schedulePeriodic(new PollExternalApi());
 ```
-[//]: # (@formatter:on)
 
 ---
 
-## Web Requests
+## Web requests
 
-Send an outbound HTTP call via the proxy mechanism in Fluxzero Runtime:
+Send outbound HTTP calls through the Fluxzero Runtime:
 
-[//]: # (@formatter:off)
 ```java
 WebRequest request = WebRequest
-        .get("https://api.example.com/data").build();
+    .get("https://api.example.com/data").build();
 WebResponse response = Fluxzero.get()
-        .webRequestGateway().sendAndWait(request);
+    .webRequestGateway().sendAndWait(request);
 ```
-[//]: # (@formatter:on)
 
 ---
 
 ## Metrics
 
-You can publish custom metrics to the Fluxzero Runtime:
+Send custom metric messages:
 
-[//]: # (@formatter:off)
 ```java
 Fluxzero.publishMetrics(
-        new SystemLoadMetric(cpu, memory));
+    new SystemLoadMetric(cpu, memory));
 ```
-[//]: # (@formatter:on)
 
 ---
 
-## What Happens After You Dispatch?
+## What happens after dispatch?
 
-Once you dispatch a message using any of the above methods, Flux goes through the following pipeline:
+Fluxzero processes the message through the following pipeline:
 
-### 1. **Dispatch Interceptors (Pre-Serialization)**
+### 1. Pre-serialization dispatch interceptors
 
-Before the message is serialized, all applicable `DispatchInterceptor`s are given a chance to:
+All configured `DispatchInterceptor`s run first. They may:
 
-- Inject metadata (e.g. correlation IDs, timestamps)
-- Modify or validate the message
-- Suppress or block dispatch entirely
+- Inject or modify metadata
+- Validate or mutate the message
+- Block or suppress delivery
 
-### 2. **Local Handlers**
+### 2. Local handlers
 
-If any handlers (e.g. `@HandleCommand`, `@HandleQuery`) are registered for this message type and topic, they will be
-invoked **locally**.
+If a local handler matches the message type/topic, it’s invoked immediately. Otherwise, the message is forwarded.
 
-- If the handler is annotated with `@LocalHandler(logMessage = true)`, the message is still forwarded to the
-  Fluxzero Runtime.
-- If the handler **fully consumes** the message, it won't be forwarded.
+<Aside type="tip">
+  Local handlers with <code>@LocalHandler(logMessage = true)</code> allow messages to be both handled and forwarded.
+</Aside>
 
-### 3. **Serialization**
+### 3. Serialization
 
-The message is converted to a `SerializedMessage`, typically using Jackson. This is where versioning and up/downcasting
-may apply.
+The message is serialized (typically via Jackson), tagged with metadata, and versioned for transport.
 
-### 4. **Dispatch Interceptors (Post-Serialization)**
+### 4. Post-serialization interceptors
 
-After serialization, interceptors may again modify the message—for example, to inject correlation headers based on the
-serialized form.
+A second pass of interceptors may adjust or enrich the serialized form before sending.
 
-### 5. **Forwarding to Fluxzero Runtime**
+### 5. Runtime forwarding
 
-If no local handler consumes the message, it is published to the Fluxzero Runtime via the configured `Client` (e.g.
-`WebSocketClient`).
-
-- Topics and routing are determined by message type and metadata
-- Runtime-side logic (like deduplication, retries, rate limits) may apply
+Messages not handled locally are published to the Fluxzero Runtime. From there, delivery guarantees, retries, rate limits, and remote handler routing apply.
 
 ---
 
-## Request Timeouts
+## Request timeouts
 
-The `@Timeout` annotation allows developers to specify how long Flux should wait for a **command** or **query** to
-complete when using synchronous (`sendAndWait`) APIs.
+Apply `@Timeout` to a payload class (command or query) to enforce maximum wait time for blocking calls:
 
-This is especially useful for time-sensitive interactions where you want to fail fast or have specific SLA expectations
-for certain request types.
-
-### Usage
-
-Apply `@Timeout` to a **payload class** (typically a command or query):
-
-[//]: # (@formatter:off)
 ```java
 @Timeout(value = 3, timeUnit = TimeUnit.SECONDS)
-public record CalculatePremium(UserProfile profile) implements Request<BigDecimal> {}
+public record CalculatePremium(UserProfile profile)
+    implements Request<BigDecimal> {}
 ```
-[//]: # (@formatter:on)
 
-When this message is sent using a blocking gateway call, the configured timeout is respected:
+When sent using `queryAndWait(...)`, this timeout is respected:
 
-[//]: # (@formatter:off)
 ```java
 BigDecimal result = Fluxzero
-        .sendAndWait(new CalculatePremium(user));
+    .queryAndWait(new CalculatePremium(user));
 ```
-[//]: # (@formatter:on)
 
-If the timeout elapses before a response is received, a `TimeoutException` is thrown.
+If no response arrives in time, a `TimeoutException` is thrown.
 
-### Notes
-
-- The timeout only applies to blocking calls (e.g., `sendAndWait`). If you use non-blocking `send(...)` methods that
-  return a `CompletableFuture`, **no timeout is enforced** unless you manually attach one:
-
-  [//]: # (@formatter:off)
-  ```java
-  CompletableFuture<BigDecimal> future
-        = Fluxzero.send(new CalculatePremium(user));
-  future.orTimeout(3, TimeUnit.SECONDS);
-  ```
-  [//]: # (@formatter:on)
-
-- The default timeout for blocking operations (when `@Timeout` is not present) is **1 minute**.
-- To configure timeouts for `WebRequest` calls, use `WebRequestSettings#timeout`.
+<Aside type="tip">
+  Asynchronous requests like <code>send(...)</code> don’t enforce timeouts automatically. Use <code>orTimeout(...)</code> on the returned `CompletableFuture` if needed.
+</Aside>
