@@ -5,6 +5,7 @@ sidebar:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
 Fluxzero provides a powerful and flexible document store that lets you persist and query models using full-text
 search, filters, and time-based constraints.
@@ -18,13 +19,22 @@ This system is especially useful for:
 
 ---
 
-## Manual Indexing
+## Manual indexing
 
 You can index any object manually using:
 
-```java
-Fluxzero.index(myObject);
-```
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    Fluxzero.index(myObject);
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    Fluxzero.index(myObject)
+    ```
+  </TabItem>
+</Tabs>
 
 This stores `myObject` in the document store so it can be queried later via `Fluxzero.search(...)`.
 
@@ -34,73 +44,127 @@ This stores `myObject` in the document store so it can be queried later via `Flu
 
 You can also specify the collection in which the object should be stored directly:
 
-```java
-Fluxzero.index(myObject, "customCollection");
-```
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    Fluxzero.index(myObject, "customCollection");
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    Fluxzero.index(myObject, "customCollection")
+    ```
+  </TabItem>
+</Tabs>
 
 ---
 
-## Searchable Domain Models
+## Searchable domain models
 
-Many models in Flux (e.g. aggregates or stateful handlers) are automatically indexable:
+Many models in Fluxzero (e.g. aggregates or stateful handlers) are automatically indexable:
 
 - `@Aggregate(searchable = true)`
 - `@Stateful` (implicitly `@Searchable`)
 - Directly annotate any POJO with `@Searchable`
 
-This enables automatic indexing after updates or message handling, without needing to call `Fluxzero.index(...)`
-manually.
-
-```java
-
-@Aggregate(searchable = true)
-public record UserAccount(@EntityId UserId userId,
-                          UserProfile profile,
-                          boolean accountClosed) {
-}
-```
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @Aggregate(searchable = true)
+    public record UserAccount(@EntityId UserId userId,
+                              UserProfile profile,
+                              boolean accountClosed) {
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @Aggregate(searchable = true)
+    data class UserAccount(
+        @EntityId val userId: UserId,
+        val profile: UserProfile,
+        val accountClosed: Boolean
+    )
+    ```
+  </TabItem>
+</Tabs>
 
 By default, the collection name is derived from the class’s **simple name** (UserAccount → `"UserAccount"`),
 unless explicitly overridden via an annotation like `@Aggregate`, `@Stateful` or `@Searchable` or in the search/index
 call:
 
-```java
-@Aggregate(searchable = true, collection = "users", timestampPath = "profile/createdAt")
-```
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @Aggregate(searchable = true, collection = "users", timestampPath = "profile/createdAt")
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @Aggregate(searchable = true, collection = "users", timestampPath = "profile/createdAt")
+    ```
+  </TabItem>
+</Tabs>
 
 ---
 
-## Querying Indexed Documents
+## Querying indexed documents
 
 Use the fluent `search(...)` API:
 
-```java
-List<UserAccount> admins = Fluxzero
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    List<UserAccount> admins = Fluxzero
+            .search("users")
+            .match("admin", "profile/role")
+            .inLast(Duration.ofDays(30))
+            .sortBy("profile/lastLogin", true)
+            .fetch(100);
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    val admins: List<UserAccount> = Fluxzero
         .search("users")
         .match("admin", "profile/role")
         .inLast(Duration.ofDays(30))
         .sortBy("profile/lastLogin", true)
-        .fetch(100);
-```
+        .fetch(100)
+    ```
+  </TabItem>
+</Tabs>
 
 You can also query by class:
 
-```java
-List<UserAccount> users = Fluxzero
-        .search(UserAccount.class)
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    List<UserAccount> users = Fluxzero
+            .search(UserAccount.class)
+            .match("Netherlands", "profile.country")
+            .fetchAll();
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    val users: List<UserAccount> = Fluxzero
+        .search(UserAccount::class.java)
         .match("Netherlands", "profile.country")
-        .fetchAll();
-```
+        .fetchAll()
+    ```
+  </TabItem>
+</Tabs>
 
-> **Note:** You can choose to split path segments using either a dot (`.`) or a slash (`/`).
-> For example, `profile.name` and `profile/name` are treated identically.
-> This flexibility can be useful when working with tools or serializers that prefer one style over the other.
+<Aside type="note">
+You can choose to split path segments with either <code>.</code> or <code>/</code>. Both styles are equivalent.
+</Aside>
 
 ---
 
-## Common Filtering Constraints
+## Common filtering constraints
 
-Flux supports a rich set of constraints:
+Fluxzero supports a rich set of constraints:
 
 - `lookAhead("cat", paths...)` – search-as-you-type lookups
 - `query("*text & (cat* | hat)", paths...)` – full-text search
@@ -111,79 +175,108 @@ Flux supports a rich set of constraints:
 - `anyExist(...)` – match if *any* of the fields are present
 - Logical operations: `not(...)`, `all(...)`, `any(...)`
 
-Example:
-
-[//]: # (@formatter:off)
-```java
-Fluxzero.search("payments")
-    .match("FAILED", "status")
-    .inLast(Duration.ofDays(1))
-    .fetchAll();
-```
-[//]: # (@formatter:on)
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    Fluxzero.search("payments")
+        .match("FAILED", "status")
+        .inLast(Duration.ofDays(1))
+        .fetchAll();
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    Fluxzero.search("payments")
+        .match("FAILED", "status")
+        .inLast(Duration.ofDays(1))
+        .fetchAll()
+    ```
+  </TabItem>
+</Tabs>
 
 ---
 
-## Matching Facet Fields
+## Matching facet fields
 
 If you're filtering on a field that is marked with `@Facet`, it's better to use:
 
-[//]: # (@formatter:off)
-```java
-.matchFacet("status", "archived")
-```
-[//]: # (@formatter:on)
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    .matchFacet("status", "archived")
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    .matchFacet("status", "archived")
+    ```
+  </TabItem>
+</Tabs>
 
 instead of:
 
-[//]: # (@formatter:off)
-```java
-.match("archived", "status")
-```
-[//]: # (@formatter:on)
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    .match("archived", "status")
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    .match("archived", "status")
+    ```
+  </TabItem>
+</Tabs>
 
-While both achieve the same result, `matchFacet(...)` is generally **faster and more efficient**.
-That's because facet values are indexed and matched entirely at the data store level,
-whereas `.match(...)` may involve resolving the path in memory and combining constraints manually.
+While both achieve the same result, `matchFacet(...)` is generally faster and more efficient.
 
-> 💡 **Tip:** Use `@Facet` on frequently-filtered fields (e.g. `status`, `type`, `category`) to take full advantage
-> of this optimization.
+<Aside type="tip">
+Use <code>@Facet</code> on frequently filtered fields (e.g. <code>status</code>, <code>type</code>, <code>category</code>) to take full advantage of this optimization.
+</Aside>
 
 ---
 
-## Facet Statistics
+## Facet statistics
 
 When a field or getter is annotated with `@Facet`, you can also retrieve **facet statistics** — e.g., how many documents
-exist per value of a given property. This is useful for building **filters with counts**, such as product categories,
-user roles, or status indicators.
+exist per value of a given property.
 
-### Example: Product Breakdown by Category and Brand
+### Example: Product breakdown by category and brand
 
-Suppose you have the following model:
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @Searchable
+    public record Product(@Facet String category,
+                          @Facet String brand,
+                          String name,
+                          BigDecimal price) {
+    }
 
-```java
+    List<FacetStats> stats = Fluxzero.search(Product.class)
+            .lookAhead("wireless")
+            .facetStats();
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @Searchable
+    data class Product(
+        @Facet val category: String,
+        @Facet val brand: String,
+        val name: String,
+        val price: BigDecimal
+    )
 
-@Searchable
-public record Product(@Facet String category,
-                      @Facet String brand,
-                      String name,
-                      BigDecimal price) {
-}
-```
-
-You can retrieve facet stats like this:
-
-[//]: # (@formatter:off)
-```java
-List<FacetStats> stats = Fluxzero.search(Product.class)
+    val stats: List<FacetStats> = Fluxzero.search(Product::class.java)
         .lookAhead("wireless")
-        .facetStats();
-```
-[//]: # (@formatter:on)
+        .facetStats()
+    ```
+  </TabItem>
+</Tabs>
 
 This gives you document counts per facet value:
 
-[//]: # (@formatter:off)
 ```json
 [
   { "name": "category", "value": "headphones", "count": 55 },
@@ -191,10 +284,10 @@ This gives you document counts per facet value:
   { "name": "brand", "value": "NoName", "count": 10 }
 ]
 ```
-[//]: # (@formatter:on)
 
-> 💡 **Tip:** Use `matchFacet("category", "headphones")` to filter efficiently by facet value. This is generally
-> faster than `match(...)`.
+<Aside type="tip">
+Use <code>matchFacet("category", "headphones")</code> to filter efficiently by facet value.
+</Aside>
 
 Each `FacetStats` object will contain:
 
@@ -204,7 +297,9 @@ Each `FacetStats` object will contain:
 
 ---
 
-## Search Index exclusion
+---
+
+## Search index exclusion
 
 By default, all non-transient properties of a document are included in the search index. However, you can fine-tune what
 fields get indexed using the following annotations:
@@ -214,22 +309,43 @@ fields get indexed using the following annotations:
 Use `@SearchExclude` to exclude a field or type from search indexing. This prevents the property from being matched in
 search queries, though it will still be present in the stored document and accessible at runtime.
 
-```java
-
-public record Order(String id,
-                    Customer customer,
-                    @SearchExclude byte[] encryptedPayload) {
-}
-```
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    public record Order(String id,
+                        Customer customer,
+                        @SearchExclude byte[] encryptedPayload) {
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    data class Order(
+        val id: String,
+        val customer: Customer,
+        @SearchExclude val encryptedPayload: ByteArray
+    )
+    ```
+  </TabItem>
+</Tabs>
 
 You can also exclude entire types:
 
-```java
-
-@SearchExclude
-public record EncryptedData(byte[] value) {
-}
-```
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @SearchExclude
+    public record EncryptedData(byte[] value) {
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @SearchExclude
+    data class EncryptedData(val value: ByteArray)
+    ```
+  </TabItem>
+</Tabs>
 
 In this case, none of the properties of `EncryptedData` will be indexed, unless you override selectively with
 `@SearchInclude`.
@@ -241,19 +357,31 @@ In this case, none of the properties of `EncryptedData` will be indexed, unless 
 Use `@SearchInclude` to **override** an exclusion. This is functionally equivalent to `@SearchExclude(false)` and is
 typically used on a field or class that would otherwise be excluded by inheritance or parent-level settings.
 
-```java
-
-@SearchExclude
-public record BaseDocument(String internalNotes,
-                           @SearchInclude String publicSummary) {
-}
-```
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @SearchExclude
+    public record BaseDocument(String internalNotes,
+                               @SearchInclude String publicSummary) {
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @SearchExclude
+    data class BaseDocument(
+        val internalNotes: String,
+        @SearchInclude val publicSummary: String
+    )
+    ```
+  </TabItem>
+</Tabs>
 
 Here, `internalNotes` will not be indexed, but `publicSummary` will be.
 
 ---
 
-## Behavior Summary
+## Behavior summary
 
 | Annotation                                  | Effect                                                           |
 |---------------------------------------------|------------------------------------------------------------------|
@@ -261,42 +389,67 @@ Here, `internalNotes` will not be indexed, but `publicSummary` will be.
 | `@SearchExclude(false)` or `@SearchInclude` | Explicitly includes a property even if a parent type is excluded |
 | *No annotation*                             | Field is included in the search index by default                 |
 
-> **Note:** If you want a field to be completely omitted from storage (not just indexing), mark it as `transient`, use
-`@JsonIgnore`, or another serialization-related annotation.
+<Aside type="note">
+If you want a field to be completely omitted from storage (not just indexing), mark it as <code>transient</code>, use
+<code>@JsonIgnore</code>, or another serialization-related annotation.
+</Aside>
 
 ---
 
-## Rapid Sorting and Filtering
+## Rapid sorting and filtering
 
 To enable efficient **range filters** and **sorted results** in document searches, annotate properties with `@Sortable`:
 
-```java
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    public record Product(@Sortable BigDecimal price,
+                          @Sortable("releaseDate") Instant publishedAt) {
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    data class Product(
+        @Sortable val price: BigDecimal,
+        @Sortable("releaseDate") val publishedAt: Instant
+    )
+    ```
+  </TabItem>
+</Tabs>
 
-public record Product(@Sortable BigDecimal price,
-                      @Sortable("releaseDate") Instant publishedAt) {
-}
-```
-
-This tells Fluxzero to **pre-index** these fields in a lexicographically sortable format. When you issue a search
-with a `between()` constraint or `.sort(...)` clause, the Fluxzero Runtime can evaluate it **directly in the data store** —
+This tells Fluxzero to pre-index these fields in a lexicographically sortable format. When you issue a search
+with a `between()` constraint or `.sort(...)` clause, the Fluxzero Runtime can evaluate it directly in the data store —
 without needing to load and compare documents in memory.
 
-### Optimized Search Example
+### Optimized search example
 
-```java
-List<Product> results = Fluxzero.search(Product.class)
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    List<Product> results = Fluxzero.search(Product.class)
+            .between("price", 10, 100)
+            .sort("releaseDate")
+            .fetch(100);
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    val results: List<Product> = Fluxzero.search(Product::class.java)
         .between("price", 10, 100)
         .sort("releaseDate")
-        .fetch(100);
-```
+        .fetch(100)
+    ```
+  </TabItem>
+</Tabs>
 
-This performs a fast, index-backed range query across all products priced between €10 and €100, sorted by their
-`releaseDate`.
+<Aside type="caution">
+You can always sort by any field — even if it is not <code>@Sortable</code> — but performance will degrade because the sorting happens after all matching documents are loaded.
+</Aside>
 
-> ⚠️ You can always sort by any field — even if it's not `@Sortable` — but performance will degrade because the sorting
-> happens **after** all matching documents are loaded.
+---
 
-### What Gets Indexed?
+### What gets indexed
 
 Fluxzero normalizes and encodes sortable fields depending on their value type:
 
@@ -306,9 +459,9 @@ Fluxzero normalizes and encodes sortable fields depending on their value type:
 | Instants       | ISO-8601 timestamp format                                                |
 | Strings/Others | Normalized (lowercased, trimmed, diacritics removed)                     |
 
-This ensures that sorting is **consistent** and **correct** across types and locales.
+This ensures that sorting is consistent and correct across types and locales.
 
-### Nested and Composite Values
+### Nested and composite values
 
 If the sortable field is:
 
@@ -317,18 +470,20 @@ If the sortable field is:
 - A **nested object** annotated with `@Sortable` → Its `toString()` is used
 - A **POJO with `@Sortable` fields** → Those nested values are indexed with prefixed paths
 
-#### Important Notes
+#### Important notes
 
-- **No retroactive indexing**: Adding `@Sortable` to a field does **not** automatically reindex existing documents.
-- To apply sorting retroactively, trigger a reindex (e.g. with `@HandleDocument` and a bumped `@Revision`)
-- Sorting and filtering still happen **within the Fluxzero Runtime**, but *without* `@Sortable` the logic falls back
-  to **in-memory evaluation** — which is much slower.
+- **No retroactive indexing**: Adding `@Sortable` to a field does not automatically reindex existing documents.
+- To apply sorting retroactively, trigger a reindex (e.g. with `@HandleDocument` and a bumped `@Revision`).
+- Sorting and filtering still happen within the Fluxzero Runtime, but without `@Sortable` the logic falls back
+  to in-memory evaluation — which is much slower.
 
-> ✅ Use `@Sortable` together with `@Facet` if you want both sorting and aggregation/filtering on a field.
+<Aside type="tip">
+Use <code>@Sortable</code> together with <code>@Facet</code> if you want both sorting and aggregation/filtering on a field.
+</Aside>
 
 ---
 
-## Customizing Returned Fields
+## Customizing returned fields
 
 When performing a search, you can control which fields are included or excluded in the returned documents.
 
@@ -359,13 +514,22 @@ Given the following indexed document:
 
 You can exclude sensitive fields like so:
 
-[//]: # (@formatter:off)
-```java
-Fluxzero.search("users")
-     .exclude("profile.ssn")
-     .fetch(50);
-```
-[//]: # (@formatter:on)
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    Fluxzero.search("users")
+         .exclude("profile.ssn")
+         .fetch(50);
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    Fluxzero.search("users")
+        .exclude("profile.ssn")
+        .fetch(50)
+    ```
+  </TabItem>
+</Tabs>
 
 This will return:
 
@@ -383,34 +547,56 @@ This will return:
 }
 ```
 
-> You can also use `.includeOnly(...)` instead to explicitly whitelist fields.
----
-
-## Streaming Results
-
-Flux supports efficient streaming of large result sets:
-
-[//]: # (@formatter:off)
-```java
-Fluxzero.search("auditTrail")
-    .inLast(Duration.ofDays(7))
-    .stream().forEach(auditEvent -> process(auditEvent));
-```
-[//]: # (@formatter:on)
+<Aside type="note">
+You can also use <code>.includeOnly(...)</code> instead to explicitly whitelist fields.
+</Aside>
 
 ---
 
-## Deleting Documents
+## Streaming results
+
+Fluxzero supports efficient streaming of large result sets:
+
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    Fluxzero.search("auditTrail")
+        .inLast(Duration.ofDays(7))
+        .stream().forEach(auditEvent -> process(auditEvent));
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    Fluxzero.search("auditTrail")
+        .inLast(Duration.ofDays(7))
+        .stream()
+        .forEach { auditEvent -> process(auditEvent) }
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Deleting documents
 
 To remove documents from the index:
 
-[//]: # (@formatter:off)
-```java
-Fluxzero.search("expiredTokens")
-    .before(Instant.now())
-    .delete();
-```
-[//]: # (@formatter:on)
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    Fluxzero.search("expiredTokens")
+        .before(Instant.now())
+        .delete();
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    Fluxzero.search("expiredTokens")
+        .before(Instant.now())
+        .delete()
+    ```
+  </TabItem>
+</Tabs>
 
 ---
 

@@ -5,33 +5,37 @@ sidebar:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
 Fluxzero provides full support for Kotlin, including:
 
-- Use of `record`-like [data classes](https://kotlinlang.org/docs/data-classes.html),
-- Optional types (e.g., `String?`) instead of `@Nullable`,
-- Seamless use of Kotlin-specific language features (e.g., `when`, `sealed class`, `companion object`),
-- Support for `Class<T>` parameters passed as `MyClass::class` or `MyClass::class.java`,
-- Automatic recognition of Kotlin modules during deserialization (see below).
+- Use of [data classes](https://kotlinlang.org/docs/data-classes.html), which behave like Java records
+- Optional types (e.g., `String?`) instead of `@Nullable`
+- Seamless use of Kotlin-specific language features (e.g., `when`, `sealed class`, `companion object`)
+- Support for `Class<T>` parameters passed as `MyClass::class` or `MyClass::class.java`
+- Automatic recognition of Kotlin modules during deserialization (see below)
 
-## Automatic Jackson Integration
+---
+
+## Automatic Jackson integration
 
 Fluxzero includes [Jackson Kotlin Module](https://github.com/FasterXML/jackson-module-kotlin) integration when
-available on the classpath. You do **not** need to manually register the module or use a service loader.
+available on the classpath. You do not need to manually register the module or use a service loader.
 If the `jackson-module-kotlin` dependency is present, it will be loaded dynamically for JSON (de)serialization.
 
-> 💡 If the module is missing, Fluxzero will fall back gracefully to standard Jackson behavior — no errors or
-> warnings.
+<Aside type="tip">
+If the module is missing, Fluxzero will fall back gracefully to standard Jackson behavior — no errors or warnings.
+</Aside>
 
 This enables correct serialization and deserialization of Kotlin constructs like:
 
-- default parameters,
-- `val` / `var` fields,
-- nullability,
-- `data class` equality and hashing,
-- and Kotlin-style constructor parameter mapping.
+- Default parameters
+- `val` / `var` fields
+- Nullability
+- `data class` equality and hashing
+- Kotlin-style constructor parameter mapping
 
-> **Note:** Fluxzero does *not* require a Kotlin dependency itself. Kotlin support is purely optional and works
-> automatically when Kotlin and its Jackson module are used in your application.
-
----
+<Aside type="note">
+Fluxzero does not require a Kotlin dependency itself. Kotlin support is purely optional and works
+automatically when Kotlin and its Jackson module are used in your application.
+</Aside>

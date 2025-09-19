@@ -5,11 +5,14 @@ sidebar:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
 Fluxzero allows fine-grained control over **handler method parameters** using the `ParameterResolver` interface.
 This lets you inject **any value** into annotated handler methods — beyond just payload, metadata, etc.
 
-## How It Works
+---
+
+## How it works
 
 When a message is dispatched to a handler (e.g. via `@HandleEvent`, `@HandleCommand`, etc.), the framework scans the
 method’s parameters and tries to resolve each one using the configured `ParameterResolvers`.
@@ -27,54 +30,106 @@ By default, Fluxzero supports injection of the following parameters into handler
 
 Other contextual values like **message ID**, **timestamp**, etc. can be obtained from the `Message`.
 
-## Example: Default Resolution
+---
 
-```java
+## Example: default resolution
 
-@HandleEvent
-void handle(CreateUser event, Metadata metadata, SerializedMessage message) {
-    log.info("User created at {}", Instant.ofEpochMilli(message.getTimestamp()));
-}
-```
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @HandleEvent
+    void handle(CreateUser event, Metadata metadata, SerializedMessage message) {
+        log.info("User created at {}", Instant.ofEpochMilli(message.getTimestamp()));
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @HandleEvent
+    fun handle(event: CreateUser, metadata: Metadata, message: SerializedMessage) {
+        log.info("User created at {}", Instant.ofEpochMilli(message.timestamp))
+    }
+    ```
+  </TabItem>
+</Tabs>
 
-## Writing Your Own Parameter Resolver
+---
+
+## Writing your own parameter resolver
 
 You can register a custom parameter resolver to inject arbitrary values, such as headers, timestamps, or contextual
 objects:
 
-```java
-public class TimestampParameterResolver implements ParameterResolver<DeserializingMessage> {
-    @Override
-    public Function<DeserializingMessage, Object> resolve(Parameter parameter, Annotation methodAnnotation) {
-        if (parameter.getType().equals(Instant.class)) {
-            return DeserializingMessage::getTimestamp;
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    public class TimestampParameterResolver implements ParameterResolver<DeserializingMessage> {
+        @Override
+        public Function<DeserializingMessage, Object> resolve(Parameter parameter, Annotation methodAnnotation) {
+            if (parameter.getType().equals(Instant.class)) {
+                return DeserializingMessage::getTimestamp;
+            }
+            return null;
         }
-        return null;
     }
-}
-```
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    class TimestampParameterResolver : ParameterResolver<DeserializingMessage> {
+        override fun resolve(parameter: Parameter, methodAnnotation: Annotation): Function<DeserializingMessage, Any>? {
+            return if (parameter.type == Instant::class.java) {
+                Function { msg -> msg.timestamp }
+            } else null
+        }
+    }
+    ```
+  </TabItem>
+</Tabs>
 
 Then register it via your builder:
 
-[//]: # (@formatter:off)
-```java
-DefaultFluxzero.builder()
-    .addParameterResolver(new TimestampParameterResolver())
-    .build();
-```
-[//]: # (@formatter:on)
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    DefaultFluxzero.builder()
+        .addParameterResolver(new TimestampParameterResolver())
+        .build();
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    DefaultFluxzero.builder()
+        .addParameterResolver(TimestampParameterResolver())
+        .build()
+    ```
+  </TabItem>
+</Tabs>
 
 And use it in your handler:
 
-```java
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @HandleCommand
+    void handle(CreateOrder command, Instant timestamp) {
+        log.info("Command received at {}", timestamp);
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @HandleCommand
+    fun handle(command: CreateOrder, timestamp: Instant) {
+        log.info("Command received at {}", timestamp)
+    }
+    ```
+  </TabItem>
+</Tabs>
 
-@HandleCommand
-void handle(CreateOrder command, Instant timestamp) {
-    log.info("Command received at {}", timestamp);
-}
-```
+---
 
-## Use Cases
+## Use cases
 
 - Injecting request-specific context (e.g. tracing info)
 - Supporting custom annotations (e.g. `@FromHeader`)
@@ -83,8 +138,5 @@ void handle(CreateOrder command, Instant timestamp) {
 
 ---
 
-Custom parameter injection is a powerful tool for modular, contextual logic. It works seamlessly with all handler
-annotations (`@HandleEvent`, `@HandleCommand`, `@HandleQuery`, `@HandleError`, etc.) and opens up a clean way to avoid
-boilerplate argument passing.
-
----
+Custom parameter injection is a powerful tool for modular, contextual logic.
+It works seamlessly with all handler annotations (`@HandleEvent`, `@HandleCommand`, `@HandleQuery`, `@HandleError`, etc.) and opens up a clean way to avoid boilerplate argument passing.

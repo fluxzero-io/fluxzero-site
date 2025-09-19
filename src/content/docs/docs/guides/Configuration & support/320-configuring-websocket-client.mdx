@@ -4,7 +4,7 @@ sidebar:
    order: 320
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 The `WebSocketClient` is the default client used to connect to the Fluxzero Runtime over WebSocket. It provides full access
 to the event store, message gateways, tracking, search, scheduling, and key-value storage subsystems via configurable,
@@ -14,22 +14,40 @@ high-throughput sessions.
 
 To configure and instantiate a WebSocket-backed client:
 
-```java
-WebSocketClient client = WebSocketClient.newInstance(
-        WebSocketClient.ClientConfig.builder()
-                .serviceBaseUrl("wss://my.flux.host")
-                .name("my-service")
-                .build());
+<Tabs>
+  <TabItem label="Java">
 
-Fluxzero flux = Fluxzero.builder().build(client);
-```
+  ```java
+  WebSocketClient client = WebSocketClient.newInstance(
+          WebSocketClient.ClientConfig.builder()
+                  .serviceBaseUrl("wss://my.flux.host")
+                  .name("my-service")
+                  .build());
+
+  Fluxzero flux = Fluxzero.builder().build(client);
+  ```
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  val client = WebSocketClient.newInstance(
+      WebSocketClient.ClientConfig.builder()
+          .serviceBaseUrl("wss://my.flux.host")
+          .name("my-service")
+          .build()
+  )
+
+  val flux = Fluxzero.builder().build(client)
+  ```
+  </TabItem>
+</Tabs>
 
 This is the most common setup for production and shared environments. It connects to a remote Fluxzero Runtime via the
 service base URL, which must point to the desired deployment.
 
 ---
 
-## Client Configuration (`ClientConfig`)
+## Client configuration (ClientConfig)
 
 The `ClientConfig` class defines all connection, routing, compression, and tracking parameters. It is fully immutable
 and can be created or extended using the `toBuilder()` pattern.
@@ -49,37 +67,72 @@ Key options include:
 
 ---
 
-## Subsystem Sessions
+## Subsystem sessions
 
 Flux opens multiple WebSocket sessions to handle parallel workloads. You can tune the number of sessions per subsystem:
 
-```java
-ClientConfig config = ClientConfig.builder()
-        .eventSourcingSessions(2)
-        .searchSessions(3)
-        .gatewaySessions(Map.of(COMMAND, 2, EVENT, 1))
-        .build();
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  ClientConfig config = ClientConfig.builder()
+          .eventSourcingSessions(2)
+          .searchSessions(3)
+          .gatewaySessions(Map.of(COMMAND, 2, EVENT, 1))
+          .build();
+  ```
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  val config = ClientConfig.builder()
+      .eventSourcingSessions(2)
+      .searchSessions(3)
+      .gatewaySessions(mapOf(COMMAND to 2, EVENT to 1))
+      .build()
+  ```
+  </TabItem>
+</Tabs>
 
 Each session can multiplex multiple consumers or producers under the hood. Use more sessions to improve parallelism and
 isolation across critical workloads.
 
 ---
 
-## Tracking Configuration
+## Tracking configuration
 
 Tracking clients can use local caches to optimize polling performance when many consumers are tracking the same topic or
 message type.
 
-```java
-ClientConfig config = ClientConfig.builder()
-        .trackingConfigs(Map.of(
-                EVENT, TrackingClientConfig.builder()
-                        .sessions(2)
-                        .cacheSize(1000)
-                        .build()))
-        .build();
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  ClientConfig config = ClientConfig.builder()
+          .trackingConfigs(Map.of(
+                  EVENT, TrackingClientConfig.builder()
+                          .sessions(2)
+                          .cacheSize(1000)
+                          .build()))
+          .build();
+  ```
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  val config = ClientConfig.builder()
+      .trackingConfigs(
+          mapOf(
+              EVENT to TrackingClientConfig.builder()
+                  .sessions(2)
+                  .cacheSize(1000)
+                  .build()
+          )
+      )
+      .build()
+  ```
+  </TabItem>
+</Tabs>
 
 The `cacheSize` determines how many messages are buffered in-memory per topic. This helps reduce round-trips to the
 Runtime and can significantly boost performance in high-fanout projections or handlers.
@@ -90,24 +143,50 @@ Runtime and can significantly boost performance in high-fanout projections or ha
 
 Once created, the client is passed into the builder:
 
-```java
-Fluxzero flux = Fluxzero.builder()
-        .makeApplicationInstance(true)
-        .build(webSocketClient);
-```
+<Tabs>
+  <TabItem label="Java">
 
-> ℹ️ Use `makeApplicationInstance(true)` to install the Flux instance as a global singleton (`Fluxzero.get()`).
-> Default **true** in Spring setups.
+  ```java
+  Fluxzero flux = Fluxzero.builder()
+          .makeApplicationInstance(true)
+          .build(webSocketClient);
+  ```
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  val flux = Fluxzero.builder()
+      .makeApplicationInstance(true)
+      .build(webSocketClient)
+  ```
+  </TabItem>
+</Tabs>
+
+<Aside type="note">
+Use `makeApplicationInstance(true)` to install the Flux instance as a global singleton (`Fluxzero.get()`).
+This is the default in Spring setups.
+</Aside>
 
 ---
 
-## Local Alternative
+## Local alternative
 
 For testing or lightweight local development, use the in-memory `LocalClient` instead:
 
-```java
-Fluxzero flux = Fluxzero.builder().build(new LocalClient());
-```
+<Tabs>
+  <TabItem label="Java">
+
+  ```java
+  Fluxzero flux = Fluxzero.builder().build(new LocalClient());
+  ```
+  </TabItem>
+  <TabItem label="Kotlin">
+
+  ```kotlin
+  val flux = Fluxzero.builder().build(LocalClient())
+  ```
+  </TabItem>
+</Tabs>
 
 This simulates the entire platform in-memory without external dependencies.
 

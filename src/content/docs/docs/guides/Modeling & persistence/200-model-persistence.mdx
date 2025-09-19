@@ -5,6 +5,7 @@ sidebar:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
 Fluxzero supports multiple strategies for storing and reloading aggregates:
 
@@ -12,58 +13,50 @@ Fluxzero supports multiple strategies for storing and reloading aggregates:
 - **Document storage**: the full aggregate is stored as a document
 - **In-memory only**: ephemeral state, not persisted across messages
 
-By default, `@Aggregate` uses **event sourcing** (`@Aggregate(eventSourced = true)` by default), but you can configure
-each aggregate individually.
+By default, aggregates use **event sourcing** (`@Aggregate(eventSourced = true)`), but you can configure each aggregate individually.
 
 ---
 
-## Event Sourcing
+## Event sourcing
 
-Event-sourced aggregates are reconstructed from their event history. When you load an aggregate
-(e.g. via `loadAggregate(...)`, `loadEntity(...)`, or `loadAggregateFor(...)`), Flux uses the following strategy to
-restore its current state:
+Event-sourced aggregates are reconstructed from their event history. When you load an aggregate (via `loadAggregate(...)`, `loadEntity(...)`, or `loadAggregateFor(...)`), Fluxzero restores its current state by:
 
----
+- Using the cache, if enabled (default).
+- If snapshotting is enabled and a snapshot exists, using it as a starting point, then replaying any subsequent events.
+- Otherwise, rehydrating the entire state from the event history, replaying each past event through its matching `@Apply` method.
 
-### Loading an Aggregate
+Each event is deserialized and routed to the corresponding `@Apply` method to reconstruct the aggregate’s entity graph.
 
-Fluxzero will attempt to resolve the **current state** of the aggregate or entity as follows:
-
-- **From cache**, if caching is enabled (default behavior).
-- If **snapshotting** is enabled and a snapshot is available, Flux uses it as the starting point and then replays any
-  subsequent events.
-- Otherwise, the entire state is rehydrated from the **event history**, by replaying each past event through its
-  matching `@Apply` method.
-
-Each event is **deserialized** and routed to the corresponding `@Apply` method to reconstruct the aggregate's entity
-graph.
-
-- If no such method exists for a given event, the event is silently **ignored**.
-- However, if the **event class itself is missing**, deserialization will fail unless `ignoreUnknownEvents = true` is
-  set on the aggregate. For better ways to deal with this, see [Upcasting](#upcasting).
+- If no such method exists for a given event, the event is silently ignored.
+- If the event class itself is missing, deserialization will fail unless `ignoreUnknownEvents = true` is set on the aggregate. For better handling, see *Upcasting*.
 
 ---
 
-### Applying Updates and Committing Changes
+### Loading an aggregate
 
-Once an aggregate has been loaded, you can apply updates, e.g.: using `Entity#apply(...)`. Each update follows this
-lifecycle:
+Fluxzero resolves the current state of an aggregate or entity using the strategy described above.
+
+---
+
+### Applying updates and committing changes
+
+Once an aggregate has been loaded, you can apply updates using `Entity#apply(...)`. Each update follows this lifecycle:
 
 1. The state transition is computed using an `@Apply` method (on the update or entity).
-2. The update is **stored** in the event store and optionally **published** (depending on publication settings).
-3. The new state is written back to the **aggregate cache** (if enabled).
-4. A new **snapshot** is created, if a snapshot threshold has been reached.
+2. The update is stored in the event store and optionally published (depending on publication settings).
+3. The new state is written back to the aggregate cache (if enabled).
+4. A new snapshot is created if a snapshot threshold has been reached.
 
-> **Commit Timing:**
-> By default, updates are committed only **after the current message batch completes**, not immediately. This means:
->
-> - Updates are **locally cached** (per tracker thread) until the batch is confirmed.
-> - This avoids unnecessary round-trips to the Fluxzero Runtime during batch processing.
->
-> You can change this behavior by explicitly committing the update earlier—i.e., at the end of the current handler
-> method.
+<Aside type="note">
+<strong>Commit timing:</strong>
+By default, updates are committed only after the current message batch completes, not immediately. This means:
+- Updates are locally cached (per tracker thread) until the batch is confirmed.
+- This avoids unnecessary round-trips to the Fluxzero runtime during batch processing.
 
-### Persistence Behavior
+You can change this behavior by committing explicitly at the end of a handler method.
+</Aside>
+
+### Persistence behavior
 
 You can customize event persistence behavior with:
 
@@ -72,24 +65,41 @@ You can customize event persistence behavior with:
 - `snapshotPeriod`: replace snapshot after every N updates
 - `ignoreUnknownEvents`: handle versioned aggregates gracefully
 
-Here’s a simple example:
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @Aggregate(snapshotPeriod = 1000)
+    public record UserAccount(@EntityId UserId userId,
+                              UserProfile profile) {
 
-```java
-
-@Aggregate(snapshotPeriod = 1000)
-public record UserAccount(@EntityId UserId userId,
-                          UserProfile profile) {
-
-    @Apply
-    UserAccount apply(UpdateProfile update) {
-        return toBuilder().profile(update.getProfile()).build();
+        @Apply
+        UserAccount apply(UpdateProfile update) {
+            return toBuilder().profile(update.getProfile()).build();
+        }
     }
-}
-```
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @Aggregate(snapshotPeriod = 1000)
+    data class UserAccount(
+        @EntityId val userId: UserId,
+        val profile: UserProfile
+    ) {
+        @Apply
+        fun apply(update: UpdateProfile): UserAccount {
+            return copy(profile = update.profile)
+        }
+    }
+    ```
+  </TabItem>
+</Tabs>
 
-## Document Storage
+---
 
-Fluxzero also supports storing aggregates as documents in a searchable document store. This is useful for:
+## Document storage
+
+Fluxzero can also store aggregates as documents in a searchable document store. This is useful for:
 
 - Read-heavy aggregates
 - Aggregates with large histories
@@ -97,108 +107,161 @@ Fluxzero also supports storing aggregates as documents in a searchable document 
 
 To enable document storage, set `searchable = true` in the `@Aggregate` annotation:
 
-```java
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @Aggregate(eventSourced = false, searchable = true, collection = "countries")
+    public record Country(@EntityId String countryCode,
+                          String name) {
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @Aggregate(eventSourced = false, searchable = true, collection = "countries")
+    data class Country(
+        @EntityId val countryCode: String,
+        val name: String
+    )
+    ```
+  </TabItem>
+</Tabs>
 
-@Aggregate(eventSourced = false, searchable = true, collection = "countries")
-public record Country(@EntityId String countryCode,
-                      String name) {
-}
-```
-
-This stores the entire aggregate as a document in the `"countries"` collection. The entity can still use:
+The entity can still use:
 
 - `@InterceptApply` to block or modify updates
 - `@AssertLegal` to validate updates
 - `@Apply` to compute and update state
 
-Each applied update will overwrite the document in the store, and—by default—**will also be published as an event**. If
-that's not desirable, you can disable event publication for the aggregate using
-`@Aggregate(eventPublication = NEVER)`. However, if you do, make sure to **also disable caching**, or you risk ending up
-with **inconsistent state** between application instances.
+Each applied update overwrites the document in the store and, by default, is also published as an event. If you want to disable event publication, use `@Aggregate(eventPublication = NEVER)`.
 
-> ℹ️ The `collection` defaults to the simple class name of the aggregate if not explicitly set. You can also configure
-> time-range indexing with `timestampPath` and `endPath` to enable temporal querying.
+<Aside type="caution">
+If you disable event publication, also disable caching — otherwise you risk inconsistent state between application instances.
+</Aside>
 
-> ⚠️ If you set `eventSourced = false` and do **not** enable `searchable`, the aggregate will not be persisted at all.
-> Its state will only live in memory during message processing. This is typically not recommended unless you're using
-> the aggregate for purely transient behavior.
+<Aside type="note">
+The `collection` defaults to the simple class name of the aggregate. You can also configure time-range indexing with `timestampPath` and `endPath` for temporal queries.
+</Aside>
+
+<Aside type="caution">
+If you set `eventSourced = false` and do not enable `searchable`, the aggregate will not be persisted. Its state will only live in memory during message processing — not recommended unless for purely transient behavior.
+</Aside>
 
 ---
 
-## Dual Persistence
+## Dual persistence
 
-You can combine both strategies by enabling both `eventSourced = true` and `searchable = true`.
+You can combine both strategies by enabling `eventSourced = true` and `searchable = true`.
 
-This causes Flux to:
+Fluxzero will:
 
-- Store events for replay and audit purposes
+- Store events for replay and auditing
 - Index the latest version as a document for fast retrieval and search
 
-```java
-
-@Aggregate(searchable = true)
-public record Order(@EntityId OrderId orderId,
-                    OrderDetails details) {
-}
-```
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @Aggregate(searchable = true)
+    public record Order(@EntityId OrderId orderId,
+                        OrderDetails details) {
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @Aggregate(searchable = true)
+    data class Order(
+        @EntityId val orderId: OrderId,
+        val details: OrderDetails
+    )
+    ```
+  </TabItem>
+</Tabs>
 
 This hybrid approach is ideal when you need both traceability and query speed.
 
 ---
 
-## Caching and Checkpoints
+## Caching and checkpoints
 
-Fluxzero automatically caches aggregates after loading or applying updates (unless `cached = false`). This allows:
+Fluxzero automatically caches aggregates after loading or applying updates (unless `cached = false`). This enables:
 
 - Fast reuse of recently loaded aggregates
 - Automatic rehydration from snapshots or partial checkpoints (when configured)
 
 You can tune cache behavior with:
 
-- `cached`: disable shared cache entirely
+- `cached`: disable shared cache
 - `cachingDepth`: how many versions to retain (enables `.previous()` access)
-- `checkpointPeriod`: how often to insert intermediate event checkpoints
+- `checkpointPeriod`: how often to insert intermediate checkpoints
 
-> ✅ When loading an aggregate inside an event handler, Flux ensures that the returned entity is always up-to-date. If
-> the event being handled is part of that aggregate, the aggregate is automatically rehydrated
-> *up to and including* the current event. **Flux will wait** (if needed) until the aggregate cache has caught up to
-> that
-> point, ensuring consistency and preventing stale reads — even during concurrent or out-of-order processing.
+<Aside type="note">
+  When loading an aggregate inside an event handler, Fluxzero guarantees that the returned entity is up-to-date. If the event being handled belongs to that aggregate, it is rehydrated *up to and including* that event. Fluxzero will wait, if needed, until the cache has caught up, preventing stale reads and ensuring consistency.
+</Aside>
 
-This makes it possible to write event-sourced, state-aware logic directly within event handlers — often eliminating the
-need for separate projections or read models.
+This makes it possible to write event-sourced, state-aware logic directly within event handlers — often eliminating the need for separate projections or read models.
 
-### Example: Detecting Significant Balance Change
+### Example: detecting significant balance change
 
-```java
-public class FraudMonitor {
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    public class FraudMonitor {
 
-    @HandleEvent
-    void handle(Entity<BankAccount> entity) {
-        BankAccount current = entity.get();
-        BankAccount previous = entity.previous().get();
+        @HandleEvent
+        void handle(Entity<BankAccount> entity) {
+            BankAccount current = entity.get();
+            BankAccount previous = entity.previous().get();
 
-        if (hasSuspiciousDelta(previous, current)) {
-            Fluxzero.publishEvent(new AdminNotification(
-                    "Unusual balance change on account %s"
-                            .formatted(current.getAccountId())));
+            if (hasSuspiciousDelta(previous, current)) {
+                Fluxzero.publishEvent(new AdminNotification(
+                        "Unusual balance change on account %s"
+                                .formatted(current.getAccountId())));
+            }
+        }
+
+        boolean hasSuspiciousDelta(BankAccount previous, BankAccount current) {
+            if (previous == null || current == null) {
+                return false;
+            }
+            BigDecimal delta = current.getBalance()
+                    .subtract(previous.getBalance()).abs();
+            return delta.compareTo(BigDecimal.valueOf(10_000)) > 0;
         }
     }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    class FraudMonitor {
 
-    boolean hasSuspiciousDelta(BankAccount previous, BankAccount current) {
-        if (previous == null || current == null) {
-            return false;
+        @HandleEvent
+        fun handle(entity: Entity<BankAccount>) {
+            val current = entity.get()
+            val previous = entity.previous().get()
+
+            if (hasSuspiciousDelta(previous, current)) {
+                Fluxzero.publishEvent(
+                    AdminNotification(
+                        "Unusual balance change on account ${current.accountId}"
+                    )
+                )
+            }
         }
-        BigDecimal delta = current.getBalance()
-                .subtract(previous.getBalance()).abs();
-        return delta.compareTo(BigDecimal.valueOf(10_000)) > 0;
+
+        fun hasSuspiciousDelta(previous: BankAccount?, current: BankAccount?): Boolean {
+            if (previous == null || current == null) return false
+            val delta = current.balance.subtract(previous.balance).abs()
+            return delta > BigDecimal.valueOf(10_000)
+        }
     }
-}
-```
+    ```
+  </TabItem>
+</Tabs>
 
 In this example:
 
-- The aggregate (`BankAccount`) is automatically loaded in-sync with the current event being handled.
-- The handler has access to both the **current state** and the **previous state** of the entity.
-- It uses this to decide whether a significant balance change has occurred.
+- The aggregate (`BankAccount`) is automatically loaded in sync with the current event.
+- The handler has access to both the current and previous state.
+- It uses this to detect significant balance changes.
 - No external store or manual query is needed — this is pure, consistent, event-sourced state.

@@ -5,63 +5,103 @@ sidebar:
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 
-Fluxzero provides a flexible way to **redact or tailor object content per user** using the `@FilterContent`
+Fluxzero provides a flexible way to redact or tailor object content per user using the `@FilterContent`
 annotation.
 
 This enables domain models or documents to define exactly what is visible to different users, based on roles, ownership,
 or context.
 
-## Basic Example
+---
 
-```java
+## Basic example
 
-@FilterContent
-Order filter(User user) {
-    return user.hasRole(Role.admin) ? this : new Order(maskSensitiveFieldsOnly());
-}
-```
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @FilterContent
+    Order filter(User user) {
+        return user.hasRole(Role.admin) ? this : new Order(maskSensitiveFieldsOnly());
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @FilterContent
+    fun filter(user: User): Order {
+        return if (user.hasRole(Role.admin)) this else Order(maskSensitiveFieldsOnly())
+    }
+    ```
+  </TabItem>
+</Tabs>
 
 To invoke filtering:
 
-[//]: # (@formatter:off)
-```java
-Order filtered = Fluxzero.filterContent(order, currentUser);
-```
-[//]: # (@formatter:on)
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    Order filtered = Fluxzero.filterContent(order, currentUser);
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    val filtered: Order = Fluxzero.filterContent(order, currentUser)
+    ```
+  </TabItem>
+</Tabs>
 
-## Recursive Filtering
+---
 
-Filtering applies **recursively** to fields and nested objects. If a nested item is a list, map, or complex structure,
-it will also be filtered using its own `@FilterContent` method if present.
+## Recursive filtering
+
+Filtering applies recursively to fields and nested objects.
+If a nested item is a list, map, or complex structure, it will also be filtered using its own `@FilterContent` method if present.
 
 If a nested object returns `null` from filtering:
 
-- It is **removed from a list**
-- It is **excluded from a map**
+- It is removed from a list
+- It is excluded from a map
 
-## Root Context Injection
+---
+
+## Root context injection
 
 Filtering methods can optionally accept both:
 
 - The current `User`
-- The **root object** being filtered
+- The root object being filtered
 
 This is useful for making decisions based on global context.
 
-```java
-
-@FilterContent
-LineItem filter(User user, Order root) {
-    return root.isOwner(user) ? this : null;
-}
-```
-
-## Key Behaviors
-
-- `@FilterContent` applies only when called via `Fluxzero.filterContent(...)` or `Serializer.filterContent(...)`
-- **It is not automatic** — for performance reasons, content filtering is not applied implicitly (e.g. during search or
-  document deserialization)
-- If no method is annotated with `@FilterContent`, the object is returned unmodified
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @FilterContent
+    LineItem filter(User user, Order root) {
+        return root.isOwner(user) ? this : null;
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @FilterContent
+    fun filter(user: User, root: Order): LineItem? {
+        return if (root.isOwner(user)) this else null
+    }
+    ```
+  </TabItem>
+</Tabs>
 
 ---
+
+## Key behaviors
+
+- `@FilterContent` applies only when called via `Fluxzero.filterContent(...)` or `Serializer.filterContent(...)`
+- It is not automatic — for performance reasons, content filtering is not applied implicitly (e.g. during search or document deserialization)
+- If no method is annotated with `@FilterContent`, the object is returned unmodified
+
+<Aside type="tip">
+Apply filtering just before exposing data to end users (for example in API responses or UI views).
+This ensures your models remain complete internally while still protecting or tailoring output safely.
+</Aside>

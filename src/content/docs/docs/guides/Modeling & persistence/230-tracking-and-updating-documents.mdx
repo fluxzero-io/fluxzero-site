@@ -4,67 +4,106 @@ sidebar:
    order: 230
 ---
 
-import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 Fluxzero allows you to **track changes to your document store** using the `@HandleDocument` annotation.
 This enables handlers to react to document updates in real time — much like handling events.
 
-```java
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @HandleDocument
+    void handle(UserAccount user) {
+        log.info("UserAccount {} was added or updated", user.getUserId());
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @HandleDocument
+    fun handle(user: UserAccount) {
+        log.info("UserAccount ${user.userId} was added or updated")
+    }
+    ```
+  </TabItem>
+</Tabs>
 
-@HandleDocument
-void handle(UserAccount user) {
-    log.info("UserAccount {} was added or updated", user.getUserId());
-}
-```
-
-## How It Works
+## How it works
 
 Every time a document is (re)indexed, it receives a new message index (based on the timestamp of the update).
 Handlers annotated with `@HandleDocument` will observe these updates as they pass through the **document log**.
 
-> ⚠️ When catching up from behind (e.g. in a replay), only the **latest version** of a document is retained per key.
-> Earlier intermediate versions are not visible to late consumers.
+<Aside type="caution">
+When catching up from behind (e.g. in a replay), only the latest version of a document is retained per key.
+Earlier intermediate versions are not visible to late consumers.
+</Aside>
 
 This makes `@HandleDocument` ideal for **live processing**, **projecting the latest known state**, or
 **cache rebuilds**.
 
 ---
 
-## Transforming Stored Documents
+## Transforming stored documents
 
 `@HandleDocument` can also be used to **update documents in place**.
 
-If the handler returns a **newer revision** of the document, Flux will reindex and persist the result:
+If the handler returns a **newer revision** of the document, Fluxzero will reindex and persist the result:
 
-```java
-
-@HandleDocument("users")
-UserAccount upgrade(UserAccount oldUser) {
-    return new UserAccount(oldUser.getId(), normalizeEmail(oldUser.getEmail()));
-}
-```
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @HandleDocument("users")
+    UserAccount upgrade(UserAccount oldUser) {
+        return new UserAccount(oldUser.getId(), normalizeEmail(oldUser.getEmail()));
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @HandleDocument("users")
+    fun upgrade(oldUser: UserAccount): UserAccount {
+        return UserAccount(oldUser.id, normalizeEmail(oldUser.email))
+    }
+    ```
+  </TabItem>
+</Tabs>
 
 The returned value replaces the previous document (same ID), **only if** it has a **higher `@Revision`**.
 
-> ✅ This creates a powerful and durable upgrade path — ideal for data normalization, filling missing fields, or
-> applying business logic retroactively.
+<Aside type="tip">
+This creates a powerful and durable upgrade path — ideal for data normalization, filling missing fields, or
+applying business logic retroactively.
+</Aside>
 
 To **delete** a document from the store, return `null`:
 
-```java
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @HandleDocument("users")
+    UserAccount upgrade(UserAccount user) {
+        return user.isTestUser() ? null : user;
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @HandleDocument("users")
+    fun upgrade(user: UserAccount): UserAccount? {
+        return if (user.isTestUser) null else user
+    }
+    ```
+  </TabItem>
+</Tabs>
 
-@HandleDocument("users")
-UserAccount upgrade(UserAccount user) {
-    return user.isTestUser() ? null : user;
-}
-```
-
-> Transformations are persisted reliably — even across application restarts — making this a great way to evolve your
-> document model safely.
+<Aside type="note">
+Transformations are persisted reliably — even across application restarts — making this a great way to evolve your
+document model safely.
+</Aside>
 
 ---
 
-## Use Cases
+## Use cases
 
 - Auto-upcasting legacy documents
 - Filling or correcting derived fields
@@ -74,7 +113,7 @@ UserAccount upgrade(UserAccount user) {
 
 ---
 
-## Handler Configuration
+## Handler configuration
 
 You can subscribe to a document collection using any of the following styles:
 
@@ -84,7 +123,7 @@ You can subscribe to a document collection using any of the following styles:
 
 ---
 
-## Replay for Full Collection Migration
+## Replay for full collection migration
 
 Want to upgrade all existing documents in a collection? Combine `@HandleDocument` with replays:
 
@@ -95,15 +134,29 @@ Want to upgrade all existing documents in a collection? Combine `@HandleDocument
 
 This is a robust and rapid way to **reindex, clean, or refactor your stored documents** in-place.
 
-```java
-
-@Consumer(name = "reindex-users", minIndex = 0)
-class ReindexUsers {
-    @HandleDocument("users")
-    UserAccount upgrade(UserAccount legacyUser) {
-        return fixLegacyState(legacyUser);
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @Consumer(name = "reindex-users", minIndex = 0)
+    class ReindexUsers {
+        @HandleDocument("users")
+        UserAccount upgrade(UserAccount legacyUser) {
+            return fixLegacyState(legacyUser);
+        }
     }
-}
-```
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @Consumer(name = "reindex-users", minIndex = 0)
+    class ReindexUsers {
+        @HandleDocument("users")
+        fun upgrade(legacyUser: UserAccount): UserAccount {
+            return fixLegacyState(legacyUser)
+        }
+    }
+    ```
+  </TabItem>
+</Tabs>
 
 Once the transformation is complete, the handler can be safely removed.
