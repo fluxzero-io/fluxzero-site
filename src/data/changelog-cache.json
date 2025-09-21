@@ -1,7 +1,34 @@
 {
-  "lastUpdated": "2025-09-18T05:30:56.455Z",
-  "latestVersion": "1.6.0",
+  "lastUpdated": "2025-09-21T09:00:44.329Z",
+  "latestVersion": "1.7.0",
   "releases": [
+    {
+      "version": "1.7.0",
+      "date": "2025-09-18",
+      "body": "#### [1.7.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.6.2...1.7.0) (2025-09-18)\n\n\n##### Features\n\n* **metrics:** Add total size and byte size to AppendEvents metric ([d583851](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/d58385123ce49cc5350ce910f1b012493d37525c))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.7.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.6.2",
+      "date": "2025-09-18",
+      "body": "##### [1.6.2](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.6.1...1.6.2) (2025-09-18)\n\n\n##### Dependency updates\n\n* bump org.projectlombok:lombok from 1.18.40 to 1.18.42 ([0564d90](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/0564d906c4e897880e0ea1f32ca0ea1f81fcda8c))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.6.2",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.6.1",
+      "date": "2025-09-18",
+      "body": "##### [1.6.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.6.0...1.6.1) (2025-09-18)\n\n\n##### Dependency updates\n\n* bump io.jooby:jooby from 3.9.1 to 4.0.7 ([9888d35](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/9888d35f4978a3404ef1021769170a12c373398e))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.6.1",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
     {
       "version": "1.6.0",
       "date": "2025-09-17",

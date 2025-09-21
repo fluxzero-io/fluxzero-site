@@ -9,13 +9,14 @@ import { Tabs, TabItem, Card, CardGrid, Aside } from '@astrojs/starlight/compone
 
 An Aggregate is a specialized root entity that serves as the entry point into a domain model.
 It represents a single unit of consistency and can contain nested child entities.
-Aggregates are the foundation of domain-driven design in Fluxzero.
+
+Aggregates in Fluxzero act as consistency boundaries. They’re not required for every model, but when you need atomic updates across related entities, an aggregate is the right tool.
 
 <Aside type="tip" title="Real-world analogy">
 Think of an aggregate like a smart home system. The smart home (aggregate root) manages all connected devices (entities) as one cohesive unit. You can't control individual devices without going through the home, ensuring everything stays synchronized.
 </Aside>
 
-## Key Concepts
+## Key concepts
 
 <CardGrid>
 <Card title="Consistency Boundary" icon="approve-check">
@@ -27,7 +28,7 @@ All access to entities within an aggregate must go through the aggregate root, c
 </Card>
 
 <Card title="Event Sourcing" icon="document">
-By default, aggregates use event sourcing to track all changes as a sequence of events that can be replayed to rebuild state.
+By default, aggregates are event-sourced: every change is captured as an event you can replay to rebuild state. Prefer document storage if that’s a better fit.
 </Card>
 
 <Card title="Nested Entities" icon="list-format">
@@ -35,35 +36,9 @@ Aggregates can contain child entities with their own identities, creating rich d
 </Card>
 </CardGrid>
 
-## Defining Aggregates
+## Defining aggregates
 
-### Basic Aggregate
-
-<Tabs>
-<TabItem label="Java">
-```java
-@Aggregate
-@Builder(toBuilder = true)
-public record SmartHome(@EntityId HomeId homeId,
-                        String address,
-                        boolean securityEnabled) {
-    // Aggregate root for home automation system
-}
-```
-</TabItem>
-<TabItem label="Kotlin">
-```kotlin
-@Aggregate
-data class SmartHome(@EntityId val homeId: HomeId,
-                     val address: String,
-                     val securityEnabled: Boolean) {
-    // Aggregate root for home automation system
-}
-```
-</TabItem>
-</Tabs>
-
-### Aggregate with Child Entities
+### Basic aggregate
 
 <Tabs>
 <TabItem label="Java">
@@ -72,8 +47,33 @@ data class SmartHome(@EntityId val homeId: HomeId,
 @Builder(toBuilder = true)
 public record SmartHome(@EntityId HomeId homeId,
                         HomeDetails details,
-                        @Member @With List<Room> rooms,
-                        @Member @With List<Device> devices) {
+                        boolean alarmEnabled) {
+    // Aggregate root for home automation system
+}
+```
+</TabItem>
+<TabItem label="Kotlin">
+```kotlin
+@Aggregate
+data class SmartHome(@EntityId val homeId: HomeId,
+                     val details: HomeDetails,
+                     val alarmEnabled: Boolean) {
+    // Aggregate root for home automation system
+}
+```
+</TabItem>
+</Tabs>
+
+### Aggregate with child entities
+
+<Tabs>
+<TabItem label="Java">
+```java
+@Aggregate
+@Builder(toBuilder = true)
+public record SmartHome(@EntityId HomeId homeId,
+                        HomeDetails details,
+                        @Member @With List<Room> rooms) {
 }
 
 public record Room(@EntityId RoomId roomId,
@@ -93,8 +93,7 @@ public record Device(@EntityId DeviceId deviceId,
 @Aggregate
 data class SmartHome(@EntityId val homeId: HomeId,
                      val details: HomeDetails,
-                     @Member val rooms: List<Room> = emptyList(),
-                     @Member val devices: List<Device> = emptyList()) {
+                     @Member val rooms: List<Room> = emptyList()) {
 }
 
 data class Room(@EntityId val roomId: RoomId,
@@ -111,7 +110,7 @@ data class Device(@EntityId val deviceId: DeviceId,
 </TabItem>
 </Tabs>
 
-## Strongly Typed Identifiers
+## Strongly typed identifiers
 
 Use strongly typed identifiers extending `Id<T>` for better type safety:
 
@@ -148,11 +147,13 @@ class DeviceId(id: String) : Id<Device>(id)
 </TabItem>
 </Tabs>
 
-## Loading Aggregates
+`Id<T>` supports prefixing, case-insensitive matching, and simply serialize to string.
+
+## Loading aggregates
 
 Fluxzero provides several ways to load aggregates and their entities:
 
-### Load by Aggregate ID
+### Load by aggregate ID
 
 <Tabs>
 <TabItem label="Java">
@@ -169,36 +170,40 @@ val homeAggregate = Fluxzero.loadAggregate(homeId)
 </TabItem>
 </Tabs>
 
-### Load by Entity ID
+### Load by entity ID
 
 <Tabs>
 <TabItem label="Java">
 ```java
-// Load aggregate containing a specific room
-SmartHome home = Fluxzero.loadAggregateFor(roomId).get();
+// Load an aggregate or entity to apply updates
+Entity<SmartHome> home = Fluxzero.loadAggregateFor(roomId);
+Entity<Room> room = Fluxzero.loadEntity(roomId);
 
-// Load just the room entity
-Room room = Fluxzero.loadEntity(roomId).get();
-
-// Load just the device entity
-Device device = Fluxzero.loadEntity(deviceId).get();
+// Or just load the current value (read-only)
+Room roomValue = Fluxzero.loadEntityValue(roomId);
+Device device = Fluxzero.loadEntityValue(deviceId);
 ```
 </TabItem>
 <TabItem label="Kotlin">
 ```kotlin
-// Load aggregate containing a specific room
-val home = Fluxzero.loadAggregateFor(roomId).get()
+// Load an aggregate or entity to apply updates
+val home = Fluxzero.loadAggregateFor(roomId)
+val room = Fluxzero.loadEntity(roomId)
 
-// Load just the room entity
-val room = Fluxzero.loadEntity(roomId).get()
-
-// Load just the device entity
-val device = Fluxzero.loadEntity(deviceId).get()
+// Or just load the current value (read-only)
+val roomValue = Fluxzero.loadEntityValue(roomId)
+val device = Fluxzero.loadEntityValue(deviceId)
 ```
 </TabItem>
 </Tabs>
 
-## Persistence Behavior
+<Aside type="tip">
+    Use `Entity<T>` whenever you need to validate business rules or apply updates. Use `loadEntityValue(...)` only for read-only access.
+</Aside>
+
+## Persistence behavior
+
+By default, aggregates are event-sourced. You can change this per aggregate or combine event streams with document snapshots.
 
 You can customize event persistence behavior with:
 
@@ -219,7 +224,13 @@ public record UserAccount(@EntityId UserId userId,
 
 This stores a snapshot of the aggregate after every thousand events.
 
-### Document Storage
+<Aside type="note">
+Snapshotting can speed up loading large aggregates (many updates) by avoiding full event replays.
+
+But be mindful: snapshots are only as fresh as the last checkpoint. If corrupted or misapplied, they can hide issues that a clean replay would reveal. Use snapshots to improve performance, but don’t rely on them as your source of truth.
+</Aside>
+
+### Document storage
 
 Fluxzero also supports storing aggregates as documents in a searchable document store. This is useful for:
 
@@ -238,3 +249,12 @@ public record Country(@EntityId String countryCode,
 ```
 
 This stores the entire aggregate as a document in the `"countries"` collection.
+
+<Aside type="tip">
+Document storage is especially useful when aggregates are large, frequently queried, or don’t need full event history.
+</Aside>
+
+
+<Aside type="note">
+Aggregates are not the only way to model state in Fluxzero — you can also use [stateful handlers](/docs/guides/modeling--persistence/210-stateful-handlers/) or manually indexed documents.
+</Aside>

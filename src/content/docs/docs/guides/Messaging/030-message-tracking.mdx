@@ -86,7 +86,7 @@ To apply this to an entire package (and its subpackages), add a `package-info.ja
 package com.example.handlers;
 ```
 
-## Customizing Consumer Configuration
+## Customizing consumer configuration
 
 You can tune the behavior using additional attributes on the `@Consumer` annotation:
 
@@ -124,11 +124,62 @@ class MyHandler {
 
 Each thread runs a **tracker**. If you deploy the app multiple times, Fluxzero automatically load-balances messages across all available trackers.
 
-## Default Consumer Settings
+## Default consumer settings
 
-| Setting      | Default Value |
-|--------------|---------------|
-| `threads`      | 1             |
-| `maxFetchSize` | 1024          |
+Fluxzero provides conservative defaults to ensure safe and sequential processing:
 
-These defaults are sufficient for most scenarios. You can always override them for improved performance or control.
+| Setting                | Description | Default value             |
+|------------------------|-------------|---------------------------|
+| `threads`              | Number of tracker threads. Each thread owns a disjoint segment of the log. | `1`                       |
+| `maxFetchSize`         | Maximum messages per batch; balances throughput and memory. | `1024`                    |
+| `maxWaitDuration`      | How long to wait before polling again if no messages are available. | `60`                      |
+| `durationUnit`         | Time unit for `maxWaitDuration`. | `SECONDS`                 |
+| `errorHandler`         | Logs processing errors and continues. | `LoggingErrorHandler`     |
+| `flowRegulator`        | Default backpressure strategy; no throttling. | `NoOpFlowRegulator`       |
+| `filterMessageTarget`  | If true, only messages targeted to this instance are processed. | `false`                   |
+| `ignoreSegment`        | If true, bypasses Runtime sharding and processes all segments. | `false`                   |
+| `singleTracker`        | If true, a single tracker processes all messages in strict global order. | `false`                   |
+| `clientControlledIndex`| If true, the app decides which messages to process. | `false`                   |
+| `storePositionManually`| If true, the app must commit tracker position explicitly. | `false`                   |
+| `exclusive`            | Handlers are active in only one consumer. | `true`                    |
+| `passive`              | If true, handler results are ignored and not published to the result log. | `false`                   |
+| `minIndex`             | Negative means start at the end of the log (only new messages). | `-1`                      |
+| `maxIndexExclusive`    | Negative means no upper bound. | `-1`                      |
+| `typeFilter`           | No server-side filtering; all message types are delivered. | `""` (empty)              |
+
+## Custom routing keys
+
+By default, Fluxzero uses **128 segments** to balance parallelism and ordering guarantees. These segments are evenly split across available trackers to distribute load efficiently. The `ignoreSegment` configuration, when set to `true`, means that each tracker receives all messages regardless of segment assignment. This allows filtering and routing to be applied at the client or handler level using custom routing keys rather than relying on segment-based filtering. The `singleTracker` option can be enabled to force all segments to be managed by a single tracker instance, simplifying ordering at the cost of scalability.
+
+To enable client-side filtering using a custom routing key, annotate your handler class with `@Consumer(name = "...", ignoreSegment = true)`. Then, use the `@RoutingKey` annotation on your handler method (or class) to specify which field to use for routing.
+
+<Tabs>
+  <TabItem value="java" label="Java">
+
+```java
+@Consumer(name = "order-processor", ignoreSegment = true)
+class OrderProcessor {
+    @HandleCommand
+    @RoutingKey("paymentId")
+    void handle(SubmitOrder command) {
+        // Handler logic here, routing messages by paymentId instead of segment
+    }
+}
+```
+
+  </TabItem>
+  <TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+@Consumer(name = "order-processor", ignoreSegment = true)
+class OrderProcessor {
+    @HandleCommand
+    @RoutingKey("paymentId")
+    fun handle(command: SubmitOrder) {
+        // Handler logic here, routing messages by paymentId instead of segment
+    }
+}
+```
+
+  </TabItem>
+</Tabs>

@@ -8,13 +8,15 @@ import { Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 
 Commands are used to trigger state changes or domain logic in your application. They may return a result or be fire-and-forget.
 
-Commands can be sent from anywhere in your application, such as from a WebRequest, or even another command handler.
+Commands can be sent from anywhere in your application, such as from a `WebRequest`, or even another command handler.
 
-## Defining Commands
+## Defining commands
 
 Commands are simple POJO's, typically defined as Java Record or Kotlin Data class.
 There is no need to implement any specific interface or extend a base class. 
-However, we recommend using the `Request` interface for commands that return a result, as it provides additional metadata and functionality.
+However, we recommend using the `Request` interface for those commands that return a result, as it provides additional metadata and functionality.
+
+For example, here’s a command that toggles a light switch. When handled successfully, it returns the current brightness level:
 
 <Tabs>
 <TabItem label="Java">
@@ -29,11 +31,11 @@ data class ToggleLight(val lightId: LightId) : Request<BigDecimal>
 </TabItem>
 </Tabs>
 
-## Sending Commands
+## Sending commands
 
-### Fire-and-Forget Commands
+### Fire-and-forget commands
 
-When you don't need a response from the command, use `sendAndForgetCommand()`:
+When you don't need a response from the command, including whether it gets handled successfully, use `sendAndForgetCommand()`:
 
 <Tabs>
 <TabItem label="Java">
@@ -48,15 +50,14 @@ Fluxzero.sendAndForgetCommand(CreateUser("Alice"))
 </TabItem>
 </Tabs>
 
-When using fire-and-forget commands, by default, Flux does not guarantee that the command will be processed. 
-For fire-and-forget commands, there is a way to provide the kind of guarantee you want.
+When using send-and-forget commands, by default, Fluxzero does not guarantee that the command will be processed.
+For send-and-forget commands, there is a way to provide the kind of guarantee you want:
 
-- **None** - default; no guarantee that the command is event sent (in case of a network failure, the command may not be sent)
-- **Sent** - guarantees that the command is sent to the Flux platform, but not necessarilty committed to the message log
-- Stored - guarantees that the command is sent and stored in the message log
+- **None** - default; no guarantee that the command is even sent (in case of a network failure, the command may not be sent).
+- **Sent** - guarantees that the command is sent to the Fluxzero Runtime, but not necessarilty committed to the message log.
+- **Stored** - guarantees that the command is sent and stored in the message log.
 
-
-### Commands with Response
+### Commands with response
 
 When you need to wait for a response, you can use either asynchronous or blocking approaches:
 
@@ -87,7 +88,7 @@ val id: LightId = Fluxzero.sendCommandAndWait(
 
 ## Adding metadata to commands
 
-You can add metadata to commands to provide additional context, such as the source of the command or user information. 
+You can add metadata to commands to provide additional context, such as the source of the command.
 
 <Tabs>
 <TabItem label="Java">
@@ -109,13 +110,13 @@ Fluxzero.sendCommand(
 </Tabs>
 
 
-<Aside type="caution">
-Metadata is not automatically propagated; see the [Metadata](/reference/core-components/message#metadata) section for more details.
+<Aside type="tip">
+    Some Metadata is automatically propagated using correlation data providers. See the [Metadata](/docs/reference/040-message#metadata) section for more details and how to extend this behavior.
 </Aside>
 
-## Request Timeouts
+## Request timeouts
 
-The `@Timeout` annotation allows you to specify how long Flux should wait for a command to complete when using synchronous APIs:
+The `@Timeout` annotation allows you to specify how long Fluxzero should wait for a command to complete when using synchronous APIs:
 
 <Tabs>
 <TabItem label="Java">
@@ -142,15 +143,30 @@ val result: BigDecimal = Fluxzero
 
 **Important notes about timeouts:**
 - The timeout only applies to blocking calls (e.g., `sendAndWait`)
-- For non-blocking `send()` methods that return `CompletableFuture`, no timeout is enforced unless you manually attach one
+- For non-blocking `send()` methods that return `CompletableFuture`, no timeout is enforced unless you manually attach one (via e.g. `orTimeout`)
 - The default timeout for blocking operations (when `@Timeout` is not present) is **1 minute**
 
-## What Happens When You Send a Command
+## What happens when you send a command
 
-When you dispatch a command, Flux goes through the following pipeline:
+When you dispatch a command, Fluxzero goes through the following pipeline:
 
-1. **Dispatch Interceptors (Pre-Serialization)** - Inject metadata, validate, or modify the message
-2. **Local Handlers** - If local handlers exist, they process the command first
-3. **Serialization** - The message is converted to a `SerializedMessage`
-4. **Dispatch Interceptors (Post-Serialization)** - Final modifications after serialization
-5. **Forwarding to Flux Platform** - The command is sent to the platform for processing
+1. **Dispatch Interceptors (Pre-Serialization)** - Inject metadata, validate, or modify the message.
+2. **Local Handlers** - If local handlers exist, they process the command first, typically preventing further propagation.
+3. **Serialization** - The message is converted to a `SerializedMessage`.
+4. **Dispatch Interceptors (Post-Serialization)** - Final modifications after serialization.
+5. **Forwarding to Fluxzero Runtime** - The command is sent to the runtime and appended to the `COMMAND` log.
+
+## How commands are handled
+
+Consumers from all connected apps tail the `COMMAND` log and invoke handlers to process commands.
+
+If the command can be handled and a result is expected (`sendCommand` or `sendCommandAndWait` was used), the handler’s return value is appended to the runtime as a new `RESULT` message. The originating app then consumes this result message to complete the request:
+
+- For **asynchronous commands**, the SDK resolves the `CompletableFuture` with the result when it arrives.
+- For **blocking commands** (`sendCommandAndWait`), the SDK waits until the `RESULT` message is received before resuming execution.
+- If the handler throws an exception, the error is also serialized and returned as part of the `RESULT` message, so callers can handle it consistently.
+  - **Functional exceptions** such as `ValidationException` or `IllegalCommandException` are passed through as-is, allowing the caller to react to domain-level issues directly.
+  - **Other errors** are wrapped in a `TechnicalException` to avoid leaking sensitive implementation details to end users.
+  - Like for all handlers, the original error is still logged to the `ERROR` log, so developers always have the full details for debugging and tracing.
+
+This design makes commands and their results fully durable and observable in the logs — just like any other message — while giving your application the ergonomics of a normal function call.

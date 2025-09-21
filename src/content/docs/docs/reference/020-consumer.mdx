@@ -15,776 +15,329 @@ Think of a consumer like a team of workers at a restaurant. Multiple instances o
 
 ## How Consumers Work
 
+### Functionally
+
 ```mermaid
 graph TB
-    ML[Message Log<br/>Commands, Events, Queries]
-    
-    ML --> C1[Consumer: user-service]
-    ML --> C2[Consumer: order-service]
-    ML --> C3[Consumer: notification-service]
-    
-    C1 --> I1[Instance 1]
-    C1 --> I2[Instance 2]
-    C1 --> I3[Instance 3]
-    
-    C2 --> I4[Instance 4]
-    C2 --> I5[Instance 5]
-    
-    C3 --> I6[Instance 6]
-    
-    I1 --> H1[CreateUser<br/>UpdateUser<br/>DeleteUser]
-    I2 --> H2[CreateUser<br/>UpdateUser<br/>DeleteUser]
-    I3 --> H3[CreateUser<br/>UpdateUser<br/>DeleteUser]
+    ML(Runtime message log)
+    C1[order-consumer]
+    C2[inventory-consumer]
+    C3[shipment-consumer]
+    H1[PaymentHandler]
+    H2[OrderHandler]
+    H3[InventoryHandler]
+    H4[ShipmentHandler]
+
+    ML ~~~ C1 --> ML
+    C1 ~~~ ML
+
+    ML ~~~ C2 --> ML
+    C2 ~~~ ML
+
+    ML ~~~ C3 --> ML
+    C3 ~~~ ML
+
+    C1 --> H1
+    C1 --> H2
+    C2 --> H3
+    C3 --> H4
 ```
+
+In this functional view, each consumer (order, inventory, shipment) connects to the runtime message log.
+  Each consumer groups its own handlers — for example, the order-consumer routes messages to the `PaymentHandler` and `OrderHandler`. This view highlights the *roles* of consumers and handlers in your domain.
+
+### Technically
+
+```mermaid
+graph LR
+    ML(Runtime message log)
+
+    H1[PaymentHandler]
+    H2[OrderHandler]
+    H3[InventoryHandler]
+    H4[ShipmentHandler]
+    T1[tracker 1
+       segment 0-50%]
+    T2[tracker 2
+       segment 50-100%]
+    T3[tracker 1
+       segment 0-50%]
+    T4[tracker 2
+       segment 50-100%]
+    T5[tracker 1
+       segment 0-100%]
+
+    subgraph A2[shipment-app]
+        subgraph I3[Instance]
+            subgraph C2[inventory-consumer]
+                T3
+                T4
+            end
+            subgraph C3[shipment-consumer]
+                T5
+            end
+
+
+            H3
+            H4
+        end
+    end
+
+    subgraph A1[shop-app]
+        subgraph I2[Instance 2]
+            subgraph C1B[order-consumer]
+                T2
+            end
+            H1B[PaymentHandler]
+            H2B[OrderHandler]
+        end
+        subgraph I1[Instance 1]
+            subgraph C1[order-consumer]
+                T1
+            end
+            H1
+            H2
+        end
+    end
+
+    ML ~~~ T1 --> ML
+    T1 ~~~ ML
+
+    ML ~~~ T2 --> ML
+    T2 ~~~ ML
+
+    ML ~~~ T3 --> ML
+    T3 ~~~ ML
+
+    ML ~~~ T4 --> ML
+    T4 ~~~ ML
+
+    ML ~~~ T5 --> ML
+    T5 ~~~ ML
+
+    C1 --> H1
+    C1 --> H2
+    C1B --> H1B
+    C1B --> H2B
+    C2 --> H3
+    C3 --> H4
+
+```
+
+In the technical view, you see how the same setup runs across multiple application instances.
+  Each consumer is backed by one or more **trackers**, which divide the log into segments. Trackers process messages sequentially within their segment, while multiple trackers in parallel enable scaling across cores and instances. Handlers then receive messages via their consumer’s tracker.
+
+The Fluxzero Runtime automatically balances message load across trackers for each consumer.
+Scaling up is effortless: just launch another instance of your app (e.g. `shipment-app`), and Fluxzero distributes the work automatically.
+
+<Aside type="tip">
+  Use <code>@RoutingKey</code> on a property in your message payload if you need all messages with the same key to be processed sequentially.
+  This is especially useful for enforcing order on a per-customer, per-order, or per-entity basis while still benefiting from parallelism across different keys.
+</Aside>
 
 ### Key Concepts
 
-1. **Consumer Name**: A logical identifier that groups related handlers
-2. **Load Balancing**: Messages are distributed across all instances with the same consumer name
-3. **Scaling**: Add more instances to handle increased load
-4. **Isolation**: Different consumers process different message types independently
+1. **Consumer**: A logical identifier that groups related handlers
+2. **Tracker**: A single-threaded processor of messages for a consumer
+3. **Handler**: A class in charge of handling messages (via e.g. `@HandleCommand`)
+4. **Instance**: An application instance, defining handlers and consumers
 
 ## Defining Consumers
 
-### Default Consumer Behavior
+## Default Consumer Behavior
 
-By default, each message handler automatically joins a consumer named after the class:
+By default, handlers join the **default consumer** for a given message type. For example:
 
 <Tabs>
-<TabItem label="Java">
+<TabItem value="Java" label="Java">
+
 ```java
-public class UserService {
-    
+class MyHandler {
     @HandleCommand
-    public UserId handle(CreateUser command) {
-        // Automatically joins consumer "UserService"
-        return createUser(command);
-    }
-    
-    @HandleEvent
-    public void on(UserCreated event) {
-        // Same consumer "UserService"
-        updateUserProjection(event);
+    void handle(SomeCommand command) {
+        // business logic here
     }
 }
 ```
+
 </TabItem>
-<TabItem label="Kotlin">
+<TabItem value="Kotlin" label="Kotlin">
+
 ```kotlin
-class UserService {
-    
+class MyHandler {
     @HandleCommand
-    fun handle(command: CreateUser): UserId {
-        // Automatically joins consumer "UserService"
-        return createUser(command)
-    }
-    
-    @HandleEvent
-    fun on(event: UserCreated) {
-        // Same consumer "UserService"
-        updateUserProjection(event)
+    fun handle(command: SomeCommand) {
+        // business logic here
     }
 }
 ```
+
 </TabItem>
 </Tabs>
 
-### Custom Consumer Names
+This handler joins the default **command consumer** automatically.
 
-You can specify custom consumer names for better organization:
+## Custom Consumers with @Consumer
+
+You can override the default behavior using the `@Consumer` annotation:
 
 <Tabs>
-<TabItem label="Java">
-```java
-@Consumer(name = "user-service")
-public class UserCommandHandler {
-    
-    @HandleCommand
-    public UserId handle(CreateUser command) {
-        return createUser(command);
-    }
-    
-    @HandleCommand
-    public void handle(UpdateUser command) {
-        updateUser(command);
-    }
-}
+<TabItem value="Java" label="Java">
 
-@Consumer(name = "user-service")  // Same consumer!
-public class UserEventHandler {
-    
-    @HandleEvent
-    public void on(UserCreated event) {
-        updateUserProjection(event);
-    }
-    
-    @HandleEvent
-    public void on(UserUpdated event) {
-        updateUserProjection(event);
+```java
+@Consumer(name = "MyConsumer")
+class MyHandler {
+    @HandleCommand
+    void handle(SomeCommand command) {
+        // business logic
     }
 }
 ```
+
 </TabItem>
-<TabItem label="Kotlin">
+<TabItem value="Kotlin" label="Kotlin">
+
 ```kotlin
-@Consumer(name = "user-service")
-class UserCommandHandler {
-    
+@Consumer(name = "MyConsumer")
+class MyHandler {
     @HandleCommand
-    fun handle(command: CreateUser): UserId {
-        return createUser(command)
-    }
-    
-    @HandleCommand
-    fun handle(command: UpdateUser) {
-        updateUser(command)
-    }
-}
-
-@Consumer(name = "user-service")  // Same consumer!
-class UserEventHandler {
-    
-    @HandleEvent
-    fun on(event: UserCreated) {
-        updateUserProjection(event)
-    }
-    
-    @HandleEvent
-    fun on(event: UserUpdated) {
-        updateUserProjection(event)
+    fun handle(command: SomeCommand) {
+        // business logic
     }
 }
 ```
+
 </TabItem>
 </Tabs>
 
-## Consumer Configuration
+To apply this to an entire package (and its subpackages), add a `package-info.java` file:
 
-Consumers can be configured to optimize performance and behavior:
+```java
+@Consumer(name = "MyConsumer")
+package com.example.handlers;
+```
+
+## Customizing Consumer Configuration
+
+You can tune the behavior using additional attributes on the `@Consumer` annotation:
 
 <Tabs>
-<TabItem label="Java">
+<TabItem value="Java" label="Java">
+
 ```java
-@Consumer(
-    name = "user-service",
-    trackerConfiguration = @TrackerConfiguration(
-        threads = 4,                    // Processing threads
-        batchSize = 100,               // Messages per batch
-        maxFetchTime = Duration.ofSeconds(1)
-    ),
-    retryConfiguration = @RetryConfiguration(
-        maxRetries = 3,
-        retryDelayFactor = 2.0
-    )
-)
-public class UserService {
-    
+@Consumer(name = "MyConsumer", threads = 2, maxFetchSize = 100)
+class MyHandler {
     @HandleCommand
-    public UserId handle(CreateUser command) {
-        return userRepository.save(new User(command.getName()));
+    void handle(SomeCommand command) {
+        // business logic
     }
 }
 ```
+
 </TabItem>
-<TabItem label="Kotlin">
+<TabItem value="Kotlin" label="Kotlin">
+
 ```kotlin
-@Consumer(
-    name = "user-service",
-    trackerConfiguration = TrackerConfiguration(
-        threads = 4,                    // Processing threads
-        batchSize = 100,               // Messages per batch
-        maxFetchTime = Duration.ofSeconds(1)
-    ),
-    retryConfiguration = RetryConfiguration(
-        maxRetries = 3,
-        retryDelayFactor = 2.0
-    )
-)
-class UserService {
-    
+@Consumer(name = "MyConsumer", threads = 2, maxFetchSize = 100)
+class MyHandler {
     @HandleCommand
-    fun handle(command: CreateUser): UserId {
-        return userRepository.save(User(command.name))
+    fun handle(command: SomeCommand) {
+        // business logic
     }
 }
 ```
+
 </TabItem>
 </Tabs>
 
-## Scaling Patterns
+- `threads = 2`: Two threads per application instance will fetch commands.
+- `maxFetchSize = 100`: Up to 100 messages fetched per request, helping apply backpressure.
 
-### Horizontal Scaling
+Each thread runs a **tracker**. If you deploy the app multiple times, Fluxzero automatically load-balances messages across all available trackers.
 
-The most common scaling pattern is to run multiple instances of your application:
+## Default consumer settings
 
-```mermaid
-graph TB
-    subgraph "Load Balancer"
-        LB[Load Balancer]
-    end
-    
-    subgraph "Application Instances"
-        App1[App Instance 1<br/>Consumer: user-service]
-        App2[App Instance 2<br/>Consumer: user-service]
-        App3[App Instance 3<br/>Consumer: user-service]
-    end
-    
-    subgraph "Fluxzero Platform"
-        ML[Message Log]
-        T1[Tracker 1]
-        T2[Tracker 2]
-        T3[Tracker 3]
-    end
-    
-    LB --> App1
-    LB --> App2
-    LB --> App3
-    
-    ML --> T1
-    ML --> T2
-    ML --> T3
-    
-    T1 --> App1
-    T2 --> App2
-    T3 --> App3
-```
+Fluxzero provides conservative defaults to ensure safe and sequential processing:
 
-**Benefits**:
-- Automatic load balancing
-- Fault tolerance (if one instance fails, others continue)
-- Easy to deploy and manage
-- Linear scaling with demand
+| Setting                | Description | Default value             |
+|------------------------|-------------|---------------------------|
+| `threads`              | Number of tracker threads. Each thread owns a disjoint segment of the log. | `1`                       |
+| `maxFetchSize`         | Maximum messages per batch; balances throughput and memory. | `1024`                    |
+| `maxWaitDuration`      | How long to wait before polling again if no messages are available. | `60`                      |
+| `durationUnit`         | Time unit for `maxWaitDuration`. | `SECONDS`                 |
+| `errorHandler`         | Logs processing errors and continues. | `LoggingErrorHandler`     |
+| `flowRegulator`        | Default backpressure strategy; no throttling. | `NoOpFlowRegulator`       |
+| `filterMessageTarget`  | If true, only messages targeted to this instance are processed. | `false`                   |
+| `ignoreSegment`        | If true, bypasses Runtime sharding and processes all segments. | `false`                   |
+| `singleTracker`        | If true, a single tracker processes all messages in strict global order. | `false`                   |
+| `clientControlledIndex`| If true, the app decides which messages to process. | `false`                   |
+| `storePositionManually`| If true, the app must commit tracker position explicitly. | `false`                   |
+| `exclusive`            | Handlers are active in only one consumer. | `true`                    |
+| `passive`              | If true, handler results are ignored and not published to the result log. | `false`                   |
+| `minIndex`             | Negative means start at the end of the log (only new messages). | `-1`                      |
+| `maxIndexExclusive`    | Negative means no upper bound. | `-1`                      |
+| `typeFilter`           | No server-side filtering; all message types are delivered. | `""` (empty)              |
 
-### Vertical Scaling
-
-You can also scale by increasing resources within a single instance:
-
-<Tabs>
-<TabItem label="Java">
-```java
-@Consumer(
-    name = "user-service",
-    trackerConfiguration = @TrackerConfiguration(
-        threads = 16,        // More threads
-        batchSize = 1000     // Larger batches
-    )
-)
-public class UserService {
-    // Same code, more processing power
-}
-```
-</TabItem>
-<TabItem label="Kotlin">
-```kotlin
-@Consumer(
-    name = "user-service",
-    trackerConfiguration = TrackerConfiguration(
-        threads = 16,        // More threads
-        batchSize = 1000     // Larger batches
-    )
-)
-class UserService {
-    // Same code, more processing power
-}
-```
-</TabItem>
-</Tabs>
-
-### Mixed Scaling
-
-You can combine both approaches:
-
-```mermaid
-graph TB
-    ML[Message Log]
-    
-    ML --> T1[Tracker 1<br/>Instance 1<br/>16 threads]
-    ML --> T2[Tracker 2<br/>Instance 2<br/>16 threads]
-    ML --> T3[Tracker 3<br/>Instance 3<br/>16 threads]
-    
-    T1 --> H1[High-throughput<br/>Processing]
-    T2 --> H2[High-throughput<br/>Processing]
-    T3 --> H3[High-throughput<br/>Processing]
-```
-
-## Consumer Strategies
-
-### Domain-Based Consumers
-
-Organize consumers around business domains:
-
-<Tabs>
-<TabItem label="Java">
-```java
-@Consumer(name = "user-domain")
-public class UserHandlers {
-    @HandleCommand
-    public UserId handle(CreateUser command) { /* ... */ }
-    
-    @HandleEvent
-    public void on(UserCreated event) { /* ... */ }
-}
-
-@Consumer(name = "order-domain")
-public class OrderHandlers {
-    @HandleCommand
-    public OrderId handle(CreateOrder command) { /* ... */ }
-    
-    @HandleEvent
-    public void on(OrderCreated event) { /* ... */ }
-}
-
-@Consumer(name = "notification-domain")
-public class NotificationHandlers {
-    @HandleEvent
-    public void on(UserCreated event) { /* Send welcome email */ }
-    
-    @HandleEvent
-    public void on(OrderCreated event) { /* Send confirmation */ }
-}
-```
-</TabItem>
-<TabItem label="Kotlin">
-```kotlin
-@Consumer(name = "user-domain")
-class UserHandlers {
-    @HandleCommand
-    fun handle(command: CreateUser): UserId { /* ... */ }
-    
-    @HandleEvent
-    fun on(event: UserCreated) { /* ... */ }
-}
-
-@Consumer(name = "order-domain")
-class OrderHandlers {
-    @HandleCommand
-    fun handle(command: CreateOrder): OrderId { /* ... */ }
-    
-    @HandleEvent
-    fun on(event: OrderCreated) { /* ... */ }
-}
-
-@Consumer(name = "notification-domain")
-class NotificationHandlers {
-    @HandleEvent
-    fun on(event: UserCreated) { /* Send welcome email */ }
-    
-    @HandleEvent
-    fun on(event: OrderCreated) { /* Send confirmation */ }
-}
-```
-</TabItem>
-</Tabs>
-
-### Function-Based Consumers
-
-Organize consumers around specific functions:
-
-<Tabs>
-<TabItem label="Java">
-```java
-@Consumer(name = "command-processor")
-public class CommandProcessor {
-    @HandleCommand
-    public UserId handle(CreateUser command) { /* ... */ }
-    
-    @HandleCommand
-    public OrderId handle(CreateOrder command) { /* ... */ }
-}
-
-@Consumer(name = "projection-builder")
-public class ProjectionBuilder {
-    @HandleEvent
-    public void on(UserCreated event) { /* ... */ }
-    
-    @HandleEvent
-    public void on(OrderCreated event) { /* ... */ }
-}
-
-@Consumer(name = "analytics-processor")
-public class AnalyticsProcessor {
-    @HandleEvent
-    public void on(UserCreated event) { /* Track user signup */ }
-    
-    @HandleEvent
-    public void on(OrderCreated event) { /* Track sales */ }
-}
-```
-</TabItem>
-<TabItem label="Kotlin">
-```kotlin
-@Consumer(name = "command-processor")
-class CommandProcessor {
-    @HandleCommand
-    fun handle(command: CreateUser): UserId { /* ... */ }
-    
-    @HandleCommand
-    fun handle(command: CreateOrder): OrderId { /* ... */ }
-}
-
-@Consumer(name = "projection-builder")
-class ProjectionBuilder {
-    @HandleEvent
-    fun on(event: UserCreated) { /* ... */ }
-    
-    @HandleEvent
-    fun on(event: OrderCreated) { /* ... */ }
-}
-
-@Consumer(name = "analytics-processor")
-class AnalyticsProcessor {
-    @HandleEvent
-    fun on(event: UserCreated) { /* Track user signup */ }
-    
-    @HandleEvent
-    fun on(event: OrderCreated) { /* Track sales */ }
-}
-```
-</TabItem>
-</Tabs>
-
-## Performance Considerations
-
-### Choosing the Right Consumer Strategy
-
-<CardGrid>
-<Card title="Single Consumer" icon="group">
-**Best for**: Simple applications, strong consistency requirements
-- All handlers in one consumer
-- Easier to manage and deploy
-- Sequential processing guarantees
-</Card>
-
-<Card title="Domain Consumers" icon="puzzle">
-**Best for**: Domain-driven design, team boundaries
-- Separate consumers per business domain
-- Independent scaling per domain
-- Clean separation of concerns
-</Card>
-
-<Card title="Function Consumers" icon="setting">
-**Best for**: Different performance requirements
-- Commands, events, queries in separate consumers
-- Optimized configurations per function
-- Fine-grained scaling control
-</Card>
-</CardGrid>
-
-### Tuning Consumer Performance
-
-<Tabs>
-<TabItem label="High Throughput">
-```java
-@Consumer(
-    name = "bulk-processor",
-    trackerConfiguration = @TrackerConfiguration(
-        threads = 16,
-        batchSize = 1000,
-        maxFetchTime = Duration.ofMillis(100)
-    )
-)
-```
-**Use when**: Processing large volumes of messages
-**Trade-offs**: Higher resource usage, potential latency
-</TabItem>
-
-<TabItem label="Low Latency">
-```java
-@Consumer(
-    name = "real-time-processor",
-    trackerConfiguration = @TrackerConfiguration(
-        threads = 1,
-        batchSize = 1,
-        maxFetchTime = Duration.ofMillis(10)
-    )
-)
-```
-**Use when**: Real-time processing requirements
-**Trade-offs**: Lower throughput, higher resource per message
-</TabItem>
-
-<TabItem label="Balanced">
-```java
-@Consumer(
-    name = "general-processor",
-    trackerConfiguration = @TrackerConfiguration(
-        threads = 4,
-        batchSize = 100,
-        maxFetchTime = Duration.ofSeconds(1)
-    )
-)
-```
-**Use when**: General purpose processing
-**Trade-offs**: Good balance of throughput and latency
-</TabItem>
-</Tabs>
-
-## Consumer Lifecycle
-
-Understanding how consumers start and stop:
-
-```mermaid
-timeline
-    title Consumer Lifecycle
-    
-    Application Start : Consumer registers with Fluxzero
-                      : Tracker starts reading from Message Log
-    
-    Processing : Messages are fetched and processed
-              : Position is tracked and updated
-    
-    Scaling : New instances join the same consumer
-           : Load is automatically balanced
-    
-    Shutdown : Consumer stops processing new messages
-            : In-flight messages are completed
-            : Position is saved
-```
-
-### Graceful Shutdown
-
-<Tabs>
-<TabItem label="Java">
-```java
-@Consumer(name = "user-service")
-public class UserService {
-    
-    @HandleCommand
-    public UserId handle(CreateUser command) {
-        // This will complete before shutdown
-        return createUser(command);
-    }
-    
-    @PreDestroy
-    public void shutdown() {
-        // Cleanup resources
-        log.info("UserService shutting down gracefully");
-    }
-}
-```
-</TabItem>
-<TabItem label="Kotlin">
-```kotlin
-@Consumer(name = "user-service")
-class UserService {
-    
-    @HandleCommand
-    fun handle(command: CreateUser): UserId {
-        // This will complete before shutdown
-        return createUser(command)
-    }
-    
-    @PreDestroy
-    fun shutdown() {
-        // Cleanup resources
-        log.info("UserService shutting down gracefully")
-    }
-}
-```
-</TabItem>
-</Tabs>
-
-## Common Patterns
-
-### Multi-Instance Deployment
-
-Deploy the same consumer across multiple instances:
-
-```yaml
-# docker-compose.yml
-version: '3.8'
-services:
-  user-service-1:
-    image: user-service:latest
-    environment:
-      - FLUX_CONSUMER_NAME=user-service
-      
-  user-service-2:
-    image: user-service:latest
-    environment:
-      - FLUX_CONSUMER_NAME=user-service
-      
-  user-service-3:
-    image: user-service:latest
-    environment:
-      - FLUX_CONSUMER_NAME=user-service
-```
-
-### Environment-Specific Consumers
-
-<Tabs>
-<TabItem label="Java">
-```java
-@Consumer(name = "${app.consumer.name:user-service}")
-public class UserService {
-    // Consumer name from configuration
-}
-```
-</TabItem>
-<TabItem label="Kotlin">
-```kotlin
-@Consumer(name = "\${app.consumer.name:user-service}")
-class UserService {
-    // Consumer name from configuration
-}
-```
-</TabItem>
-</Tabs>
-
-### Consumer Health Checks
-
-<Tabs>
-<TabItem label="Java">
-```java
-@Consumer(name = "user-service")
-public class UserService {
-    
-    private final MeterRegistry meterRegistry;
-    private final Counter processedMessages;
-    
-    public UserService(MeterRegistry meterRegistry) {
-        this.meterRegistry = meterRegistry;
-        this.processedMessages = Counter.builder("messages.processed")
-            .tag("consumer", "user-service")
-            .register(meterRegistry);
-    }
-    
-    @HandleCommand
-    public UserId handle(CreateUser command) {
-        try {
-            UserId result = createUser(command);
-            processedMessages.increment();
-            return result;
-        } catch (Exception e) {
-            Metrics.counter("messages.failed", "consumer", "user-service").increment();
-            throw e;
-        }
-    }
-}
-```
-</TabItem>
-<TabItem label="Kotlin">
-```kotlin
-@Consumer(name = "user-service")
-class UserService(private val meterRegistry: MeterRegistry) {
-    
-    private val processedMessages = Counter.builder("messages.processed")
-        .tag("consumer", "user-service")
-        .register(meterRegistry)
-    
-    @HandleCommand
-    fun handle(command: CreateUser): UserId {
-        return try {
-            val result = createUser(command)
-            processedMessages.increment()
-            result
-        } catch (e: Exception) {
-            Metrics.counter("messages.failed", "consumer", "user-service").increment()
-            throw e
-        }
-    }
-}
-```
-</TabItem>
-</Tabs>
-
-## Best Practices
-
-### 1. Use Descriptive Consumer Names
-```java
-// Good
-@Consumer(name = "user-service")
-@Consumer(name = "order-processing")
-@Consumer(name = "notification-sender")
-
-// Bad
-@Consumer(name = "service1")
-@Consumer(name = "handler")
-@Consumer(name = "processor")
-```
-
-### 2. Keep Consumer Names Stable
-```java
-// Good: Stable across deployments
-@Consumer(name = "user-service")
-
-// Bad: Environment-specific
-@Consumer(name = "user-service-prod")
-@Consumer(name = "user-service-${environment}")
-```
-
-### 3. Configure for Your Use Case
-```java
-// For high-throughput batch processing
-@Consumer(
-    name = "batch-processor",
-    trackerConfiguration = @TrackerConfiguration(
-        threads = 16,
-        batchSize = 1000
-    )
-)
-
-// For real-time processing
-@Consumer(
-    name = "real-time-processor",
-    trackerConfiguration = @TrackerConfiguration(
-        threads = 1,
-        batchSize = 1
-    )
-)
-```
-
-### 4. Monitor Consumer Health
-```java
-@Consumer(name = "user-service")
-public class UserService {
-    
-    @HandleCommand
-    public UserId handle(CreateUser command) {
-        Timer.Sample timer = Timer.start(meterRegistry);
-        try {
-            return createUser(command);
-        } finally {
-            timer.stop(Timer.builder("message.processing.time")
-                .tag("consumer", "user-service")
-                .tag("message", "CreateUser")
-                .register(meterRegistry));
-        }
-    }
-}
-```
-
-## Troubleshooting
-
-### Common Issues
-
-<Aside type="caution" title="Messages not being processed">
-**Check**:
-- Consumer name is correct
-- Application instances are running
-- No exceptions in message handlers
-- Tracker configuration is appropriate
+<Aside type="note">
+Defaults are safe but modest. They ensure single-threaded sequential processing with minimal risk of overload.
 </Aside>
 
-<Aside type="caution" title="Slow processing">
-**Solutions**:
-- Increase thread count
-- Increase batch size
-- Add more application instances
-- Check handler performance
+### Segment distribution
+
+- By default, message logs are split into **128 segments**.
+- Trackers divide these segments evenly.
+  - `threads = 2` → 64 segments each
+  - `threads = 4` → 32 segments each
+
+This segmentation enables parallel consumption and smooth horizontal scaling.
+
+### When to override defaults
+
+- Raise **threads** for concurrency when handlers are I/O-bound.
+- Adjust **maxFetchSize** to balance latency and throughput.
+- Set **singleTracker = true** for strict global ordering.
+- Use **passive = true** for projections or audit-only consumers.
+- Enable **storePositionManually** for long-running workflows or custom commit strategies.
+
+<Aside type="caution">
+Sticking to defaults may underutilize resources or miss ordering guarantees your use case requires.
 </Aside>
 
-<Aside type="caution" title="Memory issues">
-**Solutions**:
-- Reduce batch size
-- Reduce thread count
-- Check for memory leaks in handlers
-- Optimize message processing logic
+## Backpressure, batching, and throughput
+
+- **Batching (`maxFetchSize`)**: Larger batches reduce fetch overhead but create handler bursts.
+- **Concurrency (`threads`)**: More trackers increase parallelism but may add contention.
+- **Per-message cost**: I/O-heavy handlers benefit from concurrency; CPU-heavy handlers may saturate a core.
+
+<Aside type="note">
+Each tracker maintains its own position. A slow tracker does not block faster ones in the same consumer.
 </Aside>
 
-## Related Concepts
+## Errors and retries
 
-- **[Trackers](/reference/core-components/tracker)** - How consumers read messages
-- **[Messages](/reference/core-components/message)** - What consumers process
-- **[Handlers](/reference/core-components/handler)** - Where consumer logic lives
-- **[Architecture](/about/architecture)** - High-level system overview
+- **Failures are isolated** to the tracker processing the message.
+- **Positions advance on success**; failed messages are retried by policy.
+- **Metrics and logs** capture errors with full correlation for root-cause tracing.
+
+<Aside type="caution">
+Handlers must be idempotent — retries may invoke the same payload again.
+</Aside>
+
+## Tuning checklist
+
+1. Start with defaults; measure latency and handler time.
+2. Increase `threads` gradually (1–2 at a time).
+3. Tune `maxFetchSize` to match handler burst capacity.
+4. Use separate consumers for heavy or specialized workloads.
+5. Scale out app instances once a single instance is saturated.
+
+## FAQ
+
+**How many trackers will I have?**
+`threads × number_of_app_instances` (per consumer).
+
+**Will a message be processed twice?**
+No. The Runtime coordinates trackers to prevent duplicate delivery.
+
+**Can I separate replay from live traffic?**
+Yes. Define a separate consumer with its own trackers and configuration.

@@ -59,10 +59,6 @@ export default defineConfig({
                     autogenerate: {directory: 'docs/guides'},
                 },
                 {
-                    label: 'Reference',
-                    autogenerate: {directory: 'docs/reference'},
-                },
-                {
                     label: 'About',
                     autogenerate: {directory: 'docs/about'},
                 },
