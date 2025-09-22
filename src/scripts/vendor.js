@@ -9,7 +9,18 @@ import 'swiper/css/bundle';
 if (typeof window !== 'undefined') {
   // Dynamic imports to ensure they only run client-side
   import('bootstrap/dist/js/bootstrap.bundle.min.js');
-  import('smooth-scroll/dist/smooth-scroll.polyfills.min.js');
+
+  // Initialize smooth scroll
+  import('smooth-scroll/dist/smooth-scroll.polyfills.min.js').then(() => {
+    if (typeof SmoothScroll !== 'undefined') {
+      new SmoothScroll('a[data-scroll]', {
+        speed: 600,
+        speedAsDuration: true,
+        offset: 80
+      });
+    }
+  });
+
   import('jarallax/dist/jarallax.min.js');
   import('rellax/rellax.min.js');
   import('swiper/bundle');
