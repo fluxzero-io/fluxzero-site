@@ -10,22 +10,10 @@ if (typeof window !== 'undefined') {
   // Dynamic imports to ensure they only run client-side
   import('bootstrap/dist/js/bootstrap.bundle.min.js');
 
-  // Initialize smooth scroll
-  import('smooth-scroll/dist/smooth-scroll.polyfills.min.js').then(() => {
-    if (typeof SmoothScroll !== 'undefined') {
-      new SmoothScroll('a[data-scroll]', {
-        speed: 600,
-        speedAsDuration: true,
-        offset: 80
-      });
+  // Initialize Jarallax (if any .jarallax elements exist)
+  import('jarallax/dist/jarallax.min.js').then(() => {
+    if (typeof jarallax !== 'undefined') {
+      jarallax(document.querySelectorAll('.jarallax'));
     }
   });
-
-  import('jarallax/dist/jarallax.min.js');
-  import('rellax/rellax.min.js');
-  import('swiper/bundle');
-  import('lightgallery');
-  import('lightgallery/plugins/fullscreen');
-  import('lightgallery/plugins/zoom');
-  import('lightgallery/plugins/video');
 }
