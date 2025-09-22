@@ -3,7 +3,7 @@ import {defineConfig} from 'astro/config';
 import starlight from '@astrojs/starlight';
 import mermaid from 'astro-mermaid';
 import tailwindcss from '@tailwindcss/vite';
-
+import starlightLinksValidator from 'starlight-links-validator'
 import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
@@ -45,6 +45,14 @@ export default defineConfig({
             favicon: '/assets/fluxzero/fluxzero-logo.png',
             social: [{icon: 'github', label: 'GitHub', href: 'https://github.com/fluxzero-io'}],
             customCss: ['./src/styles/global.css'],
+            plugins: [
+                starlightLinksValidator({
+                    exclude: ({ link }) => {
+                        // ignore any non docs link as we cannot check this from starlight if they actually exist or not
+                        return !link.startsWith('/docs/')
+                    }
+                })
+            ],
             sidebar: [
                 {
                     label: 'Getting started',
