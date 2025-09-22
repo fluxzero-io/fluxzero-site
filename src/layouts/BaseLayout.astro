@@ -186,59 +186,5 @@ const {
     <script src="../scripts/theme.js"></script>
     <script src="../scripts/main.js"></script>
     <script src="../scripts/vendor.js"></script>
-
-    <script>
-      // Initialize parallax effects only on desktop (>= 1200px)
-      document.addEventListener('DOMContentLoaded', function() {
-        const isDesktop = () => window.matchMedia('(min-width: 1200px)').matches;
-        let cleanupMouse = null;
-        let rellaxInstance = null;
-
-        const enableParallax = () => {
-          const parallaxLayers = document.querySelectorAll('.parallax-layer[data-depth]');
-          if (parallaxLayers.length > 0 && !cleanupMouse) {
-            const onMouseMove = (e) => {
-              const x = (e.clientX - window.innerWidth / 2) / window.innerWidth;
-              const y = (e.clientY - window.innerHeight / 2) / window.innerHeight;
-              parallaxLayers.forEach((layer) => {
-                const depth = parseFloat(layer.getAttribute('data-depth')) || 0;
-                const moveX = x * depth * 60;
-                const moveY = y * depth * 60;
-                layer.style.transform = `translate(${moveX}px, ${moveY}px)`;
-                layer.style.transition = 'transform 0.1s ease-out';
-              });
-            };
-            document.addEventListener('mousemove', onMouseMove);
-            cleanupMouse = () => document.removeEventListener('mousemove', onMouseMove);
-          }
-
-          if (typeof Rellax !== 'undefined' && !rellaxInstance) {
-            const rellaxElements = document.querySelectorAll('.rellax');
-            if (rellaxElements.length > 0) {
-              rellaxInstance = new Rellax('.rellax');
-            }
-          }
-        };
-
-        const disableParallax = () => {
-          if (cleanupMouse) { cleanupMouse(); cleanupMouse = null; }
-          if (rellaxInstance && typeof rellaxInstance.destroy === 'function') {
-            rellaxInstance.destroy();
-            rellaxInstance = null;
-          }
-        };
-
-        const updateParallax = () => {
-          if (isDesktop()) {
-            enableParallax();
-          } else {
-            disableParallax();
-          }
-        };
-
-        updateParallax();
-        window.addEventListener('resize', updateParallax);
-      });
-    </script>
   </body>
 </html>
