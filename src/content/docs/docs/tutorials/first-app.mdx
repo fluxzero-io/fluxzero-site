@@ -264,7 +264,7 @@ data class CreateProject(
   </TabItem>
 </Tabs>
 
-You can define any roles. For more info on user and role based access see [user access control](/docs/guides/messaging/071-role-based-access-control).
+You can define any roles. For more info on user and role based access see [user access control](/docs/guides/messaging/role-based-access-control).
 
 ---
 
@@ -308,7 +308,7 @@ class ProjectCommandHandler {
 What this method tells Fluxzero is that this handler is interested in commands of type CreateProject. These commands
 may have been published in the same app or any other service connected to the Fluxzero runtime.
 
-You can inject all kinds of parameters into handler methods, like the command sender, metadata, or full command message. For more info on handlers see [message handlers](/docs/guides/messaging/020-message-handling).
+You can inject all kinds of parameters into handler methods, like the command sender, metadata, or full command message. For more info on handlers see [message handlers](/docs/guides/messaging/message-handling).
 
 <Aside type="note">
   Behind the scenes, messages like commands are consumed from the command log in Fluxzero by your app’s
@@ -316,7 +316,7 @@ You can inject all kinds of parameters into handler methods, like the command se
 
   If you want more control, you can also create an isolated consumer with <code>@Consumer</code>.
   For details on consumer behavior, tuning, and tracking positions, see
-  [Message tracking](/docs/guides/messaging/030-message-tracking/).
+  [Message tracking](/docs/guides/messaging/message-tracking/).
 </Aside>
 
 <Aside type="tip">
@@ -373,7 +373,7 @@ works even if the entity does not yet exist.
 In the last example, the command payload (CreateProject) is applied to the entity.
 If that succeeds, the same payload is wrapped in a new message which gets published as event.
 
-Want to understand why we recommend reusing the same payload in both command and event? See [Applying entity updates](/docs/guides/modeling--persistence/170-domain-modeling#applying-updates-to-entities).
+Want to understand why we recommend reusing the same payload in both command and event? See [Applying entity updates](/docs/guides/modeling-and-persistence/domain-modeling#applying-updates-to-entities).
 
 ---
 
@@ -622,7 +622,7 @@ This ensures that business rules are enforced before anything is persisted, and 
 
 <Aside type="tip">
   Want to dive deeper into persistence models and aggregate lifecycles?
-  See [Entity persistence](/docs/guides/modeling--persistence/200-model-persistence).
+  See [Entity persistence](/docs/guides/modeling-and-persistence/model-persistence).
 </Aside>
 
 ---
@@ -1244,7 +1244,7 @@ You can handle queries directly inside the query class. This keeps your logic cl
   </TabItem>
 </Tabs>
 
-Fluxzero Search makes queries like this effortless. See the [search docs](/docs/guides/modeling--persistence/220-document-index-and-search/) for details.
+Fluxzero Search makes queries like this effortless. See the [search docs](/docs/guides/modeling-and-persistence/document-index-and-search/) for details.
 
 You can inject the Sender just like with commands, and implement filtering or authorization logic as needed. Let's use this to make sure only authorized
 users get access to a Project:
@@ -1589,7 +1589,7 @@ Your handler methods can return results or `void`. Fluxzero manages the flow tra
 3. **Handler runs** — your method processes the request.
 4. **Response returned** — the result is sent back as a `WebResponse` to the client.
 
-For more details, see the [handling web requests guide](/docs/guides/messaging/120-handling-web-requests/).
+For more details, see the [handling web requests guide](/docs/guides/messaging/handling-web-requests/).
 
 <Aside type="tip">
   Just like with other message handlers, you can inject the current user, full message, or message metadata into your
@@ -1782,7 +1782,7 @@ fun renamingNonExistentProjectFails() {
 
 <Aside type="note">
   The default user in tests is the system user. To simulate user-specific access in endpoint tests, pass an access header or cookie to the `TestFixture`, e.g. using `.withHeader("Authorization", "Bearer xyz")`.
-  See [User providers](/docs/guides/messaging/071-role-based-access-control/#where-does-user-info-come-from) for more info.
+  See [User providers](/docs/guides/messaging/role-based-access-control/#where-does-user-info-come-from) for more info.
 </Aside>
 
 ## Adding Tasks to a Project
@@ -2498,7 +2498,7 @@ By storing the Task **entity** (`Entity<Task>`) instead of the Task value, a ref
 <Aside type="note">
   When loading an event-sourced <code>Entity</code> inside a handler method, Fluxzero automatically replays it up to
   the time of the handled message — not the present. This ensures you're always working with the entity state as it
-  was when the message occurred. See [Entity loading](/docs/guides/modeling--persistence/180-entity-loading/) for more info.
+  was when the message occurred. See [Entity loading](/docs/guides/modeling-and-persistence/entity-loading/) for more info.
 </Aside>
 
 ### Querying your tasks
@@ -2801,7 +2801,7 @@ class SlackNotifier {
 <Aside type="note">
   If your app is running in a secure environment, make sure to inject secrets like `slack.webhook.url` via environment variables or secret stores.
 
-  For more information on injecting application properties, [see here](/docs/guides/configuration--support/280-application-properties/).
+  For more information on injecting application properties, [see here](/docs/guides/configuration-and-support/application-properties/).
 </Aside>
 
 This pattern keeps things clean:
@@ -2987,7 +2987,7 @@ You’ve now seen how Fluxzero helps you build powerful apps with simple, expres
 
 Want to keep going?
 
-- Dive deeper with our [developer guides](/docs/guides/010-overview)
+- Dive deeper with our [developer guides](/docs/guides)
 - Learn how to [deploy to Fluxzero Cloud](/docs/tutorials/cloud-deployment)
 - Explore real-world patterns in the <a href="https://github.com/fluxzero-io/fluxzero-examples" target="_blank" rel="noopener noreferrer">Fluxzero examples repo <span aria-hidden="true">↗</span></a>
 - Try extending the to-do app — maybe add task checklists, due dates, or progress tracking

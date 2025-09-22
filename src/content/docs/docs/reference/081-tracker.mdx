@@ -1,5 +1,7 @@
 ---
 title: Tracker
+description: Understanding trackers as the backbone of message processing in Fluxzero
+slug: docs/reference/tracker
 sidebar:
   order: 81
 ---
@@ -8,7 +10,7 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 ## What is a tracker?
 
-A **tracker** is a lightweight worker thread that continuously fetches messages from the Fluxzero Runtime and dispatches them to your handlers for a specific [consumer](/docs/reference/020-consumer).
+A **tracker** is a lightweight worker thread that continuously fetches messages from the Fluxzero Runtime and dispatches them to your handlers for a specific [consumer](/docs/reference/consumer).
 
 Trackers form the backbone of message processing in Fluxzero. They:
 
