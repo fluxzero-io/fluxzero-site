@@ -527,6 +527,17 @@ By calling `assertAndApply(command)` on the entity:
 - Then it calls the matching `@Apply` method
 - If successful, the command is accepted and an **event is published** (with the same payload)
 
+<Aside type="note">
+    Note that we use Spring `@Component` annotation to register the handler.
+    In previous examples, such as with queries, we didn't need to register anything manually because the query class itself contained the handler, allowing Fluxzero to [automatically discover it](/docs/guides/configuration--support/310-configuring-fluxzero/#spring-auto-configuration).
+
+    In this case, the handler is a separate class, so we need to explicitly make it discoverable.
+
+    Fluxzero will automatically scan all your Spring Beans for handlers.
+    However, if you're not using Spring, you can also register handlers manually using the `Fluxzero.registerHandler(...)` method.
+    See [Configuring Fluxzero](/docs/guides/configuration--support/310-configuring-fluxzero/) for more details.
+</Aside>
+
 ---
 
 ### Handling multiple commands
