@@ -4,6 +4,7 @@
 // CSS imports
 import 'boxicons/css/boxicons.min.css';
 import 'swiper/css/bundle';
+import 'swiper/css/pagination';
 
 // JS imports - only run in browser
 if (typeof window !== 'undefined') {

@@ -434,19 +434,5 @@ import '../styles/fluxzero.css';
 
   <Footer />
 
-  <script>
-    import { Swiper } from 'swiper';
-    import 'swiper/css';
-    import 'swiper/css/pagination';
-
-    // Initialize Swiper
-    document.addEventListener('DOMContentLoaded', function() {
-      const swiperEl = document.querySelector('.swiper');
-      if (swiperEl) {
-        const swiperOptions = JSON.parse(swiperEl.getAttribute('data-swiper-options') || '{}');
-        new Swiper(swiperEl, swiperOptions);
-      }
-    });
-  </script>
 
 </BaseLayout>
