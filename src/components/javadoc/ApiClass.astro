@@ -1,0 +1,305 @@
+---
+import { Tabs, TabItem, Card, CardGrid, Aside } from '@astrojs/starlight/components';
+import ApiMethod from './ApiMethod.astro';
+import ApiField from './ApiField.astro';
+import CodeExample from './CodeExample.astro';
+
+export interface Props {
+  classData: {
+    type: 'class' | 'interface' | 'annotation' | 'enum' | 'record';
+    fullName: string;
+    simpleName: string;
+    packageName: string;
+    modifiers?: string[];
+    description?: string;
+    since?: string;
+    author?: string[];
+    deprecated?: {
+      isDeprecated: boolean;
+      since?: string;
+      reason?: string;
+    };
+    superclass?: string;
+    interfaces?: string[];
+    fluxzeroCategory?: 'handler' | 'web' | 'modeling' | 'publishing' | 'scheduling' | 'common';
+    methods?: Array<{
+      name: string;
+      description?: string;
+      returnType: {
+        name: string;
+        fullName: string;
+        isPrimitive?: boolean;
+        isArray?: boolean;
+      };
+      parameters?: Array<{
+        name: string;
+        description?: string;
+        type: {
+          name: string;
+          fullName: string;
+          isPrimitive?: boolean;
+        };
+      }>;
+      fluxzeroHandlerType?: 'command' | 'event' | 'query' | 'web' | 'document' | 'custom' | 'schedule';
+    }>;
+    fields?: Array<{
+      name: string;
+      description?: string;
+      type: {
+        name: string;
+        fullName: string;
+      };
+      defaultValue?: string;
+    }>;
+    examples?: Array<{
+      title?: string;
+      description?: string;
+      language: 'java' | 'kotlin';
+      code: string;
+    }>;
+    relatedTypes?: string[];
+    seeAlso?: string[];
+  };
+}
+
+const { classData } = Astro.props;
+
+// Helper function to get category icon
+function getCategoryIcon(category?: string): string {
+  switch (category) {
+    case 'handler': return '🎯';
+    case 'web': return '🌐';
+    case 'modeling': return '🏗️';
+    case 'publishing': return '📤';
+    case 'scheduling': return '⏰';
+    default: return '📦';
+  }
+}
+
+// Helper function to get type badge color
+function getTypeBadgeColor(type: string): string {
+  switch (type) {
+    case 'annotation': return 'blue';
+    case 'interface': return 'green';
+    case 'enum': return 'purple';
+    case 'record': return 'orange';
+    default: return 'gray';
+  }
+}
+---
+
+<div class="api-class">
+  <!-- Header -->
+  <div class="class-header">
+    <div class="class-title">
+      <span class="category-icon">{getCategoryIcon(classData.fluxzeroCategory)}</span>
+      <h1>{classData.simpleName}</h1>
+      <span class={`type-badge ${getTypeBadgeColor(classData.type)}`}>
+        {classData.type}
+      </span>
+      {classData.fluxzeroCategory && (
+        <span class="category-badge">
+          {classData.fluxzeroCategory}
+        </span>
+      )}
+    </div>
+
+    {classData.deprecated?.isDeprecated && (
+      <Aside type="caution" title="Deprecated">
+        {classData.deprecated.reason && <p>{classData.deprecated.reason}</p>}
+        {classData.deprecated.since && <p>Since: {classData.deprecated.since}</p>}
+      </Aside>
+    )}
+  </div>
+
+  <!-- Package and Modifiers -->
+  <div class="class-meta">
+    <p><strong>Package:</strong> <code>{classData.packageName}</code></p>
+    <p><strong>Full Name:</strong> <code>{classData.fullName}</code></p>
+    {classData.modifiers && classData.modifiers.length > 0 && (
+      <p><strong>Modifiers:</strong> {classData.modifiers.join(', ')}</p>
+    )}
+    {classData.since && (
+      <p><strong>Since:</strong> {classData.since}</p>
+    )}
+  </div>
+
+  <!-- Description -->
+  {classData.description && (
+    <div class="class-description">
+      <p>{classData.description}</p>
+    </div>
+  )}
+
+  <!-- Inheritance -->
+  {(classData.superclass || (classData.interfaces && classData.interfaces.length > 0)) && (
+    <div class="inheritance">
+      <h2>Inheritance</h2>
+      {classData.superclass && (
+        <p><strong>Extends:</strong> <code>{classData.superclass}</code></p>
+      )}
+      {classData.interfaces && classData.interfaces.length > 0 && (
+        <p><strong>Implements:</strong> {classData.interfaces.map(i => `<code>${i}</code>`).join(', ')}</p>
+      )}
+    </div>
+  )}
+
+  <!-- Examples -->
+  {classData.examples && classData.examples.length > 0 && (
+    <div class="examples">
+      <h2>Examples</h2>
+      {classData.examples.map((example, index) => (
+        <CodeExample
+          key={index}
+          title={example.title}
+          description={example.description}
+          language={example.language}
+          code={example.code}
+        />
+      ))}
+    </div>
+  )}
+
+  <!-- Methods -->
+  {classData.methods && classData.methods.length > 0 && (
+    <div class="methods">
+      <h2>Methods</h2>
+      {classData.methods.map((method, index) => (
+        <ApiMethod key={index} methodData={method} />
+      ))}
+    </div>
+  )}
+
+  <!-- Fields -->
+  {classData.fields && classData.fields.length > 0 && (
+    <div class="fields">
+      <h2>Fields</h2>
+      {classData.fields.map((field, index) => (
+        <ApiField key={index} fieldData={field} />
+      ))}
+    </div>
+  )}
+
+  <!-- Related Types -->
+  {(classData.relatedTypes && classData.relatedTypes.length > 0) || (classData.seeAlso && classData.seeAlso.length > 0) && (
+    <div class="related">
+      <h2>Related</h2>
+
+      {classData.relatedTypes && classData.relatedTypes.length > 0 && (
+        <div>
+          <h3>Related Types</h3>
+          <ul>
+            {classData.relatedTypes.map(type => (
+              <li><code>{type}</code></li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {classData.seeAlso && classData.seeAlso.length > 0 && (
+        <div>
+          <h3>See Also</h3>
+          <ul>
+            {classData.seeAlso.map(ref => (
+              <li><code>{ref}</code></li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  )}
+</div>
+
+<style>
+  .api-class {
+    max-width: none;
+  }
+
+  .class-header {
+    margin-bottom: 2rem;
+  }
+
+  .class-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .category-icon {
+    font-size: 1.5rem;
+  }
+
+  .class-title h1 {
+    margin: 0;
+    font-size: 2.5rem;
+  }
+
+  .type-badge, .category-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .type-badge.blue { background: #3b82f6; color: white; }
+  .type-badge.green { background: #10b981; color: white; }
+  .type-badge.purple { background: #8b5cf6; color: white; }
+  .type-badge.orange { background: #f59e0b; color: white; }
+  .type-badge.gray { background: #6b7280; color: white; }
+
+  .category-badge {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+  }
+
+  .class-meta {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .class-meta p {
+    margin: 0.5rem 0;
+  }
+
+  .class-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .inheritance, .examples, .methods, .fields, .related {
+    margin: 2rem 0;
+  }
+
+  .inheritance h2, .examples h2, .methods h2, .fields h2, .related h2 {
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .related h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .related ul {
+    margin: 0.5rem 0;
+  }
+
+  .related li {
+    margin: 0.25rem 0;
+  }
+
+  code {
+    background: #f3f4f6;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 0.9em;
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+export interface Props {
+  fieldData: {
+    name: string;
+    description?: string;
+    type: {
+      name: string;
+      fullName: string;
+    };
+    defaultValue?: string;
+  };
+}
+
+const { fieldData } = Astro.props;
+---
+
+<div class="api-field">
+  <div class="field-signature">
+    <span class="field-type">{fieldData.type.name}</span>
+    <span class="field-name">{fieldData.name}</span>
+    {fieldData.defaultValue && (
+      <span class="default-value">= {fieldData.defaultValue}</span>
+    )}
+  </div>
+
+  {fieldData.description && (
+    <div class="field-description">
+      <p>{fieldData.description}</p>
+    </div>
+  )}
+
+  <div class="field-details">
+    <span class="field-type-full">Type: <code>{fieldData.type.fullName}</code></span>
+  </div>
+</div>
+
+<style>
+  .api-field {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin: 0.75rem 0;
+    background: #fafafa;
+  }
+
+  .field-signature {
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .field-type {
+    color: #6b7280;
+    margin-right: 0.5rem;
+  }
+
+  .field-name {
+    color: #1f2937;
+    font-weight: bold;
+  }
+
+  .default-value {
+    color: #059669;
+    font-style: italic;
+    margin-left: 0.5rem;
+  }
+
+  .field-description {
+    color: #4b5563;
+    margin: 0.75rem 0;
+    line-height: 1.5;
+  }
+
+  .field-description p {
+    margin: 0;
+  }
+
+  .field-details {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .field-type-full code {
+    background: #f3f4f6;
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.8em;
+  }
+</style>
