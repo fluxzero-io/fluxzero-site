@@ -20,10 +20,33 @@ All commands are run from the root of the project, from a terminal:
 | `pnpm update-changelog:full` | Rebuild entire changelog from GitHub           |
 
 
-## Contributing 
+## Environment Setup
+
+### Required Environment Variables
+
+Create a `.dev.vars` file in the root directory with the following variables:
+
+```bash
+# GitHub Personal Access Token for reading discussions (feedback API)
+# Create at: https://github.com/settings/tokens
+# Required permissions: public_repo (for reading public discussions)
+# Note: PATs expire after 30-90 days depending on your settings. You'll need to regenerate them periodically.
+GITHUB_TOKEN=your_github_token_here
+```
+
+### For Production Deployment
+
+Set the GitHub token as a secret in Cloudflare:
+
+```bash
+wrangler secret put GITHUB_TOKEN
+```
+
+## Contributing
 
 - Download VSCode
 - Install extensions: Astro, MDX, TypeScript
+- Set up environment variables as described above
 
 
 ## Changelog Automation
