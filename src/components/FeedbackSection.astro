@@ -1,0 +1,231 @@
+---
+// Astro component for displaying feedback on documentation pages
+export interface Props {
+  slug?: string;
+  className?: string;
+}
+
+const { slug, className = '' } = Astro.props;
+
+// Use current page path if no slug provided
+const currentSlug = slug || Astro.url.pathname;
+const componentId = `feedback-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div id={componentId} class={`feedback-section ${className}`}>
+  <div class="feedback-display">
+    <div class="feedback-loading">
+      <div class="loading-spinner"></div>
+      <span>Loading feedback...</span>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ currentSlug, componentId }}>
+  // Vanilla JavaScript feedback component
+  class FeedbackDisplay {
+    constructor(container, slug) {
+      this.container = container;
+      this.slug = slug;
+      this.feedback = null;
+      this.loading = true;
+      this.error = null;
+
+      this.init();
+    }
+
+    async init() {
+      await this.fetchFeedback();
+      this.render();
+    }
+
+    async fetchFeedback() {
+      try {
+        this.setLoading(true);
+        this.setError(null);
+
+        const response = await fetch(`/api/feedback?slug=${encodeURIComponent(this.slug)}`);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch feedback: ${response.status}`);
+        }
+
+        this.feedback = await response.json();
+      } catch (err) {
+        console.error('Error fetching feedback:', err);
+        this.setError(err.message);
+      } finally {
+        this.setLoading(false);
+      }
+    }
+
+    setLoading(loading) {
+      this.loading = loading;
+    }
+
+    setError(error) {
+      this.error = error;
+    }
+
+    formatDate(dateString) {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+
+    extractSelectedText(discussion) {
+      if (discussion.metadata?.selection?.text) {
+        return discussion.metadata.selection.text;
+      }
+
+      // Fallback: extract quoted text from body
+      const quoteMatch = discussion.body.match(/>\s*([^\n]+)/);
+      return quoteMatch?.[1] || 'Selected text';
+    }
+
+    cleanTitle(title) {
+      // Remove [slug:...] prefix from title
+      return title.replace(/^\[slug:[^\]]+\]\s*/, '');
+    }
+
+    render() {
+      if (this.loading) {
+        this.container.innerHTML = `
+          <div class="feedback-display">
+            <div class="feedback-loading">
+              <div class="loading-spinner"></div>
+              <span>Loading feedback...</span>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (this.error) {
+        this.container.innerHTML = `
+          <div class="feedback-display">
+            <div class="feedback-error">
+              <span>⚠️ Error loading feedback: ${this.error}</span>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (!this.feedback || this.feedback.discussions.length === 0) {
+        this.container.innerHTML = `
+          <div class="feedback-display">
+            <div class="feedback-empty">
+              <p>💬 No feedback yet for this page.</p>
+              <p class="feedback-cta">
+                <a href="#" onclick="alert('Text selection feedback feature coming soon!')">
+                  Select text above to leave feedback
+                </a>
+              </p>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const discussionsHtml = this.feedback.discussions.map(discussion => `
+        <div class="feedback-item">
+          <div class="feedback-item-header">
+            <div class="feedback-author">
+              <img
+                src="${discussion.author.avatarUrl}"
+                alt="${discussion.author.login}'s avatar"
+                class="feedback-avatar"
+                width="24"
+                height="24"
+              />
+              <span class="feedback-author-name">${discussion.author.login}</span>
+              <span class="feedback-date">${this.formatDate(discussion.createdAt)}</span>
+            </div>
+
+            <div class="feedback-stats">
+              ${discussion.commentCount > 0 ? `
+                <span class="feedback-comments">
+                  💬 ${discussion.commentCount}
+                </span>
+              ` : ''}
+              ${discussion.reactionCount > 0 ? `
+                <span class="feedback-reactions">
+                  👍 ${discussion.reactionCount}
+                </span>
+              ` : ''}
+            </div>
+          </div>
+
+          <div class="feedback-content">
+            <h4 class="feedback-title">
+              <a href="${discussion.url}" target="_blank" rel="noopener noreferrer">
+                ${this.cleanTitle(discussion.title)}
+              </a>
+            </h4>
+
+            <div class="feedback-selected-text">
+              <strong>About:</strong> "${this.extractSelectedText(discussion)}"
+            </div>
+
+            <div class="feedback-body">
+              ${discussion.body.slice(0, 200)}${discussion.body.length > 200 ? '...' : ''}
+            </div>
+
+            <div class="feedback-actions">
+              <a
+                href="${discussion.url}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="feedback-link"
+              >
+                View full discussion →
+              </a>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      this.container.innerHTML = `
+        <div class="feedback-display">
+          <div class="feedback-header">
+            <h3>💬 Community Feedback (${this.feedback.total})</h3>
+            <p class="feedback-subtitle">
+              Questions and discussions about this page
+            </p>
+          </div>
+
+          <div class="feedback-list">
+            ${discussionsHtml}
+          </div>
+
+          <div class="feedback-footer">
+            <a
+              href="#"
+              onclick="alert('Text selection feedback feature coming soon!')"
+              class="feedback-add-button"
+            >
+              + Add your feedback
+            </a>
+          </div>
+        </div>
+      `;
+    }
+  }
+
+  // Initialize the feedback component when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById(componentId);
+    if (container) {
+      new FeedbackDisplay(container, currentSlug);
+    }
+  });
+</script>
+
+<style>
+  .feedback-section {
+    margin: 2rem 0;
+  }
+</style>

@@ -3,6 +3,96 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
 
+// Mock data for local development
+function getMockFeedbackData(pageSlug: string) {
+  return {
+    data: {
+      search: {
+        discussionCount: 2,
+        nodes: [
+          {
+            id: "D_kwDOTest1234567",
+            title: `[slug:${pageSlug}] What exactly are messages and handlers?`,
+            body: `## Documentation Feedback
+
+**Page**: [Introduction](${pageSlug})
+**Selected Text**:
+> you just write messages and handlers
+
+## User Feedback
+This sounds really interesting, but I'm not clear on what "messages and handlers" actually look like in practice. Could you provide a simple example to help me understand the concept better?
+
+---
+*This feedback was submitted through the documentation site.*
+
+<!-- FEEDBACK_METADATA
+{
+  "version": 1,
+  "page": "${pageSlug}",
+  "selection": {
+    "text": "you just write messages and handlers",
+    "context": {
+      "prefix": "Instead of gluing together tools, layering service code, mapping models, and wiring up infrastructure, **",
+      "suffix": "**. Fluxzero takes care of everything else"
+    }
+  },
+  "timestamp": "2025-09-24T15:30:00Z"
+}
+-->`,
+            url: "https://github.com/fluxzero-io/fluxzero-site/discussions/123",
+            createdAt: "2025-09-24T15:30:00Z",
+            updatedAt: "2025-09-24T16:00:00Z",
+            author: {
+              login: "developer123",
+              avatarUrl: "https://avatars.githubusercontent.com/u/12345?v=4"
+            },
+            comments: {
+              totalCount: 3
+            },
+            reactions: {
+              totalCount: 5
+            },
+            repository: {
+              nameWithOwner: "fluxzero-io/fluxzero-site"
+            }
+          },
+          {
+            id: "D_kwDOTest7890123",
+            title: `[slug:${pageSlug}] How does this compare to building a traditional backend?`,
+            body: `## Documentation Feedback
+
+**Page**: [Introduction](${pageSlug})
+**Selected Text**:
+> Fluxzero is a cloud runtime for building backends without infrastructure overhead
+
+## User Feedback
+This sounds promising, but I'm curious about the learning curve. How different is this from building a traditional REST API with Express.js or Spring Boot? Is there migration path from existing backends?
+
+---
+*This feedback was submitted through the documentation site.*`,
+            url: "https://github.com/fluxzero-io/fluxzero-site/discussions/124",
+            createdAt: "2025-09-24T14:15:00Z",
+            updatedAt: "2025-09-24T14:15:00Z",
+            author: {
+              login: "newbie_dev",
+              avatarUrl: "https://avatars.githubusercontent.com/u/67890?v=4"
+            },
+            comments: {
+              totalCount: 1
+            },
+            reactions: {
+              totalCount: 2
+            },
+            repository: {
+              nameWithOwner: "fluxzero-io/fluxzero-site"
+            }
+          }
+        ]
+      }
+    }
+  };
+}
+
 export const GET: APIRoute = async ({ url, locals }) => {
   const slug = url.searchParams.get('slug');
 
@@ -17,7 +107,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
   }
 
   // Extract page slug from URL path (e.g., /docs/getting-started/introduction → getting-started/introduction)
-  const pageSlug = slug.replace('/docs/', '');
+  const pageSlug = slug
   const slugFilter = `[slug:${pageSlug}]`;
 
   // GitHub GraphQL query to search discussions
@@ -55,7 +145,17 @@ export const GET: APIRoute = async ({ url, locals }) => {
   // Build search query - search for discussions with slug in title
   const searchQuery = `repo:fluxzero-io/fluxzero-site "${slugFilter}" in:title`;
 
+  // Use mock data for localhost development
+  const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+
   try {
+    let data;
+
+    if (isLocalhost) {
+      // Return mock data for local development
+      console.log('Using mock data for localhost');
+      data = getMockFeedbackData(pageSlug);
+    } else {
     const response = await fetch('https://api.github.com/graphql', {
       method: 'POST',
       headers: {
@@ -83,17 +183,20 @@ export const GET: APIRoute = async ({ url, locals }) => {
       );
     }
 
-    const data = await response.json();
+      const responseData = await response.json();
 
-    if (data.errors) {
-      console.error('GitHub GraphQL errors:', data.errors);
-      return new Response(
-        JSON.stringify({ error: 'GitHub GraphQL error', details: data.errors }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
+      if (responseData.errors) {
+        console.error('GitHub GraphQL errors:', responseData.errors);
+        return new Response(
+          JSON.stringify({ error: 'GitHub GraphQL error', details: responseData.errors }),
+          {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
+      }
+
+      data = responseData;
     }
 
     // Process each discussion to extract metadata and clean up body

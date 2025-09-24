@@ -1,0 +1,518 @@
+---
+// Floating feedback component that anchors feedback to selected text locations
+export interface Props {
+  slug?: string;
+  className?: string;
+}
+
+const { slug, className = '' } = Astro.props;
+
+// Use current page path if no slug provided
+const currentSlug = slug || Astro.url.pathname;
+const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div id={componentId} class={`floating-feedback-container ${className}`}>
+  <!-- Feedback indicators will be injected here -->
+</div>
+
+<script define:vars={{ currentSlug, componentId }}>
+  class FloatingFeedback {
+    constructor(container, slug) {
+      this.container = container;
+      this.slug = slug;
+      this.feedback = null;
+      this.indicators = [];
+      this.activePopup = null;
+
+      this.init();
+    }
+
+    async init() {
+      await this.fetchFeedback();
+      this.processTextSelections();
+      this.setupScrollListener();
+    }
+
+    async fetchFeedback() {
+      try {
+        const response = await fetch(`/api/feedback?slug=${encodeURIComponent(this.slug)}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch feedback: ${response.status}`);
+        }
+        this.feedback = await response.json();
+      } catch (err) {
+        console.error('Error fetching feedback:', err);
+      }
+    }
+
+    processTextSelections() {
+      if (!this.feedback || this.feedback.discussions.length === 0) return;
+
+      this.feedback.discussions.forEach((discussion, index) => {
+        const selectedText = this.extractSelectedText(discussion);
+        const textLocation = this.findTextInPage(selectedText);
+
+        if (textLocation) {
+          this.createFeedbackIndicator(discussion, textLocation, index);
+        }
+      });
+    }
+
+    extractSelectedText(discussion) {
+      if (discussion.metadata?.selection?.text) {
+        return discussion.metadata.selection.text;
+      }
+
+      // Fallback: extract quoted text from body
+      const quoteMatch = discussion.body.match(/>\s*([^\n]+)/);
+      return quoteMatch?.[1] || null;
+    }
+
+    findTextInPage(selectedText) {
+      if (!selectedText) return null;
+
+      // Find the text in the page content
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode: function(node) {
+            // Skip script and style elements
+            const parent = node.parentElement;
+            if (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE') {
+              return NodeFilter.FILTER_REJECT;
+            }
+            return NodeFilter.FILTER_ACCEPT;
+          }
+        }
+      );
+
+      let node;
+      while (node = walker.nextNode()) {
+        const text = node.textContent;
+        const index = text.indexOf(selectedText);
+
+        if (index !== -1) {
+          // Found the text, return position info
+          const range = document.createRange();
+          range.setStart(node, index);
+          range.setEnd(node, index + selectedText.length);
+
+          return {
+            range,
+            rect: range.getBoundingClientRect(),
+            element: node.parentElement,
+            text: selectedText
+          };
+        }
+      }
+
+      return null;
+    }
+
+    createFeedbackIndicator(discussion, textLocation, index) {
+      // Wrap the selected text in a span with feedback indicator
+      const span = document.createElement('span');
+      span.className = 'feedback-highlight';
+      span.dataset.feedbackId = discussion.id;
+      span.dataset.feedbackIndex = index;
+
+      // Extract the text node content
+      const range = textLocation.range;
+      const selectedText = range.extractContents();
+      span.appendChild(selectedText);
+
+      // Insert the span back
+      range.insertNode(span);
+
+      // Create floating indicator
+      const indicator = document.createElement('div');
+      indicator.className = 'feedback-indicator';
+      indicator.innerHTML = `
+        <div class="feedback-badge">
+          💬 ${discussion.commentCount || 0}
+        </div>
+      `;
+
+      // Position the indicator
+      this.updateAbsolutePosition(indicator, span);
+
+      // Add click handler
+      indicator.addEventListener('click', (e) => {
+        e.preventDefault();
+        this.showFeedbackPopup(discussion, indicator);
+      });
+
+      // Hide indicator by default
+      indicator.style.opacity = '0';
+      indicator.style.pointerEvents = 'none';
+
+      // Add hover listeners to the highlighted text
+      span.addEventListener('mouseenter', () => {
+        indicator.style.opacity = '0.8';
+        indicator.style.pointerEvents = 'auto';
+        indicator.style.transform = 'scale(1)';
+      });
+
+      let hideTimeout;
+
+      const hideIndicator = () => {
+        indicator.style.opacity = '0';
+        indicator.style.pointerEvents = 'none';
+        indicator.style.transform = 'scale(0.8)';
+      };
+
+      const showIndicator = () => {
+        clearTimeout(hideTimeout);
+        indicator.style.opacity = '0.8';
+        indicator.style.pointerEvents = 'auto';
+        indicator.style.transform = 'scale(1)';
+      };
+
+      span.addEventListener('mouseenter', showIndicator);
+
+      span.addEventListener('mouseleave', (e) => {
+        // Check if mouse is moving to the indicator
+        const rect = indicator.getBoundingClientRect();
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+
+        const isMovingToIndicator = (
+          mouseX >= rect.left - 10 &&
+          mouseX <= rect.right + 10 &&
+          mouseY >= rect.top - 10 &&
+          mouseY <= rect.bottom + 10
+        );
+
+        if (!isMovingToIndicator) {
+          hideTimeout = setTimeout(hideIndicator, 300);
+        }
+      });
+
+      // Keep indicator visible when hovering over it
+      indicator.addEventListener('mouseenter', () => {
+        clearTimeout(hideTimeout);
+        indicator.style.opacity = '1';
+        indicator.style.transform = 'scale(1.1)';
+      });
+
+      indicator.addEventListener('mouseleave', () => {
+        hideTimeout = setTimeout(hideIndicator, 100);
+      });
+
+      // Add to DOM
+      document.body.appendChild(indicator);
+
+      this.indicators.push({
+        element: indicator,
+        discussion,
+        anchor: span
+      });
+    }
+
+
+
+    setupScrollListener() {
+      // Use position: absolute instead of fixed for better performance
+      this.indicators.forEach(({ element, anchor }) => {
+        element.style.position = 'absolute';
+        this.updateAbsolutePosition(element, anchor);
+      });
+
+      // Throttled scroll update - update less frequently but smoother
+      let scrollTimeout;
+      let isScrolling = false;
+
+      const updatePositions = () => {
+        this.indicators.forEach(({ element, anchor }) => {
+          this.updateAbsolutePosition(element, anchor);
+        });
+        isScrolling = false;
+      };
+
+      window.addEventListener('scroll', () => {
+        if (!isScrolling) {
+          // Use immediate update for first scroll event
+          this.indicators.forEach(({ element, anchor }) => {
+            this.updateAbsolutePosition(element, anchor);
+          });
+          isScrolling = true;
+        }
+
+        // Clear existing timeout
+        clearTimeout(scrollTimeout);
+
+        // Set new timeout for final position update
+        scrollTimeout = setTimeout(updatePositions, 10); // Much faster than requestAnimationFrame
+      }, { passive: true });
+
+      // Update positions on resize
+      window.addEventListener('resize', updatePositions);
+    }
+
+    updateAbsolutePosition(indicator, anchor) {
+      const rect = anchor.getBoundingClientRect();
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+
+      indicator.style.left = `${rect.right + scrollLeft + 10}px`;
+      indicator.style.top = `${rect.top + scrollTop + (rect.height / 2) - 12}px`;
+    }
+
+    showFeedbackPopup(discussion, indicator) {
+      // Close existing popup
+      if (this.activePopup) {
+        this.activePopup.remove();
+      }
+
+      // Create popup
+      const popup = document.createElement('div');
+      popup.className = 'feedback-popup';
+
+      const cleanTitle = discussion.title.replace(/^\[slug:[^\]]+\]\s*/, '');
+
+      popup.innerHTML = `
+        <div class="feedback-popup-header">
+          <h4>${cleanTitle}</h4>
+          <button class="feedback-close">&times;</button>
+        </div>
+        <div class="feedback-popup-content">
+          <div class="feedback-author">
+            <img src="${discussion.author.avatarUrl}" alt="${discussion.author.login}" width="24" height="24">
+            <span>${discussion.author.login}</span>
+            <time>${this.formatDate(discussion.createdAt)}</time>
+          </div>
+          <div class="feedback-selected-text">
+            <strong>About:</strong> "${this.extractSelectedText(discussion)}"
+          </div>
+          <div class="feedback-body">
+            ${discussion.body.slice(0, 300)}${discussion.body.length > 300 ? '...' : ''}
+          </div>
+          <div class="feedback-actions">
+            <a href="${discussion.url}" target="_blank" rel="noopener noreferrer">
+              View full discussion →
+            </a>
+          </div>
+        </div>
+      `;
+
+      // Position popup near indicator
+      const indicatorRect = indicator.getBoundingClientRect();
+      popup.style.position = 'fixed';
+      popup.style.left = `${Math.min(indicatorRect.left, window.innerWidth - 320)}px`;
+      popup.style.top = `${indicatorRect.bottom + 10}px`;
+      popup.style.zIndex = '2000';
+
+      // Add close handler
+      popup.querySelector('.feedback-close').addEventListener('click', () => {
+        popup.remove();
+        this.activePopup = null;
+      });
+
+      // Close on click outside
+      setTimeout(() => {
+        document.addEventListener('click', (e) => {
+          if (!popup.contains(e.target) && e.target !== indicator) {
+            popup.remove();
+            this.activePopup = null;
+          }
+        }, { once: true });
+      }, 100);
+
+      document.body.appendChild(popup);
+      this.activePopup = popup;
+    }
+
+    formatDate(dateString) {
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
+  }
+
+  // Initialize when DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById(componentId);
+    if (container) {
+      new FloatingFeedback(container, currentSlug);
+    }
+  });
+</script>
+
+<style>
+  .floating-feedback-container {
+    /* Container doesn't need visible styling */
+  }
+
+  /* Highlighted text styling */
+  :global(.feedback-highlight) {
+    background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.1) 10%, rgba(59, 130, 246, 0.1) 90%, transparent 100%);
+    border-bottom: 2px dashed rgba(59, 130, 246, 0.3);
+    position: relative;
+    cursor: help;
+    transition: all 0.2s ease;
+  }
+
+  :global(.feedback-highlight:hover) {
+    background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.2) 10%, rgba(59, 130, 246, 0.2) 90%, transparent 100%);
+    border-bottom-color: rgba(59, 130, 246, 0.6);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+
+  /* Floating indicator */
+  :global(.feedback-indicator) {
+    position: absolute;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    opacity: 0.7;
+    transform: scale(0.8);
+    z-index: 1000;
+    pointer-events: auto;
+  }
+
+  :global(.feedback-badge) {
+    background: #3b82f6;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  :global(.feedback-indicator:hover) {
+    opacity: 1 !important;
+    transform: scale(1.1) !important;
+  }
+
+  /* Popup styling */
+  :global(.feedback-popup) {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    width: 300px;
+    max-height: 400px;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  :global(.feedback-popup-header) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  :global(.feedback-popup-header h4) {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    flex: 1;
+    margin-right: 12px;
+  }
+
+  :global(.feedback-close) {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global(.feedback-close:hover) {
+    color: #1f2937;
+  }
+
+  :global(.feedback-popup-content) {
+    padding: 16px;
+  }
+
+  :global(.feedback-author) {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  :global(.feedback-author img) {
+    border-radius: 50%;
+    border: 1px solid #e5e7eb;
+  }
+
+  :global(.feedback-author span) {
+    font-weight: 500;
+    color: #1f2937;
+  }
+
+  :global(.feedback-selected-text) {
+    background: #f3f4f6;
+    border-left: 3px solid #3b82f6;
+    padding: 8px 12px;
+    margin: 12px 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 12px;
+    color: #4b5563;
+    font-style: italic;
+  }
+
+  :global(.feedback-body) {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #1f2937;
+    margin-bottom: 12px;
+  }
+
+  :global(.feedback-actions a) {
+    color: #3b82f6;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  :global(.feedback-actions a:hover) {
+    text-decoration: underline;
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    :global(.feedback-popup) {
+      background: #1f2937;
+      border-color: #374151;
+      color: #f9fafb;
+    }
+
+    :global(.feedback-popup-header) {
+      background: #111827;
+      border-color: #374151;
+    }
+
+    :global(.feedback-popup-header h4) {
+      color: #f9fafb;
+    }
+
+    :global(.feedback-selected-text) {
+      background: #374151;
+      color: #d1d5db;
+    }
+
+    :global(.feedback-body) {
+      color: #f9fafb;
+    }
+  }
+</style>
