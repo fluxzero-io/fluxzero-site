@@ -148,13 +148,6 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
       indicator.style.opacity = '0';
       indicator.style.pointerEvents = 'none';
 
-      // Add hover listeners to the highlighted text
-      span.addEventListener('mouseenter', () => {
-        indicator.style.opacity = '0.8';
-        indicator.style.pointerEvents = 'auto';
-        indicator.style.transform = 'scale(1)';
-      });
-
       let hideTimeout;
 
       const hideIndicator = () => {
@@ -170,35 +163,32 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
         indicator.style.transform = 'scale(1)';
       };
 
+      const scheduleHide = (delay = 200) => {
+        // Don't hide indicator if popup is open
+        if (this.activePopup) return;
+
+        clearTimeout(hideTimeout);
+        hideTimeout = setTimeout(hideIndicator, delay);
+      };
+
+      // Show indicator when hovering over highlighted text
       span.addEventListener('mouseenter', showIndicator);
 
-      span.addEventListener('mouseleave', (e) => {
-        // Check if mouse is moving to the indicator
-        const rect = indicator.getBoundingClientRect();
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
-
-        const isMovingToIndicator = (
-          mouseX >= rect.left - 10 &&
-          mouseX <= rect.right + 10 &&
-          mouseY >= rect.top - 10 &&
-          mouseY <= rect.bottom + 10
-        );
-
-        if (!isMovingToIndicator) {
-          hideTimeout = setTimeout(hideIndicator, 300);
-        }
+      // Hide indicator when leaving highlighted text (with delay for moving to indicator)
+      span.addEventListener('mouseleave', () => {
+        scheduleHide(300); // Give user time to move to indicator
       });
 
-      // Keep indicator visible when hovering over it
+      // Keep indicator visible and enhance when hovering over it
       indicator.addEventListener('mouseenter', () => {
         clearTimeout(hideTimeout);
         indicator.style.opacity = '1';
         indicator.style.transform = 'scale(1.1)';
       });
 
+      // Hide indicator when leaving it
       indicator.addEventListener('mouseleave', () => {
-        hideTimeout = setTimeout(hideIndicator, 100);
+        scheduleHide(100);
       });
 
       // Add to DOM
@@ -220,35 +210,36 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
         this.updateAbsolutePosition(element, anchor);
       });
 
-      // Throttled scroll update - update less frequently but smoother
-      let scrollTimeout;
-      let isScrolling = false;
+      // More responsive scroll handling
+      let ticking = false;
 
       const updatePositions = () => {
         this.indicators.forEach(({ element, anchor }) => {
           this.updateAbsolutePosition(element, anchor);
         });
-        isScrolling = false;
+
+        // Update popup position if open
+        if (this.activePopup && this.activePopup.associatedIndicator) {
+          this.updatePopupPosition(this.activePopup, this.activePopup.associatedIndicator);
+        }
+
+        ticking = false;
       };
 
       window.addEventListener('scroll', () => {
-        if (!isScrolling) {
-          // Use immediate update for first scroll event
-          this.indicators.forEach(({ element, anchor }) => {
-            this.updateAbsolutePosition(element, anchor);
-          });
-          isScrolling = true;
+        if (!ticking) {
+          requestAnimationFrame(updatePositions);
+          ticking = true;
         }
-
-        // Clear existing timeout
-        clearTimeout(scrollTimeout);
-
-        // Set new timeout for final position update
-        scrollTimeout = setTimeout(updatePositions, 10); // Much faster than requestAnimationFrame
       }, { passive: true });
 
       // Update positions on resize
-      window.addEventListener('resize', updatePositions);
+      window.addEventListener('resize', () => {
+        if (!ticking) {
+          requestAnimationFrame(updatePositions);
+          ticking = true;
+        }
+      });
     }
 
     updateAbsolutePosition(indicator, anchor) {
@@ -297,31 +288,65 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
         </div>
       `;
 
-      // Position popup near indicator
-      const indicatorRect = indicator.getBoundingClientRect();
+      // Position popup near indicator (fixed position)
+      this.updatePopupPosition(popup, indicator);
       popup.style.position = 'fixed';
-      popup.style.left = `${Math.min(indicatorRect.left, window.innerWidth - 320)}px`;
-      popup.style.top = `${indicatorRect.bottom + 10}px`;
       popup.style.zIndex = '2000';
 
+      // Store reference for position updates
+      popup.associatedIndicator = indicator;
+
       // Add close handler
-      popup.querySelector('.feedback-close').addEventListener('click', () => {
+      const closePopup = () => {
         popup.remove();
         this.activePopup = null;
-      });
 
-      // Close on click outside
+        // Hide the indicator when popup closes
+        indicator.style.opacity = '0';
+        indicator.style.pointerEvents = 'none';
+        indicator.style.transform = 'scale(0.8)';
+      };
+
+      popup.querySelector('.feedback-close').addEventListener('click', closePopup);
+
+      // Close on click outside (but not on indicator)
       setTimeout(() => {
-        document.addEventListener('click', (e) => {
-          if (!popup.contains(e.target) && e.target !== indicator) {
-            popup.remove();
-            this.activePopup = null;
+        const handleOutsideClick = (e) => {
+          if (!popup.contains(e.target) && e.target !== indicator && !indicator.contains(e.target)) {
+            closePopup();
+            document.removeEventListener('click', handleOutsideClick);
           }
-        }, { once: true });
+        };
+        document.addEventListener('click', handleOutsideClick);
       }, 100);
 
       document.body.appendChild(popup);
       this.activePopup = popup;
+    }
+
+    updatePopupPosition(popup, indicator) {
+      const indicatorRect = indicator.getBoundingClientRect();
+      const popupWidth = 320;
+
+      // Calculate optimal position
+      let left = indicatorRect.left;
+      let top = indicatorRect.bottom + 10;
+
+      // Ensure popup stays within viewport
+      if (left + popupWidth > window.innerWidth) {
+        left = window.innerWidth - popupWidth - 10;
+      }
+      if (left < 10) {
+        left = 10;
+      }
+
+      // If popup would go below viewport, show above indicator
+      if (top + 400 > window.innerHeight) {
+        top = indicatorRect.top - 410; // Approximate popup height
+      }
+
+      popup.style.left = `${left}px`;
+      popup.style.top = `${top}px`;
     }
 
     formatDate(dateString) {
