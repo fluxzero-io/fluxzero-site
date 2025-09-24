@@ -36,7 +36,7 @@ Available doclets:
 - Style with your existing Starlight theme (syntax highlighting, cards, etc.)
 
 #### 5. Create documentation pages
-- Add routes like `/api/[className]` for full class docs
+- Add routes like `/javadoc/[className]` for full class docs
 - Or embed inline with MDX using custom components
 
 ### Option 2: Parse Javadoc HTML (Alternative)

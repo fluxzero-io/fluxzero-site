@@ -1,0 +1,197 @@
+---
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  language: 'java' | 'kotlin';
+  code: string;
+  showKotlinVariant?: boolean;
+}
+
+const { title, description, language, code, showKotlinVariant = true } = Astro.props;
+
+// Helper function to convert Java code to Kotlin equivalent (basic conversion)
+function javaToKotlin(javaCode: string): string {
+  return javaCode
+    // Basic method syntax conversion
+    .replace(/public\s+void\s+(\w+)\s*\(/g, 'fun $1(')
+    .replace(/public\s+(\w+)\s+(\w+)\s*\(/g, 'fun $2(')
+    .replace(/private\s+void\s+(\w+)\s*\(/g, 'private fun $1(')
+    .replace(/private\s+(\w+)\s+(\w+)\s*\(/g, 'private fun $2(')
+
+    // Parameter types
+    .replace(/(\w+)\s+(\w+)(?=[\),])/g, '$2: $1')
+
+    // Basic type conversions
+    .replace(/String/g, 'String')
+    .replace(/void/g, 'Unit')
+
+    // Comments and annotations stay the same
+    .replace(/\/\/(.*)$/gm, '// $1')
+
+    // Basic cleanup
+    .replace(/\s+$/gm, '') // Remove trailing whitespace
+    .replace(/;\s*$/gm, '') // Remove semicolons at end of lines
+
+    // Fix some common patterns
+    .replace(/fun\s+(\w+)\s*:\s*Unit\s*\(/g, 'fun $1(')
+    .replace(/(\w+):\s*(\w+)\s*\)/g, '$1: $2)');
+}
+
+const kotlinCode = showKotlinVariant && language === 'java' ? javaToKotlin(code) : null;
+---
+
+<div class="code-example">
+  {title && (
+    <div class="example-header">
+      <h4>{title}</h4>
+      {description && <p class="example-description">{description}</p>}
+    </div>
+  )}
+
+  {kotlinCode ? (
+    <Tabs>
+      <TabItem label="Java">
+        <div class="code-block">
+          <pre><code class="language-java">{code}</code></pre>
+        </div>
+      </TabItem>
+      <TabItem label="Kotlin">
+        <div class="code-block">
+          <pre><code class="language-kotlin">{kotlinCode}</code></pre>
+        </div>
+      </TabItem>
+    </Tabs>
+  ) : (
+    <div class="code-block">
+      <div class="language-label">{language.toUpperCase()}</div>
+      <pre><code class={`language-${language}`}>{code}</code></pre>
+    </div>
+  )}
+</div>
+
+<style>
+  .code-example {
+    margin: 1.5rem 0;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background: white;
+  }
+
+  .example-header {
+    padding: 1rem;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .example-header h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1f2937;
+    font-size: 1.1rem;
+  }
+
+  .example-description {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .code-block {
+    position: relative;
+    background: #1f2937;
+    color: #f9fafb;
+  }
+
+  .language-label {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    background: #374151;
+    color: #d1d5db;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    z-index: 1;
+  }
+
+  .code-block pre {
+    margin: 0;
+    padding: 1rem;
+    overflow-x: auto;
+    background: transparent;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .code-block code {
+    background: transparent !important;
+    padding: 0 !important;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  /* Syntax highlighting for Java/Kotlin */
+  .language-java .token.keyword,
+  .language-kotlin .token.keyword {
+    color: #8b5cf6;
+  }
+
+  .language-java .token.string,
+  .language-kotlin .token.string {
+    color: #10b981;
+  }
+
+  .language-java .token.comment,
+  .language-kotlin .token.comment {
+    color: #6b7280;
+    font-style: italic;
+  }
+
+  .language-java .token.annotation,
+  .language-kotlin .token.annotation {
+    color: #f59e0b;
+  }
+
+  .language-java .token.class-name,
+  .language-kotlin .token.class-name {
+    color: #3b82f6;
+  }
+
+  .language-java .token.function,
+  .language-kotlin .token.function {
+    color: #ec4899;
+  }
+
+  /* Dark mode support */
+  [data-theme="dark"] .code-example {
+    border-color: #374151;
+    background: #1f2937;
+  }
+
+  [data-theme="dark"] .example-header {
+    background: #374151;
+    border-bottom-color: #4b5563;
+  }
+
+  [data-theme="dark"] .example-header h4 {
+    color: #f9fafb;
+  }
+
+  [data-theme="dark"] .example-description {
+    color: #d1d5db;
+  }
+</style>
+
+<script>
+  // Add syntax highlighting if Prism.js is available
+  if (typeof window !== 'undefined' && window.Prism) {
+    window.Prism.highlightAll();
+  }
+</script>

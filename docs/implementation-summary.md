@@ -165,7 +165,7 @@ fluxzero-site/
 ├── src/
 │   ├── loaders/
 │   │   └── javadoc-loader.ts         # Enhanced JSON loader
-│   └── components/api/
+│   └── components/javadoc/
 │       ├── ApiClass.astro            # Class documentation display
 │       ├── ApiMethod.astro           # Method signatures
 │       ├── ApiField.astro            # Field documentation

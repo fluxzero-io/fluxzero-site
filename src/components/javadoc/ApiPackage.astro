@@ -1,0 +1,365 @@
+---
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+export interface Props {
+  packageData: {
+    name: string;
+    description?: string;
+    classes: Record<string, {
+      type: 'class' | 'interface' | 'annotation' | 'enum' | 'record';
+      simpleName: string;
+      description?: string;
+      fluxzeroCategory?: 'handler' | 'web' | 'modeling' | 'publishing' | 'scheduling' | 'common';
+    }>;
+  };
+}
+
+const { packageData } = Astro.props;
+
+// Group classes by type
+const classesByType = Object.entries(packageData.classes).reduce((groups, [name, classInfo]) => {
+  const type = classInfo.type;
+  if (!groups[type]) {
+    groups[type] = [];
+  }
+  groups[type].push({ name, ...classInfo });
+  return groups;
+}, {} as Record<string, Array<{ name: string; type: string; simpleName: string; description?: string; fluxzeroCategory?: string }>>);
+
+// Helper function to get category icon
+function getCategoryIcon(category?: string): string {
+  switch (category) {
+    case 'handler': return '🎯';
+    case 'web': return '🌐';
+    case 'modeling': return '🏗️';
+    case 'publishing': return '📤';
+    case 'scheduling': return '⏰';
+    default: return '📦';
+  }
+}
+
+// Helper function to get type icon
+function getTypeIcon(type: string): string {
+  switch (type) {
+    case 'annotation': return '🏷️';
+    case 'interface': return '🔌';
+    case 'enum': return '📋';
+    case 'record': return '📝';
+    case 'class': return '🏛️';
+    default: return '📦';
+  }
+}
+
+// Helper function to get type color
+function getTypeColor(type: string): string {
+  switch (type) {
+    case 'annotation': return 'blue';
+    case 'interface': return 'green';
+    case 'enum': return 'purple';
+    case 'record': return 'orange';
+    case 'class': return 'gray';
+    default: return 'gray';
+  }
+}
+---
+
+<div class="api-package">
+  <!-- Package Header -->
+  <div class="package-header">
+    <h1>📦 {packageData.name}</h1>
+    {packageData.description && (
+      <p class="package-description">{packageData.description}</p>
+    )}
+  </div>
+
+  <!-- Package Statistics -->
+  <div class="package-stats">
+    <div class="stat">
+      <span class="stat-number">{Object.keys(packageData.classes).length}</span>
+      <span class="stat-label">Total Types</span>
+    </div>
+    {Object.entries(classesByType).map(([type, classes]) => (
+      <div class="stat">
+        <span class="stat-number">{classes.length}</span>
+        <span class="stat-label">{type}s</span>
+      </div>
+    ))}
+  </div>
+
+  <!-- Classes by Type -->
+  {Object.entries(classesByType).map(([type, classes]) => (
+    <div class="type-section">
+      <h2>
+        <span class="type-icon">{getTypeIcon(type)}</span>
+        {type.charAt(0).toUpperCase() + type.slice(1)}s
+        <span class="type-count">({classes.length})</span>
+      </h2>
+
+      <CardGrid>
+        {classes.map(cls => (
+          <Card title={cls.simpleName}>
+            <div class="class-card-content">
+              <div class="class-meta">
+                <span class={`type-badge ${getTypeColor(cls.type)}`}>
+                  {cls.type}
+                </span>
+                {cls.fluxzeroCategory && (
+                  <span class="category-badge">
+                    {getCategoryIcon(cls.fluxzeroCategory)} {cls.fluxzeroCategory}
+                  </span>
+                )}
+              </div>
+
+              {cls.description && (
+                <p class="class-description">{cls.description}</p>
+              )}
+
+              <div class="class-actions">
+                <a href={`/javadoc/${packageData.name}/${cls.simpleName}/`} class="view-docs-btn">
+                  View Documentation →
+                </a>
+              </div>
+            </div>
+          </Card>
+        ))}
+      </CardGrid>
+    </div>
+  ))}
+
+  <!-- Quick Links -->
+  <div class="quick-links">
+    <h2>Quick Links</h2>
+    <div class="links-grid">
+      <a href="/javadoc/" class="quick-link">
+        📚 All Packages
+      </a>
+      <a href={`/javadoc/${packageData.name}/examples/`} class="quick-link">
+        💡 Examples
+      </a>
+      <a href={`/javadoc/${packageData.name}/guides/`} class="quick-link">
+        📖 Guides
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .api-package {
+    max-width: none;
+  }
+
+  .package-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .package-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #1f2937;
+  }
+
+  .package-description {
+    font-size: 1.2rem;
+    color: #6b7280;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  .package-stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 2rem 0;
+    padding: 1.5rem;
+    background: #f9fafb;
+    border-radius: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #3b82f6;
+  }
+
+  .stat-label {
+    display: block;
+    font-size: 0.875rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.25rem;
+  }
+
+  .type-section {
+    margin: 3rem 0;
+  }
+
+  .type-section h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+  }
+
+  .type-icon {
+    font-size: 1.5rem;
+  }
+
+  .type-count {
+    font-size: 1rem;
+    color: #6b7280;
+    font-weight: normal;
+  }
+
+  .class-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+  }
+
+  .class-meta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .type-badge, .category-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .type-badge.blue { background: #3b82f6; color: white; }
+  .type-badge.green { background: #10b981; color: white; }
+  .type-badge.purple { background: #8b5cf6; color: white; }
+  .type-badge.orange { background: #f59e0b; color: white; }
+  .type-badge.gray { background: #6b7280; color: white; }
+
+  .category-badge {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    font-size: 0.7rem;
+  }
+
+  .class-description {
+    color: #6b7280;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  .class-actions {
+    margin-top: auto;
+    padding-top: 1rem;
+  }
+
+  .view-docs-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+
+  .view-docs-btn:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+  }
+
+  .quick-links {
+    margin: 3rem 0;
+    padding: 2rem;
+    background: #f9fafb;
+    border-radius: 1rem;
+  }
+
+  .quick-links h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+  }
+
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .quick-link {
+    display: block;
+    padding: 1rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: #374151;
+    font-weight: 500;
+    text-align: center;
+    transition: all 0.2s;
+  }
+
+  .quick-link:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Dark mode support */
+  [data-theme="dark"] .package-header h1 {
+    color: #f9fafb;
+  }
+
+  [data-theme="dark"] .package-description {
+    color: #d1d5db;
+  }
+
+  [data-theme="dark"] .package-stats {
+    background: #374151;
+  }
+
+  [data-theme="dark"] .type-section h2 {
+    color: #f9fafb;
+    border-bottom-color: #4b5563;
+  }
+
+  [data-theme="dark"] .quick-links {
+    background: #374151;
+  }
+
+  [data-theme="dark"] .quick-links h2 {
+    color: #f9fafb;
+  }
+
+  [data-theme="dark"] .quick-link {
+    background: #1f2937;
+    border-color: #4b5563;
+    color: #d1d5db;
+  }
+
+  [data-theme="dark"] .quick-link:hover {
+    border-color: #3b82f6;
+    color: #60a5fa;
+  }
+</style>

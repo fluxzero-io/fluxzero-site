@@ -1,0 +1,258 @@
+---
+export interface Props {
+  methodData: {
+    name: string;
+    description?: string;
+    returnType: {
+      name: string;
+      fullName: string;
+      isPrimitive?: boolean;
+      isArray?: boolean;
+    };
+    parameters?: Array<{
+      name: string;
+      description?: string;
+      type: {
+        name: string;
+        fullName: string;
+        isPrimitive?: boolean;
+      };
+    }>;
+    fluxzeroHandlerType?: 'command' | 'event' | 'query' | 'web' | 'document' | 'custom' | 'schedule';
+  };
+}
+
+const { methodData } = Astro.props;
+
+// Helper function to get handler type icon
+function getHandlerIcon(handlerType?: string): string {
+  switch (handlerType) {
+    case 'command': return '⚡';
+    case 'event': return '📢';
+    case 'query': return '❓';
+    case 'web': return '🌐';
+    case 'document': return '📄';
+    case 'schedule': return '⏰';
+    case 'custom': return '🎛️';
+    default: return '🔧';
+  }
+}
+
+// Helper function to get handler type color
+function getHandlerColor(handlerType?: string): string {
+  switch (handlerType) {
+    case 'command': return 'blue';
+    case 'event': return 'green';
+    case 'query': return 'purple';
+    case 'web': return 'orange';
+    case 'document': return 'yellow';
+    case 'schedule': return 'pink';
+    case 'custom': return 'gray';
+    default: return 'gray';
+  }
+}
+---
+
+<div class="api-method">
+  <div class="method-header">
+    <div class="method-signature">
+      <span class="return-type">{methodData.returnType.name}</span>
+      <span class="method-name">{methodData.name}</span>
+      <span class="parameters">
+        (
+        {methodData.parameters && methodData.parameters.length > 0
+          ? methodData.parameters.map(param => `${param.type.name} ${param.name}`).join(', ')
+          : ''
+        }
+        )
+      </span>
+    </div>
+
+    {methodData.fluxzeroHandlerType && (
+      <div class={`handler-badge ${getHandlerColor(methodData.fluxzeroHandlerType)}`}>
+        <span class="handler-icon">{getHandlerIcon(methodData.fluxzeroHandlerType)}</span>
+        {methodData.fluxzeroHandlerType} handler
+      </div>
+    )}
+  </div>
+
+  {methodData.description && (
+    <div class="method-description">
+      <p>{methodData.description}</p>
+    </div>
+  )}
+
+  {methodData.parameters && methodData.parameters.length > 0 && (
+    <div class="parameters-section">
+      <h4>Parameters</h4>
+      <div class="parameters-list">
+        {methodData.parameters.map(param => (
+          <div class="parameter">
+            <div class="parameter-signature">
+              <span class="parameter-type">{param.type.name}</span>
+              <span class="parameter-name">{param.name}</span>
+            </div>
+            {param.description && (
+              <div class="parameter-description">
+                {param.description}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div class="return-section">
+    <h4>Returns</h4>
+    <div class="return-info">
+      <span class="return-type-full">{methodData.returnType.fullName}</span>
+      {methodData.returnType.isArray && <span class="array-indicator">[]</span>}
+      {methodData.returnType.isPrimitive && <span class="primitive-indicator">primitive</span>}
+    </div>
+  </div>
+</div>
+
+<style>
+  .api-method {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    background: #ffffff;
+  }
+
+  .method-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .method-signature {
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .return-type {
+    color: #6b7280;
+    margin-right: 0.5rem;
+  }
+
+  .method-name {
+    font-weight: bold;
+    color: #1f2937;
+  }
+
+  .parameters {
+    color: #6b7280;
+  }
+
+  .handler-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .handler-badge.blue { background: #dbeafe; color: #1e40af; }
+  .handler-badge.green { background: #d1fae5; color: #059669; }
+  .handler-badge.purple { background: #e9d5ff; color: #7c3aed; }
+  .handler-badge.orange { background: #fed7aa; color: #ea580c; }
+  .handler-badge.yellow { background: #fef3c7; color: #d97706; }
+  .handler-badge.pink { background: #fce7f3; color: #be185d; }
+  .handler-badge.gray { background: #f3f4f6; color: #374151; }
+
+  .handler-icon {
+    font-size: 1rem;
+  }
+
+  .method-description {
+    margin-bottom: 1.5rem;
+    color: #4b5563;
+    line-height: 1.6;
+  }
+
+  .parameters-section, .return-section {
+    margin: 1.5rem 0;
+  }
+
+  .parameters-section h4, .return-section h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.5rem;
+  }
+
+  .parameters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .parameter {
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 0.375rem;
+    border-left: 3px solid #3b82f6;
+  }
+
+  .parameter-signature {
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .parameter-type {
+    color: #6b7280;
+    margin-right: 0.5rem;
+  }
+
+  .parameter-name {
+    color: #1f2937;
+    font-weight: bold;
+  }
+
+  .parameter-description {
+    color: #6b7280;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .return-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
+  }
+
+  .return-type-full {
+    color: #1f2937;
+    font-weight: 500;
+  }
+
+  .array-indicator, .primitive-indicator {
+    padding: 0.125rem 0.375rem;
+    background: #e5e7eb;
+    color: #6b7280;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+  }
+
+  .primitive-indicator {
+    background: #fef3c7;
+    color: #d97706;
+  }
+</style>

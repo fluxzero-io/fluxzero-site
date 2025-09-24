@@ -207,10 +207,10 @@ export function javadocLoader(): Loader {
 - **ApiExample.astro**: Interactive code examples
 
 ### 5.3 Routes
-- `/api/` - API documentation index
-- `/api/packages/` - Package listing
-- `/api/[package]/` - Package details
-- `/api/[package]/[class]/` - Class documentation
+- `/javadoc/` - API documentation index
+- `/javadoc/packages/` - Package listing
+- `/javadoc/[package]/` - Package details
+- `/javadoc/[package]/[class]/` - Class documentation
 
 ## Phase 6: Advanced Features
 
