@@ -146,7 +146,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
   const searchQuery = `repo:fluxzero-io/fluxzero-site "${slugFilter}" in:title`;
 
   // Use mock data for localhost development
-  const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+  const isLocalhost = false //url.hostname === 'localhost' || url.hostname === '127.0.0.1';
 
   try {
     let data;
@@ -202,7 +202,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
     // Process each discussion to extract metadata and clean up body
     const discussions = data.data.search.nodes.map((discussion: any) => {
       // Extract metadata from HTML comment if present
-      const metadataMatch = discussion.body.match(/<!-- FEEDBACK_METADATA\n(.*?)\n-->/s);
+      const metadataMatch = discussion.body.match(/<!-- FEEDBACK_METADATA\r?\n(.*?)\r?\n-->/s);
       let metadata = null;
       if (metadataMatch) {
         try {
