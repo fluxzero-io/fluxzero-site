@@ -89,7 +89,6 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
       );
 
       const listHtml = sortedDiscussions.map((discussion, index) => {
-        const cleanTitle = discussion.title.replace(/^\[slug:[^\]]+\]\s*/, '');
         const date = new Date(discussion.createdAt);
         const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -105,7 +104,7 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
                 🕐 ${dateStr} ${timeStr}${discussion.commentCount > 0 ? ` • ${discussion.commentCount}💬` : ''}
               </span>
               <span class="feedback-separator">•</span>
-              <span class="feedback-title">${cleanTitle}${externalIcon}</span>
+              <span class="feedback-title">${discussion.title}${externalIcon}</span>
             </a>
           </div>
         `;
@@ -392,11 +391,9 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
       const popup = document.createElement('div');
       popup.className = 'feedback-popup';
 
-      const cleanTitle = discussion.title.replace(/^\[slug:[^\]]+\]\s*/, '');
-
       popup.innerHTML = `
         <div class="feedback-popup-header">
-          <h4>${cleanTitle}</h4>
+          <h4>${discussion.title}</h4>
           <button class="feedback-close">&times;</button>
         </div>
         <div class="feedback-popup-content">

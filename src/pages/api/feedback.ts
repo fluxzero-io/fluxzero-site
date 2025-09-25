@@ -215,9 +215,12 @@ export const GET: APIRoute = async ({ url, locals }) => {
       // Clean body for display (remove metadata comment)
       const displayBody = discussion.body.replace(/<!-- FEEDBACK_METADATA.*?-->/s, '').trim();
 
+      // Clean title (remove slug prefix)
+      const cleanTitle = discussion.title.replace(/\[slug:[^\]]+\]\s*/g, '').trim();
+
       return {
         id: discussion.id,
-        title: discussion.title,
+        title: cleanTitle,
         body: displayBody,
         originalBody: discussion.body, // Keep original for debugging
         url: discussion.url,
