@@ -13,7 +13,10 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
 ---
 
 <div id={componentId} class={`floating-feedback-container ${className}`}>
-  <!-- Feedback indicators will be injected here -->
+  <div class="feedback-list">
+    <!-- Feedback list will be populated here -->
+  </div>
+  <!-- Floating indicators will also be injected into the page -->
 </div>
 
 <script define:vars={{ currentSlug, componentId }}>
@@ -30,6 +33,7 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
 
     async init() {
       await this.fetchFeedback();
+      this.renderFeedbackList();
       this.processTextSelections();
       this.setupScrollListener();
     }
@@ -44,6 +48,77 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
       } catch (err) {
         console.error('Error fetching feedback:', err);
       }
+    }
+
+    renderFeedbackList() {
+      const feedbackList = this.container.querySelector('.feedback-list');
+
+      if (!this.feedback || this.feedback.discussions.length === 0) {
+        feedbackList.innerHTML = '<p class="no-feedback">No feedback yet for this page.</p>';
+        return;
+      }
+
+      // Sort discussions by date descending (newest first)
+      const sortedDiscussions = [...this.feedback.discussions].sort((a, b) =>
+        new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      const listHtml = sortedDiscussions.map((discussion, index) => {
+        const cleanTitle = discussion.title.replace(/^\[slug:[^\]]+\]\s*/, '');
+        const date = new Date(discussion.createdAt);
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+        return `
+          <div class="feedback-item">
+            <a href="${discussion.url}" target="_blank" rel="noopener noreferrer" class="feedback-item-link" data-discussion-id="${discussion.id}">
+              <span class="feedback-meta">
+                🕐 ${dateStr} ${timeStr}${discussion.commentCount > 0 ? ` • ${discussion.commentCount}💬` : ''}
+              </span>
+              <span class="feedback-separator">•</span>
+              <span class="feedback-title">${cleanTitle}</span>
+            </a>
+          </div>
+        `;
+      }).join('');
+
+      feedbackList.innerHTML = `
+        <h3 class="feedback-list-title">Feedback & Questions</h3>
+        <div class="feedback-items">
+          ${listHtml}
+        </div>
+      `;
+
+      // Add click handlers to scroll to highlighted text
+      feedbackList.querySelectorAll('.feedback-item-link').forEach((link) => {
+        link.addEventListener('click', (e) => {
+          const discussionId = link.dataset.discussionId;
+          const highlightSpan = document.querySelector(`[data-feedback-id="${discussionId}"]`);
+
+          if (highlightSpan) {
+            e.preventDefault();
+
+            // Scroll to the highlighted text
+            highlightSpan.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+
+            // Find the discussion data and show the popup
+            const discussion = this.feedback.discussions.find(d => d.id === discussionId);
+            if (discussion) {
+              // Find the corresponding indicator
+              const indicator = this.indicators.find(ind => ind.discussion.id === discussionId);
+              if (indicator) {
+                setTimeout(() => {
+                  this.showFeedbackPopup(discussion, indicator.element);
+                }, 500); // Delay to let scroll animation finish
+              }
+            }
+          }
+          // If span doesn't exist, let default behavior happen (open GitHub URL)
+        });
+      });
     }
 
     processTextSelections() {
@@ -369,7 +444,82 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
 
 <style>
   .floating-feedback-container {
-    /* Container doesn't need visible styling */
+    margin: 2rem 0;
+  }
+
+  /* Feedback list styling */
+  .feedback-list-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 0.75rem 0;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.25rem;
+  }
+
+  :global(.feedback-items) {
+    display: flex;
+    flex-direction: column;
+    gap: 0.025rem;
+  }
+
+  :global(.feedback-item) {
+    transition: background-color 0.2s ease;
+    border-radius: 1px;
+  }
+
+  :global(.feedback-item:hover) {
+    background: #f3f4f6;
+  }
+
+  :global(.feedback-item-link) {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.05rem 0.2rem;
+    text-decoration: none;
+    color: inherit;
+    line-height: 1.1;
+  }
+
+  :global(.feedback-item-link:hover) {
+    text-decoration: none;
+  }
+
+  :global(.feedback-meta) {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+    font-size: 10px !important;
+    color: #6b7280;
+    flex-shrink: 0;
+  }
+
+  :global(.feedback-separator) {
+    color: #d1d5db;
+    font-size: 10px !important;
+    margin: 0 0.2rem;
+    flex-shrink: 0;
+  }
+
+  :global(.feedback-title) {
+    color: #3b82f6;
+    font-size: 11px !important;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  .no-feedback {
+    color: #6b7280;
+    font-style: italic;
+    text-align: center;
+    padding: 2rem;
+    background: #f9fafb;
+    border: 1px dashed #d1d5db;
+    border-radius: 8px;
   }
 
   /* Highlighted text styling */
@@ -516,6 +666,21 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
 
   /* Dark mode support */
   @media (prefers-color-scheme: dark) {
+    .feedback-list-title {
+      color: #f9fafb;
+      border-color: #374151;
+    }
+
+    .feedback-item:hover {
+      background: #374151;
+    }
+
+    .no-feedback {
+      background: #1f2937;
+      border-color: #374151;
+      color: #9ca3af;
+    }
+
     :global(.feedback-popup) {
       background: #1f2937;
       border-color: #374151;
