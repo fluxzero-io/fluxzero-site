@@ -33,8 +33,8 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
 
     async init() {
       await this.fetchFeedback();
-      this.renderFeedbackList();
       this.processTextSelections();
+      this.renderFeedbackList();
       this.setupScrollListener();
     }
 
@@ -69,6 +69,10 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
         const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
+        // Check if there's a corresponding highlighted span on the page
+        const hasHighlightedText = !!document.querySelector(`[data-feedback-id="${discussion.id}"]`);
+        const externalIcon = hasHighlightedText ? '' : ' ↗️';
+
         return `
           <div class="feedback-item">
             <a href="${discussion.url}" target="_blank" rel="noopener noreferrer" class="feedback-item-link" data-discussion-id="${discussion.id}">
@@ -76,7 +80,7 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
                 🕐 ${dateStr} ${timeStr}${discussion.commentCount > 0 ? ` • ${discussion.commentCount}💬` : ''}
               </span>
               <span class="feedback-separator">•</span>
-              <span class="feedback-title">${cleanTitle}</span>
+              <span class="feedback-title">${cleanTitle}${externalIcon}</span>
             </a>
           </div>
         `;
