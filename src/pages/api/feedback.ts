@@ -2,6 +2,7 @@
 // Currently using Personal Access Token for simplicity
 export const prerender = false;
 import type { APIRoute } from 'astro';
+import { marked } from 'marked';
 
 // Mock data for local development
 function getMockFeedbackData(pageSlug: string) {
@@ -215,13 +216,16 @@ export const GET: APIRoute = async ({ url, locals }) => {
       // Clean body for display (remove metadata comment)
       const displayBody = discussion.body.replace(/<!-- FEEDBACK_METADATA.*?-->/s, '').trim();
 
+      // Convert markdown to HTML
+      const htmlBody = marked(displayBody);
+
       // Clean title (remove slug prefix)
       const cleanTitle = discussion.title.replace(/\[slug:[^\]]+\]\s*/g, '').trim();
 
       return {
         id: discussion.id,
         title: cleanTitle,
-        body: displayBody,
+        body: htmlBody,
         originalBody: discussion.body, // Keep original for debugging
         url: discussion.url,
         createdAt: discussion.createdAt,
