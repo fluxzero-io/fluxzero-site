@@ -41,6 +41,7 @@ This sounds really interesting, but I'm not clear on what "messages and handlers
 }
 -->`,
             url: "https://github.com/fluxzero-io/fluxzero-site/discussions/123",
+            closed: true,
             createdAt: "2025-09-24T15:30:00Z",
             updatedAt: "2025-09-24T16:00:00Z",
             author: {
@@ -70,8 +71,25 @@ This sounds really interesting, but I'm not clear on what "messages and handlers
 This sounds promising, but I'm curious about the learning curve. How different is this from building a traditional REST API with Express.js or Spring Boot? Is there migration path from existing backends?
 
 ---
-*This feedback was submitted through the documentation site.*`,
+*This feedback was submitted through the documentation site.*
+
+<!-- FEEDBACK_METADATA
+{
+  "version": 1,
+  "page": "/docs/getting-started/introduction",
+  "selection": {
+    "text": "you just write messages and handlers",
+    "context": {
+      "prefix": "Instead of gluing together tools, layering service code, mapping models, and wiring up infrastructure, **",
+      "suffix": "**. Fluxzero takes care of everything else"
+    }
+  },
+  "timestamp": "2025-09-24T15:30:00Z"
+}
+-->
+`,
             url: "https://github.com/fluxzero-io/fluxzero-site/discussions/124",
+            closed: false,
             createdAt: "2025-09-24T14:15:00Z",
             updatedAt: "2025-09-24T14:15:00Z",
             author: {
@@ -122,6 +140,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
             title
             body
             url
+            closed
             createdAt
             updatedAt
             author {
@@ -147,7 +166,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
   const searchQuery = `repo:fluxzero-io/fluxzero-site "${slugFilter}" in:title`;
 
   // Use mock data for localhost development
-  const isLocalhost = false //url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+  const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
 
   try {
     let data;
@@ -228,6 +247,7 @@ export const GET: APIRoute = async ({ url, locals }) => {
         body: htmlBody,
         originalBody: discussion.body, // Keep original for debugging
         url: discussion.url,
+        closed: discussion.closed,
         createdAt: discussion.createdAt,
         updatedAt: discussion.updatedAt,
         author: discussion.author,

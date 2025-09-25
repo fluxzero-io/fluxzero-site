@@ -93,15 +93,17 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
         const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
 
-        // Check if there's a corresponding highlighted span on the page
-        const hasHighlightedText = !!document.querySelector(`[data-feedback-id="${discussion.id}"]`);
-        const externalIcon = hasHighlightedText ? '' : ' ↗️';
+        // No external icon needed in the compact list
+        const externalIcon = '';
+
+        // Show checkmark for closed discussions, comment bubble for open ones
+        const statusIcon = discussion.closed ? '✅' : '💬';
 
         return `
           <div class="feedback-item">
             <a href="${discussion.url}" target="_blank" rel="noopener noreferrer" class="feedback-item-link" data-discussion-id="${discussion.id}">
               <span class="feedback-meta">
-                🕐 ${dateStr} ${timeStr}${discussion.commentCount > 0 ? ` • ${discussion.commentCount}💬` : ''}
+                ${statusIcon} ${dateStr} ${timeStr}${discussion.commentCount > 0 ? ` • ${discussion.commentCount}` : ''}
               </span>
               <span class="feedback-separator">•</span>
               <span class="feedback-title">${discussion.title}${externalIcon}</span>
@@ -179,7 +181,10 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
     processTextSelections() {
       if (!this.feedback || this.feedback.discussions.length === 0) return;
 
-      this.feedback.discussions.forEach((discussion, index) => {
+      // Only process open discussions for text highlighting
+      const openDiscussions = this.feedback.discussions.filter(discussion => !discussion.closed);
+
+      openDiscussions.forEach((discussion, index) => {
         const selectedText = this.extractSelectedText(discussion);
         const textLocation = this.findTextInPage(selectedText);
 
@@ -599,7 +604,7 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
     font-size: 1.1rem;
     font-weight: 600;
     color: #1f2937;
-    margin: 0 0 0.75rem 0;
+    margin: 0 0 0.25rem 0;
     border-bottom: 1px solid #e5e7eb;
     padding-bottom: 0.25rem;
   }
@@ -607,7 +612,7 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
   :global(.feedback-items) {
     display: flex;
     flex-direction: column;
-    gap: 0.025rem;
+    gap: 0;
   }
 
   :global(.feedback-item) {
@@ -617,6 +622,7 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
     border: none;
     outline: none;
     box-shadow: none;
+    margin: 0;
   }
 
   :global(.feedback-item:hover) {
@@ -648,7 +654,7 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
     display: flex;
     align-items: center;
     gap: 0.2rem;
-    padding: 0.05rem 0.2rem;
+    padding: 0.01rem 0.2rem;
     text-decoration: none;
     color: inherit;
     line-height: 1.1;
