@@ -3,7 +3,7 @@ title: Sending messages
 description: Sending messages
 slug: docs/guides/messaging/sending-messages
 sidebar:
-  order: 100
+  order: 15
 ---
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
@@ -61,7 +61,7 @@ Fluxzero.sendCommand(new CreateUser("Bob"),
 
 ---
 
-## Commands
+### Commands
 
 Commands trigger domain behavior and optionally return a result.
 
@@ -86,7 +86,7 @@ CompletableFuture<UserId> future =
 
 ---
 
-## Queries
+### Queries
 
 Queries retrieve state from read models or projections.
 
@@ -106,7 +106,7 @@ CompletableFuture<UserProfile> result =
 
 ---
 
-## Events
+### Events
 
 Events can be published via:
 
@@ -125,7 +125,7 @@ By default:
 
 ---
 
-## Schedules
+### Schedules
 
 Schedule messages for future delivery:
 
@@ -141,7 +141,7 @@ Fluxzero.schedulePeriodic(new PollExternalApi());
 
 ---
 
-## Web requests
+### Web requests
 
 Send outbound HTTP calls through the Fluxzero Runtime:
 
@@ -154,7 +154,7 @@ WebResponse response = Fluxzero.get()
 
 ---
 
-## Metrics
+### Metrics
 
 Send custom metric messages:
 
@@ -165,11 +165,69 @@ Fluxzero.publishMetrics(
 
 ---
 
+## Dispatch interceptors
+
+A `DispatchInterceptor` lets you hook into the message pipeline before it’s published to Fluxzero or handled locally. Interceptors are a powerful way to enrich, validate, log, or even block messages at dispatch time.
+
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    public class LoggingInterceptor implements DispatchInterceptor {
+        @Override
+        public Message interceptDispatch(Message message, MessageType type,
+                                         String topic) {
+            log.info("Dispatching: {} to topic {}", type, topic);
+            return message;
+        }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    class LoggingInterceptor : DispatchInterceptor {
+        override fun interceptDispatch(message: Message, type: MessageType,
+                                       topic: String): Message {
+            log.info("Dispatching: {} to topic {}", type, topic)
+            return message
+        }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+**What you can do with an interceptor:**
+
+- `interceptDispatch(...)` — inspect, modify, or block a message before it’s dispatched
+- `modifySerializedMessage(...)` — adjust the serialized form of a message before it’s sent across the wire
+- `monitorDispatch(...)` — observe or log the final message as it leaves the system
+
+To block dispatch, simply return `null` from the `interceptDispatch` method.
+
+**Registering an interceptor globally**
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    FluxzeroBuilder
+        .addDispatchInterceptor(new LoggingInterceptor(), MessageType.COMMAND, MessageType.EVENT);
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    FluxzeroBuilder
+        .addDispatchInterceptor(LoggingInterceptor(), MessageType.COMMAND, MessageType.EVENT)
+    ```
+  </TabItem>
+</Tabs>
+
+See [Configuring Fluxzero](/docs/guides/configuration-and-support/configuring-fluxzero) for details on registration.
+
+---
+
 ## What happens after dispatch?
 
 Fluxzero processes the message through the following pipeline:
 
-### 1. Pre-serialization dispatch interceptors
+### 1. Pre-serialization interceptors
 
 All configured `DispatchInterceptor`s run first. They may:
 
@@ -196,6 +254,76 @@ A second pass of interceptors may adjust or enrich the serialized form before se
 ### 5. Runtime forwarding
 
 Messages not handled locally are published to the Fluxzero Runtime. From there, delivery guarantees, retries, rate limits, and remote handler routing apply.
+
+### Full dispatch flow
+
+The diagram below illustrates the full dispatch pipeline. At each step, processing may end early if the message is blocked or suppressed.
+
+```mermaid
+graph TD
+    START[Message dispatched] --> PRE[Pre-serialization dispatch interceptors]
+    PRE --> PRE_BLOCK{Dispatch blocked?}
+    PRE_BLOCK -->|No| HANDLERS{Local handler available?}
+    HANDLERS -->|Yes| LOCAL[Invoke local handler]
+    HANDLERS -->|No| SERIALIZE[Serialize message with metadata]
+    LOCAL --> PASSIVE{Passive?}
+    PASSIVE -->|Yes| SERIALIZE
+    PASSIVE -->|No| LOG_MESSAGE{Log message?}
+    LOG_MESSAGE -->|Yes| SERIALIZE
+    LOG_MESSAGE --> RETURN_LOCAL_RESULT[Return local result]
+    SERIALIZE --> POST[Post-serialization interceptors]
+    POST --> POST_BLOCK{Dispatch blocked?}
+    POST_BLOCK -->|No| FORWARD[Forward to Runtime]
+```
+
+---
+
+## Routing keys
+
+Sometimes you need all messages with the same identifier to be processed in order, while still allowing parallelism across unrelated entities. Fluxzero supports this through the <code>@RoutingKey</code> annotation.
+
+
+Apply <code>@RoutingKey</code> to a field in your message payload (or metadata) to ensure that all messages sharing the same key are handled sequentially. This is especially useful for per-customer, per-order, or per-entity consistency.
+
+Routing keys are converted into a hash using **consistent hashing** at dispatch time. This ensures even distribution across segments while maintaining order for messages that share the same key.
+
+Handlers may also override the routing key for finer control. See [Custom routing keys](/docs/guides/messaging/message-tracking/#custom-routing-keys) for details.
+
+### Examples
+You can place the annotation directly on a field, or point it to a nested property path:
+
+<Tabs>
+<TabItem value="Java" label="Java">
+
+```java
+public record ShipOrder(@RoutingKey OrderId orderId) {
+}
+```
+
+```java
+@RoutingKey("customer/id")
+public record OrderPlaced(Customer customer) {
+}
+```
+
+</TabItem>
+<TabItem value="Kotlin" label="Kotlin">
+
+```kotlin
+data class ShipOrder(
+    @RoutingKey val orderId: OrderId
+)
+```
+
+```kotlin
+@RoutingKey("customer/id")
+data class OrderPlaced(
+    val customer: Customer
+)
+```
+
+</TabItem>
+</Tabs>
 
 ---
 

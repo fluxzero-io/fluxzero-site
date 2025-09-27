@@ -1,0 +1,25 @@
+---
+title: Core principles
+sidebar:
+   order: 40
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import { Steps } from '@astrojs/starlight/components';
+
+Fluxzero is designed to make communication within and between your apps reliable and effortless.
+These principles guide everything in the platform:
+
+- **Decoupled producers and consumers** — senders never depend on how or when messages are handled.
+- **Uniform communication** — whether inside a single app or across apps, the messaging model is the same.
+- **Transparent load distribution** — message load is automatically shared across apps.
+- **Zero awareness between apps** — applications don’t need to know about each other to work together.
+- **Built-in backpressure** — flow control is part of the core design, not an afterthought.
+- **No entity locks required** — messages can be processed without blocking or manual synchronization.
+- **Messages are never lost** — every message is durably logged. Handlers cannot skip messages accidentally.
+- **Replayable at any time** — past messages can be replayed for recovery, migration, or analytics.
+- **Auditable history** — every sent message is recorded for inspection and compliance.
+
+<Aside type="note">
+These principles aren’t just design goals — they’re guarantees Fluxzero enforces in practice.
+</Aside>

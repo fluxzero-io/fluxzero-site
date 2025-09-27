@@ -64,13 +64,13 @@ handled locally.
 <Tabs>
   <TabItem label="Java">
     ```java
-    FluxzeroBuilder.builder()
+    FluxzeroBuilder
         .addDispatchInterceptor(new LoggingInterceptor(), MessageType.COMMAND, MessageType.EVENT);
     ```
   </TabItem>
   <TabItem label="Kotlin">
     ```kotlin
-    FluxzeroBuilder.builder()
+    FluxzeroBuilder
         .addDispatchInterceptor(LoggingInterceptor(), MessageType.COMMAND, MessageType.EVENT)
     ```
   </TabItem>
@@ -131,7 +131,7 @@ A `HandlerInterceptor` allows wrapping the execution of handler methods, ideal f
     @Consumer(handlerInterceptors = AuthorizationInterceptor.class)
     public class SecureCommandHandler { ... }
 
-    FluxzeroBuilder.builder()
+    FluxzeroBuilder
         .addHandlerInterceptor(new AuthorizationInterceptor(), true, MessageType.COMMAND);
     ```
   </TabItem>
@@ -140,7 +140,7 @@ A `HandlerInterceptor` allows wrapping the execution of handler methods, ideal f
     @Consumer(handlerInterceptors = [AuthorizationInterceptor::class])
     class SecureCommandHandler { ... }
 
-    FluxzeroBuilder.builder()
+    FluxzeroBuilder
         .addHandlerInterceptor(AuthorizationInterceptor(), true, MessageType.COMMAND)
     ```
   </TabItem>
@@ -239,13 +239,13 @@ This specialization of `BatchInterceptor` can rewrite or filter the batch itself
 <Tabs>
   <TabItem label="Java">
     ```java
-    FluxzeroBuilder.builder()
+    FluxzeroBuilder
         .addBatchInterceptor(filterTestMessages, MessageType.QUERY);
     ```
   </TabItem>
   <TabItem label="Kotlin">
     ```kotlin
-    FluxzeroBuilder.builder()
+    FluxzeroBuilder
         .addBatchInterceptor(filterTestMessages, MessageType.QUERY)
     ```
   </TabItem>
