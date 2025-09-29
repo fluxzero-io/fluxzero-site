@@ -459,7 +459,7 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
 
     updatePopupPosition(popup, indicator) {
       const indicatorRect = indicator.getBoundingClientRect();
-      const popupWidth = 320;
+      const popupWidth = 440;
 
       // Calculate optimal position
       let left = indicatorRect.left;
@@ -546,7 +546,8 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
     position: fixed;
     bottom: 80px;
     right: 20px;
-    width: 350px;
+    width: 420px;
+    max-width: calc(100vw - 40px);
     max-height: 400px;
     background: white;
     border: 1px solid #d1d5db;
@@ -766,7 +767,8 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    width: 300px;
+    width: 420px;
+    max-width: calc(100vw - 24px);
     max-height: 400px;
     overflow: hidden;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -847,6 +849,62 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
     line-height: 1.5;
     color: #1f2937;
     margin-bottom: 12px;
+  }
+
+  /* Ensure markdown headings inside feedback body are compact */
+  :global(.feedback-body h1),
+  :global(.feedback-body h2),
+  :global(.feedback-body h3),
+  :global(.feedback-body h4),
+  :global(.feedback-body h5),
+  :global(.feedback-body h6) {
+    margin: 6px 0 4px;
+    line-height: 1.25;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  :global(.feedback-body h1) { font-size: 0.95rem; }
+  :global(.feedback-body h2) { font-size: 0.9rem; }
+  :global(.feedback-body h3) { font-size: 0.875rem; }
+  :global(.feedback-body h4) { font-size: 0.85rem; }
+  :global(.feedback-body h5) { font-size: 0.825rem; }
+  :global(.feedback-body h6) { font-size: 0.8rem; }
+
+  /* Compact other markdown elements inside feedback body */
+  :global(.feedback-body p) { margin: 6px 0; }
+  :global(.feedback-body ul),
+  :global(.feedback-body ol) {
+    margin: 6px 0 6px 1rem;
+    padding-left: 1rem;
+  }
+  :global(.feedback-body li) { margin: 2px 0; }
+  :global(.feedback-body blockquote) {
+    margin: 8px 0;
+    padding: 6px 10px;
+    border-left: 3px solid #3b82f6;
+    background: #f3f4f6;
+    border-radius: 0 4px 4px 0;
+    font-size: 12px;
+    color: #4b5563;
+  }
+
+  /* Dark mode adjustments for markdown elements */
+  @media (prefers-color-scheme: dark) {
+    :global(.feedback-body h1),
+    :global(.feedback-body h2),
+    :global(.feedback-body h3),
+    :global(.feedback-body h4),
+    :global(.feedback-body h5),
+    :global(.feedback-body h6) {
+      color: #f9fafb;
+    }
+
+    :global(.feedback-body blockquote) {
+      background: #374151;
+      color: #d1d5db;
+      border-left-color: #60a5fa;
+    }
   }
 
   :global(.feedback-actions a) {
