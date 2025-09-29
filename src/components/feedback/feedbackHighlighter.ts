@@ -345,10 +345,10 @@ class FeedbackHighlighterController {
       e.preventDefault();
       const g = this.groups.find(x => x.element === indicator);
       if (g && g.discussions.length > 1) {
-        window.dispatchEvent(new CustomEvent('feedback:open-group', { detail: { discussions: g.discussions } }));
+        window.dispatchEvent(new CustomEvent('feedback:open-group', { detail: { discussions: g.discussions, clientX: (e as MouseEvent).clientX, clientY: (e as MouseEvent).clientY } }));
       } else {
         const first = (g?.discussions?.[0]) || discussion;
-        window.dispatchEvent(new CustomEvent('feedback:open-id', { detail: { id: first.id, discussion: first } }));
+        window.dispatchEvent(new CustomEvent('feedback:open-id', { detail: { id: first.id, discussion: first, clientX: (e as MouseEvent).clientX, clientY: (e as MouseEvent).clientY } }));
       }
     });
 
@@ -356,10 +356,13 @@ class FeedbackHighlighterController {
   }
 
   private attachSpanHoverHandlers(span: HTMLElement, indicator: HTMLElement) {
-    span.addEventListener('mouseenter', () => {
+    span.addEventListener('mouseenter', (e: MouseEvent) => {
       const ht = (indicator as any)._ht;
       if (ht) { try { clearTimeout(ht); } catch {} }
-      this.updateAbsolutePosition(indicator, span);
+      const sl = window.pageXOffset || document.documentElement.scrollLeft;
+      const st = window.pageYOffset || document.documentElement.scrollTop;
+      indicator.style.left = `${e.clientX + 20 + sl}px`;
+      indicator.style.top = `${e.clientY - 30 + st}px`;
       indicator.style.opacity = '0.9';
       indicator.style.transform = 'scale(1)';
     });
@@ -418,7 +421,7 @@ class FeedbackHighlighterController {
     indicator.addEventListener('click', (e) => {
       e.preventDefault();
       const first = group.discussions[0] || discussion;
-      window.dispatchEvent(new CustomEvent('feedback:open-id', { detail: { id: first.id, discussion: first } }));
+      window.dispatchEvent(new CustomEvent('feedback:open-id', { detail: { id: first.id, discussion: first, clientX: (e as MouseEvent).clientX, clientY: (e as MouseEvent).clientY } }));
     });
     this.groups.push(group);
     return group;

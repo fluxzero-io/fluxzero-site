@@ -17,14 +17,15 @@ class FeedbackPopupController {
   private onOpen(e: CustomEvent) {
     const id = (e as any).detail?.id as string | undefined;
     const discussion = (e as any).detail?.discussion as any | undefined;
+    const clientX = (e as any).detail?.clientX as number | undefined;
+    const clientY = (e as any).detail?.clientY as number | undefined;
     if (!id || !discussion) return;
     const highlightSpan = this.findHighlightSpanById(id);
     const indicator = document.querySelector(`.feedback-indicator[data-discussion-id="${id}"]`) as HTMLElement | null;
     const anchorEl = indicator || highlightSpan;
-    if (!anchorEl) return;
-    anchorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (anchorEl) anchorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     // Small delay to allow scroll positioning, but keep snappy
-    setTimeout(() => this.showPopup(discussion, anchorEl), 60);
+    setTimeout(() => this.showPopup(discussion, anchorEl || document.body, clientX, clientY), 60);
   }
 
   private findHighlightSpanById(id: string): HTMLElement | null {
@@ -59,7 +60,7 @@ class FeedbackPopupController {
     });
   }
 
-  private showPopup(discussion: any, indicator: HTMLElement) {
+  private showPopup(discussion: any, indicator: HTMLElement, clickX?: number, clickY?: number) {
     if (this.activePopup) this.activePopup.remove();
 
     const popup = document.createElement('div');
@@ -89,16 +90,19 @@ class FeedbackPopupController {
       </div>
     `;
 
-    this.updatePopupPosition(popup, indicator);
     popup.style.position = 'fixed';
     popup.style.zIndex = '2000';
+    popup.style.visibility = 'hidden';
     (popup as any).associatedIndicator = indicator;
+    document.body.appendChild(popup);
+    // Now that it's in the DOM, measure and position near the cursor (top-right, 20px offset)
+    this.updatePopupPosition(popup, indicator, clickX, clickY);
+    popup.style.visibility = 'visible';
 
     const close = () => {
       popup.remove();
       this.activePopup = null;
       indicator.style.opacity = '0';
-      (indicator as any).style.pointerEvents = 'none';
       indicator.style.transform = 'scale(0.8)';
     };
     popup.querySelector('.feedback-close')?.addEventListener('click', close);
@@ -113,7 +117,6 @@ class FeedbackPopupController {
       document.addEventListener('click', onOutside);
     }, 100);
 
-    document.body.appendChild(popup);
     // Trigger enter animation
     requestAnimationFrame(() => {
       popup.classList.add('is-visible');
@@ -123,15 +126,17 @@ class FeedbackPopupController {
 
   private onOpenGroup(e: CustomEvent) {
     const discussions = (e as any).detail?.discussions as any[] | undefined;
+    const clientX = (e as any).detail?.clientX as number | undefined;
+    const clientY = (e as any).detail?.clientY as number | undefined;
     if (!discussions || discussions.length === 0) return;
     // Anchor to first discussion's indicator if present
     const firstId = discussions[0].id;
     const indicator = document.querySelector(`.feedback-indicator[data-discussion-id="${firstId}"]`) as HTMLElement | null;
     const anchorEl = indicator || document.body;
-    this.showGroupPopup(discussions, anchorEl);
+    this.showGroupPopup(discussions, anchorEl, clientX, clientY);
   }
 
-  private showGroupPopup(discussions: any[], indicator: HTMLElement) {
+  private showGroupPopup(discussions: any[], indicator: HTMLElement, clickX?: number, clickY?: number) {
     if (this.activePopup) this.activePopup.remove();
     const popup = document.createElement('div');
     popup.className = 'feedback-popup';
@@ -150,10 +155,13 @@ class FeedbackPopupController {
       <div class="feedback-popup-content">
         <div class="feedback-items">${items}</div>
       </div>`;
-    this.updatePopupPosition(popup, indicator);
     popup.style.position = 'fixed';
     popup.style.zIndex = '2000';
+    popup.style.visibility = 'hidden';
     (popup as any).associatedIndicator = indicator;
+    document.body.appendChild(popup);
+    this.updatePopupPosition(popup, indicator, clickX, clickY);
+    popup.style.visibility = 'visible';
     popup.querySelector('.feedback-close')?.addEventListener('click', () => { popup.remove(); this.activePopup = null; });
     popup.querySelectorAll('.feedback-item-link').forEach((el) => {
       el.addEventListener('click', (ev) => {
@@ -164,21 +172,33 @@ class FeedbackPopupController {
         this.showPopup(d, indicator);
       });
     });
-    document.body.appendChild(popup);
     requestAnimationFrame(() => popup.classList.add('is-visible'));
     this.activePopup = popup;
   }
 
-  private updatePopupPosition(popup: HTMLElement, indicator: HTMLElement) {
+  private updatePopupPosition(popup: HTMLElement, indicator: HTMLElement, clickX?: number, clickY?: number) {
     const rect = indicator.getBoundingClientRect();
-    const popupWidth = 440;
-    let left = rect.left;
-    let top = rect.bottom + 10;
-    if (left + popupWidth > window.innerWidth) left = window.innerWidth - popupWidth - 10;
+    const offset = 20;
+    const popupRect = popup.getBoundingClientRect();
+    const popupWidth = Math.min(440, Math.max(280, popupRect.width || 360));
+    const popupHeight = Math.min(420, Math.max(180, popupRect.height || 320));
+
+    let left = (typeof clickX === 'number') ? clickX + offset : rect.left;
+    // Prefer above the cursor: top-right of cursor by 20px; if not enough space, place below
+    let top = (typeof clickY === 'number') ? (clickY - popupHeight - offset) : (rect.bottom + 10);
+    if (typeof clickY === 'number' && top < 10) {
+      top = clickY + offset; // place below if not enough space above
+    }
+
+    // Clamp within viewport horizontally
+    if (left + popupWidth > window.innerWidth - 10) left = window.innerWidth - popupWidth - 10;
     if (left < 10) left = 10;
-    if (top + 400 > window.innerHeight) top = rect.top - 410;
+    // Clamp vertically
+    if (top + popupHeight > window.innerHeight - 10) top = Math.max(10, window.innerHeight - popupHeight - 10);
+
     popup.style.left = `${left}px`;
     popup.style.top = `${top}px`;
+    popup.style.width = `${popupWidth}px`;
   }
 
   private formatDate(dateString: string) {
