@@ -2,7 +2,6 @@
 @import '@astrojs/starlight-tailwind';
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
-@import './feedback.css';
 
 /* Custom theme colors for Tailwind CSS v4 */
 @theme {

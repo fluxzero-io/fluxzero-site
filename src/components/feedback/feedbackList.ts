@@ -1,0 +1,124 @@
+import { subscribe, getState, type FeedbackState } from '/src/components/feedback/feedbackStore.ts';
+
+export function initFeedbackList(options: { slug: string; mount?: HTMLElement | null }) {
+  const controller = new FeedbackListController(options.slug, options.mount || null);
+  return controller;
+}
+
+class FeedbackListController {
+  private slug: string;
+  private root: HTMLElement | null;
+  private unsubscribe: null | (() => void) = null;
+  private isOpen = false;
+
+  constructor(slug: string, mount: HTMLElement | null) {
+    this.slug = slug;
+    this.root = this.ensureRoot(mount);
+    this.init();
+  }
+
+  private ensureRoot(mount: HTMLElement | null) {
+    const root = document.createElement('div');
+    root.className = 'feedback-list-root';
+    root.dataset.slug = this.slug;
+    (mount || document.body).appendChild(root);
+    root.innerHTML = `
+      <button class="feedback-button" id="feedback-toggle" aria-expanded="false">
+        💬 <span class="feedback-count">0</span>
+      </button>
+      <div class="feedback-popup-container" id="feedback-popup" style="display:none;">
+        <div class="feedback-popup-header">
+          <h3>Feedback & Questions</h3>
+          <button class="feedback-popup-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="feedback-list" role="list"></div>
+      </div>`;
+    return root;
+  }
+
+  private async init() {
+    // subscribe to store and render reactively
+    this.unsubscribe = subscribe((s) => {
+      this.renderFromState(s);
+    });
+    this.setupHandlers();
+  }
+
+  private renderFromState(state: FeedbackState) {
+    if (!this.root) return;
+    const listEl = this.root.querySelector('.feedback-list') as HTMLElement;
+    const btn = this.root.querySelector('.feedback-button') as HTMLElement;
+    const countEl = this.root.querySelector('.feedback-count') as HTMLElement;
+    const { discussions = [], loading } = state;
+    const count = discussions.length || 0;
+    countEl.textContent = String(count);
+    if (loading) {
+      (btn as any).style.display = 'none';
+      listEl.innerHTML = '<p class="no-feedback">Loading feedback…</p>';
+      return;
+    }
+    if (count === 0) {
+      (btn as any).style.display = 'none';
+      listEl.innerHTML = '<p class="no-feedback">No feedback yet for this page.</p>';
+      return;
+    }
+    (btn as any).style.display = 'block';
+    const items = [...discussions]
+      .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .map((d: any) => {
+        const date = new Date(d.createdAt);
+        const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        const statusIcon = d.closed ? '✅' : '💬';
+        return `<div class="feedback-item">
+          <a href="${d.url}" target="_blank" rel="noopener noreferrer" class="feedback-item-link" data-id="${d.id}">
+            <span class="feedback-meta">${dateStr} ${timeStr}${d.commentCount > 0 ? ` • ${d.commentCount}` : ''}</span>
+            <span class="feedback-title">${statusIcon} ${d.title}</span>
+          </a>
+        </div>`;
+      }).join('');
+    listEl.innerHTML = `<div class="feedback-items">${items}</div>`;
+    const current = discussions;
+    listEl.querySelectorAll('.feedback-item-link').forEach((linkEl) => {
+      linkEl.addEventListener('click', (e) => {
+        const link = e.currentTarget as HTMLElement;
+        const id = (link as any).dataset.id;
+        if (!id) return;
+        const discussion = current.find((d) => d.id === id);
+        const anchor = document.querySelector(`[data-feedback-id="${id}"]`);
+        if (anchor) {
+          e.preventDefault();
+          (anchor as any).scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Close the list popup while opening single-item popup
+          const popup = this.root?.querySelector('#feedback-popup') as HTMLElement | null;
+          const btn = this.root?.querySelector('.feedback-button') as HTMLElement | null;
+          if (popup && btn) {
+            popup.style.display = 'none';
+            btn.setAttribute('aria-expanded', 'false');
+            this.isOpen = false;
+          }
+          window.dispatchEvent(new CustomEvent('feedback:open-id', { detail: { id, discussion } }));
+        }
+      });
+    });
+  }
+
+  private setupHandlers() {
+    if (!this.root) return;
+    const btn = this.root.querySelector('.feedback-button') as HTMLElement;
+    const popup = this.root.querySelector('#feedback-popup') as HTMLElement;
+    const close = this.root.querySelector('.feedback-popup-close') as HTMLElement;
+    const setOpen = (open: boolean) => {
+      this.isOpen = open;
+      (popup as any).style.display = open ? 'block' : 'none';
+      btn.setAttribute('aria-expanded', String(open));
+    };
+    btn.addEventListener('click', () => setOpen(!this.isOpen));
+    close.addEventListener('click', () => setOpen(false));
+    document.addEventListener('click', (e) => {
+      if (this.isOpen && !popup.contains(e.target as Node) && !btn.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    });
+  }
+}

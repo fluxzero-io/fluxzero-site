@@ -1,0 +1,115 @@
+---
+export interface Props { slug?: string }
+const { slug } = Astro.props;
+---
+
+<script>
+  class SelectionPromptController {
+    constructor() {
+      this.el = null;
+      this.handleSelectionChange = this.handleSelectionChange.bind(this);
+      this.handleScrollOrResize = this.handleScrollOrResize.bind(this);
+      this.init();
+    }
+
+    init() {
+      document.addEventListener('mouseup', this.handleSelectionChange);
+      document.addEventListener('keyup', this.handleSelectionChange);
+      document.addEventListener('touchend', this.handleSelectionChange, { passive: true });
+      window.addEventListener('scroll', this.handleScrollOrResize, { passive: true });
+      window.addEventListener('resize', this.handleScrollOrResize, { passive: true });
+    }
+
+    ensureEl() {
+      if (this.el) return this.el;
+      const el = document.createElement('div');
+      el.className = 'feedback-selection-prompt';
+      el.innerHTML = `💬 <span>Add a comment</span>`;
+      el.style.position = 'fixed';
+      el.style.zIndex = '2000';
+      el.style.display = 'none';
+      document.body.appendChild(el);
+      this.el = el;
+      return el;
+    }
+
+    handleScrollOrResize() {
+      if (this.el && this.el.style.display !== 'none') {
+        const sel = window.getSelection();
+        if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+          const range = sel.getRangeAt(0);
+          this.position(range);
+        } else {
+          this.hide();
+        }
+      }
+    }
+
+    handleSelectionChange() {
+      const sel = window.getSelection();
+      if (!sel || sel.rangeCount === 0 || sel.isCollapsed) {
+        this.hide();
+        return;
+      }
+
+      const range = sel.getRangeAt(0);
+
+      // Ignore selections inside our own feedback UI
+      const common = range.commonAncestorContainer instanceof Element
+        ? range.commonAncestorContainer
+        : range.commonAncestorContainer.parentElement;
+      if (common && (common.closest('.floating-feedback-container') || common.closest('.feedback-popup') || common.closest('.feedback-indicator'))) {
+        this.hide();
+        return;
+      }
+
+      const text = sel.toString().trim();
+      if (!text || text.length < 3) {
+        this.hide();
+        return;
+      }
+
+      this.show(range);
+    }
+
+    position(range) {
+      const rect = range.getBoundingClientRect();
+      const el = this.ensureEl();
+      const padding = 8;
+      const promptWidth = 160;
+      const promptHeight = 34;
+
+      let left = rect.right + padding;
+      let top = rect.top - promptHeight - 4;
+
+      if (left + promptWidth > window.innerWidth - 8) {
+        left = Math.max(8, rect.left - promptWidth - padding);
+      }
+      if (top < 8) {
+        top = Math.min(window.innerHeight - promptHeight - 8, rect.bottom + 6);
+      }
+
+      el.style.left = `${Math.round(left)}px`;
+      el.style.top = `${Math.round(top)}px`;
+    }
+
+    show(range) {
+      const el = this.ensureEl();
+      this.position(range);
+      el.style.display = 'flex';
+      el.style.opacity = '1';
+    }
+
+    hide() {
+      if (this.el) {
+        this.el.style.display = 'none';
+        this.el.style.opacity = '0';
+      }
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new SelectionPromptController();
+  });
+</script>
+

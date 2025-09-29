@@ -1,7 +1,43 @@
 {
-  "lastUpdated": "2025-09-21T09:00:44.329Z",
-  "latestVersion": "1.7.0",
+  "lastUpdated": "2025-09-29T06:42:57.592Z",
+  "latestVersion": "1.9.0",
   "releases": [
+    {
+      "version": "1.9.0",
+      "date": "2025-09-28",
+      "body": "#### [1.9.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.8.0...1.9.0) (2025-09-28)",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.9.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.7.4",
+      "date": "2025-09-27",
+      "body": "##### [1.7.4](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.7.3...1.7.4) (2025-09-27)\n\n\n##### Dependency updates\n\n* bump the dependency-updates group across 1 directory with 6 updates ([e608428](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/e608428016cf190f16ae0f1e7d2232c94e146281))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.7.4",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.7.2",
+      "date": "2025-09-27",
+      "body": "##### [1.7.2](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.7.1...1.7.2) (2025-09-27)\n\n\n##### Bug Fixes\n\n* **dispatch:** ensure `logMessage` is checked only when `handled` is true in `LocalHandlerRegistry` ([232c6ec](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/232c6ec3373afe1c70331fd51caf884a9c5f4c4e))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.7.2",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.7.1",
+      "date": "2025-09-27",
+      "body": "##### [1.7.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.7.0...1.7.1) (2025-09-27)\n\n\n##### Bug Fixes\n\n* **dispatch:** apply dispatch interceptor to serialized messages in `LocalHandlerRegistry` ([90ebf37](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/90ebf37b201850268c47cb95a32b50e43ba5c577))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.7.1",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
     {
       "version": "1.7.0",
       "date": "2025-09-18",

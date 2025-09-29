@@ -1,0 +1,17 @@
+---
+export interface Props { slug: string }
+const { slug } = Astro.props;
+---
+
+<script type="module" define:vars={{ slug }}>
+  import { initFeedbackStore } from '/src/components/feedback/feedbackStore.ts';
+  const boot = () => initFeedbackStore(slug);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
+</script>
+
+<!-- This component has no UI; it initializes a shared feedback store. -->
+

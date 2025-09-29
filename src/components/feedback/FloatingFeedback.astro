@@ -1,0 +1,44 @@
+---
+import '~/styles/feedback.css';
+
+// Floating feedback component that anchors feedback to selected text locations
+export interface Props {
+  slug?: string;
+  className?: string;
+}
+
+import TextSelectionFeedback from './TextSelectionFeedback.astro';
+import FeedbackLoader from './FeedbackLoader.astro';
+// FeedbackList and FeedbackHighlighter are now TS modules
+const { slug, className = '' } = Astro.props;
+
+// Use current page path if no slug provided
+const currentSlug = slug || Astro.url.pathname;
+const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<div id={componentId} class={`floating-feedback-container ${className}`}></div>
+
+<!-- Modular feedback components -->
+<FeedbackLoader slug={currentSlug} />
+<TextSelectionFeedback slug={currentSlug} />
+
+<script type="module" define:vars={{ currentSlug, componentId }}>
+  import { initFeedbackList } from '/src/components/feedback/feedbackList.ts';
+  import { initFeedbackHighlighter } from '/src/components/feedback/feedbackHighlighter.ts';
+  import { initFeedbackPopup } from '/src/components/feedback/feedbackPopup.ts';
+
+  const mountInit = () => {
+    const mount = document.getElementById(componentId);
+    initFeedbackList({ slug: currentSlug, mount });
+    initFeedbackHighlighter({ slug: currentSlug });
+    initFeedbackPopup();
+    // No global exposure needed; components dispatch full discussion payloads
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', mountInit, { once: true });
+  } else {
+    mountInit();
+  }
+</script>
+
