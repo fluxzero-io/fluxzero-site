@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
-import { getEnv, makeCookie, absoluteCallbackURL, sealCookiePayload } from '../_utils';
 export const prerender = false;
+import { getEnv, makeCookie, absoluteCallbackURL, sealCookiePayload } from '../_utils';
 
 export const GET: APIRoute = async ({ url, locals, request }) => {
   const env = getEnv((locals as any)?.runtime?.env);

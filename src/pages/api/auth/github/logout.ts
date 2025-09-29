@@ -1,6 +1,6 @@
+export const prerender = false;
 import type { APIRoute } from 'astro';
 import { makeCookie } from '../_utils';
-export const prerender = false;
 
 export const POST: APIRoute = async ({ url }) => {
   const secure = url.protocol === 'https:';

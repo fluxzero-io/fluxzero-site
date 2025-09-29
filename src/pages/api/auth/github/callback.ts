@@ -1,6 +1,6 @@
+export const prerender = false;
 import type { APIRoute } from 'astro';
 import { getEnv, parseCookies, makeCookie, deleteCookie, absoluteCallbackURL, sealCookiePayload, unsealCookiePayload } from '../_utils';
-export const prerender = false;
 export const GET: APIRoute = async ({ url, request, locals }) => {
   const env = getEnv((locals as any)?.runtime?.env);
   const clientId = env.GITHUB_APP_CLIENT_ID;

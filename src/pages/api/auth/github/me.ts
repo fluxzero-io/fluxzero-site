@@ -1,10 +1,13 @@
+export const prerender = false;
 import type { APIRoute } from 'astro';
 import { getEnv, parseCookies, unsealCookiePayload } from '../_utils';
-export const prerender = false;
 
 export const GET: APIRoute = async ({ request, locals }) => {
   try {
     const env = getEnv((locals as any)?.runtime?.env);
+    if (String((env as any).FEEDBACK_PROVIDER || '').toLowerCase() === 'memory') {
+      return new Response(JSON.stringify({ login: 'local-user' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
     const cookies = parseCookies(request.headers.get('cookie'));
     const tokenBlob = cookies['fx_gh_auth'];
     if (!tokenBlob || !env.COOKIE_SECRET) {
