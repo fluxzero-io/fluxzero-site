@@ -284,3 +284,34 @@ export const GET: APIRoute = async ({ url, locals }) => {
     );
   }
 };
+
+export const POST: APIRoute = async ({ request, url }) => {
+  try {
+    const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+    const body = await request.json().catch(() => null) as any;
+    if (!body || !body.slug || !body.selection?.text || !body.message) {
+      return new Response(JSON.stringify({ error: 'Invalid payload' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+    }
+    // For local development, mock a successful creation
+    if (isLocalhost) {
+      const created = {
+        id: `local_${Date.now()}`,
+        title: `[slug:${body.slug}] New feedback from site`,
+        body: `## Documentation Feedback\n\n**Page**: [${body.slug}](${body.slug})\n**Selected Text**:\n> ${body.selection.text}\n\n## User Feedback\n${body.message}\n\n---\n*This feedback was submitted through the documentation site.*\n` ,
+        url: '#',
+        closed: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        author: { login: 'you', avatarUrl: 'https://www.gravatar.com/avatar/?d=mp' },
+        comments: { totalCount: 0 },
+        reactions: { totalCount: 0 },
+        repository: 'local/mock'
+      };
+      return new Response(JSON.stringify({ created }), { status: 201, headers: { 'Content-Type': 'application/json' } });
+    }
+    // In non-local environments, this endpoint is not yet wired to GitHub
+    return new Response(JSON.stringify({ status: 'accepted', message: 'Submission received (creation not implemented in this environment).' }), { status: 202, headers: { 'Content-Type': 'application/json' } });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: 'Failed to submit feedback' }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+  }
+};

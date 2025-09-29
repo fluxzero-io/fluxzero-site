@@ -1,14 +1,18 @@
 ---
-export interface Props { slug?: string }
-const { slug } = Astro.props;
+export interface Props {}
 ---
 
-<script>
+<script type="module">
+  import { getState } from '/src/components/feedback/feedbackStore.ts';
   class SelectionPromptController {
     constructor() {
       this.el = null;
+      this.tempHighlight = null;
+      this.lastRange = null;
+      this.lastText = '';
       this.handleSelectionChange = this.handleSelectionChange.bind(this);
       this.handleScrollOrResize = this.handleScrollOrResize.bind(this);
+      this.onPromptClick = this.onPromptClick.bind(this);
       this.init();
     }
 
@@ -30,6 +34,7 @@ const { slug } = Astro.props;
       el.style.display = 'none';
       document.body.appendChild(el);
       this.el = el;
+      this.el.addEventListener('click', this.onPromptClick);
       return el;
     }
 
@@ -58,7 +63,7 @@ const { slug } = Astro.props;
       const common = range.commonAncestorContainer instanceof Element
         ? range.commonAncestorContainer
         : range.commonAncestorContainer.parentElement;
-      if (common && (common.closest('.floating-feedback-container') || common.closest('.feedback-popup') || common.closest('.feedback-indicator'))) {
+      if (common && (common.closest('.floating-feedback-container') || common.closest('.feedback-popup') || common.closest('.feedback-indicator') || common.closest('.feedback-compose'))) {
         this.hide();
         return;
       }
@@ -69,7 +74,143 @@ const { slug } = Astro.props;
         return;
       }
 
+      // Cache current range and text for click, since clicking the prompt collapses selection
+      this.lastRange = range.cloneRange();
+      this.lastText = text;
+
       this.show(range);
+    }
+
+    onPromptClick(e) {
+      e.preventDefault();
+      // Use cached selection if the native selection collapsed after clicking
+      let range = this.lastRange;
+      let text = this.lastText;
+      const sel = window.getSelection();
+      if ((!range || !text) && sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+        range = sel.getRangeAt(0).cloneRange();
+        text = sel.toString().trim();
+      }
+      if (!range || !text || text.length < 3) return;
+      // Create a temporary highlight wrapper to preserve visual emphasis when selection blurs
+      const span = document.createElement('span');
+      span.className = 'feedback-highlight feedback-highlight--temp';
+      const frag = range.extractContents();
+      span.appendChild(frag);
+      range.insertNode(span);
+      this.tempHighlight = span;
+      // Clear the native selection so focusing the popup doesn't reflow the page
+      sel.removeAllRanges();
+      this.hide();
+      // Show compose popup near the highlighted text
+      this.showComposer({ quote: text, anchor: span });
+    }
+
+    showComposer({ quote, anchor }) {
+      const existing = document.querySelector('.feedback-compose');
+      if (existing) existing.remove();
+      const popup = document.createElement('div');
+      popup.className = 'feedback-compose';
+      popup.innerHTML = `
+        <div class="compose-header">
+          <h4 class="compose-title">Add Feedback</h4>
+          <button class="compose-close" aria-label="Close">&times;</button>
+        </div>
+        <div class="compose-body">
+          <div class="compose-quote">${this.escapeHtml(quote)}</div>
+          <label for="feedback-compose-text" style="display:none">Feedback</label>
+          <textarea id="feedback-compose-text" placeholder="What would you like to tell us?" autofocus></textarea>
+        </div>
+        <div class="compose-actions">
+          <button class="btn" data-action="cancel">Cancel</button>
+          <button class="btn btn-primary" data-action="submit">Submit</button>
+        </div>
+      `;
+      document.body.appendChild(popup);
+
+      const position = () => {
+        const rect = anchor.getBoundingClientRect();
+        let left = rect.left;
+        let top = rect.bottom + 10;
+        const width = Math.min(460, window.innerWidth - 32);
+        if (left + width > window.innerWidth - 8) left = Math.max(8, window.innerWidth - width - 8);
+        if (top + 280 > window.innerHeight) top = Math.max(8, rect.top - 300);
+        popup.style.left = `${Math.round(left)}px`;
+        popup.style.top = `${Math.round(top)}px`;
+      };
+      position();
+      // animate in
+      requestAnimationFrame(() => popup.classList.add('is-visible'));
+
+      const textarea = popup.querySelector('textarea');
+      setTimeout(() => textarea && textarea.focus(), 50);
+
+      const close = () => {
+        popup.remove();
+        // Remove temp highlight on cancel. If submission succeeded we already converted it.
+        if (this.tempHighlight && this.tempHighlight.parentNode) {
+          const frag = document.createDocumentFragment();
+          while (this.tempHighlight.firstChild) frag.appendChild(this.tempHighlight.firstChild);
+          this.tempHighlight.replaceWith(frag);
+          this.tempHighlight = null;
+        }
+      };
+      popup.querySelector('.compose-close')?.addEventListener('click', close);
+      popup.querySelector('[data-action="cancel"]')?.addEventListener('click', close);
+
+      const onSubmit = async () => {
+        const ta = popup.querySelector('textarea');
+        const message = ta ? String(((ta && (ta)['value']) || '')).trim() : '';
+        if (!message) {
+          if (ta && typeof (ta)['focus'] === 'function') (ta)['focus']();
+          return;
+        }
+        const state = (typeof getState === 'function' ? getState() : null) || { slug: null };
+        const payload = {
+          slug: state.slug || location.pathname,
+          selection: { text: quote },
+          message
+        };
+        try {
+          const res = await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+          if (!res.ok) throw new Error(`Submit failed: ${res.status}`);
+          // Remove temp highlight to avoid double-wrapping; refreshed data will add permanent one
+          if (this.tempHighlight && this.tempHighlight.parentNode) {
+            const frag = document.createDocumentFragment();
+            while (this.tempHighlight.firstChild) frag.appendChild(this.tempHighlight.firstChild);
+            this.tempHighlight.replaceWith(frag);
+            this.tempHighlight = null;
+          }
+          popup.remove();
+          // Optionally, signal others to refresh
+          window.dispatchEvent(new CustomEvent('feedback:reload'));
+        } catch (err) {
+          console.error(err);
+          // Simple error affordance
+          const btn = popup.querySelector('[data-action="submit"]');
+          if (btn) { btn.textContent = 'Retry'; }
+        }
+      };
+      popup.querySelector('[data-action="submit"]')?.addEventListener('click', onSubmit);
+
+      const onOutside = (evt) => {
+        if (!popup.contains(evt.target)) {
+          document.removeEventListener('mousedown', onOutside);
+          close();
+        }
+      };
+      setTimeout(() => document.addEventListener('mousedown', onOutside), 50);
+
+      let ticking = false;
+      const onScrollResize = () => {
+        if (!ticking) { requestAnimationFrame(() => { position(); ticking = false; }); ticking = true; }
+      };
+      window.addEventListener('scroll', onScrollResize, { passive: true });
+      window.addEventListener('resize', onScrollResize);
+    }
+
+    escapeHtml(s) {
+      return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
 
     position(range) {
@@ -108,8 +249,10 @@ const { slug } = Astro.props;
     }
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    new SelectionPromptController();
-  });
+  const boot = () => new SelectionPromptController();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
+  }
 </script>
-

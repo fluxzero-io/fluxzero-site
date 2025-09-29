@@ -27,6 +27,7 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
   import { initFeedbackList } from '/src/components/feedback/feedbackList.ts';
   import { initFeedbackHighlighter } from '/src/components/feedback/feedbackHighlighter.ts';
   import { initFeedbackPopup } from '/src/components/feedback/feedbackPopup.ts';
+  import { refresh } from '/src/components/feedback/feedbackStore.ts';
 
   const mountInit = () => {
     const mount = document.getElementById(componentId);
@@ -34,6 +35,9 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
     initFeedbackHighlighter({ slug: currentSlug });
     initFeedbackPopup();
     // No global exposure needed; components dispatch full discussion payloads
+    window.addEventListener('feedback:reload', () => {
+      try { refresh(); } catch {}
+    });
   };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', mountInit, { once: true });
@@ -41,4 +45,3 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
     mountInit();
   }
 </script>
-
