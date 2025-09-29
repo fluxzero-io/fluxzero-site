@@ -51,9 +51,24 @@ This document outlines the plan and architecture for the embedded text‑selecti
 ### Permissions
 - Repository permissions:
   - Discussions: Read and write
+  - Issues: Read and write
   - Metadata: Read only
 - Enable “User authorization callback” for user‑to‑server tokens.
 - Install the app on `fluxzero-io/fluxzero-site`.
+
+### Asking For The Right Permissions
+- GitHub App (recommended):
+  - You do not request Discussions/Issues via `scope` in the OAuth URL. Those permissions come from the app’s repository permissions and the installation the user selects during install.
+  - Keep the OAuth `scope` minimal (e.g., `read:user user:email`) for user profile lookup. The token’s repository access (including creating discussions and issues) is governed by the app’s configured permissions above.
+- OAuth App (alternative):
+  - Use OAuth scopes to request API rights at login.
+  - For creating discussions: include `write:discussion`.
+  - For creating issues:
+    - Public repos: `public_repo` is sufficient.
+    - Private repos: `repo` is required.
+  - Common additional scopes: `read:user user:email` for profile/email.
+  - Example authorize URL:
+    - `https://github.com/login/oauth/authorize?client_id=<id>&redirect_uri=<cb>&state=<nonce>&scope=write:discussion%20public_repo%20read:user%20user:email`
 
 ### Cookie‑Only Sessions
 - No KV/DB. All auth state lives in sealed httpOnly cookies.
@@ -97,4 +112,3 @@ Phase 3 — Discussions write path
 - Verify `state` on callback; consider PKCE for added protection.
 - Do not log tokens or the sealed cookie contents.
 - Keep encrypted cookie payload under 4KB.
-

@@ -1,10 +1,9 @@
 import type { APIRoute } from 'astro';
 export const prerender = false;
-import { getEnv, makeCookie, absoluteCallbackURL, sealCookiePayload } from '../_utils';
+import { makeCookie, absoluteCallbackURL, sealCookiePayload } from '../_utils';
 
-export const GET: APIRoute = async ({ url, locals, request }) => {
-  const env = getEnv((locals as any)?.runtime?.env);
-  const clientId = env.GITHUB_APP_CLIENT_ID;
+export const GET: APIRoute = async ({ url }) => {
+  const clientId = import.meta.env.GITHUB_APP_CLIENT_ID as string;
   if (!clientId) {
     return new Response('GitHub App client id not configured', { status: 500 });
   }
@@ -17,8 +16,8 @@ export const GET: APIRoute = async ({ url, locals, request }) => {
   const authorize = new URL('https://github.com/login/oauth/authorize');
   const statePayload = { n: nonce, ts: Date.now(), returnTo };
   let state = nonce;
-  if (env.COOKIE_SECRET) {
-    try { state = await sealCookiePayload(statePayload, env.COOKIE_SECRET); } catch {}
+  if (import.meta.env.COOKIE_SECRET) {
+    try { state = await sealCookiePayload(statePayload, String(import.meta.env.COOKIE_SECRET)); } catch {}
   }
   authorize.searchParams.set('client_id', clientId);
   authorize.searchParams.set('redirect_uri', callback);

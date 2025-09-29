@@ -1,19 +1,18 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
-import { getEnv, parseCookies, unsealCookiePayload } from '../_utils';
+import { parseCookies, unsealCookiePayload } from '../_utils';
 
-export const GET: APIRoute = async ({ request, locals }) => {
+export const GET: APIRoute = async ({ request }) => {
   try {
-    const env = getEnv((locals as any)?.runtime?.env);
-    if (String((env as any).FEEDBACK_PROVIDER || '').toLowerCase() === 'memory') {
+    if (String(import.meta.env.FEEDBACK_PROVIDER || '').toLowerCase() === 'memory') {
       return new Response(JSON.stringify({ login: 'local-user' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
     }
     const cookies = parseCookies(request.headers.get('cookie'));
     const tokenBlob = cookies['fx_gh_auth'];
-    if (!tokenBlob || !env.COOKIE_SECRET) {
+    if (!tokenBlob || !import.meta.env.COOKIE_SECRET) {
       return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
     }
-    const payload = await unsealCookiePayload(tokenBlob, env.COOKIE_SECRET);
+    const payload = await unsealCookiePayload(tokenBlob, String(import.meta.env.COOKIE_SECRET));
     if (!payload?.access_token) {
       return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
     }

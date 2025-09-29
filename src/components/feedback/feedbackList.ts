@@ -42,6 +42,11 @@ class FeedbackListController {
       this.renderFromState(s);
     });
     this.setupHandlers();
+    window.addEventListener('feedback:highlights-updated', () => {
+      try {
+        this.updateMissingMarkers();
+      } catch {}
+    });
   }
 
   private renderFromState(state: FeedbackState) {
@@ -79,13 +84,16 @@ class FeedbackListController {
       }).join('');
     listEl.innerHTML = `<div class="feedback-items">${items}</div>`;
     const current = discussions;
+
+    // Defer marking to after highlights update
+    setTimeout(() => { try { this.updateMissingMarkers(); } catch {} }, 0);
     listEl.querySelectorAll('.feedback-item-link').forEach((linkEl) => {
       linkEl.addEventListener('click', (e) => {
         const link = e.currentTarget as HTMLElement;
         const id = (link as any).dataset.id;
         if (!id) return;
         const discussion = current.find((d) => d.id === id);
-        const anchor = document.querySelector(`[data-feedback-id="${id}"]`);
+        const anchor = findHighlightSpanById(id);
         if (anchor) {
           e.preventDefault();
           (anchor as any).scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -100,6 +108,26 @@ class FeedbackListController {
           window.dispatchEvent(new CustomEvent('feedback:open-id', { detail: { id, discussion } }));
         }
       });
+    });
+  }
+
+  private updateMissingMarkers() {
+    if (!this.root) return;
+    const listEl = this.root.querySelector('.feedback-list') as HTMLElement;
+    listEl.querySelectorAll('.feedback-item-link').forEach((link) => {
+      // reset
+      (link as HTMLElement).classList.remove('is-missing');
+      const old = (link as HTMLElement).querySelector('.feedback-missing-badge');
+      if (old) old.remove();
+      const id = (link as HTMLElement).dataset.id || '';
+      const anchor = findHighlightSpanById(id);
+      if (!anchor) {
+        (link as HTMLElement).classList.add('is-missing');
+        const badge = document.createElement('span');
+        badge.className = 'feedback-missing-badge';
+        badge.textContent = 'not found on page';
+        (link as HTMLElement).appendChild(badge);
+      }
     });
   }
 
@@ -122,3 +150,20 @@ class FeedbackListController {
     });
   }
 }
+
+function findHighlightSpanById(id: string): HTMLElement | null {
+  try {
+    const spans = document.querySelectorAll('span.feedback-highlight[data-feedback-highlight="true"]');
+    for (const el of Array.from(spans)) {
+      const ds = (el as any).dataset || {};
+      if (!ds.feedbackIds) continue;
+      try {
+        const arr = JSON.parse(ds.feedbackIds);
+        if (Array.isArray(arr) && arr.includes(id)) return el as HTMLElement;
+      } catch {}
+    }
+  } catch {}
+  return null;
+}
+
+// No registry: anchors are discovered by scanning highlight spans

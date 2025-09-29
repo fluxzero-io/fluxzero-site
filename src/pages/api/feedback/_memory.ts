@@ -14,7 +14,7 @@ export class MemoryProvider implements FeedbackProvider {
     const { slug, selectionText, message } = options;
     const id = `mem_${Date.now()}_${Math.random().toString(36).slice(2)}`;
     const title = buildTitle(slug, message);
-    const rawBody = buildBody(slug, selectionText, message);
+    const rawBody = buildBody(slug, selectionText, message, options.selectionContext, (options as any).segments);
     const discussion: Discussion = {
       id,
       title,

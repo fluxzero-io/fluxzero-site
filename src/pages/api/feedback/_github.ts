@@ -118,7 +118,7 @@ export class GitHubProvider implements FeedbackProvider {
     if (!category) throw new Error('no_category:enable_discussions_and_add_a_category');
 
     const title = buildTitle(options.slug, options.message);
-    const composed = buildBody(options.slug, options.selectionText, options.message);
+    const composed = buildBody(options.slug, options.selectionText, options.message, options.selectionContext, (options as any).segments);
 
     const mCreate = `
     mutation($repositoryId: ID!, $categoryId: ID!, $title: String!, $body: String!) {

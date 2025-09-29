@@ -1,11 +1,10 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
-import { getEnv, parseCookies, makeCookie, deleteCookie, absoluteCallbackURL, sealCookiePayload, unsealCookiePayload } from '../_utils';
-export const GET: APIRoute = async ({ url, request, locals }) => {
-  const env = getEnv((locals as any)?.runtime?.env);
-  const clientId = env.GITHUB_APP_CLIENT_ID;
-  const clientSecret = env.GITHUB_APP_CLIENT_SECRET;
-  const cookieSecret = env.COOKIE_SECRET;
+import { parseCookies, makeCookie, absoluteCallbackURL, sealCookiePayload, unsealCookiePayload } from '../_utils';
+export const GET: APIRoute = async ({ url, request }) => {
+  const clientId = String(import.meta.env.GITHUB_APP_CLIENT_ID || '');
+  const clientSecret = String(import.meta.env.GITHUB_APP_CLIENT_SECRET || '');
+  const cookieSecret = String(import.meta.env.COOKIE_SECRET || '');
   if (!clientId || !clientSecret || !cookieSecret) {
     return new Response('Auth not configured', { status: 500 });
   }
@@ -16,9 +15,9 @@ export const GET: APIRoute = async ({ url, request, locals }) => {
   let returnTo = cookies['fx_return_to'] || '/';
   // Prefer sealed `state` content for validation + returnTo; fall back to cookie comparison
   let stateOk = false;
-  if (qpState && env.COOKIE_SECRET) {
+  if (qpState && cookieSecret) {
     try {
-      const parsed = await unsealCookiePayload(qpState, env.COOKIE_SECRET);
+      const parsed = await unsealCookiePayload(qpState, cookieSecret);
       if (parsed && parsed.n && typeof parsed.ts === 'number') {
         stateOk = true;
         if (parsed.returnTo) returnTo = parsed.returnTo;

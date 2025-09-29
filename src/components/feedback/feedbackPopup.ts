@@ -8,7 +8,9 @@ class FeedbackPopupController {
 
   constructor() {
     this.onOpen = this.onOpen.bind(this);
+    this.onOpenGroup = this.onOpenGroup.bind(this);
     window.addEventListener('feedback:open-id', this.onOpen);
+    window.addEventListener('feedback:open-group', this.onOpenGroup);
     this.setupReposition();
   }
 
@@ -16,13 +18,28 @@ class FeedbackPopupController {
     const id = (e as any).detail?.id as string | undefined;
     const discussion = (e as any).detail?.discussion as any | undefined;
     if (!id || !discussion) return;
-    const highlightSpan = document.querySelector(`[data-feedback-id="${id}"]`) as HTMLElement | null;
+    const highlightSpan = this.findHighlightSpanById(id);
     const indicator = document.querySelector(`.feedback-indicator[data-discussion-id="${id}"]`) as HTMLElement | null;
     const anchorEl = indicator || highlightSpan;
     if (!anchorEl) return;
     anchorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     // Small delay to allow scroll positioning, but keep snappy
     setTimeout(() => this.showPopup(discussion, anchorEl), 60);
+  }
+
+  private findHighlightSpanById(id: string): HTMLElement | null {
+    try {
+      const spans = document.querySelectorAll('span.feedback-highlight[data-feedback-highlight="true"]');
+      for (const el of Array.from(spans)) {
+        const ds = (el as any).dataset || {};
+        if (!ds.feedbackIds) continue;
+        try {
+          const arr = JSON.parse(ds.feedbackIds);
+          if (Array.isArray(arr) && arr.includes(id)) return el as HTMLElement;
+        } catch {}
+      }
+    } catch {}
+    return null;
   }
 
   private setupReposition() {
@@ -101,6 +118,54 @@ class FeedbackPopupController {
     requestAnimationFrame(() => {
       popup.classList.add('is-visible');
     });
+    this.activePopup = popup;
+  }
+
+  private onOpenGroup(e: CustomEvent) {
+    const discussions = (e as any).detail?.discussions as any[] | undefined;
+    if (!discussions || discussions.length === 0) return;
+    // Anchor to first discussion's indicator if present
+    const firstId = discussions[0].id;
+    const indicator = document.querySelector(`.feedback-indicator[data-discussion-id="${firstId}"]`) as HTMLElement | null;
+    const anchorEl = indicator || document.body;
+    this.showGroupPopup(discussions, anchorEl);
+  }
+
+  private showGroupPopup(discussions: any[], indicator: HTMLElement) {
+    if (this.activePopup) this.activePopup.remove();
+    const popup = document.createElement('div');
+    popup.className = 'feedback-popup';
+    const items = discussions.map((d, i) => `
+      <div class="feedback-item" data-id="${d.id}">
+        <a href="#" class="feedback-item-link" data-id="${d.id}">
+          <span class="feedback-meta">${new Date(d.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+          <span class="feedback-title">${d.closed ? '✅' : '💬'} ${d.title}</span>
+        </a>
+      </div>`).join('');
+    popup.innerHTML = `
+      <div class="feedback-popup-header">
+        <h4>${discussions.length} discussions</h4>
+        <button class="feedback-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="feedback-popup-content">
+        <div class="feedback-items">${items}</div>
+      </div>`;
+    this.updatePopupPosition(popup, indicator);
+    popup.style.position = 'fixed';
+    popup.style.zIndex = '2000';
+    (popup as any).associatedIndicator = indicator;
+    popup.querySelector('.feedback-close')?.addEventListener('click', () => { popup.remove(); this.activePopup = null; });
+    popup.querySelectorAll('.feedback-item-link').forEach((el) => {
+      el.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const id = (ev.currentTarget as HTMLElement).dataset.id!;
+        const d = discussions.find(x => x.id === id) || discussions[0];
+        popup.remove();
+        this.showPopup(d, indicator);
+      });
+    });
+    document.body.appendChild(popup);
+    requestAnimationFrame(() => popup.classList.add('is-visible'));
     this.activePopup = popup;
   }
 

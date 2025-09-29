@@ -4,6 +4,7 @@ export interface Props {}
 
 <script type="module">
   import { getState } from '/src/components/feedback/feedbackStore.ts';
+  import { buildSegmentsFromRange, findContainerForNode } from '/src/components/feedback/domAnchors.ts';
   class SelectionPromptController {
     constructor() {
       this.el = null;
@@ -63,7 +64,7 @@ export interface Props {}
       const common = range.commonAncestorContainer instanceof Element
         ? range.commonAncestorContainer
         : range.commonAncestorContainer.parentElement;
-      if (common && (common.closest('.floating-feedback-container') || common.closest('.feedback-popup') || common.closest('.feedback-indicator') || common.closest('.feedback-compose'))) {
+      if (common && (common.closest('.floating-feedback-container') || common.closest('.feedback-popup') || common.closest('.feedback-indicator') || common.closest('.feedback-compose') || common.closest('.feedback-selection-prompt'))) {
         this.hide();
         return;
       }
@@ -92,6 +93,12 @@ export interface Props {}
         text = sel.toString().trim();
       }
       if (!range || !text || text.length < 3) return;
+      const ctx = this.computeContext(range);
+      let segments = [];
+      try {
+        const container = findContainerForNode(range.startContainer || document.body);
+        segments = buildSegmentsFromRange(container, range) || [];
+      } catch {}
       // Create a temporary highlight wrapper to preserve visual emphasis when selection blurs
       const span = document.createElement('span');
       span.className = 'feedback-highlight feedback-highlight--temp';
@@ -103,10 +110,10 @@ export interface Props {}
       sel.removeAllRanges();
       this.hide();
       // Show compose popup near the highlighted text
-      this.showComposer({ quote: text, anchor: span });
+      this.showComposer({ quote: text, anchor: span, context: ctx, segments });
     }
 
-    showComposer({ quote, anchor, preset }) {
+    showComposer({ quote, anchor, preset, context, segments }) {
       const existing = document.querySelector('.feedback-compose');
       if (existing) existing.remove();
       const popup = document.createElement('div');
@@ -206,7 +213,7 @@ export interface Props {}
         const state = (typeof getState === 'function' ? getState() : null) || { slug: null };
         const payload = {
           slug: state.slug || location.pathname,
-          selection: { text: quote },
+          selection: { text: quote, context: context || null, segments },
           message
         };
         try {
@@ -250,6 +257,25 @@ export interface Props {}
       };
       window.addEventListener('scroll', onScrollResize, { passive: true });
       window.addEventListener('resize', onScrollResize);
+    }
+
+    computeContext(range) {
+      const ctx = { prefix: '', suffix: '' };
+      try {
+        const sc = range.startContainer;
+        const ec = range.endContainer;
+        if (sc && sc.nodeType === Node.TEXT_NODE) {
+          const data = sc.nodeValue || '';
+          const off = range.startOffset || 0;
+          ctx.prefix = data.slice(Math.max(0, off - 40), off);
+        }
+        if (ec && ec.nodeType === Node.TEXT_NODE) {
+          const data2 = ec.nodeValue || '';
+          const off2 = range.endOffset || 0;
+          ctx.suffix = data2.slice(off2, Math.min(data2.length, off2 + 40));
+        }
+      } catch {}
+      return ctx;
     }
 
     // Restore draft after OAuth login: re-anchor by matching the saved quote, else use last known rect
