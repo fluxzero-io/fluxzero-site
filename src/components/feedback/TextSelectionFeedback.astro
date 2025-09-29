@@ -211,6 +211,11 @@ export interface Props {}
         };
         try {
           const res = await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+          if (res.status === 401) {
+            // Switch UI to login mode if token missing/invalid
+            if (authWrap) setAuth(false);
+            return;
+          }
           if (!res.ok) throw new Error(`Submit failed: ${res.status}`);
           // Remove temp highlight to avoid double-wrapping; refreshed data will add permanent one
           if (this.tempHighlight && this.tempHighlight.parentNode) {

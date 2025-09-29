@@ -51,7 +51,7 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
       if (!authCookie || ! import.meta.env.COOKIE_SECRET) {
         return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
       }
-      const tokenPayload = await unsealCookiePayload(authCookie, import.meta.env.PRODCOOKIE_SECRET);
+      const tokenPayload = await unsealCookiePayload(authCookie, import.meta.env.COOKIE_SECRET);
       const accessToken = tokenPayload?.access_token as string | undefined;
       if (!accessToken) {
         return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });

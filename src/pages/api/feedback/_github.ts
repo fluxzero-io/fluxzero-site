@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import type { FeedbackProvider, ListResult, CreateInput, CreateResult } from './types';
+import { buildTitle, buildBody } from './util';
 
 export class GitHubProvider implements FeedbackProvider {
   constructor(private githubRepo: string, private githubToken: string, private userToken?: string) {
@@ -32,7 +33,7 @@ export class GitHubProvider implements FeedbackProvider {
       }
     }
   `;
-    const searchQuery = `repo:${this.githubRepo} "${slugFilter}" in:title`;
+    const searchQuery = `repo:${this.githubRepo} "${slugFilter}" in:title,body`;
     if (!this.githubToken) {
       return { slug: pageSlug, discussions: [], total: 0 };
     }
@@ -101,23 +102,23 @@ export class GitHubProvider implements FeedbackProvider {
       },
       body: JSON.stringify({ query: qRepo, variables: { owner, name } })
     });
-    if (!repoResp.ok) throw new Error('repo_access');
+    if (!repoResp.ok) {
+      const txt = await repoResp.text().catch(() => '');
+      throw new Error(`repo_access:${repoResp.status}:${txt}`);
+    }
     const repoData = await repoResp.json();
     const repository = repoData?.data?.repository;
-    if (!repository?.id) throw new Error('repo_access');
+    if (!repository?.id) throw new Error('repo_access:repository_not_found_or_no_permissions');
     const categories = repository.discussionCategories?.nodes || [];
     const prefName = ''; // TODO: category name?
     let category = categories.find((c: any) => c.name === prefName) ||
       categories.find((c: any) => /Q&A|General|Ideas/i.test(c.name)) ||
       categories.find((c: any) => c.isAnswerable) ||
       categories[0];
-    if (!category) throw new Error('no_category');
+    if (!category) throw new Error('no_category:enable_discussions_and_add_a_category');
 
-    const selected = String(options.selectionText).trim();
-    const userMsg = String(options.message).trim();
-    const snippet = (selected || userMsg).replace(/\s+/g, ' ').slice(0, 80);
-    const title = `[slug:${options.slug}] ${snippet}`;
-    const composed = `## Documentation Feedback\n\n**Page**: [${options.slug}](${options.slug})\n**Selected Text**:\n> ${selected}\n\n## User Feedback\n${userMsg}\n\n---\n*This feedback was submitted through the documentation site.*\n\n<!-- FEEDBACK_METADATA\n${JSON.stringify({ version: 1, page: options.slug, selection: { text: selected }, timestamp: new Date().toISOString() }, null, 2)}\n-->`;
+    const title = buildTitle(options.slug, options.message);
+    const composed = buildBody(options.slug, options.selectionText, options.message);
 
     const mCreate = `
     mutation($repositoryId: ID!, $categoryId: ID!, $title: String!, $body: String!) {
@@ -137,7 +138,7 @@ export class GitHubProvider implements FeedbackProvider {
     });
     const createData: any = await createResp.json();
     if (!createResp.ok || createData.errors) {
-      throw new Error('create_failed');
+      throw new Error(`create_failed:${createResp.status}:${JSON.stringify(createData.errors || {})}`);
     }
     return { created: createData.data.createDiscussion.discussion };
   }

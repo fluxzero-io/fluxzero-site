@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import type { FeedbackProvider, Discussion, ListResult, CreateInput, CreateResult } from './types';
+import { buildTitle, buildBody } from './util';
 
 const store: Map<string, Discussion[]> = new Map();
 
@@ -12,25 +13,8 @@ export class MemoryProvider implements FeedbackProvider {
   async createDiscussion(options: CreateInput): Promise<CreateResult> {
     const { slug, selectionText, message } = options;
     const id = `mem_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-    const selected = String(selectionText || '').trim();
-    const userMsg = String(message || '').trim();
-    const snippet = (selected || userMsg).replace(/\s+/g, ' ').slice(0, 80);
-    const title = `[slug:${slug}] ${snippet}`;
-    const rawBody = `## Documentation Feedback
-
-**Page**: [${slug}](${slug})
-**Selected Text**:
-> ${selected}
-
-## User Feedback
-${userMsg}
-
----
-*This feedback was submitted through the documentation site.*
-
-<!-- FEEDBACK_METADATA
-${JSON.stringify({ version: 1, page: slug, selection: { text: selected }, timestamp: new Date().toISOString() }, null, 2)}
--->`;
+    const title = buildTitle(slug, message);
+    const rawBody = buildBody(slug, selectionText, message);
     const discussion: Discussion = {
       id,
       title,
