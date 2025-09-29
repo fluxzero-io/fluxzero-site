@@ -288,11 +288,17 @@ export const GET: APIRoute = async ({ url, locals }) => {
 export const POST: APIRoute = async ({ request, url }) => {
   try {
     const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+    const cookie = request.headers.get('cookie') || '';
+    const hasAuthCookie = /(?:^|;\s*)fx_gh_auth=/.test(cookie);
     const body = await request.json().catch(() => null) as any;
     if (!body || !body.slug || !body.selection?.text || !body.message) {
       return new Response(JSON.stringify({ error: 'Invalid payload' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
-    // For local development, mock a successful creation
+    // Require auth cookie for all environments (UI should present login when missing)
+    if (!hasAuthCookie) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
+    }
+    // For local development, mock a successful creation when cookie is present
     if (isLocalhost) {
       const created = {
         id: `local_${Date.now()}`,

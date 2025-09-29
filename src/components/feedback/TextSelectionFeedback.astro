@@ -106,7 +106,7 @@ export interface Props {}
       this.showComposer({ quote: text, anchor: span });
     }
 
-    showComposer({ quote, anchor }) {
+    showComposer({ quote, anchor, preset }) {
       const existing = document.querySelector('.feedback-compose');
       if (existing) existing.remove();
       const popup = document.createElement('div');
@@ -122,8 +122,12 @@ export interface Props {}
           <textarea id="feedback-compose-text" placeholder="What would you like to tell us?" autofocus></textarea>
         </div>
         <div class="compose-actions">
-          <button class="btn" data-action="cancel">Cancel</button>
-          <button class="btn btn-primary" data-action="submit">Submit</button>
+          <div class="compose-actions-auth" data-auth="unknown">
+            <span class="compose-auth-status" style="flex:1; font-size:12px; color:#6b7280"></span>
+            <button class="btn" data-action="cancel">Cancel</button>
+            <button class="btn btn-primary" data-action="submit">Submit</button>
+            <button class="btn btn-primary" data-action="login" style="display:none">Sign in with GitHub</button>
+          </div>
         </div>
       `;
       document.body.appendChild(popup);
@@ -142,7 +146,22 @@ export interface Props {}
       // animate in
       requestAnimationFrame(() => popup.classList.add('is-visible'));
 
+      // Auth gate: check if user is logged in
+      const authWrap = popup.querySelector('.compose-actions-auth');
+      const authNote = popup.querySelector('.compose-auth-status');
+      const btnSubmit = popup.querySelector('[data-action="submit"]');
+      const btnLogin = popup.querySelector('[data-action="login"]');
+      const setAuth = (loggedIn) => {
+        if (!authWrap) return;
+        authWrap.setAttribute('data-auth', loggedIn ? 'yes' : 'no');
+        if (authNote) authNote.textContent = loggedIn ? '' : 'Sign in to submit feedback.';
+        if (btnSubmit) btnSubmit.style.display = loggedIn ? '' : 'none';
+        if (btnLogin) btnLogin.style.display = loggedIn ? 'none' : '';
+      };
+      fetch('/api/auth/github/me').then((r) => setAuth(r.ok)).catch(() => setAuth(false));
+
       const textarea = popup.querySelector('textarea');
+      if (preset && textarea) { try { textarea.value = preset; } catch {} }
       setTimeout(() => textarea && textarea.focus(), 50);
 
       const close = () => {
@@ -157,6 +176,25 @@ export interface Props {}
       };
       popup.querySelector('.compose-close')?.addEventListener('click', close);
       popup.querySelector('[data-action="cancel"]')?.addEventListener('click', close);
+
+      // Login button: persist draft and redirect
+      popup.querySelector('[data-action="login"]')?.addEventListener('click', () => {
+        try {
+          const ta = popup.querySelector('textarea');
+          const draft = ta ? (ta['value'] || '') : '';
+          sessionStorage.setItem('fz_feedback_draft', draft);
+          sessionStorage.setItem('fz_feedback_quote', quote);
+          const temp = document.querySelector('.feedback-highlight--temp');
+          if (temp && typeof temp === 'object' && typeof (temp['getBoundingClientRect']) === 'function') {
+            const r = temp['getBoundingClientRect']();
+            const rect = { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+            sessionStorage.setItem('fz_feedback_rect', JSON.stringify(rect));
+          }
+        } catch {}
+        const state = (typeof getState === 'function' ? getState() : null) || { slug: location.pathname };
+        const returnTo = encodeURIComponent(state.slug || location.pathname);
+        location.href = `/api/auth/github/login?returnTo=${returnTo}`;
+      });
 
       const onSubmit = async () => {
         const ta = popup.querySelector('textarea');
@@ -209,6 +247,70 @@ export interface Props {}
       window.addEventListener('resize', onScrollResize);
     }
 
+    // Restore draft after OAuth login: re-anchor by matching the saved quote, else use last known rect
+    restoreFromSession() {
+      try {
+        const quote = sessionStorage.getItem('fz_feedback_quote');
+        const draft = sessionStorage.getItem('fz_feedback_draft');
+        const rectStr = sessionStorage.getItem('fz_feedback_rect');
+        if (!quote) return;
+        let anchor = null;
+        const loc = this.findTextInPage(quote);
+        if (loc) {
+          const span = document.createElement('span');
+          span.className = 'feedback-highlight feedback-highlight--temp';
+          const frag = loc.range.extractContents();
+          span.appendChild(frag);
+          loc.range.insertNode(span);
+          anchor = span;
+          this.tempHighlight = span;
+        } else {
+          const fallback = document.createElement('div');
+          fallback.style.position = 'fixed';
+          const rect = rectStr ? JSON.parse(rectStr) : null;
+          const left = rect?.left ?? 16;
+          const top = (rect?.bottom ?? 100);
+          fallback.style.left = `${Math.round(left)}px`;
+          fallback.style.top = `${Math.round(top)}px`;
+          fallback.style.width = '1px';
+          fallback.style.height = '1px';
+          fallback.style.pointerEvents = 'none';
+          document.body.appendChild(fallback);
+          anchor = fallback;
+        }
+        try { if (anchor && typeof (anchor['scrollIntoView']) === 'function') { anchor['scrollIntoView']({ behavior: 'instant', block: 'center' }); } } catch {}
+        setTimeout(() => this.showComposer({ quote, anchor, preset: draft || '' }), 60);
+      } catch {}
+      try { sessionStorage.removeItem('fz_feedback_quote'); } catch {}
+      try { sessionStorage.removeItem('fz_feedback_draft'); } catch {}
+      try { sessionStorage.removeItem('fz_feedback_rect'); } catch {}
+    }
+
+    findTextInPage(selectedText) {
+      if (!selectedText) return null;
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+        acceptNode(node) {
+          const parent = node.parentElement;
+          if (!parent) return NodeFilter.FILTER_REJECT;
+          const tag = parent.tagName;
+          if (tag === 'SCRIPT' || tag === 'STYLE') return NodeFilter.FILTER_REJECT;
+          return NodeFilter.FILTER_ACCEPT;
+        },
+      });
+      let node;
+      while ((node = walker.nextNode())) {
+        const text = node.textContent || '';
+        const index = text.indexOf(selectedText);
+        if (index !== -1) {
+          const range = document.createRange();
+          range.setStart(node, index);
+          range.setEnd(node, index + selectedText.length);
+          return { range, element: node.parentElement, text: selectedText };
+        }
+      }
+      return null;
+    }
+
     escapeHtml(s) {
       return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     }
@@ -249,7 +351,10 @@ export interface Props {}
     }
   }
 
-  const boot = () => new SelectionPromptController();
+  const boot = () => {
+    const ctrl = new SelectionPromptController();
+    ctrl.restoreFromSession();
+  };
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot, { once: true });
   } else {
