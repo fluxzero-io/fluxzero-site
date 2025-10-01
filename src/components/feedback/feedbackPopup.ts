@@ -66,6 +66,8 @@ class FeedbackPopupController {
     const popup = document.createElement('div');
     popup.className = 'feedback-popup';
     const messageHtml = this.extractUserFeedbackHtml(discussion) || '<p>No feedback message provided.</p>';
+    const commentCount = Number(discussion?.commentCount ?? 0);
+    const commentLabel = `${commentCount} ${commentCount === 1 ? 'comment' : 'comments'}`;
     popup.innerHTML = `
       <div class="feedback-popup-header">
         <h4>${discussion.title}</h4>
@@ -82,7 +84,7 @@ class FeedbackPopupController {
         </div>
         <div class="feedback-actions">
           <a href="${discussion.url}" target="_blank" rel="noopener noreferrer">
-            View full discussion →
+            View full discussion (${commentLabel}) →
           </a>
         </div>
       </div>
