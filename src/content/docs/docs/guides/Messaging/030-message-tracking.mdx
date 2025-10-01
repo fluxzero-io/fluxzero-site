@@ -37,6 +37,41 @@ graph TD
     INDEX_CHECK -->|Yes| STOP[Stop tracker]
 ```
 
+Trackers aren’t only useful for consuming commands or events — they also enable request–response communication between services, without direct endpoints.
+
+## Request–Response via tracking
+
+Fluxzero enables services to communicate without making any direct contact and without exposing endpoints. Instead of direct calls, services interact by publishing messages to the Fluxzero Runtime and continuously tracking the relevant logs.
+
+For example, when a handler (the Requester) wants to ask a question, it sends a query to the runtime. Fluxzero first records it in the `QUERY` log. Other consumers will be tracking this log and will receive the query, process it, and then publish a result. That result is durably written to the `RESULT` log, where the Requester tracks for the corresponding answer.
+
+This design ensures:
+- **No direct connections between services**: all communication goes through Fluxzero.
+- **Durability and auditability**: requests and responses are logged before delivery.
+- **Decoupling and scalability**: Requesters and Responders can scale independently, and multiple responders can handle the same type of request if desired.
+
+The diagram below shows the complete cycle:
+
+```mermaid
+sequenceDiagram
+    participant Requester
+    participant Flux as Fluxzero Runtime
+    participant Responder
+
+    Requester->>Flux: Publish query ("GetInvoice")
+    Flux->>Flux: Persist query
+    Responder->>Flux: Pull query
+    Responder->>Flux: Publish result ("Invoice")
+    Flux->>Flux: Persist result
+    Requester->>Flux: Pull result
+```
+
+Both the Requester and the Responder maintain continuous trackers:
+- The Requester continuously tracks the `RESULT` log to receive answers.
+- The Responder continuously tracks the `QUERY` log to receive new requests.
+
+This ensures that services stay connected to Fluxzero and messages flow asynchronously without direct endpoints.
+
 ## Default Consumer Behavior
 
 By default, handlers join the **default consumer** for a given message type. For example:

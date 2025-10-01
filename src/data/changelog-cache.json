@@ -1,7 +1,16 @@
 {
-  "lastUpdated": "2025-10-01T04:50:09.125Z",
-  "latestVersion": "1.13.0",
+  "lastUpdated": "2025-10-01T14:17:21.253Z",
+  "latestVersion": "1.14.0",
   "releases": [
+    {
+      "version": "1.14.0",
+      "date": "2025-10-01",
+      "body": "#### [1.14.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.13.0...1.14.0) (2025-10-01)\n\n\n##### Features\n\n* **web:** Allow override of application name in Fluxzero proxy ([9883aa6](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/9883aa61c247e3e3b36708dbf6e1154f15b1893e))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.14.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
     {
       "version": "1.13.0",
       "date": "2025-09-30",
