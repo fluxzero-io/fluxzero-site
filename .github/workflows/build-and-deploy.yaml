@@ -2,8 +2,7 @@ name: Deploy to Cloudflare Workers (PNPM + Previews)
 
 on:
   push:
-    branches:
-      - "**"
+    branches: [ main ]
   pull_request:
     types: [opened, synchronize, reopened]
 
