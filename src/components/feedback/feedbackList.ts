@@ -75,9 +75,13 @@ class FeedbackListController {
         const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
         const statusIcon = d.closed ? '✅' : '💬';
+        const comments = Number(d.commentCount ?? 0);
+        const commentLabel = ` • ${comments} ${comments === 1 ? 'comment' : 'comments'}`;
+        const authorName = (d.author && d.author.login) ? d.author.login : 'Anonymous';
+        const authorLabel = ` • ${authorName}`;
         return `<div class="feedback-item">
           <a href="${d.url}" target="_blank" rel="noopener noreferrer" class="feedback-item-link" data-id="${d.id}">
-            <span class="feedback-meta">${dateStr} ${timeStr}${d.commentCount > 0 ? ` • ${d.commentCount}` : ''}</span>
+            <span class="feedback-meta">${dateStr} ${timeStr}${authorLabel}${commentLabel}</span>
             <span class="feedback-title">${statusIcon} ${d.title}</span>
           </a>
         </div>`;
