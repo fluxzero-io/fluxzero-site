@@ -35,7 +35,12 @@ class FeedbackHighlighterController {
     if (state.slug !== this.slug) {
       this.slug = state.slug || this.slug;
     }
+    if (!state.slug || state.slug !== this.slug) {
+      this.log('highlighter:skip', { expected: this.slug, received: state.slug });
+      return;
+    }
     if (state.loading) return;
+    this.log('highlighter:onState', { slug: this.slug, discussions: state.discussions?.length });
     this.ensureHashes();
     this.clearAll();
     const open = (state.discussions || []).filter((d) => !d.closed);

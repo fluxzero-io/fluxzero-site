@@ -7,17 +7,16 @@ const entry = starlightRoute?.entry;
 const isDocsEntry = entry?.collection === 'docs';
 const rawFeedback = isDocsEntry ? entry?.data?.feedback : undefined;
 
-const ensureLeadingSlash = (value) => (value.startsWith('/') ? value : `/${value}`);
 const normalizeSlug = (value) => {
-  if (!value) return '/';
-  const trimmed = ensureLeadingSlash(value.trim());
-  const withoutTrailing = trimmed.replace(/\/+$/g, '');
-  return withoutTrailing === '' ? '/' : withoutTrailing;
+  if (!value) return Astro.url.pathname;
+  const slug = value.trim();
+  if (!slug) return Astro.url.pathname;
+  return slug.startsWith('/') ? slug : `/${slug}`;
 };
 
-const entrySlug = entry?.slug ? `/${entry.slug}` : Astro.url.pathname;
+const entrySlug = Astro.url.pathname;
 let feedbackEnabled = false;
-let feedbackSlug = normalizeSlug(entrySlug);
+let feedbackSlug = entrySlug;
 
 if (isDocsEntry) {
   if (typeof rawFeedback === 'boolean') {
@@ -30,6 +29,12 @@ if (isDocsEntry) {
   } else {
     feedbackEnabled = true;
   }
+}
+
+if (feedbackEnabled) {
+  try { console.debug('[FloatingFeedback]', 'page:enable', { slug: feedbackSlug, entrySlug, rawFeedback }); } catch {}
+} else {
+  try { console.debug('[FloatingFeedback]', 'page:disable', { slug: feedbackSlug, entrySlug, rawFeedback }); } catch {}
 }
 
 const scopeId = `fz-feedback-scope-${Math.random().toString(36).slice(2, 9)}`;

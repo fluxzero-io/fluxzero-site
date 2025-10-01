@@ -51,23 +51,31 @@ class FeedbackListController {
 
   private renderFromState(state: FeedbackState) {
     if (!this.root) return;
+    if (!state.slug || state.slug !== this.slug) {
+      try { console.debug('[FloatingFeedback]', 'list:skip', { expected: this.slug, received: state.slug }); } catch {}
+      return;
+    }
     const listEl = this.root.querySelector('.feedback-list') as HTMLElement;
     const btn = this.root.querySelector('.feedback-button') as HTMLElement;
     const countEl = this.root.querySelector('.feedback-count') as HTMLElement;
     const { discussions = [], loading } = state;
     const count = discussions.length || 0;
+    try { console.debug('[FloatingFeedback]', 'list:render', { slug: state.slug, loading, count }); } catch {}
     countEl.textContent = String(count);
     if (loading) {
       (btn as any).style.display = 'none';
       listEl.innerHTML = '<p class="no-feedback">Loading feedback…</p>';
+      try { console.debug('[FloatingFeedback]', 'list:state', 'loading'); } catch {}
       return;
     }
     if (count === 0) {
-      (btn as any).style.display = 'none';
+      (btn as any).style.display = 'block';
       listEl.innerHTML = '<p class="no-feedback">No feedback yet for this page.</p>';
+      try { console.debug('[FloatingFeedback]', 'list:state', 'empty-visible'); } catch {}
       return;
     }
     (btn as any).style.display = 'block';
+    try { console.debug('[FloatingFeedback]', 'list:state', 'visible'); } catch {}
     const items = [...discussions]
       .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
       .map((d: any) => {

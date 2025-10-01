@@ -14,14 +14,7 @@ import FeedbackLoader from './FeedbackLoader.astro';
 const { slug, className = '', rootId } = Astro.props;
 
 // Use current page path if no slug provided
-const ensureLeadingSlash = (value) => (value.startsWith('/') ? value : `/${value}`);
-const normalizeSlug = (value) => {
-  if (!value) return '/';
-  const trimmed = ensureLeadingSlash(value.trim());
-  const withoutTrailing = trimmed.replace(/\/+$/g, '');
-  return withoutTrailing === '' ? '/' : withoutTrailing;
-};
-const currentSlug = normalizeSlug(slug ?? Astro.url.pathname);
+const currentSlug = (slug && slug.trim().length > 0) ? (slug.startsWith('/') ? slug.trim() : `/${slug.trim()}`) : Astro.url.pathname;
 const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
@@ -47,6 +40,7 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
     if (!root && mount?.parentElement instanceof HTMLElement) {
       root = mount.parentElement;
     }
+    try { console.debug('[FloatingFeedback]', 'component:init', { slug: currentSlug, componentId, rootId, hasRoot: !!root }); } catch {}
     initFeedbackList({ slug: currentSlug, mount });
     initFeedbackHighlighter({ slug: currentSlug, root });
     initFeedbackPopup();

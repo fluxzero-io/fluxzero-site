@@ -8,7 +8,7 @@ const { rootSelector = '', mountId = '' } = Astro.props;
 ---
 
 <script type="module" define:vars={{ rootSelector, mountId }}>
-  import { getState } from '/src/components/feedback/feedbackStore.ts';
+  import { getState, submitFeedback } from '/src/components/feedback/feedbackStore.ts';
   import { buildSegmentsFromRange } from '/src/components/feedback/domAnchors.ts';
   class SelectionPromptController {
     constructor(rootSelector, mountId) {
@@ -282,14 +282,11 @@ const { rootSelector = '', mountId = '' } = Astro.props;
         };
         try { console.debug('[FloatingFeedback]', 'compose: submitting feedback', payload); } catch {}
         try {
-          const res = await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-          if (res.status === 401) {
-            // Switch UI to login mode if token missing/invalid
+          const result = await submitFeedback(payload);
+          if (!result.ok && result.status === 401) {
             if (authWrap) setAuth(false);
             return;
           }
-          if (!res.ok) throw new Error(`Submit failed: ${res.status}`);
-          // Remove temp highlight to avoid double-wrapping; refreshed data will add permanent one
           if (this.tempHighlight && this.tempHighlight.parentNode) {
             const frag = document.createDocumentFragment();
             while (this.tempHighlight.firstChild) frag.appendChild(this.tempHighlight.firstChild);
@@ -297,11 +294,8 @@ const { rootSelector = '', mountId = '' } = Astro.props;
             this.tempHighlight = null;
           }
           popup.remove();
-          // Optionally, signal others to refresh
-          window.dispatchEvent(new CustomEvent('feedback:reload'));
         } catch (err) {
           console.error(err);
-          // Simple error affordance
           const btn = popup.querySelector('[data-action="submit"]');
           if (btn) { btn.textContent = 'Retry'; }
         }

@@ -6,6 +6,7 @@ const { slug } = Astro.props;
 <script type="module" define:vars={{ slug }}>
   import { initFeedbackStore } from '/src/components/feedback/feedbackStore.ts';
   const boot = () => initFeedbackStore(slug);
+  try { console.debug('[FloatingFeedback]', 'loader:init', slug); } catch {}
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot, { once: true });
   } else {
@@ -14,4 +15,3 @@ const { slug } = Astro.props;
 </script>
 
 <!-- This component has no UI; it initializes a shared feedback store. -->
-
