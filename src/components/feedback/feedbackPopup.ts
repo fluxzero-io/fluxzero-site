@@ -65,6 +65,7 @@ class FeedbackPopupController {
 
     const popup = document.createElement('div');
     popup.className = 'feedback-popup';
+    const messageHtml = this.extractUserFeedbackHtml(discussion) || '<p>No feedback message provided.</p>';
     popup.innerHTML = `
       <div class="feedback-popup-header">
         <h4>${discussion.title}</h4>
@@ -76,11 +77,8 @@ class FeedbackPopupController {
           <span>${discussion.author.login}</span>
           <time>${this.formatDate(discussion.createdAt)}</time>
         </div>
-        <div class="feedback-selected-text">
-          <strong>About:</strong> "${this.extractSelectedText(discussion)}"
-        </div>
-        <div class="feedback-body">
-          ${discussion.body.slice(0, 300)}${discussion.body.length > 300 ? '...' : ''}
+        <div class="feedback-body feedback-user-message">
+          ${messageHtml}
         </div>
         <div class="feedback-actions">
           <a href="${discussion.url}" target="_blank" rel="noopener noreferrer">
@@ -205,9 +203,28 @@ class FeedbackPopupController {
     return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   }
 
-  private extractSelectedText(discussion: any) {
-    if (discussion.metadata?.selection?.text) return discussion.metadata.selection.text;
-    const m = discussion.body.match(/>\s*([^\n]+)/);
-    return m?.[1] || '';
+  private extractUserFeedbackHtml(discussion: any) {
+    const html = discussion?.body || discussion?.originalBody || '';
+    if (!html) return '';
+    const container = document.createElement('div');
+    container.innerHTML = html;
+    const heading = Array.from(container.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+      .find((el) => el.textContent?.trim().toLowerCase() === 'user feedback');
+    if (heading) {
+      const frag = document.createElement('div');
+      let next = heading.nextElementSibling;
+      while (next && !/^H[1-6]$/.test(next.tagName)) {
+        frag.appendChild(next.cloneNode(true));
+        next = next.nextElementSibling;
+      }
+      const content = frag.innerHTML.trim();
+      if (content) return content;
+    }
+    // fallback: return paragraph content if structured differently
+    const paragraphs = Array.from(container.querySelectorAll('p'));
+    if (paragraphs.length) {
+      return paragraphs.map((p) => p.outerHTML).join('');
+    }
+    return container.textContent || '';
   }
 }

@@ -1,6 +1,6 @@
 import { marked } from 'marked';
 import type { FeedbackProvider, Discussion, ListResult, CreateInput, CreateResult } from './types';
-import { buildTitle, buildBody } from './util';
+import { buildTitle, buildBody, extractUserFeedbackSection } from './util';
 
 const store: Map<string, Discussion[]> = new Map();
 
@@ -15,10 +15,17 @@ export class MemoryProvider implements FeedbackProvider {
     const id = `mem_${Date.now()}_${Math.random().toString(36).slice(2)}`;
     const title = buildTitle(slug, message);
     const rawBody = buildBody(slug, selectionText, message, options.selectionContext, (options as any).segments);
+    const feedbackMarkdown = extractUserFeedbackSection(rawBody) || rawBody;
+    const feedbackHtml = marked(feedbackMarkdown);
+    let metadata: any = null;
+    const metaMatch = rawBody.match(/<!-- FEEDBACK_METADATA\s*([\s\S]*?)\s*-->/);
+    if (metaMatch) {
+      try { metadata = JSON.parse(metaMatch[1]); } catch { metadata = null; }
+    }
     const discussion: Discussion = {
       id,
       title,
-      body: marked(rawBody),
+      body: feedbackHtml,
       url: '#',
       closed: false,
       createdAt: new Date().toISOString(),
@@ -27,7 +34,8 @@ export class MemoryProvider implements FeedbackProvider {
       commentCount: 0,
       reactionCount: 0,
       repository: 'local/memory',
-      metadata: { version: 1, page: slug, selection: { text: selected } },
+      metadata,
+      originalBody: rawBody,
     };
     const arr = store.get(slug) || [];
     arr.unshift(discussion);

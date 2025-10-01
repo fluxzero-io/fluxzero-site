@@ -13,6 +13,7 @@ export type Discussion = {
   reactionCount: number;
   repository: string;
   metadata?: any;
+  originalBody?: string;
 };
 
 export type ListResult = { slug: string; discussions: Discussion[]; total: number };

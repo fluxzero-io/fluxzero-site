@@ -1,6 +1,6 @@
 import { marked } from 'marked';
 import type { FeedbackProvider, ListResult, CreateInput, CreateResult } from './types';
-import { buildTitle, buildBody } from './util';
+import { buildTitle, buildBody, extractUserFeedbackSection } from './util';
 
 export class GitHubProvider implements FeedbackProvider {
   constructor(private githubRepo: string, private githubToken: string, private userToken?: string) {
@@ -58,7 +58,8 @@ export class GitHubProvider implements FeedbackProvider {
         try { metadata = JSON.parse(metadataMatch[1]); } catch { }
       }
       const displayBody = discussion.body.replace(/<!-- FEEDBACK_METADATA.*?-->/s, '').trim();
-      const htmlBody = marked(displayBody);
+      const feedbackMarkdown = extractUserFeedbackSection(displayBody) || displayBody;
+      const htmlBody = marked(feedbackMarkdown);
       const cleanTitle = discussion.title.replace(/\[slug:[^\]]+\]\s*/g, '').trim();
       return {
         id: discussion.id,
