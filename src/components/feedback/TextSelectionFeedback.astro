@@ -99,6 +99,7 @@ export interface Props {}
         const container = findContainerForNode(range.startContainer || document.body);
         segments = buildSegmentsFromRange(container, range) || [];
       } catch {}
+      try { console.debug('[FloatingFeedback]', 'compose: computed segments for selection', { length: segments?.length || 0, segments }); } catch {}
       // Create a temporary highlight wrapper to preserve visual emphasis when selection blurs
       const span = document.createElement('span');
       span.className = 'feedback-highlight feedback-highlight--temp';
@@ -152,6 +153,33 @@ export interface Props {}
       position();
       // animate in
       requestAnimationFrame(() => popup.classList.add('is-visible'));
+
+      let currentSegments = Array.isArray(segments) ? [...segments] : [];
+      const ensureSegments = () => {
+        if (Array.isArray(currentSegments) && currentSegments.length > 0) return currentSegments;
+        try {
+          if (anchor && anchor instanceof Node) {
+            const range = document.createRange();
+            if (anchor instanceof Text) {
+              range.selectNode(anchor);
+            } else {
+              range.selectNodeContents(anchor);
+            }
+            const container = findContainerForNode(anchor);
+            const rebuilt = buildSegmentsFromRange(container, range) || [];
+            if (Array.isArray(rebuilt) && rebuilt.length > 0) {
+              currentSegments = rebuilt;
+              try { console.debug('[FloatingFeedback]', 'compose: rebuilt segments from anchor', { length: rebuilt.length, segments: rebuilt }); } catch {}
+            }
+          }
+        } catch (err) {
+          try { console.debug('[FloatingFeedback]', 'compose: failed to rebuild segments', err); } catch {}
+        }
+        if (!currentSegments || currentSegments.length === 0) {
+          try { console.debug('[FloatingFeedback]', 'compose: no segments available for submission'); } catch {}
+        }
+        return currentSegments || [];
+      };
 
       // Auth gate: check if user is logged in
       const authWrap = popup.querySelector('.compose-actions-auth');
@@ -211,11 +239,13 @@ export interface Props {}
           return;
         }
         const state = (typeof getState === 'function' ? getState() : null) || { slug: null };
+        const segs = ensureSegments();
         const payload = {
           slug: state.slug || location.pathname,
-          selection: { text: quote, context: context || null, segments },
+          selection: { text: quote, context: context || null, segments: segs },
           message
         };
+        try { console.debug('[FloatingFeedback]', 'compose: submitting feedback', payload); } catch {}
         try {
           const res = await fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
           if (res.status === 401) {

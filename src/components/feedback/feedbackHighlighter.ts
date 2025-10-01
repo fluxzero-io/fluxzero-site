@@ -7,13 +7,19 @@ export function initFeedbackHighlighter(options: { slug: string }) {
 
 class FeedbackHighlighterController {
   private slug: string;
-  private groups: Array<{ key?: string; element: HTMLElement; anchor: HTMLElement; rect: DOMRect; discussions: any[] }>=[];
+  private groups: Array<{ key?: string; element: HTMLElement; anchor: HTMLElement; rect: DOMRect; discussions: any[]; spans: HTMLElement[] }> = [];
   private processed = new Set<string>();
   private unsubscribe: null | (() => void) = null;
 
   constructor(slug: string) {
     this.slug = slug;
     this.init();
+  }
+
+  private log(...args: any[]) {
+    try {
+      console.debug('[FloatingFeedback]', ...args);
+    } catch {}
   }
 
   private async init() {
@@ -34,9 +40,23 @@ class FeedbackHighlighterController {
     open.forEach((d, index) => {
       const sel = (d as any).metadata?.selection || {};
       const segments = Array.isArray(sel.segments) ? sel.segments : [];
-      if (!segments.length) return;
+      if (!segments.length) {
+        this.log('onState: discussion missing segments, skipping direct anchor', { id: d.id, selection: sel });
+        return;
+      }
       const loc = this.anchorBySegments(segments);
-      if (loc) this.placeHighlightAndIndicator(d as any, loc, index);
+      if (loc) {
+        this.placeHighlightAndIndicator(d as any, loc, index);
+      } else {
+        this.log('onState: segment anchoring failed, attempting text search', { id: d.id, selection: sel });
+        const fallback = this.findTextInPage(sel.text || null, sel.context || null);
+        if (fallback) {
+          this.log('onState: fallback text search succeeded', { id: d.id, location: fallback });
+          this.placeHighlightAndIndicator(d as any, fallback, index);
+        } else {
+          this.log('onState: unable to locate discussion in page', { id: d.id, selection: sel });
+        }
+      }
     });
     try { window.dispatchEvent(new CustomEvent('feedback:highlights-updated')); } catch {}
   }
@@ -64,7 +84,11 @@ class FeedbackHighlighterController {
   }
 
   private anchorBySegments(segments: Array<{ hash: string; start: number; end: number }>) {
-    if (!segments || segments.length === 0) return null;
+    if (!segments || segments.length === 0) {
+      this.log('anchorBySegments: no segments provided');
+      return null;
+    }
+    this.log('anchorBySegments: attempting lookup', segments);
     const blocks = Array.from(document.querySelectorAll('[data-fz-hash]')) as HTMLElement[];
     const findByHash = (h: string) => blocks.find((el) => el.getAttribute('data-fz-hash') === h) || null;
     const toRange = (el: HTMLElement, start: number, end: number): Range | null => {
@@ -79,24 +103,38 @@ class FeedbackHighlighterController {
         if (!eSet && acc + l >= end) { r.setEnd(n, end - acc); eSet = true; break; }
         acc += l;
       }
-      return (sSet && eSet) ? r : null;
+      if (sSet && eSet) return r;
+      this.log('anchorBySegments: failed to build range in element', { el, start, end, sSet, eSet });
+      return null;
     };
     const parts: any[] = [];
     for (const seg of segments) {
       const el = findByHash(seg.hash);
-      if (!el) return null;
+      if (!el) {
+        this.log('anchorBySegments: no element for hash', seg.hash);
+        return null;
+      }
       const r = toRange(el, seg.start, seg.end);
-      if (!r) return null;
+      if (!r) {
+        this.log('anchorBySegments: no range for segment', seg);
+        return null;
+      }
       parts.push({ range: r, rect: r.getBoundingClientRect(), element: el });
     }
     const first = parts[0];
     const last = parts[parts.length - 1];
     const key = `${Math.round(first.rect.top)}|${Math.round(first.rect.left)}|${Math.round(first.rect.width)}|${Math.round(first.rect.height)}|${segments[0].hash}`;
-    return { parts, rect: first.rect, element: first.element, key };
+    const location = { parts, rect: first.rect, element: first.element, key };
+    this.log('anchorBySegments: resolved location', location);
+    return location;
   }
 
   private findTextInPage(selectedText: string | null, context?: { prefix?: string; suffix?: string } | null) {
-    if (!selectedText) return null as const;
+    if (!selectedText) {
+      this.log('findTextInPage: no text provided');
+      return null as const;
+    }
+    this.log('findTextInPage: searching for text', { selectedText, context });
     const needle = this.normQuotes(selectedText);
     const walker = document.createTreeWalker(
       document.body,
@@ -143,12 +181,18 @@ class FeedbackHighlighterController {
         range.setEnd(node, Math.min((node as any).length || raw.length, start + Math.max(1, matchLen)));
         const rect = range.getBoundingClientRect();
         const key = `${Math.round(rect.top)}|${Math.round(rect.left)}|${Math.round(rect.width)}|${Math.round(rect.height)}|${needle}`;
-        return { range, rect, element: node.parentElement as HTMLElement, text: selectedText, key };
+        const result = { range, rect, element: node.parentElement as HTMLElement, text: selectedText, key };
+        this.log('findTextInPage: direct text node match', result);
+        return result;
       }
     }
     // Fallback: search within common block elements and build a multi-node range
     const block = this.findInBlocks(selectedText, context);
-    if (block) return block as any;
+    if (block) {
+      this.log('findTextInPage: fallback block match', block);
+      return block as any;
+    }
+    this.log('findTextInPage: failed to locate text', { selectedText, context });
     return null as const;
   }
 
@@ -194,9 +238,12 @@ class FeedbackHighlighterController {
       if (range) {
         const rect = range.getBoundingClientRect();
         const key = `${Math.round(rect.top)}|${Math.round(rect.left)}|${Math.round(rect.width)}|${Math.round(rect.height)}|${needle}`;
-        return { range, rect, element: el as HTMLElement, text: selectedText, key };
+        const result = { range, rect, element: el as HTMLElement, text: selectedText, key };
+        this.log('findInBlocks: matched within block', { element: el, result });
+        return result;
       }
     }
+    this.log('findInBlocks: no match found', { selectedText, context });
     return null;
   }
 
@@ -236,6 +283,55 @@ class FeedbackHighlighterController {
       .replace(/\u00A0/g, ' ');
   }
 
+  private updateSpanIds(span: HTMLElement, ids: string[]) {
+    const unique = Array.from(new Set(ids.filter(Boolean)));
+    span.dataset.feedbackHighlight = 'true';
+    span.dataset.feedbackIds = JSON.stringify(unique);
+  }
+
+  private closestHighlightSpan(node: Node | null): HTMLElement | null {
+    if (!node) return null;
+    let el: HTMLElement | null = null;
+    if (node instanceof HTMLElement) {
+      el = node;
+    } else if (node.nodeType === Node.TEXT_NODE) {
+      el = node.parentElement;
+    }
+    return el ? el.closest('span.feedback-highlight[data-feedback-highlight="true"]') as HTMLElement | null : null;
+  }
+
+  private mergeRangesIntoGroup(group: { element: HTMLElement; spans: HTMLElement[]; anchor: HTMLElement }, textLocation: any, ids: string[]) {
+    const merged = new Set<HTMLElement>((group.spans || []).filter(Boolean));
+    const parts = Array.isArray(textLocation.parts) ? textLocation.parts : [];
+    parts.forEach((p: any) => {
+      const r: Range = p.range;
+      if (!r) return;
+      const startSpan = this.closestHighlightSpan(r.startContainer);
+      const endSpan = this.closestHighlightSpan(r.endContainer);
+      if (startSpan && startSpan === endSpan) {
+        merged.add(startSpan);
+        return;
+      }
+      const span = document.createElement('span');
+      span.className = 'feedback-highlight';
+      this.updateSpanIds(span, ids);
+      try {
+        const frag = r.extractContents();
+        span.appendChild(frag);
+        r.insertNode(span);
+      } catch {}
+      merged.add(span);
+      this.attachSpanHoverHandlers(span, group.element);
+    });
+    const result = Array.from(merged);
+    result.forEach((span) => this.updateSpanIds(span, ids));
+    group.spans = result;
+    if (!group.anchor || !result.includes(group.anchor)) {
+      group.anchor = result[0] || group.anchor;
+    }
+    return result;
+  }
+
   private placeHighlightAndIndicator(discussion: any, textLocation: any, index: number) {
     const rect: DOMRect = textLocation.rect;
     // Try to find existing group first (same key/line); reuse its anchor to avoid double wrapping
@@ -250,20 +346,21 @@ class FeedbackHighlighterController {
         const r: Range = p.range;
         const span = document.createElement('span');
         span.className = 'feedback-highlight';
-        (span as any).dataset.feedbackHighlight = 'true';
-        (span as any).dataset.feedbackIds = JSON.stringify([discussion.id]);
+        this.updateSpanIds(span, [discussion.id]);
         const frag = r.extractContents();
         span.appendChild(frag);
         r.insertNode(span);
         if (!firstSpan) firstSpan = span;
         createdSpans.push(span);
       });
-      anchor = firstSpan || (parts[0]?.element as HTMLElement);
-      group = this.createGroup(rect, anchor, discussion, textLocation.key);
+      anchor = firstSpan || (parts[0]?.element as HTMLElement) || (textLocation.element as HTMLElement);
+      if (!anchor) return;
+      const highlightSpans = createdSpans.length ? createdSpans : (firstSpan ? [firstSpan] : []);
+      group = this.createGroup(rect, anchor, discussion, textLocation.key, highlightSpans);
       this.groups.push(group);
       document.body.appendChild(group.element);
       // Attach hover handlers to all created spans so indicator appears near any part
-      createdSpans.forEach((sp) => this.attachSpanHoverHandlers(sp, group.element));
+      highlightSpans.forEach((sp) => this.attachSpanHoverHandlers(sp, group.element));
       // Bind robust click handler that closes over this group
       group.element.addEventListener('click', (e) => {
         e.preventDefault();
@@ -276,15 +373,14 @@ class FeedbackHighlighterController {
       });
     } else {
       anchor = group.anchor;
-      try {
-        const ds = (anchor as any).dataset || {};
-        const ids = ds.feedbackIds ? JSON.parse(ds.feedbackIds) : [];
-        if (!ids.includes(discussion.id)) ids.push(discussion.id);
-        (anchor as any).dataset.feedbackIds = JSON.stringify(ids);
-      } catch {}
+      const existingIds = group.discussions.map((d: any) => d.id);
+      const allIds = Array.from(new Set([...existingIds, discussion.id]));
+      this.mergeRangesIntoGroup(group, textLocation, allIds);
+      anchor = group.anchor;
       group.discussions.push(discussion);
       const badge = group.element.querySelector('.feedback-badge');
       if (badge) badge.textContent = `💬 ${group.discussions.length}`;
+      this.updateAbsolutePosition(group.element, group.anchor);
     }
     // Map id to anchor for external lookup
     try { (this as any).anchorById ||= new Map(); } catch {}
@@ -299,7 +395,7 @@ class FeedbackHighlighterController {
     return found;
   }
 
-  private createGroup(rect: DOMRect, anchor: HTMLElement, discussion: any, key?: string) {
+  private createGroup(rect: DOMRect, anchor: HTMLElement, discussion: any, key?: string, spans: HTMLElement[] = [anchor]) {
     const indicator = document.createElement('div');
     indicator.className = 'feedback-indicator';
     (indicator as any).dataset.discussionId = discussion.id;
@@ -352,7 +448,7 @@ class FeedbackHighlighterController {
       }
     });
 
-    return { key, element: indicator, anchor, rect, discussions: [discussion], parts: [anchor] };
+    return { key, element: indicator, anchor, rect, discussions: [discussion], spans: spans.length ? spans : [anchor] };
   }
 
   private attachSpanHoverHandlers(span: HTMLElement, indicator: HTMLElement) {
