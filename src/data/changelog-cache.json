@@ -1,7 +1,43 @@
 {
-  "lastUpdated": "2025-09-29T06:42:57.592Z",
-  "latestVersion": "1.9.0",
+  "lastUpdated": "2025-10-01T12:01:45.889Z",
+  "latestVersion": "1.14.0",
   "releases": [
+    {
+      "version": "1.14.0",
+      "date": "2025-10-01",
+      "body": "#### [1.14.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.13.0...1.14.0) (2025-10-01)\n\n\n##### Features\n\n* **web:** Allow override of application name in Fluxzero proxy ([9883aa6](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/9883aa61c247e3e3b36708dbf6e1154f15b1893e))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.14.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.13.0",
+      "date": "2025-09-30",
+      "body": "#### [1.13.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.12.0...1.13.0) (2025-09-30)\n\n\n##### Features\n\n* **test-server:** support `FLUXZERO_LOG_RETENTION` property to configure log retention ([9cb469a](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/9cb469ac727e37f5982915a147ed5b598a4bab3d))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.13.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.12.0",
+      "date": "2025-09-30",
+      "body": "#### [1.12.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.11.0...1.12.0) (2025-09-30)\n\n\n##### Build Systems\n\n* Use metadata action for docker tags and labels ([5eb5241](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/5eb5241746ed930d26bff36c49467f815d60dd54))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.12.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.10.0",
+      "date": "2025-09-29",
+      "body": "#### [1.10.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.9.0...1.10.0) (2025-09-29)\n\n\n##### Code Refactoring\n\n* **properties:** replace redundant property resolution logic with `getFirstAvailableProperty` ([d968aba](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/d968abaa0070d64a229cf5fec8e2d42f4b717571))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.10.0",
+      "quarterKey": "2025-Q3",
+      "year": 2025,
+      "quarter": "Q3"
+    },
     {
       "version": "1.9.0",
       "date": "2025-09-28",

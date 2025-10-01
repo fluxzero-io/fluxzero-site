@@ -21,8 +21,23 @@ const changelogReleaseSchema = z.object({
   quarter: z.string(),
 });
 
+const feedbackToggleSchema = z.union([
+	z.boolean(),
+	z.object({
+		enabled: z.boolean().optional(),
+		slug: z.string().optional(),
+	}),
+]);
+
+const docsWithFeedbackSchema = docsSchema({
+	extend: () =>
+		z.object({
+			feedback: feedbackToggleSchema.optional(),
+		}),
+});
+
 export const collections = {
-	docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
+	docs: defineCollection({ loader: docsLoader(), schema: docsWithFeedbackSchema }),
 	javadocClasses: defineCollection({
 		loader: javadocLoader(),
 		schema: javadocClassSchema,

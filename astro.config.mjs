@@ -35,6 +35,7 @@ export default defineConfig({
         starlight({
             components: {
                //  Header: './src/components/DocsHeader.astro', // disabled as we haven't gotten this right yet
+               MarkdownContent: './src/components/MarkdownContentWithFeedback.astro',
             },
             title: 'Fluxzero docs',
             logo: {
