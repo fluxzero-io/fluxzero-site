@@ -197,7 +197,7 @@ graph TD
 
     INVOKE --> RETURN{Handler return value?}
     RETURN -->|Same type instance| UPDATE[Persist new handler state]
-    RETURN -->|null but declares same type| DELETE[Delete handler from store]
+    RETURN -->|"null (with compatible return type)"| DELETE[Delete handler from store]
     RETURN -->|Other type or void| KEEP[Keep existing state]
 ```
 
