@@ -5,15 +5,23 @@ import '~/styles/feedback.css';
 export interface Props {
   slug?: string;
   className?: string;
+  rootId?: string;
 }
 
 import TextSelectionFeedback from './TextSelectionFeedback.astro';
 import FeedbackLoader from './FeedbackLoader.astro';
 // FeedbackList and FeedbackHighlighter are now TS modules
-const { slug, className = '' } = Astro.props;
+const { slug, className = '', rootId } = Astro.props;
 
 // Use current page path if no slug provided
-const currentSlug = slug || Astro.url.pathname;
+const ensureLeadingSlash = (value) => (value.startsWith('/') ? value : `/${value}`);
+const normalizeSlug = (value) => {
+  if (!value) return '/';
+  const trimmed = ensureLeadingSlash(value.trim());
+  const withoutTrailing = trimmed.replace(/\/+$/g, '');
+  return withoutTrailing === '' ? '/' : withoutTrailing;
+};
+const currentSlug = normalizeSlug(slug ?? Astro.url.pathname);
 const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
@@ -21,9 +29,9 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
 
 <!-- Modular feedback components -->
 <FeedbackLoader slug={currentSlug} />
-<TextSelectionFeedback slug={currentSlug} />
+<TextSelectionFeedback slug={currentSlug} rootSelector={rootId ? `#${rootId}` : ''} mountId={componentId} />
 
-<script type="module" define:vars={{ currentSlug, componentId }}>
+<script type="module" define:vars={{ currentSlug, componentId, rootId }}>
   import { initFeedbackList } from '/src/components/feedback/feedbackList.ts';
   import { initFeedbackHighlighter } from '/src/components/feedback/feedbackHighlighter.ts';
   import { initFeedbackPopup } from '/src/components/feedback/feedbackPopup.ts';
@@ -31,8 +39,16 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
 
   const mountInit = () => {
     const mount = document.getElementById(componentId);
+    let root;
+    if (rootId) {
+      const el = document.getElementById(rootId);
+      if (el && el instanceof HTMLElement) root = el;
+    }
+    if (!root && mount?.parentElement instanceof HTMLElement) {
+      root = mount.parentElement;
+    }
     initFeedbackList({ slug: currentSlug, mount });
-    initFeedbackHighlighter({ slug: currentSlug });
+    initFeedbackHighlighter({ slug: currentSlug, root });
     initFeedbackPopup();
     // No global exposure needed; components dispatch full discussion payloads
     window.addEventListener('feedback:reload', () => {

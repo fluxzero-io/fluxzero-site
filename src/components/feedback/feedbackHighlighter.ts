@@ -1,18 +1,20 @@
 import { subscribe, type FeedbackState } from '/src/components/feedback/feedbackStore.ts';
 
-export function initFeedbackHighlighter(options: { slug: string }) {
-  const controller = new FeedbackHighlighterController(options.slug);
+export function initFeedbackHighlighter(options: { slug: string; root?: HTMLElement }) {
+  const controller = new FeedbackHighlighterController(options.slug, options.root);
   return controller;
 }
 
 class FeedbackHighlighterController {
   private slug: string;
+  private root: HTMLElement;
   private groups: Array<{ key?: string; element: HTMLElement; anchor: HTMLElement; rect: DOMRect; discussions: any[]; spans: HTMLElement[] }> = [];
   private processed = new Set<string>();
   private unsubscribe: null | (() => void) = null;
 
-  constructor(slug: string) {
+  constructor(slug: string, root?: HTMLElement) {
     this.slug = slug;
+    this.root = (root && root instanceof HTMLElement) ? root : document.body;
     this.init();
   }
 
@@ -63,7 +65,7 @@ class FeedbackHighlighterController {
 
   private ensureHashes() {
     const sel = 'p,li,blockquote,pre,code,td,th,div,h1,h2,h3,h4,h5,h6';
-    const blocks = document.querySelectorAll(sel);
+    const blocks = this.root.querySelectorAll(sel);
     blocks.forEach((el) => {
       const he = el as HTMLElement;
       if (!he.hasAttribute('data-fz-hash')) {
@@ -89,7 +91,7 @@ class FeedbackHighlighterController {
       return null;
     }
     this.log('anchorBySegments: attempting lookup', segments);
-    const blocks = Array.from(document.querySelectorAll('[data-fz-hash]')) as HTMLElement[];
+    const blocks = Array.from(this.root.querySelectorAll('[data-fz-hash]')) as HTMLElement[];
     const findByHash = (h: string) => blocks.find((el) => el.getAttribute('data-fz-hash') === h) || null;
     const toRange = (el: HTMLElement, start: number, end: number): Range | null => {
       const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null as any);
@@ -137,7 +139,7 @@ class FeedbackHighlighterController {
     this.log('findTextInPage: searching for text', { selectedText, context });
     const needle = this.normQuotes(selectedText);
     const walker = document.createTreeWalker(
-      document.body,
+      this.root,
       NodeFilter.SHOW_TEXT,
       {
         acceptNode(node) {
@@ -210,7 +212,7 @@ class FeedbackHighlighterController {
 
   private findInBlocks(selectedText: string, context?: { prefix?: string; suffix?: string } | null) {
     const needle = this.normQuotes(selectedText);
-    const blocks = document.querySelectorAll('p, li, blockquote, pre, code, h1, h2, h3, h4, h5, h6');
+    const blocks = this.root.querySelectorAll('p, li, blockquote, pre, code, h1, h2, h3, h4, h5, h6');
     for (const el of Array.from(blocks)) {
       if (this.isUiNode(el)) continue;
       const raw = (el as HTMLElement).textContent || '';
@@ -529,7 +531,7 @@ class FeedbackHighlighterController {
     this.groups = [];
     // Unwrap existing non-temporary highlights to avoid nesting
     try {
-      document.querySelectorAll('span.feedback-highlight:not(.feedback-highlight--temp)').forEach((el) => {
+      this.root.querySelectorAll('span.feedback-highlight:not(.feedback-highlight--temp)').forEach((el) => {
         const span = el as HTMLElement;
         const frag = document.createDocumentFragment();
         while (span.firstChild) frag.appendChild(span.firstChild);

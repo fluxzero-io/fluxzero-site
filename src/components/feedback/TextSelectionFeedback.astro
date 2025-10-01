@@ -1,16 +1,24 @@
 ---
-export interface Props {}
+export interface Props {
+  rootSelector?: string;
+  mountId?: string;
+}
+
+const { rootSelector = '', mountId = '' } = Astro.props;
 ---
 
-<script type="module">
+<script type="module" define:vars={{ rootSelector, mountId }}>
   import { getState } from '/src/components/feedback/feedbackStore.ts';
-  import { buildSegmentsFromRange, findContainerForNode } from '/src/components/feedback/domAnchors.ts';
+  import { buildSegmentsFromRange } from '/src/components/feedback/domAnchors.ts';
   class SelectionPromptController {
-    constructor() {
+    constructor(rootSelector, mountId) {
       this.el = null;
       this.tempHighlight = null;
       this.lastRange = null;
       this.lastText = '';
+      this.rootSelector = rootSelector;
+      this.mountId = mountId;
+      this.root = null;
       this.handleSelectionChange = this.handleSelectionChange.bind(this);
       this.handleScrollOrResize = this.handleScrollOrResize.bind(this);
       this.onPromptClick = this.onPromptClick.bind(this);
@@ -18,11 +26,26 @@ export interface Props {}
     }
 
     init() {
+      this.root = this.resolveRoot(this.rootSelector);
       document.addEventListener('mouseup', this.handleSelectionChange);
       document.addEventListener('keyup', this.handleSelectionChange);
       document.addEventListener('touchend', this.handleSelectionChange, { passive: true });
       window.addEventListener('scroll', this.handleScrollOrResize, { passive: true });
       window.addEventListener('resize', this.handleScrollOrResize, { passive: true });
+    }
+
+    resolveRoot(selector) {
+      if (selector) {
+        const el = document.querySelector(selector);
+        if (el && el instanceof HTMLElement) return el;
+      }
+      if (this.mountId) {
+        const mount = document.getElementById(this.mountId);
+        if (mount && mount.parentElement instanceof HTMLElement) return mount.parentElement;
+      }
+      // Prefer the main content element if present, otherwise fallback to body
+      const main = document.querySelector('main');
+      return main instanceof HTMLElement ? main : document.body;
     }
 
     ensureEl() {
@@ -69,6 +92,18 @@ export interface Props {}
         return;
       }
 
+      if (!this.root || !document.body.contains(this.root)) {
+        this.root = this.resolveRoot(this.rootSelector);
+      }
+
+      const root = this.root || document.body;
+      const probe = common || range.commonAncestorContainer;
+      const probeElement = probe instanceof Element ? probe : probe?.parentElement;
+      if (probeElement && !root.contains(probeElement)) {
+        this.hide();
+        return;
+      }
+
       const text = sel.toString().trim();
       if (!text || text.length < 3) {
         this.hide();
@@ -96,8 +131,8 @@ export interface Props {}
       const ctx = this.computeContext(range);
       let segments = [];
       try {
-        const container = findContainerForNode(range.startContainer || document.body);
-        segments = buildSegmentsFromRange(container, range) || [];
+        const root = this.root || document.body;
+        segments = buildSegmentsFromRange(root, range) || [];
       } catch {}
       try { console.debug('[FloatingFeedback]', 'compose: computed segments for selection', { length: segments?.length || 0, segments }); } catch {}
       // Create a temporary highlight wrapper to preserve visual emphasis when selection blurs
@@ -165,8 +200,8 @@ export interface Props {}
             } else {
               range.selectNodeContents(anchor);
             }
-            const container = findContainerForNode(anchor);
-            const rebuilt = buildSegmentsFromRange(container, range) || [];
+            const root = this.root || document.body;
+            const rebuilt = buildSegmentsFromRange(root, range) || [];
             if (Array.isArray(rebuilt) && rebuilt.length > 0) {
               currentSegments = rebuilt;
               try { console.debug('[FloatingFeedback]', 'compose: rebuilt segments from anchor', { length: rebuilt.length, segments: rebuilt }); } catch {}
@@ -349,7 +384,8 @@ export interface Props {}
 
     findTextInPage(selectedText) {
       if (!selectedText) return null;
-      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      const root = this.root || document.body;
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
         acceptNode(node) {
           const parent = node.parentElement;
           if (!parent) return NodeFilter.FILTER_REJECT;
@@ -413,7 +449,7 @@ export interface Props {}
   }
 
   const boot = () => {
-    const ctrl = new SelectionPromptController();
+    const ctrl = new SelectionPromptController(rootSelector, mountId);
     ctrl.restoreFromSession();
   };
   if (document.readyState === 'loading') {
