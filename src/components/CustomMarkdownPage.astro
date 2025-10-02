@@ -1,5 +1,6 @@
 ---
 import Default from "@astrojs/starlight/components/MarkdownContent.astro";
+import { isFeedbackEnabled } from "~/components/feedback/feedbackProvider";
 
 // Access current page route data:
 const entry = Astro.locals.starlightRoute.entry;
@@ -12,7 +13,9 @@ const slug = (typeof feedback === "object" && feedback !== null && typeof feedba
     ? feedback.slug
     : entry.slug || undefined;
 
-const feedbackEnabled = (() => {
+const feedbackGloballyEnabled = isFeedbackEnabled();
+
+const feedbackEnabled = feedbackGloballyEnabled && (() => {
     if (slug === undefined) return false; // no slug, no feedback
     if (feedback === false) return false; // explicit opt-out
     if (typeof feedback === "object" && feedback !== null) {

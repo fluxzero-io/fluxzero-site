@@ -1,10 +1,12 @@
 ---
 import MarkdownContent from '@astrojs/starlight/components/MarkdownContent.astro';
 import FloatingFeedback from '~/components/feedback/FloatingFeedback.astro';
+import { isFeedbackEnabled } from '~/components/feedback/feedbackProvider';
 
 const { starlightRoute } = Astro.locals;
 const entry = starlightRoute?.entry;
 const isDocsEntry = entry?.collection === 'docs';
+const feedbackGloballyEnabled = isFeedbackEnabled();
 const rawFeedback = isDocsEntry ? entry?.data?.feedback : undefined;
 
 const normalizeSlug = (value) => {
@@ -18,7 +20,7 @@ const entrySlug = Astro.url.pathname;
 let feedbackEnabled = false;
 let feedbackSlug = entrySlug;
 
-if (isDocsEntry) {
+if (feedbackGloballyEnabled && isDocsEntry) {
   if (typeof rawFeedback === 'boolean') {
     feedbackEnabled = rawFeedback;
   } else if (rawFeedback && typeof rawFeedback === 'object') {
