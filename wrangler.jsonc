@@ -28,6 +28,12 @@
 	"vars": {
 		"FEEDBACK_PROVIDER": "github",
 		"GITHUB_REPO": "fluxzero-io/fluxzero-site"
+	},
+	"environments": {
+		"preview": {
+			"workers_dev": true,
+			"routes": []
+		}
 	}
 	/**
 	 * Smart Placement

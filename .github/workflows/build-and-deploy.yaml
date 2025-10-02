@@ -2,55 +2,131 @@ name: Deploy to Cloudflare Workers (PNPM + Previews)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, "**" ]   # deploy preview for any branch; prod on main
   pull_request:
     types: [opened, synchronize, reopened]
   workflow_dispatch:
 
+# Prevent overlapping deploys per ref
+concurrency:
+  group: cloudflare-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    outputs:
+      preview_name: ${{ steps.preview-name.outputs.value }}
+      is_main: ${{ steps.is-main.outputs.value }}
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - name: Install Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
+          cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install deps (frozen lockfile)
+        run: pnpm install --frozen-lockfile
 
-      - name: Build Astro site
+      - name: Build
         run: pnpm build
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Sync Worker secrets
-        run: |
-          npx wrangler secret put GITHUB_APP_CLIENT_ID --text "${{ secrets.CF_GITHUB_APP_CLIENT_ID }}"
-          npx wrangler secret put GITHUB_APP_CLIENT_SECRET --text "${{ secrets.CF_GITHUB_APP_CLIENT_SECRET }}"
-          npx wrangler secret put COOKIE_SECRET --text "${{ secrets.CF_COOKIE_SECRET }}"
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-
-      - name: Deploy to Cloudflare Workers
+      # Derive a stable preview name from the branch
+      - name: Compute preview worker name
+        id: preview-name
         run: |
           BRANCH="${{ github.ref_name }}"
-          NAME="flux-docs01"
-
+          BASE="flux-docs01"
           if [ "$BRANCH" = "main" ]; then
-            npx wrangler deploy
+            echo "value=${BASE}" >> "$GITHUB_OUTPUT"
           else
-            PREVIEW_NAME="${NAME}-${BRANCH//[^a-zA-Z0-9]/-}"
-            npx wrangler deploy --name "$PREVIEW_NAME"
+            # Replace non-alnum with '-' (Workers name charset)
+            SAFE="${BRANCH//[^a-zA-Z0-9]/-}"
+            echo "value=${BASE}-${SAFE}" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Is main?
+        id: is-main
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "value=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # --- Sync secrets for both envs (idempotent) ---
+  sync-secrets:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      # Preview environment secrets
+      - name: Sync secrets (preview)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # If account_id isn't in wrangler.toml, uncomment:
+          # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          environment: preview
+          secrets: |
+            GITHUB_APP_CLIENT_ID
+            GITHUB_APP_CLIENT_SECRET
+            COOKIE_SECRET
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GITHUB_APP_CLIENT_ID: ${{ secrets.CF_GITHUB_APP_CLIENT_ID }}
+          GITHUB_APP_CLIENT_SECRET: ${{ secrets.CF_GITHUB_APP_CLIENT_SECRET }}
+          COOKIE_SECRET: ${{ secrets.CF_COOKIE_SECRET }}
+
+      # Production environment secrets
+      - name: Sync secrets (production)
+        if: needs.build.outputs.is_main == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          environment: production
+          secrets: |
+            GITHUB_APP_CLIENT_ID
+            GITHUB_APP_CLIENT_SECRET
+            COOKIE_SECRET
+        env:
+          GITHUB_APP_CLIENT_ID: ${{ secrets.CF_GITHUB_APP_CLIENT_ID }}
+          GITHUB_APP_CLIENT_SECRET: ${{ secrets.CF_GITHUB_APP_CLIENT_SECRET }}
+          COOKIE_SECRET: ${{ secrets.CF_COOKIE_SECRET }}
+
+  # --- Deploy ---
+  deploy:
+    needs: [build, sync-secrets]
+    runs-on: ubuntu-latest
+    steps:
+      # Preview deploy (any non-main branch or PR)
+      - name: Deploy preview
+        if: needs.build.outputs.is_main == 'false'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          environment: preview
+          command: deploy --env preview --name "${{ needs.build.outputs.preview_name }}"
+
+      # Production deploy (main)
+      - name: Deploy production
+        if: needs.build.outputs.is_main == 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
