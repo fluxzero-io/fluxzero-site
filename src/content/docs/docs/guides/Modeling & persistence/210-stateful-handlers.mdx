@@ -178,3 +178,40 @@ Stateful handlers are ideal for:
 - **Process managers** (e.g., order fulfillment, payment retry, etc.)
 
 They complement aggregates without competing with them — and allow modeling temporal behavior in a clean, event-driven way.
+
+## Invocation flow
+
+The following diagram shows how a `@Stateful` handler is matched, loaded, invoked, and updated:
+
+```mermaid
+graph TD
+    MSG[Incoming message] --> CHECK[Inspect payload for possible association match]
+    CHECK -->|No match| SKIP[Skip handler]
+    CHECK -->|Potential match| LOOKUP[Lookup persisted handler via @Association properties]
+
+    LOOKUP -->|Not found & factory method exists| CREATE[Invoke static factory @Handle... method]
+    LOOKUP -->|Found| LOAD[Load and deserialize handler state]
+
+    CREATE --> INVOKE[Invoke handler with message]
+    LOAD --> INVOKE[Invoke handler with message]
+
+    INVOKE --> RETURN{Handler return value?}
+    RETURN -->|Same type instance| UPDATE[Persist new handler state]
+    RETURN -->|"null (with compatible return type)"| DELETE[Delete handler from store]
+    RETURN -->|Other type or void| KEEP[Keep existing state]
+```
+
+1. The message payload is inspected to see if any `@Association` values might match.
+2. If there’s a possible match, Fluxzero looks up the persisted handler document by association.
+3. If a handler is not found but a static factory method or constructor (`@Handle...`) exists, that method is invoked to create a new handler.
+4. If a persisted handler is found, its state is loaded and deserialized.
+5. The handler is invoked with the incoming message.
+6. The return value determines what happens next:
+   - Returning a new instance of the handler type → the handler state is re-persisted with the updated values.
+   - Returning `null` (with a compatible return type) → the handler is deleted from the store.
+   - Returning another type or `void` → the state remains unchanged (useful for utility responses such as durations or acknowledgments).
+
+<Aside type="note">
+This entire process typically runs behind a **message tracker**, which continuously delivers messages to eligible stateful handlers. It’s not an on-demand invocation, but part of Fluxzero’s ongoing tracking loop.
+</Aside>
+

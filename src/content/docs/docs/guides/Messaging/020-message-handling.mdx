@@ -173,7 +173,7 @@ class AsyncUserQueryHandler {
 
 Fluxzero resolves which handler(s) should run based on **message type** and **specificity**.
 
-### Most specific handler wins (per class)
+### Most specific handler wins
 
 If multiple methods in the *same class* match a message, only the most specific one is invoked.
 
@@ -206,9 +206,9 @@ class SpecificityExample {
 </TabItem>
 </Tabs>
 
-### Multiple classes are all invoked (for events)
+### Multiple classes are all invoked
 
-When different classes handle the same **event**, each eligible handler runs independently.
+When different classes handle the same payload, each eligible handler runs independently.
 
 <Tabs>
 <TabItem value="Java" label="Java">
@@ -288,62 +288,191 @@ class QueryMetricsHandler {
 </TabItem>
 </Tabs>
 
-## Metadata
+## Parameter resolvers
 
-Messages can include **metadata** (key–value context like user agent, correlation IDs, etc.).
+Fluxzero allows fine-grained control over handler method parameters using the `ParameterResolver` interface. This lets you inject any value into annotated handler methods — beyond just the payload or Message metadata.
 
-Send metadata with a command:
+When a message is dispatched to a handler (e.g. via `@HandleEvent`, `@HandleCommand`, etc.), the framework inspects the method’s parameters and resolves each one using the configured `ParameterResolvers`.
 
-<Tabs>
-<TabItem value="Java" label="Java">
+By default, Fluxzero supports injection of the following:
 
-```java
-Fluxzero.sendCommand(
-    new CreateUser(...),
-    Metadata.of("userAgent", userAgent)
-);
-```
+- The message payload (automatically matched by parameter type)
+- The full **`Message`**, **`Schedule`**, or **`WebRequest`**
+- The raw **`DeserializingMessage`** (for low-level access)
+- The message **`Metadata`**
+- The currently authenticated **`User`** (if available)
+- The associated **`Entity`** wrapper or the entity value itself
+- The triggering message (annotated with `@Trigger`)
+- Any Spring bean (when Spring integration is enabled)
 
-</TabItem>
-<TabItem value="Kotlin" label="Kotlin">
-
-```kotlin
-Fluxzero.sendCommand(
-    CreateUser(...),
-    Metadata.of("userAgent", userAgent)
-)
-```
-
-</TabItem>
-</Tabs>
-
-Read metadata in a handler:
+Other contextual values like message ID or timestamp can be obtained from the `Message`:
 
 <Tabs>
-<TabItem value="Java" label="Java">
-
-```java
-class UserCommandHandler {
-    @HandleCommand
-    void handle(CreateUser command, Metadata metadata) {
-        String agent = metadata.get("userAgent");
-        // ...
+  <TabItem label="Java">
+    ```java
+    @HandleEvent
+    void handle(CreateUser event, Message message) {
+        log.info("User created at {}", message.getTimestamp());
     }
-}
-```
-
-</TabItem>
-<TabItem value="Kotlin" label="Kotlin">
-
-```kotlin
-class UserCommandHandler {
-    @HandleCommand
-    fun handle(command: CreateUser, metadata: Metadata) {
-        val agent = metadata.get("userAgent")
-        // ...
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @HandleEvent
+    fun handle(event: CreateUser, message: Message) {
+        log.info("User created at {}", message.timestamp)
     }
-}
-```
-
-</TabItem>
+    ```
+  </TabItem>
 </Tabs>
+
+### Writing your own resolver
+
+You can create a custom resolver to inject arbitrary values, such as headers, timestamps, or contextual objects:
+
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    public class TimestampParameterResolver implements ParameterResolver<DeserializingMessage> {
+        @Override
+        public Function<DeserializingMessage, Object> resolve(Parameter parameter, Annotation methodAnnotation) {
+            if (parameter.getType().equals(Instant.class)) {
+                return DeserializingMessage::getTimestamp;
+            }
+            return null;
+        }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    class TimestampParameterResolver : ParameterResolver<DeserializingMessage> {
+        override fun resolve(parameter: Parameter, methodAnnotation: Annotation): Function<DeserializingMessage, Any>? {
+            return if (parameter.type == Instant::class.java) {
+                Function { msg -> msg.timestamp }
+            } else null
+        }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+Then register it via your builder:
+
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    DefaultFluxzero.builder()
+        .addParameterResolver(new TimestampParameterResolver())
+        .build();
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    DefaultFluxzero.builder()
+        .addParameterResolver(TimestampParameterResolver())
+        .build()
+    ```
+  </TabItem>
+</Tabs>
+
+And use it in your handler:
+
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @HandleCommand
+    void handle(CreateOrder command, Instant timestamp) {
+        log.info("Command received at {}", timestamp);
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @HandleCommand
+    fun handle(command: CreateOrder, timestamp: Instant) {
+        log.info("Command received at {}", timestamp)
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+### Use cases
+
+- Injecting request-specific context (e.g. tracing info)
+- Supporting custom annotations (e.g. `@FromHeader`)
+- Enabling access to correlated data (e.g. parent entity)
+- Binding to environment or system values
+
+Custom parameter injection is a powerful tool for modular, contextual logic. It works seamlessly with all handler annotations (`@HandleEvent`, `@HandleCommand`, `@HandleQuery`, `@HandleError`, etc.) and helps avoid boilerplate argument passing.
+
+## Handler interceptors
+
+A `HandlerInterceptor` lets you wrap or intercept the execution of handler methods. This gives you a central place to add cross‑cutting behavior such as:
+
+- **Authorization & access control** — block or allow messages depending on the current user
+- **Auditing & logging** — capture details about incoming messages, handler calls, or results
+- **Validation** — enforce extra business rules before or after handler execution
+- **Blocking** — stop the handler from being invoked entirely
+- **Result transformation** — adjust or enrich results before they are published
+- **Thread context propagation** — set up thread‑local state (e.g. correlation IDs, security principals)
+
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    public class AuthorizationInterceptor implements HandlerInterceptor {
+        @Override
+        public Function<DeserializingMessage, Object> interceptHandling(
+                Function<DeserializingMessage, Object> next, HandlerInvoker invoker) {
+            return message -> {
+                if (!isAuthorized(message)) {
+                    throw new UnauthorizedException();
+                }
+                return next.apply(message);
+            };
+        }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    class AuthorizationInterceptor : HandlerInterceptor {
+        override fun interceptHandling(
+            next: Function<DeserializingMessage, Any>, invoker: HandlerInvoker
+        ): Function<DeserializingMessage, Any> {
+            return Function { message ->
+                if (!isAuthorized(message)) {
+                    throw UnauthorizedException()
+                }
+                next.apply(message)
+            }
+        }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+You can register handler interceptors either per class (via `@Consumer` annotation) or globally across the application.
+See [Configuring Fluxzero](/docs/guides/configuration-and-support/configuring-fluxzero) for details.
+
+## Handler invocation flow
+
+The diagram below shows how Fluxzero selects and invokes handlers for an incoming message:
+
+```mermaid
+graph TD
+    MSG[Incoming message] --> MATCH[Match handlers by signature & parameters]
+    MATCH --> FOUND_MATCH{Handler found?}
+    FOUND_MATCH -->|Yes| INTERCEPT[Apply handler interceptors]
+    INTERCEPT --> PRE_BLOCK{Handling blocked?}
+    PRE_BLOCK -->|No| INVOKE[Provide method parameters]
+    INVOKE --> DESERIALIZE{Payload already deserialized?}
+    DESERIALIZE -->|No| UPCAST[Upcast payload if needed]
+    UPCAST --> MAP[Map to payload object]
+    MAP --> HANDLED[Invoke handler method]
+    DESERIALIZE -->|Yes| HANDLED
+```
+
+- Handlers are selected based on method signatures and parameter types.
+- Interceptors can wrap the call or block invocation altogether.
+- On invocation, the message payload is deserialized if needed, which may include **upcasting** followed by **mapping** to the target object type.

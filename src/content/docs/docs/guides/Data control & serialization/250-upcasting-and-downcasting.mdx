@@ -163,6 +163,36 @@ This works for any stored data — not just messages, but also snapshots, key-va
 
 ---
 
+## Upcasting flow
+
+When a stored data object is deserialized, Fluxzero uses the object’s **type** and **revision** to traverse the tree of registered upcasters. Each upcaster specifies which type+revision it can handle, and may:
+
+- Transform the data to the next revision,
+- Change the type name,
+- Split the object into multiple new ones,
+- Or drop it entirely.
+
+The traversal continues until no upcasters match the current type+revision, at which point the data is deserialized into a Java/Kotlin object.
+
+```mermaid
+graph TD
+    RAW["Serialized data (type, revision)"] --> FIND{Find matching upcasters}
+    FIND -->|None found| DESERIALIZE[Ready for deserialization]
+    FIND -->|Upcaster found| APPLY[Apply upcaster]
+
+    APPLY --> ACTION{Upcaster result}
+    ACTION -->|"Transformed (rev+1)"| FIND
+    ACTION -->|Renamed type| FIND
+    ACTION -->|Split into multiple| FIND
+    ACTION -->|"Dropped (null/void)"| END[Discard]
+```
+
+<Aside type="note">
+Each object may pass through multiple upcasters in sequence. Fluxzero guarantees that your application code only ever sees the latest revision.
+</Aside>
+
+---
+
 ## Downcasting
 
 Downcasting does the reverse: it converts a newer object into an older format. This is useful for emitting

@@ -1,22 +1,21 @@
 ---
-title: Domain modeling
-slug: docs/guides/modeling-and-persistence/domain-modeling
-description: Modeling stateful domain entities with Fluxzero
+title: Updating entities
+slug: docs/guides/modeling-and-persistence/updating-entities
 sidebar:
-  order: 170
+  order: 180
 ---
 
 import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
-Fluxzero allows you to model the state of your domain using entities that evolve over time by applying updates.
-These entities — such as users, orders, etc. — maintain state and enforce invariants through controlled updates,
-typically driven by commands.
+Fluxzero models domain state with entities that evolve by applying controlled updates. A group of related entities is
+called an **aggregate** (like an order and its line items). An aggregate is treated as a single unit for data changes.
 
----
+Entities in an aggregate share a common root. The root is used as the entry point when updates are applied, ensuring that the
+aggregate’s consistency rules are preserved.
 
-## Defining the aggregate entity
+## Defining the aggregate
 
-To define a stateful domain object, annotate it with @Aggregate:
+To define the root of an aggregate, annotate it with `@Aggregate`:
 
 <Tabs>
   <TabItem label="Java">
@@ -48,8 +47,10 @@ data class UserAccount(
 
 This class models an aggregate with fields like `profile` and `accountClosed`.
 
-An aggregate is a root entity that may contain nested child entities (via `@Member`) and acts as a unit of consistency.
-Although an `@EntityId` is optional for aggregates, you’ll usually load them with `Fluxzero.loadAggregate(...)`.
+An **aggregate** is a root entity that groups its state together with any nested child entities (declared via `@Member`).
+ Like all entities, it defines its identity through a unique field annotated with `@EntityId`.
+
+You’ll usually load an aggregate with `Fluxzero.loadAggregate(...)`.
 
 <Aside type="tip">
 Use strongly typed ID classes for better safety and traceability.
@@ -93,9 +94,40 @@ val user = Fluxzero.loadAggregate(UserId("1234"))
 
 ## Applying updates to entities
 
-Updates typically originate from commands and evolve entities by applying validated changes.
+Once an aggregate is loaded it can be updated. Here’s a basic example of a command handler applying a `CreateUser` update:
 
-Here’s an example of two commands — one to create a user and another to update their profile:
+<Tabs>
+  <TabItem label="Java">
+
+```java
+public class UserCommandHandler {
+    @HandleCommand
+    void handle(CreateUser update) {
+        Fluxzero.loadAggregate(update.getUserId()).assertAndApply(update);
+    }
+}
+```
+
+  </TabItem>
+  <TabItem label="Kotlin">
+
+```kotlin
+class UserCommandHandler {
+    @HandleCommand
+    fun handle(update: CreateUser) {
+        Fluxzero.loadAggregate(update.userId).assertAndApply(update)
+    }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+This loads the `UserAccount` entity by ID and applies the `CreateUser` payload after validation.
+
+### Entity updates
+
+Here’s an example of two commands that update users (modelled as `UserAccount`) — one to create a user and another to update their profile:
 
 <Tabs>
   <TabItem label="Java">
@@ -152,7 +184,7 @@ Handler method parameters like `UserAccount current` are injected automatically.
 
 ## Intercepting and transforming updates
 
-Use @InterceptApply to modify or suppress updates *before* validation and application.
+Use `@InterceptApply` to modify or suppress updates *before* validation and application.
 
 <Tabs>
   <TabItem label="Java">
@@ -194,9 +226,9 @@ Flux recursively applies interceptors until no further transformation is needed.
 
 Update lifecycle steps:
 
-1. Intercept using @InterceptApply
-2. Assert preconditions using @AssertLegal
-3. Apply state using @Apply
+1. Intercept using `@InterceptApply`
+2. Assert preconditions using `@AssertLegal`
+3. Apply state using `@Apply`
 
 ### Return types for interceptors:
 

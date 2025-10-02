@@ -8,11 +8,69 @@ sidebar:
 
 import { Tabs, TabItem } from '@astrojs/starlight/components';
 
-Fluxzero handles message dispatch asynchronously by default. When a message such as a command is published:
+Fluxzero handles message dispatch asynchronously by default. Messages are first written to the Fluxzero Runtime, where they are logged durably and made available to all subscribed consumers. From there, **consumers**, **trackers**, and **handlers** work together to process them.
 
-1. It is sent to the Fluxzero Runtime.
-2. The Runtime logs the message and notifies all subscribed consumers.
-3. Consumers stream these messages to the relevant handler methods.
+- **Consumers** define a named subscription to a message type (commands, events, queries, etc.). Each consumer has its own position in the log and its own configuration (threads, fetch size, backpressure strategy).
+- **Trackers** are the worker threads belonging to a consumer. A tracker fetches batches of messages from the Runtime and delivers them to handler methods. Multiple trackers per consumer enable parallelism.
+- **Handlers** functionally process messages using annotated methods like `@HandleCommand`. You can configure which handlers belong to which consumers.
+
+This separation makes Fluxzero highly flexible: you can isolate workloads into dedicated consumers, scale them independently, or run multiple consumers side by side in the same application.
+
+## Tracking flow
+
+The following diagram shows the lifecycle flow of a single tracker, responsible for fetching messages from the log and invoking the right handlers.
+The process repeats in a continuous loop:
+
+```mermaid
+graph TD
+    START[Fetch message batch from runtime] --> INTERCEPT[Intercept message batch]
+    INTERCEPT --> DELIVER[Deliver next message to handlers]
+    DELIVER --> HANDLE{Matching handlers?}
+    HANDLE -->|No| CHECK{More messages?}
+    HANDLE -->|Yes| INVOKE[Invoke handlers]
+    INVOKE --> RESULT[Publish handler results]
+    RESULT --> CHECK
+    CHECK -->|Yes| DELIVER
+    CHECK -->|No| UPDATE[Update tracker position in log]
+    UPDATE --> INDEX_CHECK{Max index reached?}
+    INDEX_CHECK -->|No| START
+    INDEX_CHECK -->|Yes| STOP[Stop tracker]
+```
+
+Trackers aren’t only useful for consuming commands or events — they also enable request–response communication between services, without direct endpoints.
+
+## Request–Response via tracking
+
+Fluxzero enables services to communicate without making any direct contact and without exposing endpoints. Instead of direct calls, services interact by publishing messages to the Fluxzero Runtime and continuously tracking the relevant logs.
+
+For example, when a handler (the Requester) wants to ask a question, it sends a query to the runtime. Fluxzero first records it in the `QUERY` log. Other consumers will be tracking this log and will receive the query, process it, and then publish a result. That result is durably written to the `RESULT` log, where the Requester tracks for the corresponding answer.
+
+This design ensures:
+- **No direct connections between services**: all communication goes through Fluxzero.
+- **Durability and auditability**: requests and responses are logged before delivery.
+- **Decoupling and scalability**: Requesters and Responders can scale independently, and multiple responders can handle the same type of request if desired.
+
+The diagram below shows the complete cycle:
+
+```mermaid
+sequenceDiagram
+    participant Requester
+    participant Flux as Fluxzero Runtime
+    participant Responder
+
+    Requester->>Flux: Publish query ("GetInvoice")
+    Flux->>Flux: Persist query
+    Responder->>Flux: Pull query
+    Responder->>Flux: Publish result ("Invoice")
+    Flux->>Flux: Persist result
+    Requester->>Flux: Pull result
+```
+
+Both the Requester and the Responder maintain continuous trackers:
+- The Requester continuously tracks the `RESULT` log to receive answers.
+- The Responder continuously tracks the `QUERY` log to receive new requests.
+
+This ensures that services stay connected to Fluxzero and messages flow asynchronously without direct endpoints.
 
 ## Default Consumer Behavior
 
@@ -45,11 +103,15 @@ class MyHandler {
 </TabItem>
 </Tabs>
 
-This handler joins the default **command consumer** automatically.
+This handler will automatically join the **default command consumer**. This means you get safe sequential processing with minimal configuration. However, you can also define your own isolated consumer with `@Consumer` to control concurrency, batch size, and fault isolation. This is useful when certain message flows require dedicated resources or stricter ordering.
 
 ## Custom Consumers with @Consumer
 
-You can override the default behavior using the `@Consumer` annotation:
+The `@Consumer` annotation creates a new, named consumer that runs independently of the default one. Each consumer maintains its own trackers and log position. This lets you:
+
+- Isolate heavy or latency-sensitive message flows into their own consumer.
+- Tune concurrency (via `threads`) and throughput (via `maxFetchSize`) separately.
+- Deploy multiple consumers side by side in the same app, each with dedicated resources.
 
 <Tabs>
 <TabItem value="Java" label="Java">
@@ -87,9 +149,9 @@ To apply this to an entire package (and its subpackages), add a `package-info.ja
 package com.example.handlers;
 ```
 
-## Customizing consumer configuration
+### Customizing consumer configuration
 
-You can tune the behavior using additional attributes on the `@Consumer` annotation:
+You can also tune the behavior using additional attributes on the `@Consumer` annotation:
 
 <Tabs>
 <TabItem value="Java" label="Java">
@@ -125,7 +187,7 @@ class MyHandler {
 
 Each thread runs a **tracker**. If you deploy the app multiple times, Fluxzero automatically load-balances messages across all available trackers.
 
-## Default consumer settings
+## Consumer settings
 
 Fluxzero provides conservative defaults to ensure safe and sequential processing:
 
@@ -184,3 +246,40 @@ class OrderProcessor {
 
   </TabItem>
 </Tabs>
+
+---
+
+## Batch interceptors
+
+A `BatchInterceptor` wraps the execution of an entire message batch processed by a single consumer. This makes it well-suited for cross-cutting concerns such as:
+
+- **Structured logging** — log once per batch instead of per message
+- **Performance instrumentation** — measure batch latency, throughput, or error rates
+- **Scoped resources** — manage transactions or other resources that should span the whole batch
+
+Example: the following interceptor filters out any messages tagged with `testOnly` in their metadata:
+
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    MappingBatchInterceptor filterTestMessages = (batch, tracker) -> {
+        var filtered = batch.getMessages().stream()
+                .filter(m -> !m.getMetadata().containsKey("testOnly"))
+                .toList();
+        return batch.withMessages(filtered);
+    };
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    val filterTestMessages = MappingBatchInterceptor { batch, _ ->
+        val filtered = batch.messages.stream()
+            .filter { !it.metadata.containsKey("testOnly") }
+            .toList()
+        batch.withMessages(filtered)
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+By applying a `BatchInterceptor`, you can centralize logic that would otherwise need to be repeated in every handler. See [Configuring Fluxzero](/docs/guides/configuration-and-support/configuring-fluxzero) for details on how to register interceptors.
