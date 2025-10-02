@@ -6,12 +6,14 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "flux-website",
 	"account_id": "fbb4ae392a349c3a4c7b713ec57dbc29",
+	// Astro Workers adapter output (adjust if yours differs)
 	"main": "./dist/_worker.js/index.js",
 	"compatibility_date": "2025-06-04",
 	"compatibility_flags": [
 		"nodejs_compat",
 		"global_fetch_strictly_public"
 	],
+	// Static assets served by the Worker
 	"assets": {
 		"binding": "ASSETS",
 		"directory": "./dist"
@@ -19,20 +21,30 @@
 	"observability": {
 		"enabled": true
 	},
+	// Production routes (custom domain)
 	"routes": [
 		{
 			"pattern": "fluxzero.io",
 			"custom_domain": true
 		}
 	],
+	// Non-secret runtime vars (prod)
 	"vars": {
 		"FEEDBACK_PROVIDER": "github",
 		"GITHUB_REPO": "fluxzero-io/fluxzero-site"
 	},
-	"environments": {
+	// ✅ Use "env", not "environments"
+	"env": {
 		"preview": {
+			// Name for the preview worker. Required for wrangler-action to sync secrets.
+			// This is overridden at deploy time with a branch-specific name.
+			"name": "flux-docs01-preview",
+			// Use *.workers.dev for previews
 			"workers_dev": true,
-			"routes": []
+			"routes": [],
+			// (optional) preview-specific non-secret vars
+			// "vars": { "FEEDBACK_PROVIDER": "github", "GITHUB_REPO": "fluxzero-io/fluxzero-site" }
+			// (optional) preview-specific bindings (KV/D1/R2/etc.) go here
 		}
 	}
 	/**

@@ -2,9 +2,8 @@ name: Deploy to Cloudflare Workers (PNPM + Previews)
 
 on:
   push:
-    branches: [ main, "**" ]   # deploy preview for any branch; prod on main
-  pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [ main ]   
+  pull_request:            # preview deploys on PRs
   workflow_dispatch:
 
 # Prevent overlapping deploys per ref
@@ -77,6 +76,8 @@ jobs:
       - name: Sync secrets (preview)
         uses: cloudflare/wrangler-action@v3
         with:
+          configFile: wrangler.jsonc
+          wranglerVersion: "4.40.3"
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # If account_id isn't in wrangler.toml, uncomment:
           # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -95,6 +96,8 @@ jobs:
         if: needs.build.outputs.is_main == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
+          configFile: wrangler.jsonc
+          wranglerVersion: "4.40.3"
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           environment: production
@@ -117,16 +120,18 @@ jobs:
         if: needs.build.outputs.is_main == 'false'
         uses: cloudflare/wrangler-action@v3
         with:
+          wranglerVersion: "4.40.3"
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           environment: preview
-          command: deploy --env preview --name "${{ needs.build.outputs.preview_name }}"
+          command: deploy --env preview --name "${{ needs.build.outputs.preview_name }}" --config wrangler.jsonc
 
       # Production deploy (main)
       - name: Deploy production
         if: needs.build.outputs.is_main == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
+          wranglerVersion: "4.40.3"
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+          command: deploy --config wrangler.jsonc
