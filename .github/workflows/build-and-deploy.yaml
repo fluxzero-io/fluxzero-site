@@ -33,6 +33,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
 
+      - name: Sync Worker secrets
+        run: |
+          npx wrangler secret put GITHUB_APP_CLIENT_ID --text "${{ secrets.CF_GITHUB_APP_CLIENT_ID }}"
+          npx wrangler secret put GITHUB_APP_CLIENT_SECRET --text "${{ secrets.CF_GITHUB_APP_CLIENT_SECRET }}"
+          npx wrangler secret put COOKIE_SECRET --text "${{ secrets.CF_COOKIE_SECRET }}"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
       - name: Deploy to Cloudflare Workers
         run: |
           BRANCH="${{ github.ref_name }}"
