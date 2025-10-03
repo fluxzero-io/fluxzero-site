@@ -1,19 +1,13 @@
-/**
- * For more details on how to configure Wrangler, refer to:
- * https://developers.cloudflare.com/workers/wrangler/configuration/
- */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "flux-website",
 	"account_id": "fbb4ae392a349c3a4c7b713ec57dbc29",
-	// Astro Workers adapter output (adjust if yours differs)
 	"main": "./dist/_worker.js/index.js",
 	"compatibility_date": "2025-06-04",
 	"compatibility_flags": [
 		"nodejs_compat",
 		"global_fetch_strictly_public"
 	],
-	// Static assets served by the Worker
 	"assets": {
 		"binding": "ASSETS",
 		"directory": "./dist"
@@ -21,63 +15,21 @@
 	"observability": {
 		"enabled": true
 	},
-	// Production routes (custom domain)
-	"routes": [
-		{
-			"pattern": "fluxzero.io",
-			"custom_domain": true
-		}
-	],
-	// Non-secret runtime vars (prod)
-	"vars": {
-		"FEEDBACK_PROVIDER": "github",
-		"GITHUB_REPO": "fluxzero-io/fluxzero-site"
-	},
-	// ✅ Use "env", not "environments"
 	"env": {
 		"preview": {
-			// Name for the preview worker. Required for wrangler-action to sync secrets.
-			// This is overridden at deploy time with a branch-specific name.
-			"name": "flux-docs01-preview",
-			// Use *.workers.dev for previews
-			"workers_dev": true,
-			"routes": [],
-			// (optional) preview-specific non-secret vars
-			// "vars": { "FEEDBACK_PROVIDER": "github", "GITHUB_REPO": "fluxzero-io/fluxzero-site" }
-			// (optional) preview-specific bindings (KV/D1/R2/etc.) go here
+			"routes": [
+				{
+					"custom_domain": false
+				}
+			]
+		},
+		"production": {
+			"routes": [
+				{
+					"pattern": "fluxzero.io",
+					"custom_domain": true
+				}
+			]
 		}
 	}
-	/**
-	 * Smart Placement
-	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
-	 */
-	// "placement": { "mode": "smart" },
-	/**
-	 * Bindings
-	 * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
-	 * databases, object storage, AI inference, real-time communication and more.
-	 * https://developers.cloudflare.com/workers/runtime-apis/bindings/
-	 */
-	/**
-	 * Environment Variables
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-	 */
-	// "vars": { "MY_VARIABLE": "production_value" },
-	/**
-	 * Note: Use secrets to store sensitive data.
-	 * https://developers.cloudflare.com/workers/configuration/secrets/
-	 *
-	 * To set the GitHub token secret:
-	 * wrangler secret put GITHUB_TOKEN
-	 */
-	/**
-	 * Static Assets
-	 * https://developers.cloudflare.com/workers/static-assets/binding/
-	 */
-	// "assets": { "directory": "./public/", "binding": "ASSETS" },
-	/**
-	 * Service Bindings (communicate between multiple Workers)
-	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
-	 */
-	// "services": [{ "binding": "MY_SERVICE", "service": "my-service" }]
 }
