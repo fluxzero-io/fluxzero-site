@@ -1,12 +1,10 @@
 ---
 import MarkdownContent from '@astrojs/starlight/components/MarkdownContent.astro';
 import FloatingFeedback from '~/components/feedback/FloatingFeedback.astro';
-import { isFeedbackEnabled } from '~/components/feedback/feedbackProvider';
 
 const { starlightRoute } = Astro.locals;
 const entry = starlightRoute?.entry;
 const isDocsEntry = entry?.collection === 'docs';
-const feedbackGloballyEnabled = isFeedbackEnabled();
 const rawFeedback = isDocsEntry ? entry?.data?.feedback : undefined;
 
 const normalizeSlug = (value) => {
@@ -20,7 +18,8 @@ const entrySlug = Astro.url.pathname;
 let feedbackEnabled = false;
 let feedbackSlug = entrySlug;
 
-if (feedbackGloballyEnabled && isDocsEntry) {
+// compile time enablement check
+if (isDocsEntry) {
   if (typeof rawFeedback === 'boolean') {
     feedbackEnabled = rawFeedback;
   } else if (rawFeedback && typeof rawFeedback === 'object') {
@@ -31,12 +30,6 @@ if (feedbackGloballyEnabled && isDocsEntry) {
   } else {
     feedbackEnabled = true;
   }
-}
-
-if (feedbackEnabled) {
-  try { console.debug('[FloatingFeedback]', 'page:enable', { slug: feedbackSlug, entrySlug, rawFeedback }); } catch {}
-} else {
-  try { console.debug('[FloatingFeedback]', 'page:disable', { slug: feedbackSlug, entrySlug, rawFeedback }); } catch {}
 }
 
 const scopeId = `fz-feedback-scope-${Math.random().toString(36).slice(2, 9)}`;
