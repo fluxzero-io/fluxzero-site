@@ -1,7 +1,7 @@
 // Utilities for element-based anchoring using per-element content hashes.
 // Normalization keeps length stable (no whitespace collapsing) to make offsets easy.
 
-import { getState } from '/src/components/feedback/feedbackStore.ts';
+import { getState } from '~/components/feedback/feedbackStore.ts';
 
 const HASH_ATTR = 'data-fz-hash';
 

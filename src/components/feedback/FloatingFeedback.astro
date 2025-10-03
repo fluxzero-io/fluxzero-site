@@ -30,7 +30,7 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
 
 <!-- initialization of the feedback store -->
 <script type="module" define:vars={{ slug, isFeedbackEnabled: isFeedbackEnabled() }}>
-  import { initFeedbackStore } from "/src/components/feedback/feedbackStore.ts";
+  import { initFeedbackStore } from "~/components/feedback/feedbackStore.ts";
 
   if (isFeedbackEnabled) {
     // only init the store if feedback is globally enabled
@@ -57,10 +57,10 @@ const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)
   type="module"
   define:vars={{ currentSlug, componentId, rootId, isFeedbackEnabled: isFeedbackEnabled() }}
 >
-  import { initFeedbackList } from "/src/components/feedback/feedbackList.ts";
-  import { initFeedbackHighlighter } from "/src/components/feedback/feedbackHighlighter.ts";
-  import { initFeedbackPopup } from "/src/components/feedback/feedbackPopup.ts";
-  import { refresh } from "/src/components/feedback/feedbackStore.ts";
+  import { initFeedbackList } from "~/components/feedback/feedbackList.ts";
+  import { initFeedbackHighlighter } from "~/components/feedback/feedbackHighlighter.ts";
+  import { initFeedbackPopup } from "~/components/feedback/feedbackPopup.ts";
+  import { refresh } from "~/components/feedback/feedbackStore.ts";
 
   if (isFeedbackEnabled) {
     const mountInit = () => {
