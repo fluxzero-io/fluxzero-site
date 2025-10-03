@@ -17,9 +17,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      is_main: ${{ steps.is-main.outputs.value }}
-      environment: preview
 
     steps:
       - name: Checkout
@@ -44,15 +41,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Is main?
-        id: is-main
-        run: |
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            echo "value=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "value=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Deploy to Cloudflare 
         uses: cloudflare/wrangler-action@v3
         with:
@@ -60,7 +48,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # If account_id isn't in wrangler.toml, uncomment:
           # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          environment: ${{ needs.build.outputs.environment }}
+          environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
           command: deploy
           secrets: |
             GITHUB_APP_CLIENT_ID
