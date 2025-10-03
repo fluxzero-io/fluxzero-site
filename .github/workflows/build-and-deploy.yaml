@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       is_main: ${{ steps.is-main.outputs.value }}
+      environment: ${{ steps.is-main.outputs.value == 'true' && 'production' || 'preview' }}
 
     steps:
       - name: Checkout
@@ -52,12 +53,6 @@ jobs:
             echo "value=false" >> "$GITHUB_OUTPUT"
           fi
 
-  # --- Sync secrets for both envs (idempotent) ---
-  sync-secrets:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      # Preview environment secrets
       - name: Sync secrets (preview)
         uses: cloudflare/wrangler-action@v3
         with:
@@ -65,8 +60,8 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # If account_id isn't in wrangler.toml, uncomment:
           # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          environment: preview
-          command: deploy --env preview --name preview"
+          environment: ${{ needs.build.outputs.environment }}
+          command: deploy
           secrets: |
             GITHUB_APP_CLIENT_ID
             GITHUB_APP_CLIENT_SECRET
@@ -76,30 +71,6 @@ jobs:
           GITHUB_APP_CLIENT_SECRET: ${{ secrets.CF_GITHUB_APP_CLIENT_SECRET }}
           COOKIE_SECRET: ${{ secrets.CF_COOKIE_SECRET }}
 
-
-      # Production environment secrets
-      - name: Sync secrets (production)
-        if: needs.build.outputs.is_main == 'true'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          wranglerVersion: "4.40.3"
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          environment: production
-          secrets: |
-            GITHUB_APP_CLIENT_ID
-            GITHUB_APP_CLIENT_SECRET
-            COOKIE_SECRET
-        env:
-          GITHUB_APP_CLIENT_ID: ${{ secrets.CF_GITHUB_APP_CLIENT_ID }}
-          GITHUB_APP_CLIENT_SECRET: ${{ secrets.CF_GITHUB_APP_CLIENT_SECRET }}
-          COOKIE_SECRET: ${{ secrets.CF_COOKIE_SECRET }}
-
-  # --- Deploy ---
-  deploy:
-    needs: [build, sync-secrets]
-    runs-on: ubuntu-latest
-    steps:
       # Preview deploy (any non-main branch or PR)
       - name: Deploy preview
         if: needs.build.outputs.is_main == 'false'
@@ -108,15 +79,5 @@ jobs:
           wranglerVersion: "4.40.3"
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          environment: preview
-          command: deploy --env preview --name preview"
-
-      # Production deploy (main)
-      - name: Deploy production
-        if: needs.build.outputs.is_main == 'true'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          wranglerVersion: "4.40.3"
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+          environment: ${{ needs.build.outputs.environment }}
+          command: deploy 
