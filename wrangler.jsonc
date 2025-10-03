@@ -17,11 +17,7 @@
 	},
 	"env": {
 		"preview": {
-			"routes": [
-				{
-					"custom_domain": false
-				}
-			]
+
 		},
 		"production": {
 			"routes": [
