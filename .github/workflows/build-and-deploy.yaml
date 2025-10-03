@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       is_main: ${{ steps.is-main.outputs.value }}
-      environment: ${{ steps.is-main.outputs.value == 'true' && 'production' || 'preview' }}
+      environment: preview
 
     steps:
       - name: Checkout
@@ -53,7 +53,7 @@ jobs:
             echo "value=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Sync secrets (preview)
+      - name: Deploy to Cloudflare 
         uses: cloudflare/wrangler-action@v3
         with:
           wranglerVersion: "4.40.3"
@@ -70,14 +70,3 @@ jobs:
           GITHUB_APP_CLIENT_ID: ${{ secrets.CF_GITHUB_APP_CLIENT_ID }}
           GITHUB_APP_CLIENT_SECRET: ${{ secrets.CF_GITHUB_APP_CLIENT_SECRET }}
           COOKIE_SECRET: ${{ secrets.CF_COOKIE_SECRET }}
-
-      # Preview deploy (any non-main branch or PR)
-      - name: Deploy preview
-        if: needs.build.outputs.is_main == 'false'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          wranglerVersion: "4.40.3"
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          environment: ${{ needs.build.outputs.environment }}
-          command: deploy 
