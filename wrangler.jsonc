@@ -17,7 +17,9 @@
 	},
 	"env": {
 		"preview": {
-
+			"vars": {
+				"GITHUB_SETTING": "test_setting"
+			}
 		},
 		"production": {
 			"routes": [

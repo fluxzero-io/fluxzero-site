@@ -66,6 +66,7 @@ jobs:
           # If account_id isn't in wrangler.toml, uncomment:
           # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           environment: preview
+          command: deploy --env preview --name preview"
           secrets: |
             GITHUB_APP_CLIENT_ID
             GITHUB_APP_CLIENT_SECRET
@@ -74,6 +75,7 @@ jobs:
           GITHUB_APP_CLIENT_ID: ${{ secrets.CF_GITHUB_APP_CLIENT_ID }}
           GITHUB_APP_CLIENT_SECRET: ${{ secrets.CF_GITHUB_APP_CLIENT_SECRET }}
           COOKIE_SECRET: ${{ secrets.CF_COOKIE_SECRET }}
+
 
       # Production environment secrets
       - name: Sync secrets (production)
