@@ -18,9 +18,15 @@
 	"env": {
 		"preview": {
 			"vars": {
-			}
+				"FEEDBACK_PROVIDER": "github",
+				"GITHUB_REPO": "fluxzero-io/fluxzero-site"
+			},
 		},
 		"production": {
+			"vars": {
+				"FEEDBACK_PROVIDER": "github",
+				"GITHUB_REPO": "fluxzero-io/fluxzero-site"
+			},
 			"routes": [
 				{
 					"pattern": "fluxzero.io",
