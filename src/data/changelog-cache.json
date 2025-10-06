@@ -1,7 +1,16 @@
 {
-  "lastUpdated": "2025-10-06T07:37:22.044Z",
-  "latestVersion": "1.14.1",
+  "lastUpdated": "2025-10-06T13:57:23.046Z",
+  "latestVersion": "1.14.2",
   "releases": [
+    {
+      "version": "1.14.2",
+      "date": "2025-10-06",
+      "body": "##### [1.14.2](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.14.1...1.14.2) (2025-10-06)\n\n\n##### Dependency updates\n\n* bump ch.qos.logback:logback-classic from 1.5.18 to 1.5.19 ([fe10fe7](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/fe10fe7953c8d5c7c94ae719bf1a9cbfe8694c5a))\n* bump org.apache.maven.plugins:maven-enforcer-plugin ([232a6a0](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/232a6a0f46b087c4efad46dae7762f670a230922))\n* bump org.jboss.resteasy:resteasy-undertow ([4493707](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/44937079d5c1790b0d61847e4d0c3e5c7373907b))\n* bump org.junit:junit-bom from 5.13.4 to 6.0.0 ([d8dd27b](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/d8dd27bd62f51c4487f12d5d5df93699574b144b))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.14.2",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
     {
       "version": "1.14.1",
       "date": "2025-10-03",

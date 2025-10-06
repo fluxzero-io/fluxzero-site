@@ -2,7 +2,7 @@ import { marked } from 'marked';
 import type { FeedbackProvider, ListResult, CreateInput, CreateResult } from './types';
 import { buildTitle, buildBody, extractUserFeedbackSection } from './util';
 
-export class GitHubProvider implements FeedbackProvider {
+export class GitHubDiscussionsProvider implements FeedbackProvider {
   constructor(private githubRepo: string, private githubToken: string, private userToken?: string) {
   }
 
