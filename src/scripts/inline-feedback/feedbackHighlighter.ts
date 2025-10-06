@@ -39,10 +39,9 @@ class FeedbackHighlighterController {
       this.log('highlighter:skip', { expected: this.slug, received: state.slug });
       return;
     }
-    if (state.loading) return;
     this.log('highlighter:onState', { slug: this.slug, discussions: state.discussions?.length });
-    this.ensureHashes();
     this.clearAll();
+    this.ensureHashes();
     const open = (state.discussions || []).filter((d) => !d.closed);
     open.forEach((d, index) => {
       const sel = (d as any).metadata?.selection || {};
@@ -81,13 +80,6 @@ class FeedbackHighlighterController {
         he.setAttribute('data-fz-hash', h.toString(16));
       }
     });
-  }
-
-  private extractSelection(discussion: any) {
-    const sel = discussion.metadata?.selection || {};
-    const text = sel.text || (() => { const m = discussion.body.match(/>\s*([^\n]+)/); return m?.[1] || null; })();
-    const context = sel.context || null;
-    return { text, context };
   }
 
   private anchorBySegments(segments: Array<{ hash: string; start: number; end: number }>) {
