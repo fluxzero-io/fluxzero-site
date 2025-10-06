@@ -360,16 +360,6 @@ class FeedbackHighlighterController {
       document.body.appendChild(group.element);
       // Attach hover handlers to all created spans so indicator appears near any part
       highlightSpans.forEach((sp) => this.attachSpanHoverHandlers(sp, group.element));
-      // Bind robust click handler that closes over this group
-      group.element.addEventListener('click', (e) => {
-        e.preventDefault();
-        if (group.discussions.length > 1) {
-          window.dispatchEvent(new CustomEvent('feedback:open-group', { detail: { discussions: group.discussions } }));
-        } else {
-          const first = group.discussions[0] || discussion;
-          window.dispatchEvent(new CustomEvent('feedback:open-id', { detail: { id: first.id, discussion: first } }));
-        }
-      });
     } else {
       anchor = group.anchor;
       const existingIds = group.discussions.map((d: any) => d.id);
