@@ -1,92 +1,36 @@
 ---
 import "~/styles/feedback.css";
 
-// Floating feedback component that anchors feedback to selected text locations
 export interface Props {
   slug?: string;
   className?: string;
   rootId?: string;
 }
 
-import { isFeedbackEnabled } from "./feedbackProvider.ts";
-import TextSelectionFeedback from "./TextSelectionFeedback.astro";
+import { isFeedbackEnabled } from "~/scripts/inline-feedback/feedbackProvider.ts";
+import inlineFeedbackScriptUrl from "~/scripts/inline-feedback/inline-feedback.ts?url";
 
-// FeedbackList and FeedbackHighlighter are now TS modules
 const { slug, className = "", rootId } = Astro.props;
 
-// Use current page path if no slug provided
 const currentSlug =
   slug && slug.trim().length > 0
     ? slug.startsWith("/")
       ? slug.trim()
       : `/${slug.trim()}`
     : Astro.url.pathname;
-const componentId = `floating-feedback-${Math.random().toString(36).substr(2, 9)}`;
+
+const componentId = `floating-feedback-${Math.random().toString(36).slice(2, 9)}`;
+const enabled = isFeedbackEnabled();
 ---
 
-<div id={componentId} class={`floating-feedback-container ${className}`}></div>
-
-<!-- Modular feedback components -->
-
-<!-- initialization of the feedback store -->
-<script type="module" define:vars={{ slug, isFeedbackEnabled: isFeedbackEnabled() }}>
-  import { initFeedbackStore } from "/src/components/feedback/feedbackStore.ts";
-
-  if (isFeedbackEnabled) {
-    // only init the store if feedback is globally enabled
-    const boot = () => initFeedbackStore(slug);
-    try {
-      console.debug("[FloatingFeedback]", "loader:init", slug);
-    } catch {}
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", boot, { once: true });
-    } else {
-      boot();
-    }
-  }
-</script>
-
-<TextSelectionFeedback
-  slug={currentSlug}
-  isFeedbackEnabled={isFeedbackEnabled()}
-  rootSelector={rootId ? `#${rootId}` : ""}
-  mountId={componentId}
-/>
-
-<script
-  type="module"
-  define:vars={{ currentSlug, componentId, rootId, isFeedbackEnabled: isFeedbackEnabled() }}
->
-  import { initFeedbackList } from "/src/components/feedback/feedbackList.ts";
-  import { initFeedbackHighlighter } from "/src/components/feedback/feedbackHighlighter.ts";
-  import { initFeedbackPopup } from "/src/components/feedback/feedbackPopup.ts";
-  import { refresh } from "/src/components/feedback/feedbackStore.ts";
-
-  if (isFeedbackEnabled) {
-    const mountInit = () => {
-      const mount = document.getElementById(componentId);
-      let root;
-      if (rootId) {
-        const el = document.getElementById(rootId);
-        if (el && el instanceof HTMLElement) root = el;
-      }
-      if (!root && mount?.parentElement instanceof HTMLElement) {
-        root = mount.parentElement;
-      }
-      initFeedbackList({ slug: currentSlug, mount });
-      initFeedbackHighlighter({ slug: currentSlug, root });
-      initFeedbackPopup();
-      // No global exposure needed; components dispatch full discussion payloads
-      window.addEventListener("feedback:reload", () => {
-        try {
-          refresh();
-        } catch {}
-      });
-    };
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", mountInit, { once: true });
-    } else {
-    }
-    mountInit();
-  }
-</script>
+{enabled && (
+  <>
+    <div
+      id={componentId}
+      class={`floating-feedback-container ${className}`}
+      inline-feedback={currentSlug}
+      data-inline-feedback-root={rootId ?? undefined}
+    ></div>
+    <script type="module" src={inlineFeedbackScriptUrl}></script>
+  </>
+)}

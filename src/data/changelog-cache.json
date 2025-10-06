@@ -1,7 +1,16 @@
 {
-  "lastUpdated": "2025-10-02T09:54:44.751Z",
-  "latestVersion": "1.14.0",
+  "lastUpdated": "2025-10-06T07:37:22.044Z",
+  "latestVersion": "1.14.1",
   "releases": [
+    {
+      "version": "1.14.1",
+      "date": "2025-10-03",
+      "body": "##### [1.14.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.14.0...1.14.1) (2025-10-03)\n\n\n##### Bug Fixes\n\n* Allow null for timestamp and end in @Searchable objects ([62453a7](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/62453a7a0c46fa15cab0a83b39eba8b1b250e653))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.14.1",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
     {
       "version": "1.14.0",
       "date": "2025-10-01",

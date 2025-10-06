@@ -1,6 +1,6 @@
 ---
 import Default from "@astrojs/starlight/components/MarkdownContent.astro";
-import { isFeedbackEnabled } from "~/components/feedback/feedbackProvider";
+import { isFeedbackEnabled } from "~/scripts/inline-feedback/feedbackProvider";
 
 // Access current page route data:
 const entry = Astro.locals.starlightRoute.entry;
@@ -24,7 +24,7 @@ const feedbackEnabled = feedbackGloballyEnabled && (() => {
     return true; // default on
 })();
 
-import FloatingFeedback from '~/components/feedback/FloatingFeedback.astro'
+import FloatingFeedback from "~/components/feedback/FloatingFeedback.astro";
 
 ---
 

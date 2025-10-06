@@ -35,7 +35,7 @@ if (isDocsEntry) {
 const scopeId = `fz-feedback-scope-${Math.random().toString(36).slice(2, 9)}`;
 ---
 
-<div id={scopeId} data-fz-feedback-scope>
+<div id={scopeId} data-fz-feedback-scope inline-feedback={feedbackSlug}>
   <MarkdownContent {...Astro.props}>
     <slot />
   </MarkdownContent>

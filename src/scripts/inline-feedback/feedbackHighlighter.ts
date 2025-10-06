@@ -1,4 +1,4 @@
-import { subscribe, type FeedbackState } from '/src/components/feedback/feedbackStore.ts';
+import { subscribe, type FeedbackState } from './feedbackStore.ts';
 
 export function initFeedbackHighlighter(options: { slug: string; root?: HTMLElement }) {
   const controller = new FeedbackHighlighterController(options.slug, options.root);

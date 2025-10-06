@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 import { parseCookies, unsealCookiePayload } from '../auth/_utils';
 import { GitHubProvider } from './_github';
 import { MemoryProvider } from './_memory';
-import { getFeedbackProvider } from '~/components/feedback/feedbackProvider';
+import { getFeedbackProvider } from '~/scripts/inline-feedback/feedbackProvider';
 
 export const GET: APIRoute = async ({ url }) => {
   try {

@@ -1,4 +1,4 @@
-import { subscribe, getState, type FeedbackState } from '/src/components/feedback/feedbackStore.ts';
+import { subscribe, getState, type FeedbackState } from './feedbackStore.ts';
 
 export function initFeedbackList(options: { slug: string; mount?: HTMLElement | null }) {
   const controller = new FeedbackListController(options.slug, options.mount || null);
