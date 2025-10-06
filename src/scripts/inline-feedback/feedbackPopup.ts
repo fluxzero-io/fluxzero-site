@@ -1,3 +1,5 @@
+import { sanitizeHtml } from './sanitize.ts';
+
 export function initFeedbackPopup() {
   const controller = new FeedbackPopupController();
   return controller;
@@ -65,30 +67,67 @@ class FeedbackPopupController {
 
     const popup = document.createElement('div');
     popup.className = 'feedback-popup';
-    const messageHtml = this.extractUserFeedbackHtml(discussion) || '<p>No feedback message provided.</p>';
+    const messageHtml = sanitizeHtml(this.extractUserFeedbackHtml(discussion) || '<p>No feedback message provided.</p>');
     const commentCount = Number(discussion?.commentCount ?? 0);
     const commentLabel = `${commentCount} ${commentCount === 1 ? 'comment' : 'comments'}`;
-    popup.innerHTML = `
-      <div class="feedback-popup-header">
-        <h4>${discussion.title}</h4>
-        <button class="feedback-close" aria-label="Close">&times;</button>
-      </div>
-      <div class="feedback-popup-content">
-        <div class="feedback-author">
-          <img src="${discussion.author.avatarUrl}" alt="${discussion.author.login}" width="24" height="24">
-          <span>${discussion.author.login}</span>
-          <time>${this.formatDate(discussion.createdAt)}</time>
-        </div>
-        <div class="feedback-body feedback-user-message">
-          ${messageHtml}
-        </div>
-        <div class="feedback-actions">
-          <a href="${discussion.url}" target="_blank" rel="noopener noreferrer">
-            View full discussion (${commentLabel}) →
-          </a>
-        </div>
-      </div>
-    `;
+
+    const header = document.createElement('div');
+    header.className = 'feedback-popup-header';
+
+    const heading = document.createElement('h4');
+    heading.textContent = String(discussion.title || 'Feedback');
+
+    const closeButton = document.createElement('button');
+    closeButton.className = 'feedback-close';
+    closeButton.setAttribute('aria-label', 'Close');
+    closeButton.textContent = '×';
+
+    header.append(heading, closeButton);
+
+    const content = document.createElement('div');
+    content.className = 'feedback-popup-content';
+
+    const authorWrap = document.createElement('div');
+    authorWrap.className = 'feedback-author';
+
+    const avatarUrl = safeHttpUrl(discussion?.author?.avatarUrl);
+    if (avatarUrl) {
+      const avatar = document.createElement('img');
+      avatar.src = avatarUrl;
+      avatar.alt = String(discussion?.author?.login || 'User');
+      avatar.width = 24;
+      avatar.height = 24;
+      authorWrap.append(avatar);
+    }
+
+    const authorName = document.createElement('span');
+    authorName.textContent = String(discussion?.author?.login || 'Unknown');
+
+    const time = document.createElement('time');
+    time.textContent = this.formatDate(discussion.createdAt);
+
+    authorWrap.append(authorName, time);
+
+    const body = document.createElement('div');
+    body.className = 'feedback-body feedback-user-message';
+    body.innerHTML = messageHtml;
+
+    const actions = document.createElement('div');
+    actions.className = 'feedback-actions';
+
+    const discussionLink = document.createElement('a');
+    const discussionUrl = safeHttpUrl(discussion.url);
+    if (discussionUrl) {
+      discussionLink.href = discussionUrl;
+      discussionLink.target = '_blank';
+      discussionLink.rel = 'noopener noreferrer';
+    }
+    discussionLink.textContent = `View full discussion (${commentLabel}) →`;
+
+    actions.append(discussionLink);
+    content.append(authorWrap, body, actions);
+
+    popup.append(header, content);
 
     popup.style.position = 'fixed';
     popup.style.zIndex = '2000';
@@ -105,7 +144,7 @@ class FeedbackPopupController {
       indicator.style.opacity = '0';
       indicator.style.transform = 'scale(0.8)';
     };
-    popup.querySelector('.feedback-close')?.addEventListener('click', close);
+    closeButton.addEventListener('click', close);
 
     setTimeout(() => {
       const onOutside = (e: MouseEvent) => {
@@ -140,21 +179,50 @@ class FeedbackPopupController {
     if (this.activePopup) this.activePopup.remove();
     const popup = document.createElement('div');
     popup.className = 'feedback-popup';
-    const items = discussions.map((d, i) => `
-      <div class="feedback-item" data-id="${d.id}">
-        <a href="#" class="feedback-item-link" data-id="${d.id}">
-          <span class="feedback-meta">${new Date(d.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-          <span class="feedback-title">${d.closed ? '✅' : '💬'} ${d.title}</span>
-        </a>
-      </div>`).join('');
-    popup.innerHTML = `
-      <div class="feedback-popup-header">
-        <h4>${discussions.length} discussions</h4>
-        <button class="feedback-close" aria-label="Close">&times;</button>
-      </div>
-      <div class="feedback-popup-content">
-        <div class="feedback-items">${items}</div>
-      </div>`;
+    const header = document.createElement('div');
+    header.className = 'feedback-popup-header';
+
+    const heading = document.createElement('h4');
+    heading.textContent = `${discussions.length} discussions`;
+
+    const closeButton = document.createElement('button');
+    closeButton.className = 'feedback-close';
+    closeButton.setAttribute('aria-label', 'Close');
+    closeButton.textContent = '×';
+
+    header.append(heading, closeButton);
+
+    const content = document.createElement('div');
+    content.className = 'feedback-popup-content';
+
+    const itemsRoot = document.createElement('div');
+    itemsRoot.className = 'feedback-items';
+
+    discussions.forEach((d) => {
+      const item = document.createElement('div');
+      item.className = 'feedback-item';
+      item.dataset.id = d.id;
+
+      const link = document.createElement('a');
+      link.href = '#';
+      link.className = 'feedback-item-link';
+      link.dataset.id = d.id;
+
+      const meta = document.createElement('span');
+      meta.className = 'feedback-meta';
+      meta.textContent = new Date(d.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+      const title = document.createElement('span');
+      title.className = 'feedback-title';
+      title.textContent = `${d.closed ? '✅' : '💬'} ${d.title || ''}`.trim();
+
+      link.append(meta, title);
+      item.append(link);
+      itemsRoot.append(item);
+    });
+
+    content.append(itemsRoot);
+    popup.append(header, content);
     popup.style.position = 'fixed';
     popup.style.zIndex = '2000';
     popup.style.visibility = 'hidden';
@@ -162,8 +230,9 @@ class FeedbackPopupController {
     document.body.appendChild(popup);
     this.updatePopupPosition(popup, indicator, clickX, clickY);
     popup.style.visibility = 'visible';
-    popup.querySelector('.feedback-close')?.addEventListener('click', () => { popup.remove(); this.activePopup = null; });
-    popup.querySelectorAll('.feedback-item-link').forEach((el) => {
+    closeButton.addEventListener('click', () => { popup.remove(); this.activePopup = null; });
+
+    itemsRoot.querySelectorAll('.feedback-item-link').forEach((el) => {
       el.addEventListener('click', (ev) => {
         ev.preventDefault();
         const id = (ev.currentTarget as HTMLElement).dataset.id!;
@@ -229,4 +298,11 @@ class FeedbackPopupController {
     }
     return container.textContent || '';
   }
+}
+
+function safeHttpUrl(url: any): string {
+  if (typeof url !== 'string') return '';
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return '';
 }

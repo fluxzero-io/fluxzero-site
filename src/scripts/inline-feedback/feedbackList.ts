@@ -64,21 +64,44 @@ class FeedbackListController {
     countEl.textContent = String(count);
     if (loading) {
       (btn as any).style.display = 'none';
-      listEl.innerHTML = '<p class="no-feedback">Loading feedback…</p>';
+      listEl.replaceChildren();
+      const msg = document.createElement('p');
+      msg.className = 'no-feedback';
+      msg.textContent = 'Loading feedback…';
+      listEl.append(msg);
       try { console.debug('[FloatingFeedback]', 'list:state', 'loading'); } catch {}
       return;
     }
     if (count === 0) {
       (btn as any).style.display = 'block';
-      listEl.innerHTML = '<p class="no-feedback">No feedback yet for this page.</p>';
+      listEl.replaceChildren();
+      const msg = document.createElement('p');
+      msg.className = 'no-feedback';
+      msg.textContent = 'No feedback yet for this page.';
+      listEl.append(msg);
       try { console.debug('[FloatingFeedback]', 'list:state', 'empty-visible'); } catch {}
       return;
     }
     (btn as any).style.display = 'block';
     try { console.debug('[FloatingFeedback]', 'list:state', 'visible'); } catch {}
-    const items = [...discussions]
+    listEl.replaceChildren();
+    const itemsRoot = document.createElement('div');
+    itemsRoot.className = 'feedback-items';
+
+    [...discussions]
       .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .map((d: any) => {
+      .forEach((d: any) => {
+        const item = document.createElement('div');
+        item.className = 'feedback-item';
+
+        const link = document.createElement('a');
+        link.className = 'feedback-item-link';
+        link.dataset.id = d.id;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        const safeUrl = typeof d.url === 'string' && /^https?:\/\//i.test(d.url) ? d.url : '#';
+        link.href = safeUrl;
+
         const date = new Date(d.createdAt);
         const dateStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
         const timeStr = date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -86,15 +109,20 @@ class FeedbackListController {
         const comments = Number(d.commentCount ?? 0);
         const commentLabel = ` • ${comments} ${comments === 1 ? 'comment' : 'comments'}`;
         const authorName = (d.author && d.author.login) ? d.author.login : 'Anonymous';
-        const authorLabel = ` • ${authorName}`;
-        return `<div class="feedback-item">
-          <a href="${d.url}" target="_blank" rel="noopener noreferrer" class="feedback-item-link" data-id="${d.id}">
-            <span class="feedback-meta">${dateStr} ${timeStr}${authorLabel}${commentLabel}</span>
-            <span class="feedback-title">${statusIcon} ${d.title}</span>
-          </a>
-        </div>`;
-      }).join('');
-    listEl.innerHTML = `<div class="feedback-items">${items}</div>`;
+        const metaSpan = document.createElement('span');
+        metaSpan.className = 'feedback-meta';
+        metaSpan.textContent = `${dateStr} ${timeStr} • ${authorName}${commentLabel}`;
+
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'feedback-title';
+        titleSpan.textContent = `${statusIcon} ${d.title || ''}`.trim();
+
+        link.append(metaSpan, titleSpan);
+        item.append(link);
+        itemsRoot.append(item);
+      });
+
+    listEl.append(itemsRoot);
     const current = discussions;
 
     // Defer marking to after highlights update

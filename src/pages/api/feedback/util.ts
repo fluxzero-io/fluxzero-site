@@ -1,5 +1,6 @@
 export function buildTitle(slug: string, message: string): string {
-  const snippet = String(message || '').replace(/\s+/g, ' ').trim().slice(0, 70);
+  const rawSnippet = String(message || '').replace(/\s+/g, ' ').trim().slice(0, 70);
+  const snippet = rawSnippet.replace(/[<>]/g, '');
   const suffix = `[slug:${slug}]`;
   if (!snippet) return suffix;
   return `${snippet} ${suffix}`;
