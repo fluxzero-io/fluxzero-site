@@ -13,7 +13,6 @@ class FeedbackPopupController {
     this.onOpenGroup = this.onOpenGroup.bind(this);
     window.addEventListener('feedback:open-id', this.onOpen);
     window.addEventListener('feedback:open-group', this.onOpenGroup);
-    this.setupReposition();
   }
 
   private onOpen(e: CustomEvent) {
@@ -25,9 +24,7 @@ class FeedbackPopupController {
     const highlightSpan = this.findHighlightSpanById(id);
     const indicator = document.querySelector(`.feedback-indicator[data-discussion-id="${id}"]`) as HTMLElement | null;
     const anchorEl = indicator || highlightSpan;
-    if (anchorEl) anchorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    // Small delay to allow scroll positioning, but keep snappy
-    setTimeout(() => this.showPopup(discussion, anchorEl || document.body, clientX, clientY), 60);
+    this.showPopup(discussion, anchorEl || document.body, clientX, clientY);
   }
 
   private findHighlightSpanById(id: string): HTMLElement | null {
@@ -43,23 +40,6 @@ class FeedbackPopupController {
       }
     } catch {}
     return null;
-  }
-
-  private setupReposition() {
-    let ticking = false;
-    const update = () => {
-      if (this.activePopup && (this.activePopup as any).associatedIndicator) {
-        const indicator = (this.activePopup as any).associatedIndicator as HTMLElement;
-        this.updatePopupPosition(this.activePopup, indicator);
-      }
-      ticking = false;
-    };
-    window.addEventListener('scroll', () => {
-      if (!ticking) { requestAnimationFrame(update); ticking = true; }
-    }, { passive: true });
-    window.addEventListener('resize', () => {
-      if (!ticking) { requestAnimationFrame(update); ticking = true; }
-    });
   }
 
   private showPopup(discussion: any, indicator: HTMLElement, clickX?: number, clickY?: number) {
@@ -129,7 +109,7 @@ class FeedbackPopupController {
 
     popup.append(header, content);
 
-    popup.style.position = 'fixed';
+    popup.style.position = 'absolute';
     popup.style.zIndex = '2000';
     popup.style.visibility = 'hidden';
     (popup as any).associatedIndicator = indicator;
@@ -139,6 +119,7 @@ class FeedbackPopupController {
     popup.style.visibility = 'visible';
 
     const close = () => {
+      document.removeEventListener('click', onOutside);
       popup.remove();
       this.activePopup = null;
       indicator.style.opacity = '0';
@@ -146,15 +127,12 @@ class FeedbackPopupController {
     };
     closeButton.addEventListener('click', close);
 
-    setTimeout(() => {
-      const onOutside = (e: MouseEvent) => {
-        if (!popup.contains(e.target as Node) && e.target !== indicator && !(indicator as any).contains(e.target)) {
-          close();
-          document.removeEventListener('click', onOutside);
-        }
-      };
-      document.addEventListener('click', onOutside);
-    }, 100);
+    const onOutside = (e: MouseEvent) => {
+      if (!popup.contains(e.target as Node) && e.target !== indicator && !(indicator as any).contains(e.target)) {
+        close();
+      }
+    };
+    setTimeout(() => document.addEventListener('click', onOutside), 100);
 
     // Trigger enter animation
     requestAnimationFrame(() => {
@@ -223,21 +201,37 @@ class FeedbackPopupController {
 
     content.append(itemsRoot);
     popup.append(header, content);
-    popup.style.position = 'fixed';
+    popup.style.position = 'absolute';
     popup.style.zIndex = '2000';
     popup.style.visibility = 'hidden';
     (popup as any).associatedIndicator = indicator;
     document.body.appendChild(popup);
     this.updatePopupPosition(popup, indicator, clickX, clickY);
     popup.style.visibility = 'visible';
-    closeButton.addEventListener('click', () => { popup.remove(); this.activePopup = null; });
+    this.updatePopupPosition(popup, indicator, clickX, clickY);
+    popup.style.visibility = 'visible';
+
+    const closePopup = () => {
+      document.removeEventListener('click', onOutside);
+      popup.remove();
+      this.activePopup = null;
+    };
+
+    closeButton.addEventListener('click', closePopup);
+
+    const onOutside = (e: MouseEvent) => {
+      if (!popup.contains(e.target as Node) && e.target !== indicator && !(indicator as any).contains(e.target)) {
+        closePopup();
+      }
+    };
+    setTimeout(() => document.addEventListener('click', onOutside), 100);
 
     itemsRoot.querySelectorAll('.feedback-item-link').forEach((el) => {
       el.addEventListener('click', (ev) => {
         ev.preventDefault();
         const id = (ev.currentTarget as HTMLElement).dataset.id!;
         const d = discussions.find(x => x.id === id) || discussions[0];
-        popup.remove();
+        closePopup();
         this.showPopup(d, indicator);
       });
     });
@@ -247,26 +241,36 @@ class FeedbackPopupController {
 
   private updatePopupPosition(popup: HTMLElement, indicator: HTMLElement, clickX?: number, clickY?: number) {
     const rect = indicator.getBoundingClientRect();
+    const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    const docWidth = Math.max(document.documentElement.scrollWidth, document.body.scrollWidth);
+    const docHeight = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
     const offset = 20;
     const popupRect = popup.getBoundingClientRect();
     const popupWidth = Math.min(440, Math.max(280, popupRect.width || 360));
     const popupHeight = Math.min(420, Math.max(180, popupRect.height || 320));
 
-    let left = (typeof clickX === 'number') ? clickX + offset : rect.left;
-    // Prefer above the cursor: top-right of cursor by 20px; if not enough space, place below
-    let top = (typeof clickY === 'number') ? (clickY - popupHeight - offset) : (rect.bottom + 10);
-    if (typeof clickY === 'number' && top < 10) {
-      top = clickY + offset; // place below if not enough space above
+    let left = (typeof clickX === 'number')
+      ? clickX + scrollX + offset
+      : rect.right + scrollX + offset;
+    let top = (typeof clickY === 'number')
+      ? clickY + scrollY - popupHeight - offset
+      : rect.top + scrollY - popupHeight - offset;
+
+    if (top < scrollY + 10) {
+      top = rect.bottom + scrollY + offset;
     }
 
-    // Clamp within viewport horizontally
-    if (left + popupWidth > window.innerWidth - 10) left = window.innerWidth - popupWidth - 10;
-    if (left < 10) left = 10;
-    // Clamp vertically
-    if (top + popupHeight > window.innerHeight - 10) top = Math.max(10, window.innerHeight - popupHeight - 10);
+    const maxLeft = docWidth - popupWidth - 10;
+    if (left > maxLeft) left = maxLeft;
+    if (left < scrollX + 10) left = scrollX + 10;
 
-    popup.style.left = `${left}px`;
-    popup.style.top = `${top}px`;
+    const maxTop = docHeight - popupHeight - 10;
+    if (top > maxTop) top = maxTop;
+    if (top < scrollY + 10) top = scrollY + 10;
+
+    popup.style.left = `${Math.round(left)}px`;
+    popup.style.top = `${Math.round(top)}px`;
     popup.style.width = `${popupWidth}px`;
   }
 

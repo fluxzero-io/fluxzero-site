@@ -136,6 +136,7 @@ class FeedbackListController {
         const anchor = findHighlightSpanById(id);
         if (anchor) {
           e.preventDefault();
+          // Scroll highlight into view before opening details
           (anchor as any).scrollIntoView({ behavior: 'smooth', block: 'center' });
           // Close the list popup while opening single-item popup
           const popup = this.root?.querySelector('#feedback-popup') as HTMLElement | null;
@@ -145,7 +146,7 @@ class FeedbackListController {
             btn.setAttribute('aria-expanded', 'false');
             this.isOpen = false;
           }
-          window.dispatchEvent(new CustomEvent('feedback:open-id', { detail: { id, discussion } }));
+          setTimeout(() => emitOpenEvent(id, discussion, anchor), 260);
         }
       });
     });
@@ -204,6 +205,17 @@ function findHighlightSpanById(id: string): HTMLElement | null {
     }
   } catch {}
   return null;
+}
+
+function emitOpenEvent(id: string, discussion: any, anchor: HTMLElement) {
+  const rect = anchor.getBoundingClientRect();
+  const clientX = rect.left + rect.width;
+  const clientY = rect.top + rect.height / 2;
+  window.dispatchEvent(
+    new CustomEvent('feedback:open-id', {
+      detail: { id, discussion, clientX, clientY },
+    }),
+  );
 }
 
 // No registry: anchors are discovered by scanning highlight spans
