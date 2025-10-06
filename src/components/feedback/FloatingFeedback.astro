@@ -7,7 +7,6 @@ export interface Props {
   rootId?: string;
 }
 
-import { isFeedbackEnabled } from "~/scripts/inline-feedback/feedbackProvider.ts";
 import inlineFeedbackScriptUrl from "~/scripts/inline-feedback/inline-feedback.ts?url";
 
 const { slug, className = "", rootId } = Astro.props;
@@ -20,17 +19,13 @@ const currentSlug =
     : Astro.url.pathname;
 
 const componentId = `floating-feedback-${Math.random().toString(36).slice(2, 9)}`;
-const enabled = isFeedbackEnabled();
 ---
 
-{enabled && (
-  <>
-    <div
-      id={componentId}
-      class={`floating-feedback-container ${className}`}
-      inline-feedback={currentSlug}
-      data-inline-feedback-root={rootId ?? undefined}
-    ></div>
-    <script type="module" src={inlineFeedbackScriptUrl}></script>
-  </>
-)}
+<div
+  id={componentId}
+  class={`floating-feedback-container ${className}`}
+  inline-feedback={currentSlug}
+  data-inline-feedback-root={rootId ?? undefined}
+>
+</div>
+<script type="module" src={inlineFeedbackScriptUrl}></script>
