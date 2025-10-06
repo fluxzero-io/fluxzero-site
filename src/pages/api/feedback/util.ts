@@ -1,6 +1,8 @@
 export function buildTitle(slug: string, message: string): string {
   const snippet = String(message || '').replace(/\s+/g, ' ').trim().slice(0, 70);
-  return `[slug:${slug}] ${snippet}`;
+  const suffix = `[slug:${slug}]`;
+  if (!snippet) return suffix;
+  return `${snippet} ${suffix}`;
 }
 
 export function buildBody(slug: string, selectionText: string, message: string, selectionContext?: { prefix?: string; suffix?: string }, segments?: Array<{ hash: string; start: number; end: number }>): string {
