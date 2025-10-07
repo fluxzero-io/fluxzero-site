@@ -7,8 +7,6 @@ export interface Props {
   rootId?: string;
 }
 
-import inlineFeedbackScriptUrl from "~/scripts/inline-feedback/inline-feedback.ts?url";
-
 const { slug, className = "", rootId } = Astro.props;
 
 const currentSlug =
@@ -28,4 +26,4 @@ const componentId = `floating-feedback-${Math.random().toString(36).slice(2, 9)}
   data-inline-feedback-root={rootId ?? undefined}
 >
 </div>
-<script type="module" src={inlineFeedbackScriptUrl}></script>
+<script src="~/scripts/inline-feedback/inline-feedback.ts"></script>
