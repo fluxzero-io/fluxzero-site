@@ -2,47 +2,61 @@ name: Deploy to Cloudflare Workers (PNPM + Previews)
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [ main ]   
+  pull_request:            # preview deploys on PRs
   workflow_dispatch:
 
+# Prevent overlapping deploys per ref
+concurrency:
+  group: cloudflare-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
         with:
           version: 10
 
-      - name: Install Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
+          cache: pnpm
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Install deps (frozen lockfile)
+        run: pnpm install --frozen-lockfile
 
-      - name: Build Astro site
+      - name: Build
         run: pnpm build
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}        
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Deploy to Cloudflare Workers
-        run: |
-          BRANCH="${{ github.ref_name }}"
-          NAME="flux-docs01"
-
-          if [ "$BRANCH" = "main" ]; then
-            npx wrangler deploy
-          else
-            PREVIEW_NAME="${NAME}-${BRANCH//[^a-zA-Z0-9]/-}"
-            npx wrangler deploy --name "$PREVIEW_NAME"
-          fi
+      - name: Deploy to Cloudflare 
+        uses: cloudflare/wrangler-action@v3
+        with:
+          wranglerVersion: "4.40.3"
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # If account_id isn't in wrangler.toml, uncomment:
+          # accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }}
+          command: deploy
+          secrets: |
+            GITHUB_APP_CLIENT_ID
+            GITHUB_APP_CLIENT_SECRET
+            COOKIE_SECRET
+            GITHUB_TOKEN
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GITHUB_APP_CLIENT_ID: ${{ secrets.CF_GITHUB_APP_CLIENT_ID }}
+          GITHUB_APP_CLIENT_SECRET: ${{ secrets.CF_GITHUB_APP_CLIENT_SECRET }}
+          COOKIE_SECRET: ${{ secrets.CF_COOKIE_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.CF_GITHUB_TOKEN }}

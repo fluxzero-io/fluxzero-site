@@ -1,0 +1,31 @@
+---
+import Default from "@astrojs/starlight/components/MarkdownContent.astro";
+
+// Access current page route data:
+const entry = Astro.locals.starlightRoute.entry;
+const { feedback } = entry?.data ?? {};
+
+
+
+// determine the slug
+const slug = (typeof feedback === "object" && feedback !== null && typeof feedback.slug === "string")
+    ? feedback.slug
+    : entry.slug || undefined;
+
+const feedbackEnabled = (() => {
+    if (slug === undefined) return false; // no slug, no feedback
+    if (feedback === false) return false; // explicit opt-out
+    if (typeof feedback === "object" && feedback !== null) {
+        return feedback.enabled ?? true; // object override
+    }
+    return true; // default on
+})();
+
+import FloatingFeedback from "~/components/feedback/FloatingFeedback.astro";
+
+---
+
+<Default>
+    {feedbackEnabled && <FloatingFeedback slug={slug} />}
+    <slot />
+</Default>

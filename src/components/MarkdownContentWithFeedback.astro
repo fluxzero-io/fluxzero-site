@@ -1,0 +1,43 @@
+---
+import MarkdownContent from '@astrojs/starlight/components/MarkdownContent.astro';
+import FloatingFeedback from '~/components/feedback/FloatingFeedback.astro';
+
+const { starlightRoute } = Astro.locals;
+const entry = starlightRoute?.entry;
+const isDocsEntry = entry?.collection === 'docs';
+const rawFeedback = isDocsEntry ? entry?.data?.feedback : undefined;
+
+const normalizeSlug = (value) => {
+  if (!value) return Astro.url.pathname;
+  const slug = value.trim();
+  if (!slug) return Astro.url.pathname;
+  return slug.startsWith('/') ? slug : `/${slug}`;
+};
+
+const entrySlug = Astro.url.pathname;
+let feedbackEnabled = false;
+let feedbackSlug = entrySlug;
+
+// compile time enablement check
+if (isDocsEntry) {
+  if (typeof rawFeedback === 'boolean') {
+    feedbackEnabled = rawFeedback;
+  } else if (rawFeedback && typeof rawFeedback === 'object') {
+    feedbackEnabled = rawFeedback.enabled ?? true;
+    if (typeof rawFeedback.slug === 'string' && rawFeedback.slug.trim().length > 0) {
+      feedbackSlug = normalizeSlug(rawFeedback.slug);
+    }
+  } else {
+    feedbackEnabled = true;
+  }
+}
+
+const scopeId = `fz-feedback-scope-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div id={scopeId} data-fz-feedback-scope inline-feedback={feedbackSlug}>
+  <MarkdownContent {...Astro.props}>
+    <slot />
+  </MarkdownContent>
+  {feedbackEnabled && <FloatingFeedback slug={feedbackSlug} rootId={scopeId} />}
+</div>

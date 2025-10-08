@@ -1,0 +1,29 @@
+---
+import "~/styles/feedback.css";
+
+export interface Props {
+  slug?: string;
+  className?: string;
+  rootId?: string;
+}
+
+const { slug, className = "", rootId } = Astro.props;
+
+const currentSlug =
+  slug && slug.trim().length > 0
+    ? slug.startsWith("/")
+      ? slug.trim()
+      : `/${slug.trim()}`
+    : Astro.url.pathname;
+
+const componentId = `floating-feedback-${Math.random().toString(36).slice(2, 9)}`;
+---
+
+<div
+  id={componentId}
+  class={`floating-feedback-container ${className}`}
+  inline-feedback={currentSlug}
+  data-inline-feedback-root={rootId ?? undefined}
+>
+</div>
+<script src="~/scripts/inline-feedback/inline-feedback.ts"></script>
