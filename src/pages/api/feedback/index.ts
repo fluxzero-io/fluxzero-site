@@ -5,6 +5,7 @@ import { GitHubDiscussionsProvider } from './github-discussions';
 import { GitHubIssuesProvider } from './github-issues';
 import { MemoryProvider } from './_memory';
 import type { FeedbackProvider } from './types';
+import { sanitizeSlug } from './util';
 
 
 function getFeedbackProvider(env: Env, userAccessToken?: string): FeedbackProvider {
@@ -44,7 +45,7 @@ async function getUserTokenFromRequest(request: Request, encryptionSecret: strin
 
 export const GET: APIRoute = async ({ url, locals }) => {
   try {
-    const slug = url.searchParams.get('slug');
+    const slug = sanitizeSlug(url.searchParams.get('slug') ?? '');
     if (!slug) {
       return new Response(JSON.stringify({ error: 'slug parameter is required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
@@ -67,7 +68,7 @@ export const POST: APIRoute = async ({ request, url, locals }) => {
     const token = await getUserTokenFromRequest(request, locals.runtime.env.COOKIE_SECRET);
     const provider = getFeedbackProvider(locals.runtime.env, token);
     const out = await provider.createDiscussion({
-      slug: body.slug,
+      slug: sanitizeSlug(body.slug),
       selectionText: body.selection.text,
       selectionContext: body.selection?.context,
       segments: Array.isArray(body.selection?.segments) ? body.selection.segments : [],

@@ -6,6 +6,11 @@ export function buildTitle(slug: string, message: string): string {
   return `${snippet} ${suffix}`;
 }
 
+export function sanitizeSlug(slug: string): string {
+  if (!slug) throw new Error('invalid_slug');
+  return slug.toLowerCase().trim().replace(/\/+$/, '');
+}
+
 export function buildBody(slug: string, selectionText: string, message: string, selectionContext?: { prefix?: string; suffix?: string }, segments?: Array<{ hash: string; start: number; end: number }>): string {
   const selected = String(selectionText || '').trim();
   const userMsg = String(message || '').trim();
