@@ -35,6 +35,7 @@ const state: FeedbackState = {
 };
 
 const listeners = new Set<Listener>();
+let pendingRefreshTimer: ReturnType<typeof setTimeout> | null = null;
 
 const canonicalSlug = (value?: string | null) => {
   if (!value) return '/';
@@ -114,10 +115,53 @@ export async function submitFeedback(payload: { slug?: string; selection: any; m
     throw error;
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 600));
-  await refresh();
+  let responseBody: any = null;
+  try {
+    responseBody = await response.json();
+  } catch (err) {
+    try { console.debug('[FloatingFeedback]', 'submit:parse-skip', slug, err); } catch {}
+  }
+
+  let discussions = [...state.discussions];
+  let total = state.total;
+  let createdDiscussion: FeedbackDiscussion | null = null;
+
+  if (responseBody && responseBody.created && responseBody.created.id) {
+    const incoming = responseBody.created;
+    const existingIndex = discussions.findIndex((item) => item.id === incoming.id);
+    if (existingIndex >= 0) {
+      discussions = [...discussions];
+      discussions[existingIndex] = incoming;
+    } else {
+      discussions = [incoming, ...discussions];
+      total = Math.max(total + 1, discussions.length);
+    }
+    createdDiscussion = incoming;
+  } else if (responseBody && responseBody.discussion && responseBody.discussion.id) {
+    const incoming = responseBody.discussion;
+    const existingIndex = discussions.findIndex((item) => item.id === incoming.id);
+    if (existingIndex >= 0) {
+      discussions = [...discussions];
+      discussions[existingIndex] = incoming;
+    } else {
+      discussions = [incoming, ...discussions];
+      total = Math.max(total + 1, discussions.length);
+    }
+    createdDiscussion = incoming;
+  }
+
+  set({
+    slug,
+    discussions,
+    total,
+    loading: false,
+    error: null,
+    lastFetched: Date.now(),
+  });
+
+  scheduleDelayedRefresh(slug);
   try { console.debug('[FloatingFeedback]', 'submit:ok', slug); } catch {}
-  return { ok: true, status: response.status };
+  return { ok: true, status: response.status, discussion: createdDiscussion };
 }
 
 export function initFeedbackStore(slug: string) {
@@ -126,4 +170,14 @@ export function initFeedbackStore(slug: string) {
   // debounce refresh slightly to avoid double fetch when multiple inits
   queueMicrotask(() => { refresh(); });
   return { subscribe, getState, refresh };
+}
+
+function scheduleDelayedRefresh(slug: string) {
+  if (pendingRefreshTimer) clearTimeout(pendingRefreshTimer);
+  pendingRefreshTimer = setTimeout(() => {
+    pendingRefreshTimer = null;
+    if (canonicalSlug(state.slug) === canonicalSlug(slug)) {
+      refresh();
+    }
+  }, 10_000);
 }

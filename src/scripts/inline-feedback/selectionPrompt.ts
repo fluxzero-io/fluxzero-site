@@ -379,19 +379,21 @@ export class SelectionPromptController {
 
   private computeContext(range: Range): SelectionContext {
     const ctx: SelectionContext = { prefix: '', suffix: '' };
+    const limit = 80;
+    const root = this.root || document.body;
     try {
-      const sc = range.startContainer;
-      const ec = range.endContainer;
-      if (sc && sc.nodeType === Node.TEXT_NODE) {
-        const data = sc.nodeValue || '';
-        const off = range.startOffset || 0;
-        ctx.prefix = data.slice(Math.max(0, off - 40), off);
-      }
-      if (ec && ec.nodeType === Node.TEXT_NODE) {
-        const data2 = ec.nodeValue || '';
-        const off2 = range.endOffset || 0;
-        ctx.suffix = data2.slice(off2, Math.min(data2.length, off2 + 40));
-      }
+      const prefixRange = document.createRange();
+      prefixRange.setStart(root, 0);
+      prefixRange.setEnd(range.startContainer, range.startOffset);
+      const prefixText = prefixRange.toString();
+      ctx.prefix = prefixText.slice(-limit);
+    } catch {}
+    try {
+      const suffixRange = document.createRange();
+      suffixRange.setStart(range.endContainer, range.endOffset);
+      suffixRange.setEnd(root, root.childNodes.length);
+      const suffixText = suffixRange.toString();
+      ctx.suffix = suffixText.slice(0, limit);
     } catch {}
     return ctx;
   }
