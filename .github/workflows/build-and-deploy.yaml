@@ -54,7 +54,9 @@ jobs:
             GITHUB_APP_CLIENT_ID
             GITHUB_APP_CLIENT_SECRET
             COOKIE_SECRET
+            GITHUB_TOKEN
         env:
           GITHUB_APP_CLIENT_ID: ${{ secrets.CF_GITHUB_APP_CLIENT_ID }}
           GITHUB_APP_CLIENT_SECRET: ${{ secrets.CF_GITHUB_APP_CLIENT_SECRET }}
           COOKIE_SECRET: ${{ secrets.CF_COOKIE_SECRET }}
+          GITHUB_TOKEN: ${{ secrets.CF_GITHUB_TOKEN }}
