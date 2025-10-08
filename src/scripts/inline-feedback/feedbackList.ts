@@ -97,6 +97,7 @@ class FeedbackListController {
         const link = document.createElement('a');
         link.className = 'feedback-item-link';
         link.dataset.id = d.id;
+        link.dataset.closed = d.closed ? 'true' : 'false';
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
         const safeUrl = typeof d.url === 'string' && /^https?:\/\//i.test(d.url) ? d.url : '#';
@@ -162,7 +163,8 @@ class FeedbackListController {
       if (old) old.remove();
       const id = (link as HTMLElement).dataset.id || '';
       const anchor = findHighlightSpanById(id);
-      if (!anchor) {
+      const isClosed = (link as HTMLElement).dataset.closed === 'true';
+      if (!anchor && !isClosed) {
         (link as HTMLElement).classList.add('is-missing');
         const badge = document.createElement('span');
         badge.className = 'feedback-missing-badge';

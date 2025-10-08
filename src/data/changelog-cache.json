@@ -1,7 +1,16 @@
 {
-  "lastUpdated": "2025-10-06T13:57:23.046Z",
-  "latestVersion": "1.14.2",
+  "lastUpdated": "2025-10-08T10:11:11.599Z",
+  "latestVersion": "1.15.0",
   "releases": [
+    {
+      "version": "1.15.0",
+      "date": "2025-10-08",
+      "body": "#### [1.15.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.14.2...1.15.0) (2025-10-08)\n\n\n##### Code Refactoring\n\n* **threads:** use virtual threads and platform thread factories across modules for improved performance and clarity ([0478f32](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/0478f3204fe5248d6e8c504855f2a681b80b4340))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.15.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
     {
       "version": "1.14.2",
       "date": "2025-10-06",
