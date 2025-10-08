@@ -2,17 +2,18 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { parseCookies, unsealCookiePayload } from '../_utils';
 
-export const GET: APIRoute = async ({ request }) => {
+export const GET: APIRoute = async ({ request, locals }) => {
+  const { FEEDBACK_PROVIDER, COOKIE_SECRET } = locals.runtime.env;
   try {
-    if (String(import.meta.env.FEEDBACK_PROVIDER || '').toLowerCase() === 'memory') {
+    if (FEEDBACK_PROVIDER === 'memory') {
       return new Response(JSON.stringify({ login: 'local-user' }), { status: 200, headers: { 'Content-Type': 'application/json' } });
     }
     const cookies = parseCookies(request.headers.get('cookie'));
     const tokenBlob = cookies['fx_gh_auth'];
-    if (!tokenBlob || !import.meta.env.COOKIE_SECRET) {
+    if (!tokenBlob || ! COOKIE_SECRET) {
       return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
     }
-    const payload = await unsealCookiePayload(tokenBlob, String(import.meta.env.COOKIE_SECRET));
+    const payload = await unsealCookiePayload(tokenBlob, String(COOKIE_SECRET));
     if (!payload?.access_token) {
       return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { 'Content-Type': 'application/json' } });
     }
