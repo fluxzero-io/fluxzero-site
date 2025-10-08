@@ -1,10 +1,10 @@
 import type { APIRoute } from 'astro';
 export const prerender = false;
 import { makeCookie, absoluteCallbackURL, sealCookiePayload } from '../_utils';
-import { GITHUB_APP_CLIENT_ID, COOKIE_SECRET } from 'astro:env/server';
+import { GITHUB_APP_CLIENT_ID, COOKIE_SECRET, GITHUB_APP_CLIENT_SECRET } from 'astro:env/server';
 export const GET: APIRoute = async ({ url }) => {
-  if (!GITHUB_APP_CLIENT_ID) {
-    return new Response('GitHub App client id not configured', { status: 500 });
+  if (!GITHUB_APP_CLIENT_ID || !COOKIE_SECRET || !GITHUB_APP_CLIENT_SECRET) {
+    return new Response('Incorrect github configuration', { status: 500 });
   }
 
   const stateBytes = crypto.getRandomValues(new Uint8Array(16));

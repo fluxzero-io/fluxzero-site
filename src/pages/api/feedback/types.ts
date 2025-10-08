@@ -16,7 +16,7 @@ export type Discussion = {
   originalBody?: string;
 };
 
-export type ListResult = { slug: string; discussions: Discussion[]; total: number };
+export type ListResult = { slug: string; discussions: Discussion[]; total: number, provider: string };
 export type SelectionContext = { prefix?: string; suffix?: string };
 export type Segment = { hash: string; start: number; end: number };
 export type CreateInput = { slug: string; selectionText: string; selectionContext?: SelectionContext; segments?: Segment[]; message: string };

@@ -19,7 +19,7 @@ export class GitHubIssuesProvider implements FeedbackProvider {
     const searchQuery = `repo:${this.githubRepo} "[${pageSlug}]" in:title type:issue`;
 
     if (!this.githubToken) {
-      return { slug: pageSlug, discussions: [], total: 0 };
+      return { slug: pageSlug, discussions: [], total: 0, provider: 'github-issues' };
     }
     
     const response = await fetch('https://api.github.com/graphql', {
@@ -54,7 +54,7 @@ export class GitHubIssuesProvider implements FeedbackProvider {
     });
 
     if (!response.ok) {
-      return { slug: pageSlug, discussions: [], total: 0 };
+      return { slug: pageSlug, discussions: [], total: 0, provider: 'github-issues' };
     }
 
     const data = await response.json();
@@ -90,6 +90,7 @@ export class GitHubIssuesProvider implements FeedbackProvider {
       slug: pageSlug,
       discussions,
       total: data?.data?.search?.issueCount || discussions.length,
+      provider: 'github-issues',
     };
   }
 

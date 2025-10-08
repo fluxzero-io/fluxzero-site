@@ -35,7 +35,7 @@ export class GitHubDiscussionsProvider implements FeedbackProvider {
   `;
     const searchQuery = `repo:${this.githubRepo} "${slugFilter}" in:title,body`;
     if (!this.githubToken) {
-      return { slug: pageSlug, discussions: [], total: 0 };
+      return { slug: pageSlug, discussions: [], total: 0, provider: 'github-discussions', };
     }
     const response = await fetch('https://api.github.com/graphql', {
       method: 'POST',
@@ -47,7 +47,7 @@ export class GitHubDiscussionsProvider implements FeedbackProvider {
       body: JSON.stringify({ query, variables: { searchQuery, first: 50 } })
     });
     if (!response.ok) {
-      return { slug: pageSlug, discussions: [], total: 0 };
+      return { slug: pageSlug, discussions: [], total: 0, provider: 'github-discussions', };
     }
     const data = await response.json();
     const nodes = data?.data?.search?.nodes || [];
@@ -78,6 +78,7 @@ export class GitHubDiscussionsProvider implements FeedbackProvider {
       };
     });
     return {
+      provider: 'github-discussions',
       slug: pageSlug,
       discussions,
       total: data?.data?.search?.discussionCount || discussions.length,

@@ -7,7 +7,7 @@ const store: Map<string, Discussion[]> = new Map();
 export class MemoryProvider implements FeedbackProvider {
   async listDiscussions(slug: string): Promise<ListResult> {
     const arr = store.get(slug) || [];
-    return { slug, discussions: arr, total: arr.length };
+    return { slug, discussions: arr, total: arr.length, provider: 'memory' };
   }
 
   async createDiscussion(options: CreateInput): Promise<CreateResult> {
