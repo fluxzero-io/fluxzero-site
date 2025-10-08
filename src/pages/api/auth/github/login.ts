@@ -1,12 +1,12 @@
 import type { APIRoute } from 'astro';
 export const prerender = false;
 import { makeCookie, absoluteCallbackURL, sealCookiePayload } from '../_utils';
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
   const {
     GITHUB_APP_CLIENT_ID,
     GITHUB_APP_CLIENT_SECRET,
     COOKIE_SECRET
-  } = import.meta.env;
+  } = locals.runtime.env;
   if (!GITHUB_APP_CLIENT_ID || !COOKIE_SECRET || !GITHUB_APP_CLIENT_SECRET) {
     return new Response('Incorrect github configuration', { status: 500 });
   }
