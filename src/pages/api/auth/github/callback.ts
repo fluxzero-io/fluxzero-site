@@ -1,8 +1,15 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
 import { parseCookies, makeCookie, absoluteCallbackURL, sealCookiePayload, unsealCookiePayload } from '../_utils';
-import { GITHUB_APP_CLIENT_SECRET, COOKIE_SECRET, GITHUB_APP_CLIENT_ID } from 'astro:env/server';
-export const GET: APIRoute = async ({ url, request }) => {
+export const GET: APIRoute = async ({ url, request, locals }) => {
+
+  const {
+    GITHUB_APP_CLIENT_ID,
+    GITHUB_APP_CLIENT_SECRET,
+    COOKIE_SECRET
+  } = locals.runtime.env;
+
+
   if (!GITHUB_APP_CLIENT_ID || !GITHUB_APP_CLIENT_SECRET || !COOKIE_SECRET) {
     return new Response('Auth not configured', { status: 500 });
   }
@@ -20,7 +27,7 @@ export const GET: APIRoute = async ({ url, request }) => {
         stateOk = true;
         if (parsed.returnTo) returnTo = parsed.returnTo;
       }
-    } catch {}
+    } catch { }
   }
   if (!stateOk) {
     const cookieState = cookies['fx_gh_state'] || '';

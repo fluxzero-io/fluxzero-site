@@ -22,6 +22,7 @@ export default defineConfig({
         }
     },
     env: {
+        validateSecrets: true,
         schema: {
             FEEDBACK_PROVIDER: envField.enum({ optional: true, context: 'server', default: 'memory', access: 'public', values: ['memory', 'github-issues', 'github-discussions'] }),
             GITHUB_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true, default: '' }),
