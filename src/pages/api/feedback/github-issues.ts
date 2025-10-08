@@ -15,8 +15,8 @@ export class GitHubIssuesProvider implements FeedbackProvider {
 
   async listDiscussions(slug: string): Promise<ListResult> {
     const path = new URL(slug, 'http://x').pathname;
-    const pageSlug = path.startsWith('/') ? path : `/${path}`;
-    const searchQuery = `repo:${this.githubRepo} "${pageSlug}" in:title,body type:issue`;
+    const pageSlug = (path.startsWith('/') ? path : `/${path}`).replace(/\/+$/, '');
+    const searchQuery = `repo:${this.githubRepo} "[${pageSlug}]" in:title type:issue`;
 
     if (!this.githubToken) {
       return { slug: pageSlug, discussions: [], total: 0 };

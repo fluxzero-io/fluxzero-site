@@ -8,8 +8,8 @@ export class GitHubDiscussionsProvider implements FeedbackProvider {
 
   async listDiscussions(slug: string): Promise<ListResult> {
     const path = new URL(slug, 'http://x').pathname;
-    const pageSlug = path.startsWith('/') ? path : `/${path}`;
-    const slugFilter = pageSlug;
+    const pageSlug = (path.startsWith('/') ? path : `/${path}`).replace(/\/+$/, '');
+    const slugFilter = `[${pageSlug}]`;
 
     const query = `
     query GetDiscussions($searchQuery: String!, $first: Int!) {
