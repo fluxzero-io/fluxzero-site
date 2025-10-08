@@ -1,5 +1,5 @@
 // @ts-check
-import {defineConfig} from 'astro/config';
+import { defineConfig, envField } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import mermaid from 'astro-mermaid';
 import tailwindcss from '@tailwindcss/vite';
@@ -21,6 +21,16 @@ export default defineConfig({
             }
         }
     },
+    env: {
+        schema: {
+            FEEDBACK_PROVIDER: envField.enum({ optional: true, context: 'server', default: 'memory', access: 'public', values: ['memory', 'github-issues', 'github-discussions'] }),
+            GITHUB_TOKEN: envField.string({ context: 'server', access: 'secret', optional: true, default: '' }),
+            GITHUB_REPO: envField.string({ context: 'server', access: 'secret', optional: true, default: '' }),
+            COOKIE_SECRET: envField.string({ context: 'server', access: 'secret', optional: true, default: '' }),
+            GITHUB_APP_CLIENT_ID: envField.string({ context: 'server', access: 'secret', optional: true, default: '' }),
+            GITHUB_APP_CLIENT_SECRET: envField.string({ context: 'server', access: 'secret', optional: true, default: '' }),
+        }
+    },
     redirects: {
         "/docs": {
             status: 302,
@@ -34,8 +44,8 @@ export default defineConfig({
     integrations: [
         starlight({
             components: {
-               //  Header: './src/components/DocsHeader.astro', // disabled as we haven't gotten this right yet
-               MarkdownContent: './src/components/MarkdownContentWithFeedback.astro',
+                //  Header: './src/components/DocsHeader.astro', // disabled as we haven't gotten this right yet
+                MarkdownContent: './src/components/MarkdownContentWithFeedback.astro',
             },
             title: 'Fluxzero docs',
             logo: {
@@ -44,7 +54,7 @@ export default defineConfig({
                 alt: 'Flux Logo'
             },
             favicon: '/assets/fluxzero/fluxzero-logo.png',
-            social: [{icon: 'github', label: 'GitHub', href: 'https://github.com/fluxzero-io'}],
+            social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/fluxzero-io' }],
             customCss: ['./src/styles/global.css'],
             plugins: [
                 starlightLinksValidator({
@@ -57,19 +67,19 @@ export default defineConfig({
             sidebar: [
                 {
                     label: 'Getting started',
-                    autogenerate: {directory: 'docs/getting-started'},
+                    autogenerate: { directory: 'docs/getting-started' },
                 },
                 {
                     label: 'Tutorials',
-                    autogenerate: {directory: 'docs/tutorials'},
+                    autogenerate: { directory: 'docs/tutorials' },
                 },
                 {
                     label: 'Guides',
-                    autogenerate: {directory: 'docs/guides'},
+                    autogenerate: { directory: 'docs/guides' },
                 },
                 {
                     label: 'About',
-                    autogenerate: {directory: 'docs/about'},
+                    autogenerate: { directory: 'docs/about' },
                 },
             ],
         }),

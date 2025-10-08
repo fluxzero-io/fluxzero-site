@@ -1,11 +1,9 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
 import { parseCookies, makeCookie, absoluteCallbackURL, sealCookiePayload, unsealCookiePayload } from '../_utils';
+import { GITHUB_APP_CLIENT_SECRET, COOKIE_SECRET, GITHUB_APP_CLIENT_ID } from 'astro:env/server';
 export const GET: APIRoute = async ({ url, request }) => {
-  const clientId = String(import.meta.env.GITHUB_APP_CLIENT_ID || '');
-  const clientSecret = String(import.meta.env.GITHUB_APP_CLIENT_SECRET || '');
-  const cookieSecret = String(import.meta.env.COOKIE_SECRET || '');
-  if (!clientId || !clientSecret || !cookieSecret) {
+  if (!GITHUB_APP_CLIENT_ID || !GITHUB_APP_CLIENT_SECRET || !COOKIE_SECRET) {
     return new Response('Auth not configured', { status: 500 });
   }
 
@@ -15,9 +13,9 @@ export const GET: APIRoute = async ({ url, request }) => {
   let returnTo = cookies['fx_return_to'] || '/';
   // Prefer sealed `state` content for validation + returnTo; fall back to cookie comparison
   let stateOk = false;
-  if (qpState && cookieSecret) {
+  if (qpState && COOKIE_SECRET) {
     try {
-      const parsed = await unsealCookiePayload(qpState, cookieSecret);
+      const parsed = await unsealCookiePayload(qpState, COOKIE_SECRET);
       if (parsed && parsed.n && typeof parsed.ts === 'number') {
         stateOk = true;
         if (parsed.returnTo) returnTo = parsed.returnTo;
@@ -39,8 +37,8 @@ export const GET: APIRoute = async ({ url, request }) => {
 
   const callback = absoluteCallbackURL(url);
   const body = new URLSearchParams({
-    client_id: clientId,
-    client_secret: clientSecret,
+    client_id: GITHUB_APP_CLIENT_ID,
+    client_secret: GITHUB_APP_CLIENT_SECRET,
     code,
     redirect_uri: callback,
   });
@@ -74,7 +72,7 @@ export const GET: APIRoute = async ({ url, request }) => {
     refresh_token_expires_in: data.refresh_token_expires_in || null,
     expires_at: expiresIn ? new Date(now + expiresIn * 1000).toISOString() : null,
   };
-  const sealed = await sealCookiePayload(payload, cookieSecret);
+  const sealed = await sealCookiePayload(payload, COOKIE_SECRET);
 
   const headers = new Headers();
   headers.set('Location', `${returnTo}?auth=ok`);

@@ -21,7 +21,7 @@ export class GitHubIssuesProvider implements FeedbackProvider {
     if (!this.githubToken) {
       return { slug: pageSlug, discussions: [], total: 0 };
     }
-
+    
     const response = await fetch('https://api.github.com/graphql', {
       method: 'POST',
       headers: this.headers,
