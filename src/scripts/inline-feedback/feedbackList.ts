@@ -18,10 +18,15 @@ class FeedbackListController {
   }
 
   private ensureRoot(mount: HTMLElement | null) {
+    const existing = document.querySelector<HTMLElement>(`.feedback-list-root[data-slug="${this.slug}"]`);
+    if (existing) return existing;
     const root = document.createElement('div');
     root.className = 'feedback-list-root';
     root.dataset.slug = this.slug;
-    (mount || document.body).appendChild(root);
+    if (mount?.id) {
+      root.dataset.mount = mount.id;
+    }
+    document.body.appendChild(root);
     root.innerHTML = `
       <button class="feedback-button" id="feedback-toggle" aria-expanded="false">
         💬 <span class="feedback-count">0</span>
