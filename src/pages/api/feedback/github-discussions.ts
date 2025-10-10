@@ -125,7 +125,19 @@ export class GitHubDiscussionsProvider implements FeedbackProvider {
     const mCreate = `
     mutation($repositoryId: ID!, $categoryId: ID!, $title: String!, $body: String!) {
       createDiscussion(input: { repositoryId: $repositoryId, categoryId: $categoryId, title: $title, body: $body }) {
-        discussion { id url title createdAt author { login avatarUrl } }
+        discussion {
+          id
+          title
+          body
+          url
+          closed
+          createdAt
+          updatedAt
+          author { login avatarUrl }
+          comments { totalCount }
+          reactions { totalCount }
+          repository { nameWithOwner }
+        }
       }
     }
   `;
@@ -142,6 +154,38 @@ export class GitHubDiscussionsProvider implements FeedbackProvider {
     if (!createResp.ok || createData.errors) {
       throw new Error(`create_failed:${createResp.status}:${JSON.stringify(createData.errors || {})}`);
     }
-    return { created: createData.data.createDiscussion.discussion };
+
+    const discussion = createData?.data?.createDiscussion?.discussion;
+    if (!discussion) {
+      throw new Error('create_failed:missing_discussion_payload');
+    }
+
+    const metadataMatch = discussion.body?.match(/<!-- FEEDBACK_METADATA\r?\n(.*?)\r?\n-->/s);
+    let metadata = null;
+    if (metadataMatch) {
+      try { metadata = JSON.parse(metadataMatch[1]); } catch { metadata = null; }
+    }
+    const displayBody = (discussion.body || '').replace(/<!-- FEEDBACK_METADATA.*?-->/s, '').trim();
+    const feedbackMarkdown = extractUserFeedbackSection(displayBody) || displayBody;
+    const htmlBody = marked(feedbackMarkdown);
+    const cleanTitle = (discussion.title || '').replace(/\[slug:[^\]]+\]\s*/g, '').trim();
+
+    return {
+      created: {
+        id: discussion.id,
+        title: cleanTitle,
+        body: htmlBody,
+        originalBody: discussion.body,
+        url: discussion.url,
+        closed: discussion.closed,
+        createdAt: discussion.createdAt,
+        updatedAt: discussion.updatedAt,
+        author: discussion.author,
+        commentCount: discussion.comments?.totalCount ?? 0,
+        reactionCount: discussion.reactions?.totalCount ?? 0,
+        repository: discussion.repository?.nameWithOwner ?? this.githubRepo,
+        metadata,
+      },
+    };
   }
 }

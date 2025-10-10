@@ -126,19 +126,8 @@ export async function submitFeedback(payload: { slug?: string; selection: any; m
   let total = state.total;
   let createdDiscussion: FeedbackDiscussion | null = null;
 
-  if (responseBody && responseBody.created && responseBody.created.id) {
-    const incoming = responseBody.created;
-    const existingIndex = discussions.findIndex((item) => item.id === incoming.id);
-    if (existingIndex >= 0) {
-      discussions = [...discussions];
-      discussions[existingIndex] = incoming;
-    } else {
-      discussions = [incoming, ...discussions];
-      total = Math.max(total + 1, discussions.length);
-    }
-    createdDiscussion = incoming;
-  } else if (responseBody && responseBody.discussion && responseBody.discussion.id) {
-    const incoming = responseBody.discussion;
+  const incoming = extractCreatedDiscussion(responseBody);
+  if (incoming) {
     const existingIndex = discussions.findIndex((item) => item.id === incoming.id);
     if (existingIndex >= 0) {
       discussions = [...discussions];
@@ -180,4 +169,11 @@ function scheduleDelayedRefresh(slug: string) {
       refresh();
     }
   }, 10_000);
+}
+
+function extractCreatedDiscussion(body: any) {
+  if (!body || typeof body !== 'object') return null;
+  if (body.created && body.created.id) return body.created;
+  if (body.discussion && body.discussion.id) return body.discussion;
+  return null;
 }

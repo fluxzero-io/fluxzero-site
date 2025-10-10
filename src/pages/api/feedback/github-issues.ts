@@ -108,10 +108,16 @@ export class GitHubIssuesProvider implements FeedbackProvider {
         createIssue(input: $input) {
           issue {
             id
-            url
             title
+            body
+            url
+            closed
             createdAt
+            updatedAt
             author { login avatarUrl }
+            comments { totalCount }
+            reactions { totalCount }
+            repository { nameWithOwner }
           }
         }
       }
@@ -141,7 +147,38 @@ export class GitHubIssuesProvider implements FeedbackProvider {
       throw new Error(`issue_create_failed:${response.status}:${JSON.stringify(data.errors || {})}`);
     }
 
-    return { created: data.data.createIssue.issue };
+    const issue = data?.data?.createIssue?.issue;
+    if (!issue) {
+      throw new Error('issue_create_failed:missing_issue_payload');
+    }
+
+    const metadataMatch = issue.body?.match(/<!-- FEEDBACK_METADATA\r?\n(.*?)\r?\n-->/s);
+    let metadata = null;
+    if (metadataMatch) {
+      try { metadata = JSON.parse(metadataMatch[1]); } catch { metadata = null; }
+    }
+    const displayBody = (issue.body || '').replace(/<!-- FEEDBACK_METADATA.*?-->/s, '').trim();
+    const feedbackMarkdown = extractUserFeedbackSection(displayBody) || displayBody;
+    const htmlBody = marked(feedbackMarkdown);
+    const cleanTitle = (issue.title || '').replace(/\[slug:[^\]]+\]\s*/g, '').trim();
+
+    return {
+      created: {
+        id: issue.id,
+        title: cleanTitle,
+        body: htmlBody,
+        originalBody: issue.body,
+        url: issue.url,
+        closed: issue.closed,
+        createdAt: issue.createdAt,
+        updatedAt: issue.updatedAt,
+        author: issue.author,
+        commentCount: issue.comments?.totalCount ?? 0,
+        reactionCount: issue.reactions?.totalCount ?? 0,
+        repository: issue.repository?.nameWithOwner ?? this.githubRepo,
+        metadata,
+      },
+    };
   }
 
   private async getRepositoryId(owner: string, name: string): Promise<string> {
