@@ -20,7 +20,7 @@
 			"vars": {
 				"FEEDBACK_PROVIDER": "github-issues",
 				"GITHUB_REPO": "fluxzero-io/fluxzero-site"
-			},
+			}
 		},
 		"production": {
 			"vars": {
@@ -31,7 +31,11 @@
 				{
 					"pattern": "fluxzero.io",
 					"custom_domain": true
-				}
+				},
+                {
+                  "pattern": "www.fluxzero.io",
+                  "custom_domain": true
+                }
 			]
 		}
 	}
