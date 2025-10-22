@@ -1,7 +1,97 @@
 {
-  "lastUpdated": "2025-10-08T10:11:11.599Z",
-  "latestVersion": "1.15.0",
+  "lastUpdated": "2025-10-22T05:57:52.029Z",
+  "latestVersion": "1.23.0",
   "releases": [
+    {
+      "version": "1.23.0",
+      "date": "2025-10-21",
+      "body": "#### [1.23.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.22.0...1.23.0) (2025-10-21)\n\n\n##### Features\n\n* **metrics:** include `messageType` and `topic` in `CompleteMessageEvent` ([0063b48](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/0063b4850a47db769530873357900cde4dcec823))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.23.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.22.0",
+      "date": "2025-10-21",
+      "body": "#### [1.22.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.21.0...1.22.0) (2025-10-21)\n\n\n##### Features\n\n* **metrics:** enhance `formatType` method to resolve URI patterns for web requests ([ca16f2c](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/ca16f2c3c2eb5c063a114bacc26430f604851c64))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.22.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.21.0",
+      "date": "2025-10-21",
+      "body": "#### [1.21.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.20.0...1.21.0) (2025-10-21)\n\n\n##### Code Refactoring\n\n* **tracking:** unify `MessageParameterResolver` and `DeserializingMessageParameterResolver` ([77d3ae0](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/77d3ae01b4be318be93421c72e40b2ef21027a35))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.21.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.20.0",
+      "date": "2025-10-21",
+      "body": "#### [1.20.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.19.0...1.20.0) (2025-10-21)",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.20.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.18.1",
+      "date": "2025-10-14",
+      "body": "##### [1.18.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.18.0...1.18.1) (2025-10-14)\n\n\n##### Dependency updates\n\n* bump undertow.version from 2.3.19.Final to 2.3.20.Final ([d6f3e29](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/d6f3e2978211f1a10ca119066f7512ff181e168c))\n\n\n##### Continuous Integration\n\n* bump actions/checkout from 4 to 5 ([091762c](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/091762ca89ecd11e50c5cf661b3f3ea419522f8c))\n\n\n##### Build Systems\n\n* Allow dependabot sync to be run manually [skip ci] ([df5323e](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/df5323e69226a258b83e16192badd99c109e6904))\n* Automatically sync dependabot branch to main [skip ci] ([7f50653](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/7f506531fbf8c7de2ec3ccfcb5eb92b2201da80a))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.18.1",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.18.0",
+      "date": "2025-10-13",
+      "body": "#### [1.18.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.17.0...1.18.0) (2025-10-13)\n\n\n##### Features\n\n* **properties:** add support for substituting placeholders in `Properties` objects ([961c4ca](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/961c4caa3c41b15a137c66f2c2d961614605b760))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.18.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.17.0",
+      "date": "2025-10-12",
+      "body": "#### [1.17.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.16.0...1.17.0) (2025-10-12)\n\n\n##### Features\n\n* **search:** add support for moving documents between collections ([b537e4f](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/b537e4f6288f3b3081d0bd5263a08254c835f80a))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.17.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.16.0",
+      "date": "2025-10-12",
+      "body": "#### [1.16.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.15.2...1.16.0) (2025-10-12)\n\n\n##### Code Refactoring\n\n* **search:** improve deserialization logic of SerializedDocument ([8913f1d](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/8913f1dfe7966b93f5b9d185fc907cfd1220f73c))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.16.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.15.2",
+      "date": "2025-10-12",
+      "body": "##### [1.15.2](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.15.1...1.15.2) (2025-10-12)\n\n\n##### Bug Fixes\n\n* **entities:** revert commit #ed5a30ed ([2c1ed8b](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/2c1ed8be2c654ff1c4413e6eac39fadd544dacb8)), closes [#ed5a30](https://github.com/fluxzero-io/fluxzero-sdk-java/issues/ed5a30)\n\n\n##### Code Refactoring\n\n* **threads:** replace `ForkJoinPool` with virtual thread executor in `DefaultFluxzero` shutdown logic ([b960891](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/b960891f7f8af2f7e4bec5638958e30b522e5a05))\n* **tracking:** lazy-initialize `trackingStrategy` in `LocalTrackingClient` to improve resource management ([f24472a](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/f24472a2fd8b7ea94e3f08eeb026373ce572eea4))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.15.2",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.15.1",
+      "date": "2025-10-08",
+      "body": "##### [1.15.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.15.0...1.15.1) (2025-10-08)\n\n\n##### Bug Fixes\n\n* **metrics:** correct parameter used in `append` method for fallback serialization ([e58455f](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/e58455fc4de479f2aaba24fe14f0977c9d7fe6ab))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.15.1",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
     {
       "version": "1.15.0",
       "date": "2025-10-08",
