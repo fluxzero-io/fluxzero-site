@@ -1,7 +1,16 @@
 {
-  "lastUpdated": "2025-10-22T05:57:52.029Z",
-  "latestVersion": "1.23.0",
+  "lastUpdated": "2025-10-22T13:29:46.952Z",
+  "latestVersion": "1.23.1",
   "releases": [
+    {
+      "version": "1.23.1",
+      "date": "2025-10-22",
+      "body": "##### [1.23.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.23.0...1.23.1) (2025-10-22)\n\n\n##### Dependency updates\n\n* bump ch.qos.logback:logback-classic from 1.5.19 to 1.5.20 ([e17fc81](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/e17fc815c97932e03e6d34d6eeafe6dd65814817))\n* bump io.jooby:jooby from 4.0.7 to 4.0.9 ([8471fd0](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/8471fd0cb02ed4d6f861f96a63d7d853a6c2bc73))\n* bump org.springframework:spring-framework-bom from 6.2.11 to 6.2.12 ([36fea9a](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/36fea9adb1d9ba372a60ba254b20d0ed0277ff24))\n\n\n##### Continuous Integration\n\n* Avoid path clashes in dependabot branch names [skip ci] ([20012f8](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/20012f81c23cbaae1b22332115ab46fd43dbde02))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.23.1",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
     {
       "version": "1.23.0",
       "date": "2025-10-21",

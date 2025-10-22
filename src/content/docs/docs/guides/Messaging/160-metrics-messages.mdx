@@ -19,6 +19,123 @@ Metrics messages are:
 - Routable to handlers (via @HandleMetrics)
 - Stored by default for **1 month** due to volume
 
+The following tables summarize all built‑in metric message types available in Fluxzero.
+
+---
+
+## Built-in metrics overview
+
+The metrics listed below are published automatically by the Fluxzero SDK and Runtime when using common SDK functions (e.g. publishing messages, tracking, scheduling, searching, etc.).
+These metrics are essential for observability and are written to the metrics log for monitoring and analysis.
+
+All metric messages are published by the SDK, except for `ConnectEvent` and `DisconnectEvent`, which are published by the Runtime when a client connects or disconnects a WebSocket session.
+
+---
+
+### Dispatch
+
+| Metric message | Description |
+|----------------|--------------|
+| **Append$Metric** | Published when messages are appended to a log. |
+| **SetRetentionTime** | Indicates that the retention time of a message log has been updated. |
+
+---
+
+### Tracking
+
+| Metric message | Description |
+|----------------|--------------|
+| **Read** | Published after a new batch of messages from the tracker’s current position is requested. |
+| **ReadResult$Metric** | Reports metrics about the received batch (size, latency, etc.). |
+| **ProcessBatchEvent** | Marks the end of processing a message batch by a single tracker. |
+| **HandleMessageEvent** | Published once a handler is done handling a message. If the handler is asynchronous `HandleMessageEvent` may be published before the handler completes. |
+| **CompleteMessageEvent** | Published when an asynchronous handler completes. |
+| **ReadFromIndex** | Manual read starting from a specific index. |
+| **ReadFromIndexResult$Metric** | Response metrics for `ReadFromIndex`. |
+| **GetPosition** | Requests the current consumer position. |
+| **GetPositionResult** | Returns the current consumer position. |
+| **StorePosition** | Reports that the tracker position has been updated. |
+| **ResetPosition** | Indicates that a consumer’s position has been reset. |
+| **DisconnectTracker** | Published when a tracker disconnects. |
+
+---
+
+### Events (Aggregates)
+
+| Metric message | Description |
+|----------------|--------------|
+| **AppendEvents** | Appends events to an aggregate. |
+| **GetEvents** | Requests events for an aggregate. |
+| **GetEventsResult$Metric** | Reports metrics for `GetEvents`. |
+| **DeleteEvents** | Deletes events for an aggregate. |
+
+---
+
+### Relationships
+
+| Metric message | Description |
+|----------------|--------------|
+| **UpdateRelationships** | Updates entity–aggregate relationships. |
+| **RepairRelationships** | Repairs relationship consistency. |
+| **GetAggregateIds** | Requests aggregate IDs for a given entity. |
+| **GetAggregateIdsResult** | Returns aggregate IDs for an entity. |
+| **GetRelationships** | Requests relationships for an entity. |
+| **GetRelationshipsResult** | Returns relationships for an entity. |
+
+---
+
+### Scheduling
+
+| Metric message | Description |
+|----------------|--------------|
+| **Schedule** | Schedules one or more messages for future dispatch. |
+| **CancelSchedule** | Cancels a scheduled message. |
+| **GetSchedule** | Requests a specific schedule by ID. |
+| **GetScheduleResult** | Returns schedule details. |
+
+---
+
+### Documents / Search
+
+| Metric message | Description |
+|----------------|--------------|
+| **IndexDocuments** | Indexes one or more documents for search. |
+| **SearchDocuments** | Executes a search query on a document collection. |
+| **SearchDocumentsResult** | Returns the results of a document search. |
+| **GetDocument** | Retrieves a document by ID. |
+| **GetDocumentResult** | Returns the requested document. |
+| **GetDocuments** | Retrieves multiple documents by their IDs. |
+| **GetDocumentsResult** | Returns multiple documents. |
+| **HasDocument** | Checks if a document exists. |
+| **DeleteCollection** | Deletes an entire document collection. |
+| **DeleteDocuments** | Deletes documents matching a query. |
+| **MoveDocuments** | Moves documents between collections. |
+| **DeleteDocumentById** | Deletes a single document by ID. |
+| **MoveDocumentById** | Moves a single document by ID. |
+| **BulkUpdateDocuments** | Updates documents in bulk. |
+| **GetFacetStats** | Requests facet statistics for a search query. |
+| **GetFacetStatsResult** | Returns facet statistics results. |
+
+---
+
+### Common results/acknowledgements
+
+| Metric message | Description |
+|----------------|--------------|
+| **VoidResult** | Empty acknowledgement for successful commands. |
+| **ErrorResult** | Indicates that a request failed in the runtime. |
+| **BooleanResult** | Boolean response for a request. |
+| **StringResult** | String response for a request. |
+
+---
+
+### Runtime connection events
+
+| Metric message | Description |
+|----------------|--------------|
+| **ConnectEvent** | Published by the runtime when a client connects a WebSocket session. |
+| **DisconnectEvent** | Published by the runtime when a client disconnects a WebSocket session. |
+
 ---
 
 ## Publishing metrics
