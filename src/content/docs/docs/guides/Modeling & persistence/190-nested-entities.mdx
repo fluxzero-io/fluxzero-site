@@ -150,12 +150,12 @@ This allows you to use immutable models (e.g. Java records or Kotlin data classe
 
 ---
 
-### Loading entities and aggregates
+## Loading entities and aggregates
 
 Fluxzero supports a flexible and powerful approach to loading aggregates and their internal entities using
 `Fluxzero.loadAggregateFor(...)` and `Fluxzero.loadEntity(...)`.
 
-### `loadEntity(entityId)`
+### loadEntity
 
 Use this method to load a specific entity **without needing to know the aggregate root** it belongs to. This allows APIs
 to remain focused and concise—for example:
@@ -203,7 +203,37 @@ Additional behavior:
 This enables true location transparency for commands and queries: you don’t need to know or pass along the full aggregate path.
 </Aside>
 
-### Finding all aggregates for an entity
+### loadAggregateFor
+
+Use this method to retrieve the **aggregate root** that currently contains the specified entity ID.
+
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    Entity<MyAggregate> aggregate = Fluxzero
+            .loadAggregateFor("some-entity-id");
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    val aggregate: Entity<MyAggregate> = Fluxzero
+        .loadAggregateFor("some-entity-id")
+    ```
+  </TabItem>
+</Tabs>
+
+Behavior:
+
+- If the ID matches a child entity, the enclosing aggregate is returned.
+- If the ID refers to an aggregate root, that root is returned directly.
+- If no aggregate exists, an empty aggregate of type `Object` is returned. This enables bootstrapping a new one by
+  applying events.
+
+<Aside type="note">
+Use `loadAggregateFor(entityId, Class<T>)` when you need type safety or to avoid relying on inference.
+</Aside>
+
+## Finding all aggregates for an entity
 
 In some scenarios, an entity may be referenced by multiple aggregates—for example, when using shared reference
 data (e.g. a `Currency`, `Role`, or `Label`). If such an entity is updated, you might want to update *all* aggregates
@@ -261,36 +291,6 @@ When used responsibly, this enables patterns like:
 </Tabs>
 
 ---
-
-### `loadAggregateFor(entityId)`
-
-Use this method to retrieve the **aggregate root** that currently contains the specified entity ID.
-
-<Tabs>
-  <TabItem label="Java">
-    ```java
-    Entity<MyAggregate> aggregate = Fluxzero
-            .loadAggregateFor("some-entity-id");
-    ```
-  </TabItem>
-  <TabItem label="Kotlin">
-    ```kotlin
-    val aggregate: Entity<MyAggregate> = Fluxzero
-        .loadAggregateFor("some-entity-id")
-    ```
-  </TabItem>
-</Tabs>
-
-Behavior:
-
-- If the ID matches a child entity, the enclosing aggregate is returned.
-- If the ID refers to an aggregate root, that root is returned directly.
-- If no aggregate exists, an empty aggregate of type `Object` is returned. This enables bootstrapping a new one by
-  applying events.
-
-<Aside type="note">
-Use `loadAggregateFor(entityId, Class<T>)` when you need type safety or to avoid relying on inference.
-</Aside>
 
 ## Alternative entity identifiers
 
@@ -408,7 +408,7 @@ or
 
 ---
 
-## Tip: use @Alias on strongly-typed `Id<T>` identifiers
+### Strongly typed @Alias identifiers
 
 While `@Alias` can be applied to any field or property, it's often more convenient and robust to use it on a
 strongly-typed identifier that extends `Id<T>`:

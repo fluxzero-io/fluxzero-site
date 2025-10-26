@@ -1,7 +1,61 @@
 {
-  "lastUpdated": "2025-10-25T10:45:43.504Z",
-  "latestVersion": "1.25.0",
+  "lastUpdated": "2025-10-26T23:08:43.890Z",
+  "latestVersion": "1.31.0",
   "releases": [
+    {
+      "version": "1.31.0",
+      "date": "2025-10-26",
+      "body": "#### [1.31.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.30.0...1.31.0) (2025-10-26)\n\n\n##### Features\n\n* **search:** add `toBulkUpdate` to `IndexOperation` ([9572b4a](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/9572b4af2ced321b698029817a02dc0efba2df01))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.31.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.30.0",
+      "date": "2025-10-26",
+      "body": "#### [1.30.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.29.0...1.30.0) (2025-10-26)\n\n\n##### Features\n\n* **reflection:** extend `readProperty` to support nested `Collection` and `Map` fields ([7aae65f](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/7aae65f634055d2a205c19468faca71bdec310b9))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.30.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.29.0",
+      "date": "2025-10-26",
+      "body": "#### [1.29.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.28.0...1.29.0) (2025-10-26)\n\n\n##### Features\n\n* **testing:** add `TestFixture` methods to handle user-context-specific web requests ([cbde644](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/cbde644fdc979031f6466bce7f5d954f8a8841ed))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.29.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.28.0",
+      "date": "2025-10-26",
+      "body": "#### [1.28.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.27.0...1.28.0) (2025-10-26)\n\n\n##### Code Refactoring\n\n* **search:** acknowledge `@SearchExclude` annotations when filtering locally ([057dea5](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/057dea541c2c808ce8afd56d49a90f940dee8353))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.28.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.27.0",
+      "date": "2025-10-25",
+      "body": "#### [1.27.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.26.0...1.27.0) (2025-10-25)\n\n\n##### Features\n\n* **search:** support getting a document using just a typed Id ([ae8b770](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/ae8b7706c603253991c868a8b7a95b82e5849117))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.27.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.26.0",
+      "date": "2025-10-25",
+      "body": "#### [1.26.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.25.0...1.26.0) (2025-10-25)\n\n\n##### Features\n\n* **handling:** support returning Optional<R> from a (local) request handler method ([bbfc963](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/bbfc96302da9fef7fd4655b0975edbc21de47cf4))\n* **serialization:** enable automatic filtering of request results if the handler has `@FilterContent` ([4373185](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/437318577d2fff1b484a17e2f2e47279a7895458))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.26.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
     {
       "version": "1.25.0",
       "date": "2025-10-22",
