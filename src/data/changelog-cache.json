@@ -1,7 +1,70 @@
 {
-  "lastUpdated": "2025-10-26T23:08:43.890Z",
-  "latestVersion": "1.31.0",
+  "lastUpdated": "2025-10-29T10:54:33.764Z",
+  "latestVersion": "1.36.1",
   "releases": [
+    {
+      "version": "1.36.1",
+      "date": "2025-10-29",
+      "body": "##### [1.36.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.36.0...1.36.1) (2025-10-29)\n\n\n##### Bug Fixes\n\n* **dependencies:** exclude `spotbugs-annotations` from `jooby` to resolve dependency conflict ([9d766a5](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/9d766a5a0f52f70098bf2fa91d677e202db3f728))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.36.1",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.36.0",
+      "date": "2025-10-28",
+      "body": "#### [1.36.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.35.0...1.36.0) (2025-10-28)\n\n\n##### Features\n\n* **aggregate:** commit aggregates asynchronously, waiting for all commits to complete before processing next messages ([ec330c5](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/ec330c5c06ccd82a0b3a98bd599f3f5b708d144e))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.36.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.35.0",
+      "date": "2025-10-28",
+      "body": "#### [1.35.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.34.0...1.35.0) (2025-10-28)\n\n\n##### Code Refactoring\n\n* **aggregate:** play back aggregate to handled message even if event is of another aggregate ([3a051e7](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/3a051e7d58401f03c387781839f78402203a845d))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.35.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.34.0",
+      "date": "2025-10-28",
+      "body": "#### [1.34.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.33.0...1.34.0) (2025-10-28)\n\n\n##### Features\n\n* **metrics:** include request details in websocket response metrics ([09810c5](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/09810c5c2a513eeb5477dc8d12cae1d0ed0556a5))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.34.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.33.0",
+      "date": "2025-10-28",
+      "body": "#### [1.33.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.32.1...1.33.0) (2025-10-28)\n\n\n##### Features\n\n* **configuration:** prevent non-Spring Fluxzero instances from exiting after main by default ([6fea27b](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/6fea27b5bc39168d375f04e1dccaf639b0aca4f1))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.33.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.32.1",
+      "date": "2025-10-27",
+      "body": "##### [1.32.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.32.0...1.32.1) (2025-10-27)\n\n\n##### Bug Fixes\n\n* **cache:** update cache logic to handle event consistency for aggregates ([47c25ff](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/47c25ff66ddd01609a23b20d3eb8f608ca52f2ac))\n* **handling:** use `isAssignableFrom` for payload class matching in `DefaultHandlerFactory` ([559f733](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/559f7335ee3fc8f119b5870fd0e5c9f47793b8ae))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.32.1",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.32.0",
+      "date": "2025-10-27",
+      "body": "#### [1.32.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.31.0...1.32.0) (2025-10-27)",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.32.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
     {
       "version": "1.31.0",
       "date": "2025-10-26",

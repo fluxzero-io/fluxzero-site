@@ -47,6 +47,7 @@ export default defineConfig({
             components: {
                 //  Header: './src/components/DocsHeader.astro', // disabled as we haven't gotten this right yet
                 MarkdownContent: './src/components/MarkdownContentWithFeedback.astro',
+                Footer: './src/components/DocsFooter.astro',
             },
             title: 'Fluxzero docs',
             logo: {
