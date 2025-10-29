@@ -4,6 +4,16 @@
 
 Current "production" URL https://flux-website.rene7346.workers.dev
 
+## License
+
+This repository uses separate licenses for code and documentation:
+
+- **Website code**: [Business Source License 1.1](./LICENSE.code) — source available for non-commercial use.
+- **Documentation & content**: [CC BY-NC-ND 4.0](./LICENSE.docs) — may not be modified or used commercially.
+- **Logos and branding**: All rights reserved.
+
+If you’d like to use our code or content commercially, please contact us at alen@fluxzero.io.
+
 ## Commands
 
 All commands are run from the root of the project, from a terminal:
