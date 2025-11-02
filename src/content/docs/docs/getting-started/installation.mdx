@@ -6,7 +6,7 @@ sidebar:
 tableOfContents: true
 ---
 
-import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Steps, Tabs, TabItem, Aside } from '@astrojs/starlight/components';
 import ProjectGenerator from '~/components/ProjectGenerator.astro';
 
 Installation can be done in multiple ways. 
@@ -94,4 +94,133 @@ To build Fluxzero projects, the only thing you need is Java 21+. However, we rec
    ```
 
 </Steps>
+
+## Manually
+
+### Maven
+
+Import the [Fluxzero BOM](https://mvnrepository.com/artifact/io.fluxzero/fluxzero-bom) in your
+`dependencyManagement` section to centralize version management:
+
+```xml
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>io.fluxzero</groupId>
+            <artifactId>fluxzero-bom</artifactId>
+            <version>${fluxzero.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
+
+Then declare only the dependencies you actually need (no version required):
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>io.fluxzero</groupId>
+        <artifactId>sdk</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>io.fluxzero</groupId>
+        <artifactId>sdk</artifactId>
+        <classifier>tests</classifier>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.fluxzero</groupId>
+        <artifactId>test-server</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.fluxzero</groupId>
+        <artifactId>proxy</artifactId>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+```
+
+<Aside>
+The `test-server` and `proxy` modules are optional, and can be included if you want to test your
+ application locally against an in-memory Flux runtime.
+</Aside>
+
+#### Annotation processing
+
+For Java versions above 21, you must explicitly register the Fluxzero SDK as an annotation processor.
+This ensures that all of Fluxzero’s annotations are properly detected during compilation.
+
+Add the Fluxzero SDK to the `annotationProcessorPaths` of your maven-compiler-plugin:
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-compiler-plugin</artifactId>
+    <configuration>
+        <parameters>true</parameters>
+        <annotationProcessorPaths>
+            <path>
+                <groupId>io.fluxzero</groupId>
+                <artifactId>sdk</artifactId>
+            </path>
+        </annotationProcessorPaths>
+    </configuration>
+</plugin>
+```
+
+<Aside>
+If you already use Lombok or other annotation processors, simply add the Fluxzero SDK alongside them
+in the same list as shown above.
+</Aside>
+
+---
+
+### Gradle
+
+Use [platform BOM support](https://docs.gradle.org/current/userguide/platforms.html) to align dependency versions
+automatically:
+
+<details>
+<summary><strong>Kotlin DSL (build.gradle.kts)</strong></summary>
+
+```kotlin
+dependencies {
+    implementation(platform("io.fluxzero:fluxzero-bom:${fluxzeroVersion}"))
+    implementation("io.fluxzero:sdk")
+    testImplementation("io.fluxzero:sdk", classifier = "tests")
+    testImplementation("io.fluxzero:test-server")
+    testImplementation("io.fluxzero:proxy")
+    annotationProcessor("io.fluxzero:sdk")
+}
+```
+
+</details>
+
+<details>
+<summary><strong>Groovy DSL (build.gradle)</strong></summary>
+
+```groovy
+dependencies {
+    implementation platform("io.fluxzero:fluxzero-bom:${fluxzeroVersion}")
+    implementation 'io.fluxzero:sdk'
+    testImplementation('io.fluxzero:sdk') {
+        classifier = 'tests'
+    }
+    testImplementation 'io.fluxzero:test-server'
+    testImplementation 'io.fluxzero:proxy'
+    annotationProcessor 'io.fluxzero:sdk'
+}
+```
+
+</details>
+
+---
+
+<Aside type="tip">
+You only need to update the version number **once** in the BOM reference. All included modules will automatically align with it.
+</Aside>
 

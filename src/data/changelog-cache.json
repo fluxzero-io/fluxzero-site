@@ -1,7 +1,34 @@
 {
-  "lastUpdated": "2025-10-29T10:54:33.764Z",
-  "latestVersion": "1.36.1",
+  "lastUpdated": "2025-11-02T14:15:33.415Z",
+  "latestVersion": "1.39.0",
   "releases": [
+    {
+      "version": "1.39.0",
+      "date": "2025-11-01",
+      "body": "#### [1.39.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.38.0...1.39.0) (2025-11-01)\n\n\n##### Features\n\n* **resolvers:** add `JsonPayloadParameterResolver` and optimize resolver selection ([7d5f75f](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/7d5f75f2f91c6b073047526760d2a08c54df078e))\n\n\n##### Code Refactoring\n\n* **entity:** when playing back an entity when the requested index is `null` return the latest entity version ([e076356](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/e076356fd0afc9a43b7c2395251a2367ce10d1ea))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.39.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.38.0",
+      "date": "2025-10-30",
+      "body": "#### [1.38.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.37.0...1.38.0) (2025-10-30)",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.38.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.37.0",
+      "date": "2025-10-29",
+      "body": "#### [1.37.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.36.1...1.37.0) (2025-10-29)\n\n\n##### Features\n\n* Add total byte size of all updates in BulkUpdateDocuments to metrics ([e20ad2c](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/e20ad2c17a17686f7ff985c782395b63a24a6ac7))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.37.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
     {
       "version": "1.36.1",
       "date": "2025-10-29",
