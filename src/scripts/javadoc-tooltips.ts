@@ -139,9 +139,12 @@ class JavadocTooltip {
       const data = await response.json();
       const documentation = data.documentation || '<p>No documentation available.</p>';
 
+      // Process and clean up the documentation
+      const processedDoc = this.processJavadocContent(documentation);
+
       // Cache and display
-      this.docCache.set(qualifiedName, documentation);
-      content.innerHTML = documentation;
+      this.docCache.set(qualifiedName, processedDoc);
+      content.innerHTML = processedDoc;
 
       // Reposition in case content changed size
       this.positionTooltip(element);
@@ -210,6 +213,47 @@ class JavadocTooltip {
     if (!this.tooltip) return;
     this.tooltip.classList.remove('visible');
     this.currentTrigger = null;
+  }
+
+  private processJavadocContent(html: string): string {
+    // Replace Javadoc inline tags with formatted HTML
+    let processed = html;
+
+    // {@link ClassName} or {@link ClassName#method} -> bold text
+    processed = processed.replace(/\{@link\s+([^}]+)\}/g, (_, content) => {
+      // Extract just the class/method name (remove package path and #)
+      const simpleName = content.split('.').pop()?.replace('#', '.') || content;
+      return `<strong>${simpleName}</strong>`;
+    });
+
+    // {@code text} -> inline code
+    processed = processed.replace(/\{@code\s+([^}]+)\}/g, (_, content) => {
+      return `<code>${content}</code>`;
+    });
+
+    // {@literal text} -> escaped text (treat as plain text)
+    processed = processed.replace(/\{@literal\s+([^}]+)\}/g, (_, content) => {
+      return content;
+    });
+
+    // {@value field} -> bold text
+    processed = processed.replace(/\{@value\s+([^}]+)\}/g, (_, content) => {
+      return `<strong>${content}</strong>`;
+    });
+
+    // {@linkplain ClassName} -> plain text link (no code formatting)
+    processed = processed.replace(/\{@linkplain\s+([^}]+)\}/g, (_, content) => {
+      const simpleName = content.split('.').pop()?.replace('#', '.') || content;
+      return `<strong>${simpleName}</strong>`;
+    });
+
+    // {@inheritDoc} -> remove (not useful in tooltip context)
+    processed = processed.replace(/\{@inheritDoc\}/g, '');
+
+    // {@docRoot} -> remove (not useful in tooltip context)
+    processed = processed.replace(/\{@docRoot\}/g, '');
+
+    return processed;
   }
 }
 
