@@ -50,6 +50,20 @@ class JavadocTooltip {
       this.hideTooltip();
     });
 
+    // Handle clicks on data-jdoc links inside the tooltip
+    this.tooltip.addEventListener('click', (e) => {
+      const target = (e.target as HTMLElement).closest('[data-jdoc]') as HTMLElement;
+      if (target && target.hasAttribute('data-jdoc')) {
+        e.preventDefault();
+        e.stopPropagation();
+        const qualifiedName = target.getAttribute('data-jdoc');
+        if (qualifiedName) {
+          // Replace tooltip content instead of opening a new one
+          this.replaceTooltipContent(qualifiedName);
+        }
+      }
+    });
+
     // Tooltip hover handlers
     this.tooltip.addEventListener('mouseenter', () => {
       this.isHoveringTooltip = true;
@@ -67,7 +81,10 @@ class JavadocTooltip {
     document.addEventListener('mouseover', (e) => {
       const target = (e.target as HTMLElement).closest('[data-jdoc]') as HTMLElement;
       if (target && target.hasAttribute('data-jdoc')) {
-        this.handleMouseEnter(target);
+        // Only trigger on hover if it's NOT inside the tooltip
+        if (!this.tooltip?.contains(target)) {
+          this.handleMouseEnter(target);
+        }
       }
     });
 
@@ -236,15 +253,92 @@ class JavadocTooltip {
     this.currentTrigger = null;
   }
 
+  private async replaceTooltipContent(qualifiedName: string): Promise<void> {
+    if (!this.tooltip) return;
+
+    // Update header with new class name
+    const title = this.tooltip.querySelector('.javadoc-tooltip-title');
+    if (title) {
+      const simpleName = qualifiedName.split('.').pop() || qualifiedName;
+      title.textContent = simpleName;
+    }
+
+    // Update content
+    const content = this.tooltip.querySelector('.javadoc-tooltip-content');
+    if (!content) return;
+
+    // Check cache first
+    if (this.docCache.has(qualifiedName)) {
+      content.innerHTML = this.docCache.get(qualifiedName)!;
+      // Scroll to top of new content
+      content.scrollTop = 0;
+      return;
+    }
+
+    // Show loading state
+    content.innerHTML = '<div class="javadoc-tooltip-loading">Loading...</div>';
+
+    // Fetch documentation
+    try {
+      const jsonPath = qualifiedName.replace(/\./g, '/');
+      const jsonUrl = `${JAVADOC_JSON_BASE}/${jsonPath}.json`;
+
+      const response = await fetch(jsonUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      const documentation = data.documentation || '<p>No documentation available.</p>';
+
+      // Process and clean up the documentation
+      const processedDoc = this.processJavadocContent(documentation);
+
+      // Cache and display
+      this.docCache.set(qualifiedName, processedDoc);
+      content.innerHTML = processedDoc;
+
+      // Scroll to top of new content
+      content.scrollTop = 0;
+    } catch (error) {
+      console.error('Failed to fetch javadoc:', error);
+      content.innerHTML = '<div class="javadoc-tooltip-error">Failed to load documentation</div>';
+    }
+  }
+
   private processJavadocContent(html: string): string {
     // Replace Javadoc inline tags with formatted HTML
     let processed = html;
 
-    // {@link ClassName} or {@link ClassName#method} -> bold text
+    // @see ClassName or @see fully.qualified.ClassName -> interactive link with data-jdoc
+    processed = processed.replace(/@see\s+([\w.]+(?:#\w+)?)/g, (_, content) => {
+      // Remove method references (#method)
+      const className = content.split('#')[0];
+      // Extract simple name for display
+      const simpleName = className.split('.').pop() || className;
+
+      // If it looks like a qualified name (has dots), create a data-jdoc link
+      if (className.includes('.')) {
+        return `<strong><span class="javadoc-see-link" data-jdoc="${className}">${simpleName}</span></strong>`;
+      } else {
+        // Just a simple class name reference, make it bold
+        return `<strong>${simpleName}</strong>`;
+      }
+    });
+
+    // {@link ClassName} or {@link ClassName#method} -> interactive link with data-jdoc
     processed = processed.replace(/\{@link\s+([^}]+)\}/g, (_, content) => {
-      // Extract just the class/method name (remove package path and #)
+      // Remove method references and whitespace
+      const className = content.trim().split('#')[0];
+      // Extract just the class/method name (remove package path)
       const simpleName = content.split('.').pop()?.replace('#', '.') || content;
-      return `<strong>${simpleName}</strong>`;
+
+      // If it looks like a qualified name, create a data-jdoc link
+      if (className.includes('.')) {
+        return `<strong><span class="javadoc-see-link" data-jdoc="${className}">${simpleName}</span></strong>`;
+      } else {
+        return `<strong>${simpleName}</strong>`;
+      }
     });
 
     // {@code text} -> inline code
@@ -264,8 +358,14 @@ class JavadocTooltip {
 
     // {@linkplain ClassName} -> plain text link (no code formatting)
     processed = processed.replace(/\{@linkplain\s+([^}]+)\}/g, (_, content) => {
+      const className = content.trim().split('#')[0];
       const simpleName = content.split('.').pop()?.replace('#', '.') || content;
-      return `<strong>${simpleName}</strong>`;
+
+      if (className.includes('.')) {
+        return `<strong><span class="javadoc-see-link" data-jdoc="${className}">${simpleName}</span></strong>`;
+      } else {
+        return `<strong>${simpleName}</strong>`;
+      }
     });
 
     // {@inheritDoc} -> remove (not useful in tooltip context)

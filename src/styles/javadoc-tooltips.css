@@ -172,6 +172,20 @@
   text-decoration: underline;
 }
 
+/* Interactive javadoc links within tooltip content */
+.javadoc-see-link {
+  color: var(--sl-color-text-accent);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 2px;
+}
+
+.javadoc-see-link:hover {
+  text-decoration-style: solid;
+  color: var(--sl-color-accent-high);
+}
+
 .javadoc-tooltip-content blockquote {
   border-left: 3px solid var(--sl-color-hairline-light);
   padding-left: 1rem;
