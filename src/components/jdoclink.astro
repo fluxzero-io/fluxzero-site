@@ -1,6 +1,8 @@
 ---
 export const prerender = true;
 import { getCollection } from "astro:content";
+import '~/styles/javadoc-tooltips.css';
+
 const javadocClasses = await getCollection("javadocClasses");
 
 interface Props {
@@ -22,7 +24,7 @@ if (!match && !isJavadocOptional) {
 ---
 
 {match ? (
-    <a target="_blank" href={match.data.url}>
+    <a target="_blank" href={match.data.url} data-jdoc={match.data.fullName}>
         <!-- Copyright 2000-2022 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license. -->
         <svg style="display: inline" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="8" cy="8" r="6.5" fill="#E7EFFD" stroke="#3574F0"/>
@@ -37,3 +39,7 @@ if (!match && !isJavadocOptional) {
         </svg> {className}
     </span>
 )}
+
+<script>
+    import '~/scripts/javadoc-tooltips.ts';
+</script>
