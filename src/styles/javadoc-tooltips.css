@@ -21,10 +21,59 @@
   pointer-events: auto;
 }
 
+.javadoc-tooltip-header {
+  background: var(--sl-color-bg-sidebar);
+  border: 1px solid var(--sl-color-hairline-light);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  border-bottom: 1px solid var(--sl-color-hairline-light);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.javadoc-tooltip-title {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--sl-color-white);
+  font-family: var(--sl-font-mono);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.javadoc-tooltip-close {
+  background: transparent;
+  border: none;
+  color: var(--sl-color-gray-3);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.javadoc-tooltip-close:hover {
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+}
+
+.javadoc-tooltip-close:active {
+  transform: scale(0.95);
+}
+
 .javadoc-tooltip-content {
   background: var(--sl-color-bg-sidebar);
   border: 1px solid var(--sl-color-hairline-light);
-  border-radius: 8px;
+  border-top: none;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
   padding: 16px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   font-size: 0.875rem;

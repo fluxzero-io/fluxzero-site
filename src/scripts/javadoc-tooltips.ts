@@ -30,11 +30,25 @@ class JavadocTooltip {
     this.tooltip.className = 'javadoc-tooltip';
     this.tooltip.setAttribute('role', 'tooltip');
     this.tooltip.innerHTML = `
+      <div class="javadoc-tooltip-header">
+        <span class="javadoc-tooltip-title"></span>
+        <button class="javadoc-tooltip-close" aria-label="Close" title="Close">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
       <div class="javadoc-tooltip-content">
         <div class="javadoc-tooltip-loading">Loading...</div>
       </div>
     `;
     document.body.appendChild(this.tooltip);
+
+    // Close button handler
+    const closeButton = this.tooltip.querySelector('.javadoc-tooltip-close');
+    closeButton?.addEventListener('click', () => {
+      this.hideTooltip();
+    });
 
     // Tooltip hover handlers
     this.tooltip.addEventListener('mouseenter', () => {
@@ -107,6 +121,13 @@ class JavadocTooltip {
 
   private async showTooltip(element: HTMLElement, qualifiedName: string): Promise<void> {
     if (!this.tooltip) return;
+
+    // Update header with class name
+    const title = this.tooltip.querySelector('.javadoc-tooltip-title');
+    if (title) {
+      const simpleName = qualifiedName.split('.').pop() || qualifiedName;
+      title.textContent = simpleName;
+    }
 
     // Position tooltip near element
     this.positionTooltip(element);
