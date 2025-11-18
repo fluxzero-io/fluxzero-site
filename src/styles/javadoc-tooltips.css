@@ -1,0 +1,168 @@
+/**
+ * Javadoc Tooltip Styles
+ *
+ * Styles for the inline javadoc documentation tooltips.
+ * Uses Starlight CSS custom properties for theme integration.
+ */
+
+.javadoc-tooltip {
+  position: fixed;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  pointer-events: none;
+  max-width: min(600px, calc(100vw - 32px));
+}
+
+.javadoc-tooltip.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.javadoc-tooltip-content {
+  background: var(--sl-color-bg-sidebar);
+  border: 1px solid var(--sl-color-hairline-light);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--sl-color-text);
+  max-height: min(400px, 60vh);
+  overflow-y: auto;
+}
+
+/* Dark mode adjustments */
+:root[data-theme='dark'] .javadoc-tooltip-content {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Loading state */
+.javadoc-tooltip-loading {
+  color: var(--sl-color-gray-3);
+  font-style: italic;
+  padding: 8px 0;
+}
+
+/* Error state */
+.javadoc-tooltip-error {
+  color: var(--sl-color-text-accent);
+  padding: 8px 0;
+}
+
+/* Documentation content styling */
+.javadoc-tooltip-content p {
+  margin: 0.5rem 0;
+}
+
+.javadoc-tooltip-content p:first-child {
+  margin-top: 0;
+}
+
+.javadoc-tooltip-content p:last-child {
+  margin-bottom: 0;
+}
+
+.javadoc-tooltip-content h2,
+.javadoc-tooltip-content h3,
+.javadoc-tooltip-content h4 {
+  font-size: 1rem;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--sl-color-white);
+}
+
+.javadoc-tooltip-content h2:first-child,
+.javadoc-tooltip-content h3:first-child,
+.javadoc-tooltip-content h4:first-child {
+  margin-top: 0;
+}
+
+.javadoc-tooltip-content ul,
+.javadoc-tooltip-content ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+}
+
+.javadoc-tooltip-content li {
+  margin: 0.25rem 0;
+}
+
+.javadoc-tooltip-content code {
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-text-accent);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.875em;
+  font-family: var(--sl-font-mono);
+}
+
+.javadoc-tooltip-content pre {
+  background: var(--sl-color-gray-6);
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+
+.javadoc-tooltip-content pre code {
+  background: none;
+  padding: 0;
+  color: var(--sl-color-text);
+}
+
+.javadoc-tooltip-content a {
+  color: var(--sl-color-text-accent);
+  text-decoration: none;
+}
+
+.javadoc-tooltip-content a:hover {
+  text-decoration: underline;
+}
+
+.javadoc-tooltip-content blockquote {
+  border-left: 3px solid var(--sl-color-hairline-light);
+  padding-left: 1rem;
+  margin: 0.75rem 0;
+  color: var(--sl-color-gray-2);
+}
+
+/* Scrollbar styling */
+.javadoc-tooltip-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.javadoc-tooltip-content::-webkit-scrollbar-track {
+  background: var(--sl-color-gray-6);
+  border-radius: 4px;
+}
+
+.javadoc-tooltip-content::-webkit-scrollbar-thumb {
+  background: var(--sl-color-gray-4);
+  border-radius: 4px;
+}
+
+.javadoc-tooltip-content::-webkit-scrollbar-thumb:hover {
+  background: var(--sl-color-gray-3);
+}
+
+/* Firefox scrollbar */
+.javadoc-tooltip-content {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sl-color-gray-4) var(--sl-color-gray-6);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .javadoc-tooltip {
+    max-width: calc(100vw - 16px);
+  }
+
+  .javadoc-tooltip-content {
+    max-height: 50vh;
+    font-size: 0.8125rem;
+  }
+}
