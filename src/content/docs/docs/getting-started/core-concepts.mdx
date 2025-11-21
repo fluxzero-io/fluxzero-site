@@ -279,7 +279,7 @@ Fluxzero will invoke the appropriate `@Apply` method depending on whether the en
 This avoids mixing system concerns and makes testing easier.
 
 - **Keep `@Apply` pure and deterministic.**
-This method may be re-run during [event sourcing](/docs/reference/event-sourcing) — avoid randomness, timestamps, or I/O actions here.
+This method may be re-run during [event sourcing](/docs/guides/modeling-and-persistence/updating-entities) — avoid randomness, timestamps, or I/O actions here.
 
 - **Treat commands as contracts.**
 The command itself should contain everything needed to execute the action.
@@ -579,7 +579,7 @@ This handler matches all `ProjectUpdate` commands and applies them to the matchi
 
 In most cases, this is all you need. If you want to customize behavior for certain commands — like converting a `CreateProject` into an `UpdateProject` if the project already exists — you can override the default.
 
-See the [handler reference guide](/docs/reference/handler) for more advanced usage.
+See the [messaging handling guide](/docs/guides/messaging/message-handling) for more advanced usage.
 
 ---
 
@@ -637,7 +637,7 @@ This handler responds to different Project events and sends out new commands.
     This makes it easy to build decoupled, reactive behaviors.
 </Aside>
 
-For deeper control — like async behavior, parallelism, error handling, and more — see the [handler reference guide](/docs/reference/handler).
+For deeper control — like async behavior, parallelism, error handling, and more — see the [messaging handling guide](/docs/guides/messaging/message-handling).
 
 ---
 
@@ -1040,7 +1040,7 @@ You can turn this off by setting `eventSourced = false`:
   </TabItem>
 </Tabs>
 
-When disabled, the entity will be persisted as a snapshot instead of a list of events. See [event sourcing](/docs/reference/event-sourcing) for more.
+When disabled, the entity will be persisted as a snapshot instead of a list of events. See [event sourcing](/docs/guides/modeling-and-persistence/entity-loading) for more.
 
 ---
 
