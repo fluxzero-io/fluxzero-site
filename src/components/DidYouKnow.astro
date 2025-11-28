@@ -1,0 +1,19 @@
+---
+export interface Props {
+  id: string;
+  message: string;
+  /** Delay in milliseconds before showing the popover (default: 3000) */
+  delay?: number;
+}
+
+const { id, message, delay = 3000 } = Astro.props;
+---
+
+<div
+  data-didyouknow={id}
+  data-didyouknow-message={message}
+  data-didyouknow-delay={delay}
+  class="did-you-know-data"
+></div>
+
+<script src="~/scripts/did-you-know.ts"></script>
