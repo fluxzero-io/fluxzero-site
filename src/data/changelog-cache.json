@@ -1,7 +1,16 @@
 {
-  "lastUpdated": "2025-11-24T17:05:11.177Z",
-  "latestVersion": "1.51.0",
+  "lastUpdated": "2025-12-01T14:15:24.945Z",
+  "latestVersion": "1.52.0",
   "releases": [
+    {
+      "version": "1.52.0",
+      "date": "2025-11-26",
+      "body": "**Full Changelog**: https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.51.0...1.52.0",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.52.0",
+      "quarterKey": "2025-Q4",
+      "year": 2025,
+      "quarter": "Q4"
+    },
     {
       "version": "1.51.0",
       "date": "2025-11-23",
