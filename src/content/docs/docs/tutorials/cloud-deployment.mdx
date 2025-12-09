@@ -37,32 +37,117 @@ Fluxzero Cloud gives you:
 
 ## Deploying from GitHub
 
-To deploy your app, all you need is a GitHub Actions workflow and your Fluxzero API key.
+To deploy your app, all you need is a Fluxzero API key, a GitHub Actions workflow, and a Dockerfile.
 
-Here’s an example:
+### Create an organization
+
+Sign in to the Fluxzero Cloud dashboard. Create a new organization if you haven't done already.
+
+### Download an API key
+
+Select your organization and open the tab 'API Keys'. Create a new key and download it.
+
+### Configure API key
+
+Go to your GitHub repository and create a new Actions secret named `FLUXZERO_API_KEY`. Copy the full content of the key into the 'Secret' field.
+
+### Add Dockerfile
+
+Place a file named `Dockerfile`. E.g.:
+
+```docker
+FROM eclipse-temurin:25-jre-alpine
+
+COPY target/app.jar /
+
+CMD java -jar /app.jar
+```
+
+### Run deployment
+
+Below is a complete example script you can use to deploy an app to a Fluxzero cluster of choice:
 
 ```yaml
-steps:
-  - name: Generate Fluxzero JWT
-    id: jwt
-    uses: fluxzero-io/fluxzero-jwt-action@v1
-    with:
-      api-key: ${{ secrets.FLUXZERO_API_KEY }}
+name: Deploy to Fluxzero Cloud
 
-  # Build and push your docker image...
+on:
+  workflow_dispatch:
+    inputs:
+      cluster-name:
+        description: "Cluster name"
+        required: true
+        default: "Test"
+      app-name:
+        description: "Application name"
+        required: true
+        default: "Sample"
+      image-name:
+        description: "Docker image name"
+        required: true
+        default: "sample"
 
-  - name: Deploy app to Fluxzero Cloud
-    uses: fluxzero-io/fluxzero-deploy-action@v1
-    with:
-      cluster-name: "Production"
-      application-name: "To Do"
-      image-name: ${{ env.image_name }}
-      version: ${{ env.image_version }}
-      token: ${{ steps.jwt.outputs.token }}
+jobs:
+  maven-build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+
+      - name: Build with Maven
+        run: mvn -B -T1C package
+
+      - name: Generate Fluxzero JWT
+        id: jwt
+        uses: fluxzero-io/fluxzero-jwt-action@v1
+        with:
+          api-key: ${{ secrets.FLUXZERO_API_KEY }}
+
+      - name: Log in to Fluxzero Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.fluxzero.io
+          username: ${{ steps.jwt.outputs.userId }}
+          password: ${{ steps.jwt.outputs.token }}
+
+      - name: Extract metadata
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            registry.fluxzero.io/${{ github.event.inputs.image-name }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+
+      - name: Deploy to Fluxzero cluster
+        uses: fluxzero-io/fluxzero-deploy-action@v1
+        with:
+          cluster-name: ${{ github.event.inputs.cluster-name }}
+          application-name: ${{ github.event.inputs.application-name }}
+          image-name: ${{ github.event.inputs.image-name }}
+          version: ${{ steps.metadata.outputs.version }}
+          token: ${{ steps.jwt.outputs.token }}
 ```
 
 <Aside type="note">
-    You can also deploy via API using your generated JWT token.
+    You can also manually deploy via API using your generated JWT token.
 </Aside>
 
 ---
