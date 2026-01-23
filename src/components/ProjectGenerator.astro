@@ -5,6 +5,7 @@ export interface Template {
   name: string;
   description: string;
   language: 'java' | 'kotlin';
+  defaultBuildTool: 'gradle' | 'maven';
 }
 
 export interface ProjectGeneratorData {
@@ -41,17 +42,20 @@ const templates: Record<string, Template> = {
   'flux-basic-java': {
     name: 'Basic Java Starter',
     description: 'A minimal Fluxzero setup for getting started.',
-    language: 'java'
+    language: 'java',
+    defaultBuildTool: 'maven'
   },
   'flux-basic-kotlin': {
     name: 'Basic Kotlin Starter',
     description: 'A minimal Fluxzero setup for getting started.',
-    language: 'kotlin'
+    language: 'kotlin',
+    defaultBuildTool: 'gradle'
   },
   'gamerental': {
     name: 'Game Rental Example',
     description: 'Complete application for game rentals.',
-    language: 'java'
+    language: 'java',
+    defaultBuildTool: 'maven'
   },
 };
 ---
@@ -242,7 +246,7 @@ const templates: Record<string, Template> = {
       artifactId: 'demo',
       groupId: 'com.example',
       selectedTemplate: 'flux-basic-java',
-      buildTool: 'gradle',
+      buildTool: 'maven', // Will be set based on template in init()
       artifactIdManuallyEdited: false,
       buttonState: 'idle',
       message: null,
@@ -269,9 +273,12 @@ const templates: Record<string, Template> = {
       
       // Methods
       init() {
+        // Set initial build tool based on selected template
+        this.updateBuildToolForTemplate();
+
         // Initialize validation
         this.validateAll();
-        
+
         // Auto-hide messages after 5 seconds
         this.$watch('message', (message) => {
           if (message) {
@@ -280,7 +287,7 @@ const templates: Record<string, Template> = {
             }, 5000);
           }
         });
-        
+
         // Auto-reset success button state
         this.$watch('buttonState', (state) => {
           if (state === 'success') {
@@ -289,13 +296,23 @@ const templates: Record<string, Template> = {
             }, 2000);
           }
         });
-        
+
+        // Watch for template changes to update build tool
+        this.$watch('selectedTemplate', () => this.updateBuildToolForTemplate());
+
         // Watch for validation changes
         this.$watch('projectName', () => this.validateProjectName());
         this.$watch('groupId', () => this.validateGroupId());
         this.$watch('artifactId', () => this.validateArtifactId());
       },
-      
+
+      updateBuildToolForTemplate() {
+        const template = this.templates[this.selectedTemplate];
+        if (template && template.defaultBuildTool) {
+          this.buildTool = template.defaultBuildTool;
+        }
+      },
+
       validateProjectName() {
         if (!this.projectName) {
           this.errors.projectName = null;
