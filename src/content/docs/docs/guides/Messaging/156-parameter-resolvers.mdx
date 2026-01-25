@@ -22,8 +22,9 @@ By default, Fluxzero supports injection of the following parameters into handler
 
 - The **message payload** (automatically matched by type)
 - The full **`Message`**, **`Schedule`**, or **`WebRequest`**
-- The raw **`DeserializingMessage`** (for low-level access)
+- The raw **`DeserializingMessage`** or **`SerializedMessage`** (for low-level access)
 - The message **`Metadata`**
+- The message timestamp as **`Instant`** or **`Clock`**
 - The currently authenticated **`User`** (if available)
 - The associated **`Entity`** wrapper or the entity value itself
 - The **triggering message** (annotated with `@Trigger`)
