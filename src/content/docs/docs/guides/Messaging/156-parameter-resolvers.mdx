@@ -90,21 +90,22 @@ objects:
 </Tabs>
 
 Then register it via your builder:
+Assuming you are configuring a `FluxzeroBuilder builder`:
 
 <Tabs>
   <TabItem label="Java">
-    ```java
-    DefaultFluxzero.builder()
+```java
+    builder
         .addParameterResolver(new TimestampParameterResolver())
         .build();
-    ```
+```
   </TabItem>
   <TabItem label="Kotlin">
-    ```kotlin
-    DefaultFluxzero.builder()
+```kotlin
+    builder
         .addParameterResolver(TimestampParameterResolver())
         .build()
-    ```
+```
   </TabItem>
 </Tabs>
 

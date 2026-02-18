@@ -31,9 +31,8 @@ Let’s assume a bug caused command processing to fail in September 2025. The fo
 class CommandReplayHandler {
 
     @HandleError
-    @Trigger(messageType = MessageType.COMMAND)
-    void retry(MyCommand failed) {
-        Fluxzero.sendCommand(failed);
+    void retry(ConsoleError error, @Trigger(messageType = MessageType.COMMAND) MyCommand failedCommand) {
+        Fluxzero.sendCommand(failedCommand);
     }
 }
 ```
@@ -50,9 +49,8 @@ class CommandReplayHandler {
 class CommandReplayHandler {
 
     @HandleError
-    @Trigger(messageType = MessageType.COMMAND)
-    fun retry(failed: MyCommand) {
-        Fluxzero.sendCommand(failed)
+    fun retry(error: ConsoleError, @Trigger(messageType = MessageType.COMMAND) failedCommand: MyCommand) {
+        Fluxzero.sendCommand(failedCommand)
     }
 }
 ```

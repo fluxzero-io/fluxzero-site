@@ -21,11 +21,11 @@ To configure and instantiate a WebSocket-backed client:
   ```java
   WebSocketClient client = WebSocketClient.newInstance(
           WebSocketClient.ClientConfig.builder()
-                  .serviceBaseUrl("wss://my.flux.host")
+                  .runtimeBaseUrl("wss://my.flux.host")
                   .name("my-service")
                   .build());
 
-  Fluxzero flux = Fluxzero.builder().build(client);
+  Fluxzero flux = DefaultFluxzero.builder().build(client);
   ```
   </TabItem>
   <TabItem label="Kotlin">
@@ -33,18 +33,18 @@ To configure and instantiate a WebSocket-backed client:
   ```kotlin
   val client = WebSocketClient.newInstance(
       WebSocketClient.ClientConfig.builder()
-          .serviceBaseUrl("wss://my.flux.host")
+          .runtimeBaseUrl("wss://my.flux.host")
           .name("my-service")
           .build()
   )
 
-  val flux = Fluxzero.builder().build(client)
+  val flux = DefaultFluxzero.builder().build(client)
   ```
   </TabItem>
 </Tabs>
 
 This is the most common setup for production and shared environments. It connects to a remote Fluxzero Runtime via the
-service base URL, which must point to the desired deployment.
+runtime base URL, which must point to the desired deployment.
 
 ---
 
@@ -57,7 +57,7 @@ Key options include:
 
 | Setting                     | Description                                                  | Default                          |
 |-----------------------------|--------------------------------------------------------------|----------------------------------|
-| `serviceBaseUrl`            | Base URL for all subsystems <br/>(e.g. `wss://my.flux.host`) | `FLUX_BASE_URL` property         |
+| `runtimeBaseUrl`            | Base URL for all subsystems <br/>(e.g. `wss://my.flux.host`) | `FLUX_BASE_URL` property         |
 | `name`                      | Name of the application                                      | `FLUX_APPLICATION_NAME` property |
 | `applicationId`             | Optional app ID                                              | `FLUX_APPLICATION_ID` property   |
 | `id`                        | Unique client instance ID                                    | `FLUX_TASK_ID` property or UUID  |
@@ -148,7 +148,7 @@ Once created, the client is passed into the builder:
   <TabItem label="Java">
 
   ```java
-  Fluxzero flux = Fluxzero.builder()
+  Fluxzero flux = DefaultFluxzero.builder()
           .makeApplicationInstance(true)
           .build(webSocketClient);
   ```
@@ -156,7 +156,7 @@ Once created, the client is passed into the builder:
   <TabItem label="Kotlin">
 
   ```kotlin
-  val flux = Fluxzero.builder()
+  val flux = DefaultFluxzero.builder()
       .makeApplicationInstance(true)
       .build(webSocketClient)
   ```
@@ -178,13 +178,13 @@ For testing or lightweight local development, use the in-memory `LocalClient` in
   <TabItem label="Java">
 
   ```java
-  Fluxzero flux = Fluxzero.builder().build(new LocalClient());
+  Fluxzero flux = DefaultFluxzero.builder().build(LocalClient.newInstance());
   ```
   </TabItem>
   <TabItem label="Kotlin">
 
   ```kotlin
-  val flux = Fluxzero.builder().build(LocalClient())
+  val flux = DefaultFluxzero.builder().build(LocalClient.newInstance())
   ```
   </TabItem>
 </Tabs>

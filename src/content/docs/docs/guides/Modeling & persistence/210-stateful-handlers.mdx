@@ -70,7 +70,7 @@ To declare a stateful handler, annotate a class with `@Stateful`:
 - Matching is dynamic and supports multiple handler instances per message
 - Multiple handler methods can exist for different message types
 - Handlers are immutable by convention — they are updated by returning a new version of themselves
-- Returning `null` deletes the handler (useful for terminating flows)
+- Returning `null` from a handler-compatible return type deletes the current handler instance (useful for terminal flows)
 
 <Aside type="note">
 Like other handlers, stateful handlers may be annotated with `@Consumer` for tracking isolation.
@@ -122,8 +122,16 @@ This is similar to correlation IDs or saga keys — but built-in and fully index
 ## State update semantics
 
 - If the handler method returns a new instance of its class, it replaces the previous version in the store
+- If it returns a collection, every returned instance of the same stateful type is stored
+- Returning an empty collection deletes the current instance
+- If a returned collection does not include the current instance ID, the current instance is deleted
+- Returning a same-type instance with a different `@EntityId` replaces the current instance (new ID stored, old ID deleted)
 - If it returns `void` or a value of another type, state is left unchanged
 - This allows safe utility returns (like `Duration` for `@HandleSchedule`)
+
+<Aside type="note">
+Collections allow a stateful handler to fan out into multiple stateful instances after handling a single message.
+</Aside>
 
 <Tabs>
   <TabItem label="Java">
@@ -197,6 +205,11 @@ graph TD
 
     INVOKE --> RETURN{Handler return value?}
     RETURN -->|Same type instance| UPDATE[Persist new handler state]
+    RETURN -->|Collection of same type| UPSERT_MANY[Persist each returned instance]
+    UPSERT_MANY --> CURRENT_IN_SET{Current ID returned?}
+    CURRENT_IN_SET -->|No| DELETE_CURRENT[Delete current handler]
+    CURRENT_IN_SET -->|Yes| KEEP_CURRENT[Keep current handler]
+    RETURN -->|Empty collection| DELETE_CURRENT
     RETURN -->|"null (with compatible return type)"| DELETE[Delete handler from store]
     RETURN -->|Other type or void| KEEP[Keep existing state]
 ```
@@ -208,10 +221,11 @@ graph TD
 5. The handler is invoked with the incoming message.
 6. The return value determines what happens next:
    - Returning a new instance of the handler type → the handler state is re-persisted with the updated values.
+   - Returning a collection of handler instances → each returned instance is stored; current instance is deleted if its ID is not returned.
+   - Returning an empty collection → the current instance is deleted.
    - Returning `null` (with a compatible return type) → the handler is deleted from the store.
    - Returning another type or `void` → the state remains unchanged (useful for utility responses such as durations or acknowledgments).
 
 <Aside type="note">
 This entire process typically runs behind a **message tracker**, which continuously delivers messages to eligible stateful handlers. It’s not an on-demand invocation, but part of Fluxzero’s ongoing tracking loop.
 </Aside>
-

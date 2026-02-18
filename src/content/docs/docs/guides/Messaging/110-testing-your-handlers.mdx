@@ -212,7 +212,7 @@ fixture.givenCommands(CreateUser(userProfile), ResetPassword(...))
 Test fixtures support loading inputs from external JSON resources. This allows you to keep your tests clean and reuse
 structured input data.
 
-Any `givenXyz(...)`, `whenXzy(...)`, or `expectXyz(...)` method argument that is a `String` ending with `.json` will be
+Any `givenXyz(...)`, `whenXyz(...)`, or `expectXyz(...)` method argument that is a `String` ending with `.json` will be
 interpreted as a <strong>classpath resource path</strong>, and deserialized accordingly.
 
 For example:
@@ -531,6 +531,7 @@ This ensures that:
 - Handlers are tracked using real consumer infrastructure.
 - Asynchronous behavior (e.g., retries, delays, state changes) is tested realistically.
 - `expect...()` calls wait for outcomes, enabling end-to-end flow testing.
+- `given...()` preconditions complete before the `when...()` phase starts.
 
 <Aside type="note">
 Handlers annotated with `@LocalHandler` are still executed synchronously, even in async fixtures—just like in production.

@@ -421,7 +421,7 @@ To enable efficient **range filters** and **sorted results** in document searche
 </Tabs>
 
 This tells Fluxzero to pre-index these fields in a lexicographically sortable format. When you issue a search
-with a `between()` constraint or `.sort(...)` clause, the Fluxzero Runtime can evaluate it directly in the data store —
+with a `between(...)` constraint or `.sortBy(...)` clause, the Fluxzero Runtime can evaluate it directly in the data store —
 without needing to load and compare documents in memory.
 
 ### Optimized search example
@@ -430,16 +430,16 @@ without needing to load and compare documents in memory.
   <TabItem label="Java">
     ```java
     List<Product> results = Fluxzero.search(Product.class)
-            .between("price", 10, 100)
-            .sort("releaseDate")
+            .between(10, 100, "price")
+            .sortBy("releaseDate")
             .fetch(100);
     ```
   </TabItem>
   <TabItem label="Kotlin">
     ```kotlin
     val results: List<Product> = Fluxzero.search(Product::class.java)
-        .between("price", 10, 100)
-        .sort("releaseDate")
+        .between(10, 100, "price")
+        .sortBy("releaseDate")
         .fetch(100)
     ```
   </TabItem>
@@ -478,6 +478,7 @@ If the sortable field is:
 - To apply sorting retroactively, trigger a reindex (e.g. with `@HandleDocument` and a bumped `@Revision`).
 - Sorting and filtering still happen within the Fluxzero Runtime, but without `@Sortable` the logic falls back
   to in-memory evaluation — which is much slower.
+- Avoid re-implementing sorting/filtering in application code; express them in the search query so execution stays in the Runtime.
 
 <Aside type="tip">
 Use <code>@Sortable</code> together with <code>@Facet</code> if you want both sorting and aggregation/filtering on a field.

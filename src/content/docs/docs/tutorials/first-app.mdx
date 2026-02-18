@@ -419,6 +419,10 @@ create a new one.
 Like with handlers you can inject context into `@Apply` methods. In fact, let's inject the user sending in the
 command and make it the owner of the Project:
 
+<Aside type="note">
+  Recommended: avoid putting the sending user ID in command payloads. Use `Sender` injection for caller context.
+</Aside>
+
 <Tabs>
   <TabItem value="java" label="Java">
 

@@ -62,7 +62,7 @@ You typically have commands to **create**, **modify**, **delete**, or **upsert**
   <TabItem label="Java">
 
   ```java
-  @RequiresRole(manager)
+  @RequiresRole(Role.manager)
   public record CreateProject(@NotNull ProjectId projectId,
                               @NotNull @Valid ProjectDetails details) {
       @Apply
@@ -76,7 +76,7 @@ You typically have commands to **create**, **modify**, **delete**, or **upsert**
   <TabItem label="Kotlin">
 
   ```kotlin
-  @RequiresRole(manager)
+  @RequiresRole(Role.manager)
   data class CreateProject(
       @field:NotNull val projectId: ProjectId,
       @field:Valid val details: ProjectDetails
@@ -184,7 +184,7 @@ Here we also implement a shared interface with common validation logic:
   <TabItem label="Java">
 
   ```java
-  @RequiresRole(manager)
+  @RequiresRole(Role.manager)
   public interface ProjectUpdate {
 
       @NotNull ProjectId projectId();
@@ -202,7 +202,7 @@ Here we also implement a shared interface with common validation logic:
   <TabItem label="Kotlin">
 
   ```kotlin
-  @RequiresRole(manager)
+  @RequiresRole(Role.manager)
   interface ProjectUpdate {
 
       fun projectId(): ProjectId
@@ -277,6 +277,9 @@ Fluxzero will invoke the appropriate `@Apply` method depending on whether the en
 
 - **Generate IDs outside the command.**
 This avoids mixing system concerns and makes testing easier.
+
+- **Recommended:** avoid putting the sending user ID in command payloads.
+Inject `Sender` in `@Apply`, `@AssertLegal`, or handler methods when you need caller context.
 
 - **Keep `@Apply` pure and deterministic.**
 This method may be re-run during [event sourcing](/docs/guides/modeling-and-persistence/updating-entities) — avoid randomness, timestamps, or I/O actions here.

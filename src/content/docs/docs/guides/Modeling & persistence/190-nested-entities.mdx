@@ -21,10 +21,8 @@ To define a nested structure, annotate the collection or field with `@Member`:
     @Builder(toBuilder = true)
     public record UserAccount(@EntityId UserId userId,
                               UserProfile profile,
-                              boolean accountClosed) {
-
-        @Member
-        List<Authorization> authorizations;
+                              boolean accountClosed,
+                              @Member List<Authorization> authorizations) {
     }
     ```
   </TabItem>

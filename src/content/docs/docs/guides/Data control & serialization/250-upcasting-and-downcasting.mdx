@@ -42,6 +42,12 @@ revision number to determine whether any transformation is required.
 
 Upcasting transforms a serialized object from an older revision to a newer one.
 
+<Aside type="note">
+Upcasters operate on top-level serialized objects (payloads, documents, snapshots, key-value entries), not on nested
+types in isolation. If a nested model change affects multiple top-level payload/document types, add upcasters (and new
+`@Revision`s) for each affected top-level type.
+</Aside>
+
 <Tabs>
   <TabItem label="Java">
     ```java

@@ -22,7 +22,7 @@ void registerGame() {
     testFixture
         .whenPost("/games", "/game/game-details.json")  // Simulates POST with payload
         .expectResult(GameId.class)                     // Asserts a result is returned
-        .expectEvents(RegisterGame.class);              // Asserts a command was published
+        .expectEvents(RegisterGame.class);              // Asserts the applied update was published as an event
 }
 ```
 
@@ -121,6 +121,9 @@ fun getGames() {
 
   </TabItem>
 </Tabs>
+
+In Java, the explicit `.<List<Game>>` cast is needed because `whenGet(...)` alone does not expose a concrete generic
+result type to the fixture.
 
 This corresponds to the following handler method:
 

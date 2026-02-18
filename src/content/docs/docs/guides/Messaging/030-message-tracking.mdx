@@ -71,6 +71,7 @@ Both the Requester and the Responder maintain continuous trackers:
 - The Responder continuously tracks the `QUERY` log to receive new requests.
 
 This ensures that services stay connected to Fluxzero and messages flow asynchronously without direct endpoints.
+If multiple consumers handle the same request message type, multiple results can be produced. The requester resolves the first stored result and ignores later ones.
 
 ## Default Consumer Behavior
 
@@ -103,7 +104,18 @@ class MyHandler {
 </TabItem>
 </Tabs>
 
-This handler will automatically join the **default command consumer**. This means you get safe sequential processing with minimal configuration. However, you can also define your own isolated consumer with `@Consumer` to control concurrency, batch size, and fault isolation. This is useful when certain message flows require dedicated resources or stricter ordering.
+This handler will automatically join the **default command consumer**. If a consumer is configured through `FluxzeroBuilder` and matches the handler, that configuration is used before the app default. An explicit `@Consumer` on the handler remains most specific and therefore takes precedence.
+
+## Namespaces
+
+Namespaces isolate message logs and tracking state, so a single Fluxzero Runtime can host multiple environments
+(for example `test`, `accept`, and `staging`) without clashing data.
+
+- Set `FLUXZERO_NAMESPACE` (env var or property) to define the app's default namespace. This applies across subsystems
+  (messaging, tracking, documents/search, event store, and related runtime operations).
+- If no namespace is configured, the runtime default namespace is used.
+- You can still set a namespace on `@Consumer(namespace = "...")` or via `ConsumerConfiguration.namespace(...)` for
+  consumer-specific cross-namespace flows (for example, peeking/replaying from another namespace).
 
 ## Custom Consumers with @Consumer
 
@@ -212,9 +224,9 @@ Fluxzero provides conservative defaults to ensure safe and sequential processing
 
 ## Custom routing keys
 
-By default, Fluxzero uses **128 segments** to balance parallelism and ordering guarantees. These segments are evenly split across available trackers to distribute load efficiently. The `ignoreSegment` configuration, when set to `true`, means that each tracker receives all messages regardless of segment assignment. This allows filtering and routing to be applied at the client or handler level using custom routing keys rather than relying on segment-based filtering. The `singleTracker` option can be enabled to force all segments to be managed by a single tracker instance, simplifying ordering at the cost of scalability.
+By default, Fluxzero uses **128 segments** to balance parallelism and ordering guarantees. These segments are evenly split across available trackers to distribute load efficiently. The `ignoreSegment` configuration, when set to `true`, means that each tracker receives all messages regardless of segment assignment. This enables handler-level routing control with custom routing keys when segment-based assignment is not sufficient. The `singleTracker` option can be enabled to force all segments to be managed by a single tracker instance, simplifying ordering at the cost of scalability.
 
-To enable client-side filtering using a custom routing key, annotate your handler class with `@Consumer(name = "...", ignoreSegment = true)`. Then, use the `@RoutingKey` annotation on your handler method (or class) to specify which field to use for routing.
+To override routing using a custom routing key at handler level, annotate your handler class with `@Consumer(name = "...", ignoreSegment = true)`. Then, use the `@RoutingKey` annotation on your handler method (or class) to specify which field to use for routing.
 
 <Tabs>
   <TabItem value="java" label="Java">

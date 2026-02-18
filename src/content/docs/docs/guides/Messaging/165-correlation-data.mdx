@@ -30,7 +30,10 @@ This correlation data is automatically added by the Fluxzero SDK to the `Metadat
 
 <Aside>
 Flux reserves `$` as a prefix for metadata property names.
-You are allowed to use the `$` prefix for your own metadata properties, but this is unsupported and therefore we recommend to use a different prefix to avoid conflicts with Fluxzero's internal metadata properties.
+You are allowed to use the `$` prefix for your own metadata properties, but this is unsupported and therefore we
+recommend using a different prefix to avoid conflicts with Fluxzero's internal metadata properties.
+Supported exception: use the SDK-provided trace helpers (for example `Metadata.withTrace(...)`) which intentionally
+write `$trace.*` keys.
 </Aside>
 
 See <Jdoclink className="CorrelationDataProvider" /> for the full list of metadata properties that are propagated by default.

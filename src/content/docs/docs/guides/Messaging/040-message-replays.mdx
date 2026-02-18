@@ -113,7 +113,7 @@ Fluxzero.client()
 </Tabs>
 
 <Aside type="caution">
-  Be careful when replaying on existing handlers to avoid **duplicating side effects** (emails, HTTP calls, etc.). Consider idempotency checks or a dedicated replay consumer.
+  Be careful when replaying on existing handlers to avoid **duplicating side effects** (emails, HTTP calls, etc.). Prefer a dedicated replay consumer when side effects are not replay-safe.
 </Aside>
 
 ## Parallel replays with <code>exclusive = false</code>
@@ -164,7 +164,7 @@ fluxzeroBuilder.addConsumerConfiguration(
         .name("replay")                                  // new consumer
         .handlerFilter(h -> h instanceof OrderProcessor) // same class
         .minIndex(111677748019200000L)                   // start of window
-        .maxIndex(111853279641600000L)                   // end of window
+        .maxIndexExclusive(111853279641600000L)          // end of window (exclusive)
         .build(),
     MessageType.COMMAND
 );
@@ -179,7 +179,7 @@ fluxzeroBuilder.addConsumerConfiguration(
         .name("replay")                             // new consumer
         .handlerFilter { it is OrderProcessor }     // same class
         .minIndex(111677748019200000L)              // start of window
-        .maxIndex(111853279641600000L)              // end of window
+        .maxIndexExclusive(111853279641600000L)     // end of window (exclusive)
         .build(),
     MessageType.COMMAND
 )
@@ -196,107 +196,7 @@ This spins up a **parallel tracker** that replays messages between the two indic
 
 ---
 
-## Handling failures by replaying from the error log
+## Handling failures and DLQ flows
 
-Fluxzero automatically logs **all handler failures** to a dedicated **error log** — including commands, queries, web requests, schedules, and events. Each error contains the stack trace, metadata, and a reference to the **original message**.
-
-### Error handling with <code>@HandleError</code>
-
-React to failures programmatically:
-
-<Tabs>
-  <TabItem value="Java" label="Java">
-
-```java
-class ErrorHandler {
-
-    @HandleError
-    void onError(Throwable error) {
-        log.warn("Something went wrong!", error);
-    }
-}
-```
-
-  </TabItem>
-  <TabItem value="Kotlin" label="Kotlin">
-
-```kotlin
-class ErrorHandler {
-
-    @HandleError
-    fun onError(error: Throwable) {
-        log.warn("Something went wrong!", error)
-    }
-}
-```
-
-  </TabItem>
-</Tabs>
-
-Inject the **failed message** using <code>@Trigger</code>:
-
-<Tabs>
-  <TabItem value="Java" label="Java">
-
-```java
-class ErrorHandler {
-
-    @HandleError
-    void onError(Throwable error, @Trigger SomeCommand failedCommand) {
-        log.warn("Failed to process {}: {}", failedCommand, error.getMessage());
-    }
-}
-```
-
-  </TabItem>
-  <TabItem value="Kotlin" label="Kotlin">
-
-```kotlin
-class ErrorHandler {
-
-    @HandleError
-    fun onError(error: Throwable, @Trigger failedCommand: SomeCommand) {
-        log.warn("Failed to process {}: {}", failedCommand, error.message)
-    }
-}
-```
-
-  </TabItem>
-</Tabs>
-
-<Aside type="note">
-  The <code>@Trigger</code> parameter can be the payload (e.g., <code>SomeCommand</code>) or a full <code>Message</code>/<code>DeserializingMessage</code>.
-</Aside>
-
-Filter by trigger type, message type, or originating consumer — for example, to **retry failed commands** from a specific consumer:
-
-<Tabs>
-  <TabItem value="Java" label="Java">
-
-```java
-class ErrorHandler {
-
-    @HandleError
-    @Trigger(messageType = MessageType.COMMAND, consumer = "my-app")
-    void retryFailedCommand(MyCommand failed) {
-        Fluxzero.sendCommand(failed);
-    }
-}
-```
-
-  </TabItem>
-  <TabItem value="Kotlin" label="Kotlin">
-
-```kotlin
-class ErrorHandler {
-
-    @HandleError
-    @Trigger(messageType = MessageType.COMMAND, consumer = "my-app")
-    fun retryFailedCommand(failed: MyCommand) {
-        Fluxzero.sendCommand(failed)
-    }
-}
-```
-
-  </TabItem>
-</Tabs>
+For replaying failures from the error log (dynamic DLQ), use the dedicated
+[Dynamic dead-lettering guide](/docs/guides/messaging/dynamic-dead-lettering).

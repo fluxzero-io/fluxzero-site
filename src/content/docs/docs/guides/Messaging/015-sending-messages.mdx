@@ -204,18 +204,17 @@ A `DispatchInterceptor` lets you hook into the message pipeline before it’s pu
 To block dispatch, simply return `null` from the `interceptDispatch` method.
 
 **Registering an interceptor globally**
+Assuming you are configuring a `FluxzeroBuilder builder`:
 <Tabs>
   <TabItem label="Java">
-    ```java
-    FluxzeroBuilder
-        .addDispatchInterceptor(new LoggingInterceptor(), MessageType.COMMAND, MessageType.EVENT);
-    ```
+```java
+builder.addDispatchInterceptor(new LoggingInterceptor(), MessageType.COMMAND, MessageType.EVENT);
+```
   </TabItem>
   <TabItem label="Kotlin">
-    ```kotlin
-    FluxzeroBuilder
-        .addDispatchInterceptor(LoggingInterceptor(), MessageType.COMMAND, MessageType.EVENT)
-    ```
+```kotlin
+builder.addDispatchInterceptor(LoggingInterceptor(), MessageType.COMMAND, MessageType.EVENT)
+```
   </TabItem>
 </Tabs>
 

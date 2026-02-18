@@ -44,19 +44,20 @@ data class CreateUser(
 </Tabs>
 
 You can disable this validation entirely by calling:
+Assuming you are configuring a `FluxzeroBuilder builder`:
 
 <Tabs>
 <TabItem value="Java" label="Java">
 
 ```java
-FluxzeroBuilder.disablePayloadValidation();
+builder.disablePayloadValidation();
 ```
 
 </TabItem>
 <TabItem value="Kotlin" label="Kotlin">
 
 ```kotlin
-FluxzeroBuilder.disablePayloadValidation()
+builder.disablePayloadValidation()
 ```
 
 </TabItem>

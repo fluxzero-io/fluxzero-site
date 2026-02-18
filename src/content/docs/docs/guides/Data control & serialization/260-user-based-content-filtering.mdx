@@ -142,26 +142,26 @@ For example, you can annotate a query handler so that all results it returns are
 
 <Tabs>
   <TabItem label="Java">
-    ```java
-    public class GetOrder implements Request<Order> {
+```java
+    public record GetOrder(OrderId orderId) implements Request<Order> {
         @HandleQuery
         @FilterContent
         public Optional<Order> handle() {
-            return Fluxzero.getDocument(query.orderId(), "orders");
+            return Fluxzero.getDocument(orderId, "orders");
         }
     }
-    ```
+```
   </TabItem>
   <TabItem label="Kotlin">
-    ```kotlin
-    class GetOrder : Request<Order> {
+```kotlin
+    data class GetOrder(val orderId: OrderId) : Request<Order?> {
         @HandleQuery
         @FilterContent
         fun handle(): Order? {
-            return Fluxzero.getDocument(query.orderId, "orders")
+            return Fluxzero.getDocument(orderId, "orders")
         }
     }
-    ```
+```
   </TabItem>
 </Tabs>
 
