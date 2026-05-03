@@ -1,3 +1,8 @@
+---
+import MarketingFooter from '../components/marketing/MarketingFooter.astro';
+import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+---
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,29 +17,7 @@
     <link rel="stylesheet" href="/css/home.css?v=20260429-11">
 </head>
 <body>
-<nav class="nav-shell">
-    <a href="/" class="nav-logo-wrap" aria-label="Fluxzero home">
-        <span class="logo-mark nav-logo-mark" aria-hidden="true"></span>
-        <span class="nav-wordmark">FLUXZERO</span>
-    </a>
-
-    <div class="nav-main">
-        <div class="nav-main-links">
-            <a href="/pricing" class="nav-link">Pricing</a>
-            <a href="/about" class="nav-link">Our story</a>
-            <a href="/docs" class="nav-link">Docs</a>
-        </div>
-    </div>
-
-    <div class="nav-actions">
-        <a href="https://fluxzero.statuspage.io/" class="nav-status" aria-label="System status" target="_blank" rel="noreferrer" data-status-link>
-            <span class="status-dot" aria-hidden="true" data-status-dot></span>
-            <span class="nav-status-label">Status</span>
-        </a>
-
-        <a href="https://dashboard.fluxzero.io" class="nav-cta">Sign in</a>
-    </div>
-</nav>
+<MarketingHeader />
 
 <!-- 1 · HERO -->
 <section class="hero" aria-labelledby="hero-title">
@@ -772,18 +755,7 @@
     <p class="cta-note">Build today. <a href="mailto:info@fluxzero.io?subject=Request%20launch%20access">Request launch access</a> when your app is ready.</p>
 </section>
 
-<footer>
-    <div class="ft">
-        <div class="ft-l">© 2026 Fluxzero B.V.</div>
-        <div class="ft-r">
-            <a href="/docs">Docs</a>
-            <a href="https://github.com/fluxzero-io" target="_blank" rel="noreferrer">GitHub</a>
-            <a href="/docs/about/changelog/">Changelog</a>
-            <a href="/docs/about/terms/">Terms</a>
-            <a href="/docs/about/privacy/">Privacy</a>
-        </div>
-    </div>
-</footer>
+<MarketingFooter />
 
     <script src="/js/home.js" defer></script>
 </body>
