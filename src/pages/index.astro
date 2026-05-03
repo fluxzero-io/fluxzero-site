@@ -1,438 +1,790 @@
----
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import '../styles/main.scss';
-import '../styles/fluxzero.css';
----
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxzero — Build the product. Trust the backend.</title>
+    <meta name="description" content="You write the logic. Fluxzero provides the backend runtime you never had time to build properly. Java or Kotlin. Cloud or self-hosted.">
+    <link rel="icon" href="/assets/fluxzero-logo-beb2804d3a4248cf9e5d05937269bfc6.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/home.css?v=20260429-11">
+</head>
+<body>
+<nav class="nav-shell">
+    <a href="/" class="nav-logo-wrap" aria-label="Fluxzero home">
+        <span class="logo-mark nav-logo-mark" aria-hidden="true"></span>
+        <span class="nav-wordmark">FLUXZERO</span>
+    </a>
 
-<BaseLayout
-  title="Fluxzero | Build Without Boundaries"
-  description="Fluxzero is the fastest way to build scalable, message‑driven apps. One unified SDK, zero boilerplate, full observability, and deploy anywhere — local, self‑hosted, or Fluxzero Cloud."
->
-  <!-- Bootstrap icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" slot="head">
-
-  <!-- Page wrapper for sticky footer -->
-  <main class="page-wrapper">
-
-    <section class="bg-info small text-light text-center py-2">
-      <div class="container">
-        Fluxzero Cloud is in closed beta. <a href="/cloud-beta" class="text-light">Want early access?</a>.
-      </div>
-    </section>
-
-    <div class="position-relative">
-      <Header/>
+    <div class="nav-main">
+        <div class="nav-main-links">
+            <a href="/pricing" class="nav-link">Pricing</a>
+            <a href="/about" class="nav-link">Our story</a>
+            <a href="/docs" class="nav-link">Docs</a>
+        </div>
     </div>
 
-    <!--<Header />-->
+    <div class="nav-actions">
+        <a href="https://fluxzero.statuspage.io/" class="nav-status" aria-label="System status" target="_blank" rel="noreferrer" data-status-link>
+            <span class="status-dot" aria-hidden="true" data-status-dot></span>
+            <span class="nav-status-label">Status</span>
+        </a>
 
-    <!-- Hero -->
-    <section class="bg-dark bg-size-cover bg-repeat-0 bg-position-center position-relative overflow-hidden pt-5 pb-3 pb-md-5 mb-2" style="background-image: url(assets/img/landing/saas-3/hero/hero-bg.jpg);" data-bs-theme="dark">
-      <div class="container position-relative zindex-2 pt-5 pb-md-2 pb-lg-4 pb-xl-5">
-        <div class="row pt-3 pb-2 py-md-4">
+        <a href="https://dashboard.fluxzero.io" class="nav-cta">Sign in</a>
+    </div>
+</nav>
 
-          <!-- Text -->
-          <div class="col-xl-5 col-md-6 pt-lg-5 text-center text-md-start mb-4 mb-md-0">
-            <h1 class="display-3 pb-2 pb-sm-3">Write Business Logic.
-              Skip Everything Else.</h1>
-            <p class="text-body fs-lg d-md-block pb-2 pb-md-0 mb-4 mb-md-5">One tool to build and run advanced backends with ease. MVP to global scale without rewrites, ops, or technical bottlenecks.
-            </p>
+<!-- 1 · HERO -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-bg" aria-hidden="true">
+    <div class="hero-bg-core">
+      <div class="hero-bg-radial"></div>
+      <div class="hero-bg-ellipse"></div>
+      <div class="hero-bg-base"></div>
+      <div class="hero-bg-fade">
+        <div class="hero-bg-fade-left"></div>
+        <div class="hero-bg-fade-right"></div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-mobile-logo" aria-hidden="true">
+      <span class="logo-mark hero-logo-mark"></span>
+      <span class="hero-logo-wordmark">FLUXZERO</span>
+  </div>
+  <h1 class="rv d1" id="hero-title"><span class="em">We&rsquo;ve got your back<span class="hero-end">end.</span></span></h1>
 
-            <!--CTA buttons-->
-            <div class="d-grid gap-2 d-md-flex">
-              <a href="/docs/getting-started/installation" class="btn btn-lg btn-primary shadow-primary">Try locally in 2 mins</a>
-              <a href="/docs/tutorials/first-app" class="btn btn-lg btn-outline-secondary">Build your first app</a>
+    <p class="hero-sub rv d2">
+        Start with a production-ready foundation. Build with AI and actually trust what you ship.
+    </p>
+
+    <div class="hero-ctas rv d3">
+        <a href="#get-started" class="btn-p">Generate your app →</a>
+        <a href="mailto:info@fluxzero.io?subject=Request%20launch%20access" class="btn-s">Request launch access</a>
+    </div>
+    <div class="hero-signals rv d4" aria-label="Product highlights">
+        <p class="hero-signal hero-signal-tools" aria-label="Build with Codex, Claude Code, Cursor, or Copilot">
+            <span class="hero-live-dot" aria-hidden="true"></span>
+            <span class="hero-signal-label">Build with</span>
+            <span class="hero-tool-rotator" aria-hidden="true">
+                <span>Codex</span>
+                <span>Claude Code</span>
+                <span>Cursor</span>
+                <span>Copilot</span>
+            </span>
+        </p>
+        <span class="hero-signal-divider" aria-hidden="true"></span>
+        <p class="hero-signal hero-signal-pay">
+            <span class="hero-live-dot" aria-hidden="true"></span>
+            <span>Only pay once you&rsquo;re live.</span>
+        </p>
+    </div>
+</section>
+
+<div class="sp"></div>
+
+<section class="facts facts-carded rv section-stack" id="production-gap-content" aria-labelledby="production-gap-content-title">
+    <div class="section-intro">
+        <h2 class="facts-heading h2-two-line" id="production-gap-content-title">For anyone who wants to launch real software, not demos</h2>
+        <p class="facts-sub"><span>With Fluxzero, what works on your device works in production.</span><br>No backend engineering before you go live.</p>
+    </div>
+
+    <div class="facts-g section-grid">
+        <div class="fc">
+            <div class="fc-head">
+                <h4>Never get stuck at demo</h4>
             </div>
-            <!--<div class="d-flex justify-content-center justify-content-md-start pb-2 pt-lg-2 pt-xl-0">-->
-            <!--                <a href="/docs/getting-started/hello-world" class="btn btn-lg btn-primary shadow-primary me-3 me-sm-4">Try locally in 2 mins</a>-->
-            <!--                <a href="/docs/tutorials/first-app" class="btn btn-lg btn-outline-secondary">Build your first app</a>-->
-            <!--              </div>-->
-          </div>
+            <p>Just build your features and ship them. Launch knowing the backend is already taken care of. No setup or assembly.</p>
+            <div class="fc-visual pg-demo-visual" aria-hidden="true">
+                <svg viewBox="0 0 280 150">
+                    <text class="pg-label" x="24" y="34">BUILT</text>
+                    <text class="pg-label" x="102" y="112">WORKING</text>
+                    <text class="pg-label" x="208" y="34">LAUNCHED</text>
+                    <path class="pg-path" d="M34 74 C88 40 112 100 142 74 S202 42 236 74"/>
+                    <path class="pg-path--active" d="M34 74 C88 40 112 100 142 74 S202 42 236 74"/>
+                    <circle class="pg-node" cx="34" cy="74" r="9"/>
+                    <circle class="pg-node" cx="142" cy="74" r="9"/>
+                    <circle class="pg-node pg-node--live" cx="236" cy="74" r="13"/>
+                    <path class="pg-check pg-check--small" d="m30 73 3 3 6-7"/>
+                    <path class="pg-check pg-check--small" d="m138 73 3 3 6-7"/>
+                    <path class="pg-check" d="m230 74 4 4 8-9"/>
+                </svg>
+            </div>
+        </div>
 
-           <!-- Parallax gfx -->
-          <div class="d-none d-xl-flex col-xl-7 col-md-6 justify-content-end fluxzero-code">
-            <div class="parallax mx-auto ms-md-0 me-md-n5" style="max-width: 700px; translate: -50px 100px">
-              <div class="parallax-layer zindex-2" data-depth="0.1">
-                <div class="code-block">
-                  <pre><code><span class="keyword">public record</span> DepositMoney(AccountId <span class="field">accountId</span>, BigDecimal <span class="field">amount</span>) {`{`}
-  <span class="annotation">@Apply</span>
-  BankAccount <span class="method">deposit</span>(BankAccount account) {`{`}
-     <span class="keyword">return</span> account.withBalance(account.balance().add(<span class="field">amount</span>));
-  {`}`}
-{`}`}
+        <div class="fc">
+            <div class="fc-head">
+                <h4>Never break what already works</h4>
+            </div>
+            <p>New prompts do not break what you already shipped. Feature one hundred builds as fast as feature one.</p>
+            <div class="fc-visual pg-traffic-visual" aria-hidden="true">
+                <div class="pg-traffic-row" style="--traffic-width: 72%; --traffic-delay: 0s"></div>
+                <div class="pg-traffic-row" style="--traffic-width: 54%; --traffic-delay: -1.1s"></div>
+                <div class="pg-traffic-row" style="--traffic-width: 86%; --traffic-delay: -2.2s"></div>
+                <div class="pg-traffic-row" style="--traffic-width: 64%; --traffic-delay: -0.5s"></div>
+            </div>
+        </div>
 
-<span class="comment">// No frameworks. No plumbing. Just business logic — at any scale.</span></code></pre>
+        <div class="fc">
+            <div class="fc-head">
+                <h4>Never leave security to chance</h4>
+            </div>
+            <p>Security and hardening are part of the architecture, not something AI has to invent.</p>
+            <div class="fc-visual pg-ready-visual" aria-hidden="true">
+                <div class="pg-ready-line"></div>
+                <div class="pg-ready-block">Auth</div>
+                <div class="pg-ready-block">Permissions</div>
+                <div class="pg-ready-block">Isolation</div>
+                <div class="pg-ready-block">Hardening</div>
+            </div>
+        </div>
+
+        <div class="fc">
+            <div class="fc-head">
+                <h4>Never rebuild due to success</h4>
+            </div>
+            <p>No matter how ambitious your business gets, the foundation is already there. From MVP to enterprise without rewrites.</p>
+            <div class="fc-visual pg-business-visual" aria-hidden="true">
+                <svg viewBox="0 0 280 142">
+                    <path class="pg-business-grid" d="M28 116 H244 M28 88 H244 M28 60 H244 M28 32 H244 M64 20 V116 M112 20 V116 M160 20 V116 M208 20 V116"/>
+                    <path class="pg-business-arrow-glow" d="M32 108 L74 90 L104 98 L140 66 L172 76 L226 30"/>
+                    <path class="pg-business-arrow" d="M32 108 L74 90 L104 98 L140 66 L172 76 L226 30"/>
+                    <path class="pg-business-arrow-head" d="M244 14 L233 38 L219 21 Z"/>
+                    <circle class="pg-business-spark" cx="74" cy="90" r="2.2"/>
+                    <circle class="pg-business-spark" cx="140" cy="66" r="2.2"/>
+                    <text class="pg-business-label" x="24" y="128">IDEA</text>
+                    <text class="pg-business-label" x="114" y="128">USERS</text>
+                    <text class="pg-business-label" x="202" y="128">BUSINESS</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3 · SPLIT -->
+<section class="system-split rv section-stack" id="system-split" aria-labelledby="system-split-title">
+    <div class="system-split__head">
+        <h2 class="system-split__title" id="system-split-title">Build only what matters</h2>
+        <p class="system-split__subtitle">The full potential of AI can only be unlocked if all technical concerns<br class="desktop-break"> move out of your product.</p>
+    </div>
+
+    <div class="system-split__map">
+        <div class="system-split__panel system-split__panel--interactive" data-inside-panel>
+            <div class="system-split__panel-inner">
+                <div class="system-split__face system-split__face--front">
+                    <p class="system-split__eyebrow">You build</p>
+                    <h3 class="system-split__panel-title">The products people use</h3>
+                    <ul class="system-split__list">
+                        <li>The product experience</li>
+                        <li>What users see and do</li>
+                        <li>The features unique to your product</li>
+                    </ul>
+                    <button class="system-split__inside-btn" type="button" data-inside-toggle aria-expanded="false" aria-label="See domain apps inside">
+                        <svg viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/>
+                        </svg>
+                        <span>See inside</span>
+                    </button>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-
-    <!-- Brands (carousel on screens < 1100px) -->
-    <section class="container border-bottom-lg pt-sm-2">
-      <div class="swiper mx-n2" data-swiper-options='{
-        "slidesPerView": 2,
-        "pagination": {
-          "el": ".swiper-pagination",
-          "clickable": true
-        },
-        "breakpoints": {
-          "500": {
-            "slidesPerView": 3,
-            "spaceBetween": 8
-          },
-          "650": {
-            "slidesPerView": 4,
-            "spaceBetween": 8
-          },
-          "850": {
-            "slidesPerView": 5,
-            "spaceBetween": 8
-          },
-          "992": {
-            "slidesPerView": 6,
-            "spaceBetween": 8
-          }
-        }
-      }'>
-
-        <div class="swiper-wrapper fluxzero-logos d-flex align-items-center">
-          <div class="d-none d-lg-block swiper-slide py-1 m-auto fw-bolder text-uppercase text-gradient-primary">
-            Trusted by teams at :
-          </div>
-
-          <!-- Item -->
-          <div class="swiper-slide py-1 mx-auto">
-            <a href="#" class="px-2 mx-2">
-              <img src="/assets/fluxzero/portbase.svg" class="d-block d-dark-mode-none mx-auto my-2" width="155" alt="Portbase">
-              <img src="/assets/fluxzero/portbase-dark.svg" class="d-none d-dark-mode-block mx-auto my-2" width="155" alt="Portbase">
-            </a>
-          </div>
-
-          <!-- Item -->
-          <div class="swiper-slide py-1 mx-auto">
-            <a href="#" class="px-2 mx-2">
-              <img src="/assets/fluxzero/flowmaps.svg" class="d-block d-dark-mode-none mx-auto my-2" width="180" alt="Flowmaps">
-              <img src="/assets/fluxzero/flowmaps-dark.svg" class="d-none d-dark-mode-block mx-auto my-2" width="180" alt="Flowmaps">
-            </a>
-          </div>
-
-          <!-- Item -->
-          <div class="swiper-slide py-1 mx-auto">
-            <a href="#" class="px-2 mx-2">
-              <img src="/assets/fluxzero/moxi.svg" class="d-block d-dark-mode-none mx-auto my-2" width="120" alt="Moxi">
-              <img src="/assets/fluxzero/moxi-dark.svg" class="d-none d-dark-mode-block mx-auto my-2" width="120" alt="Moxi">
-            </a>
-          </div>
-
-          <!-- Item -->
-          <div class="swiper-slide py-1 mx-auto">
-            <a href="#" class="px-2 mx-2">
-              <img src="/assets/fluxzero/openvoy.svg" class="d-block d-dark-mode-none mx-auto my-2" width="140" alt="OpenVoy">
-              <img src="/assets/fluxzero/openvoy-dark.svg" class="d-none d-dark-mode-block mx-auto my-2" width="140" alt="OpenVoy">
-            </a>
-          </div>
-
-          <!-- Item -->
-          <div class="swiper-slide py-1 mx-auto">
-            <a href="#" class="px-2 mx-2">
-              <img src="/assets/fluxzero/zoef.svg" class="d-block d-dark-mode-none mx-auto my-2" width="120" alt="Zoef">
-              <img src="/assets/fluxzero/zoef-dark.svg" class="d-none d-dark-mode-block mx-auto my-2" width="120" alt="Zoef">
-            </a>
-          </div>
-
-        </div>
-
-        <!-- Pagination (bullets) -->
-        <div class="swiper-pagination position-relative pt-3"></div>
-      </div>
-    </section>
-
-    <section class="container py-2 my-md-2 my-lg-3 my-xl-5">
-      <div class="row align-items-center pt-2 pb-3">
-
-        <!-- Text -->
-        <div class="col-md-6 col-xl-5 text-center text-md-start mb-md-5 mb-md-0">
-          <h2 class="h1 pb-2 pb-lg-3">Software development shouldn’t be this hard.</h2>
-          <p class="pb-2">We started Fluxzero because we were tired of endless rewrites, complexity, and wasted time.</p>
-          <p class="pb-2">What if a single tool could make the advanced stuff easy? We now think we've cracked this nut, and want to share it with fellow builders out there.</p>
-          <p class="pb-2">Fluxzero unifies messaging, storage, search, observability, and deployment into one runtime — so you can focus on what matters.</p>
-
-          <hr class="pt-4"/>
-
-          <div class="d-flex justify-content-center justify-content-md-between pt-2 pt-lg-3">
-            <div class="mx-3 mx-md-0">
-              <div class="display-3 text-dark mb-1">95%</div>
-              <span>Less code</span>
-            </div>
-            <div class="mx-3 mx-md-0">
-              <div class="display-3 text-dark mb-1">10M+</div>
-              <span>Requests per second</span>
-            </div>
-          </div>
-
-        </div>
-
-        <!-- Parallax gfx -->
-        <div class="col-md-6 d-none d-md-block offset-xl-1">
-          <div class="parallax ratio ratio-1x1 mx-auto" style="max-width: 550px; translate: 0px 0px">
-            <div class="parallax-layer position-absolute zindex-2" data-depth="-0.25">
-              <img src="/assets/fluxzero/fluxzero-engine-features4.png" alt="Features">
-            </div>
-            <div class="parallax-layer d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100" data-depth="0.1">
-              <div class="rounded-circle bg-primary" style="width: 70%; height: 70%; opacity: .06;"></div>
-            </div>
-            <div class="parallax-layer d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100" data-depth="0.2">
-              <div class="rounded-circle bg-primary" style="width: 55%; height: 55%; opacity: .06;"></div>
-            </div>
-            <div class="parallax-layer d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100 zindex-3" data-depth="0.4">
-              <div class="d-flex justify-content-center align-items-center rounded-circle" style="width: 110px; height: 110px; ">
-                <img src="/assets/fluxzero/fluxzero-logo.png" width="100%" alt="Fluxzero">
-              </div>
-            </div>
-            <div class="parallax-layer d-flex justify-content-center align-items-center position-absolute top-0 start-0 w-100 h-100" data-depth="0.3">
-              <div class="rounded-circle bg-primary" style="width: 40%; height: 40%; opacity: .06;"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <hr class="mt-5"/>
-
-    </section>
-
-    <section class="container py-5 my-md-2 my-lg-4 my-xl-5">
-      <h2 class="h1 pb-4 pb-lg-5 text-center">All the power. Zero friction.</h2>
-      <div class="row">
-        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-          <div class="d-inline-block bg-secondary rounded-circle p-3 mb-4" style="color: #6366f1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
-              <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
-            </svg>
-          </div>
-          <h3 class="h5 pb-1 mb-2">One simple programming model</h3>
-          <p class="fs-sm">Every interaction is a message: commands, queries, events, schedules, web traffic.</p>
-        </div>
-        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-          <div class="d-inline-block bg-secondary rounded-circle p-3 mb-4" style="color: #6366f1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" fill="currentColor" class="bi bi-braces" viewBox="0 0 16 16">
-              <path d="M2.114 8.063V7.9c1.005-.102 1.497-.615 1.497-1.6V4.503c0-1.094.39-1.538 1.354-1.538h.273V2h-.376C3.25 2 2.49 2.759 2.49 4.352v1.524c0 1.094-.376 1.456-1.49 1.456v1.299c1.114 0 1.49.362 1.49 1.456v1.524c0 1.593.759 2.352 2.372 2.352h.376v-.964h-.273c-.964 0-1.354-.444-1.354-1.538V9.663c0-.984-.492-1.497-1.497-1.6M13.886 7.9v.163c-1.005.103-1.497.616-1.497 1.6v1.798c0 1.094-.39 1.538-1.354 1.538h-.273v.964h.376c1.613 0 2.372-.759 2.372-2.352v-1.524c0-1.094.376-1.456 1.49-1.456V7.332c-1.114 0-1.49-.362-1.49-1.456V4.352C13.51 2.759 12.75 2 11.138 2h-.376v.964h.273c.964 0 1.354.444 1.354 1.538V6.3c0 .984.492 1.497 1.497 1.6"/>
-            </svg>
-          </div>
-          <h3 class="h5 pb-1 mb-2">Designed around your code</h3>
-          <p class="fs-sm">Forget boilerplate. Forget wiring. Just write clean, meaningful code.</p>
-        </div>
-        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-          <div class="d-inline-block bg-secondary rounded-circle p-3 mb-4" style="color: #6366f1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" fill="currentColor" class="bi bi-speedometer2" viewBox="0 0 16 16">
-              <path d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4M3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707M2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10m9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5m.754-4.246a.39.39 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 1.302 1.258l3.434-4.297a.39.39 0 0 0-.029-.518z"/>
-              <path fill-rule="evenodd" d="M0 10a8 8 0 1 1 15.547 2.661c-.442 1.253-1.845 1.602-2.932 1.25C11.309 13.488 9.475 13 8 13c-1.474 0-3.31.488-4.615.911-1.087.352-2.49.003-2.932-1.25A8 8 0 0 1 0 10m8-7a7 7 0 0 0-6.603 9.329c.203.575.923.876 1.68.63C4.397 12.533 6.358 12 8 12s3.604.532 4.923.96c.757.245 1.477-.056 1.68-.631A7 7 0 0 0 8 3"/>
-            </svg>
-          </div>
-          <h3 class="h5 pb-1 mb-2">Non-functionals baked in, not bolted on</h3>
-          <p class="fs-sm">Don't trade simplicity for power — performance, scalability, and security are built into the very design.</p>
-        </div>
-        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-          <div class="d-inline-block bg-secondary rounded-circle p-3 mb-4" style="color: #6366f1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" fill="currentColor" class="bi bi-rocket-takeoff" viewBox="0 0 16 16">
-              <path d="M9.752 6.193c.599.6 1.73.437 2.528-.362s.96-1.932.362-2.531c-.599-.6-1.73-.438-2.528.361-.798.8-.96 1.933-.362 2.532"/>
-              <path d="M15.811 3.312c-.363 1.534-1.334 3.626-3.64 6.218l-.24 2.408a2.56 2.56 0 0 1-.732 1.526L8.817 15.85a.51.51 0 0 1-.867-.434l.27-1.899c.04-.28-.013-.593-.131-.956a9 9 0 0 0-.249-.657l-.082-.202c-.815-.197-1.578-.662-2.191-1.277-.614-.615-1.079-1.379-1.275-2.195l-.203-.083a10 10 0 0 0-.655-.248c-.363-.119-.675-.172-.955-.132l-1.896.27A.51.51 0 0 1 .15 7.17l2.382-2.386c.41-.41.947-.67 1.524-.734h.006l2.4-.238C9.005 1.55 11.087.582 12.623.208c.89-.217 1.59-.232 2.08-.188.244.023.435.06.57.093q.1.026.16.045c.184.06.279.13.351.295l.029.073a3.5 3.5 0 0 1 .157.721c.055.485.051 1.178-.159 2.065m-4.828 7.475.04-.04-.107 1.081a1.54 1.54 0 0 1-.44.913l-1.298 1.3.054-.38c.072-.506-.034-.993-.172-1.418a9 9 0 0 0-.164-.45c.738-.065 1.462-.38 2.087-1.006M5.205 5c-.625.626-.94 1.351-1.004 2.09a9 9 0 0 0-.45-.164c-.424-.138-.91-.244-1.416-.172l-.38.054 1.3-1.3c.245-.246.566-.401.91-.44l1.08-.107zm9.406-3.961c-.38-.034-.967-.027-1.746.163-1.558.38-3.917 1.496-6.937 4.521-.62.62-.799 1.34-.687 2.051.107.676.483 1.362 1.048 1.928.564.565 1.25.941 1.924 1.049.71.112 1.429-.067 2.048-.688 3.079-3.083 4.192-5.444 4.556-6.987.183-.771.18-1.345.138-1.713a3 3 0 0 0-.045-.283 3 3 0 0 0-.3-.041Z"/>
-              <path d="M7.009 12.139a7.6 7.6 0 0 1-1.804-1.352A7.6 7.6 0 0 1 3.794 8.86c-1.102.992-1.965 5.054-1.839 5.18.125.126 3.936-.896 5.054-1.902Z"/>
-            </svg>
-          </div>
-          <h3 class="h5 pb-1 mb-2">MVP-to-enterprise without replatforming</h3>
-          <p class="fs-sm">Same codebase, same logic, zero rewrites.</p>
-        </div>
-        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-          <div class="d-inline-block bg-secondary rounded-circle p-3 mb-4" style="color: #6366f1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="32" fill="currentColor" class="bi bi-cloud-sun" viewBox="0 0 16 16">
-              <path d="M7 8a3.5 3.5 0 0 1 3.5 3.555.5.5 0 0 0 .624.492A1.503 1.503 0 0 1 13 13.5a1.5 1.5 0 0 1-1.5 1.5H3a2 2 0 1 1 .1-3.998.5.5 0 0 0 .51-.375A3.5 3.5 0 0 1 7 8m4.473 3a4.5 4.5 0 0 0-8.72-.99A3 3 0 0 0 3 16h8.5a2.5 2.5 0 0 0 0-5z"/>
-              <path d="M10.5 1.5a.5.5 0 0 0-1 0v1a.5.5 0 0 0 1 0zm3.743 1.964a.5.5 0 1 0-.707-.707l-.708.707a.5.5 0 0 0 .708.708zm-7.779-.707a.5.5 0 0 0-.707.707l.707.708a.5.5 0 1 0 .708-.708zm1.734 3.374a2 2 0 1 1 3.296 2.198q.3.423.516.898a3 3 0 1 0-4.84-3.225q.529.017 1.028.129m4.484 4.074c.6.215 1.125.59 1.522 1.072a.5.5 0 0 0 .039-.742l-.707-.707a.5.5 0 0 0-.854.377M14.5 6.5a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1z"/>
-            </svg>
-          </div>
-          <h3 class="h5 pb-1 mb-2">Cloud runtime, but not cloud lock-in</h3>
-          <p class="fs-sm">Run locally, deploy to Fluxzero Cloud, or self-host on your terms.</p>
-        </div>
-        <div class="col-lg-4 text-center pb-md-2 mb-3 mb-lg-4">
-          <div class="d-inline-block bg-secondary rounded-circle p-3 mb-4">
-            <img src="/assets/img/landing/saas-1/features/analytics.svg" width="32" alt="Icon">
-          </div>
-          <h3 class="h5 pb-1 mb-2">Not a black box</h3>
-          <p class="fs-sm">Full visibility into every message, every state change, every interaction.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="container pb-5">
-      <!-- Parallax gfx -->
-      <div class="">
-        <img src="/assets/fluxzero/dashboard-eb.png" width="1079" class="d-block mx-auto" style="border-radius: 1.5rem; box-shadow: 0 1.875rem 7.5rem -.625rem rgba(124,125,152, .2);" alt="Dashboard">
-      </div>
-    </section>
-
-    <!-- How it works (Steps + Video) -->
-    <section class="container pt-5">
-      <div class="text-center pb-4 pb-md-0 mb-2 mb-md-5 mx-auto">
-        <h2 class="h1">From idea to production in record time</h2>
-        <p class="mb-0">Zero setup. Zero friction. Just code — and scale.</p>
-      </div>
-
-      <!-- Steps -->
-      <div class="steps steps-sm steps-horizontal-md steps-center pb-5 mb-md-2 mb-lg-3">
-        <div class="step">
-          <div class="step-number">
-            <div class="step-number-inner">1</div>
-          </div>
-          <div class="step-body">
-            <h3 class="h4 mb-3">Develop Your Feature</h3>
-            <p class="mb-0">Write clean business logic. No boilerplate. No plumbing.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-number">
-            <div class="step-number-inner">2</div>
-          </div>
-          <div class="step-body">
-            <h3 class="h4 mb-3">Test Automatically</h3>
-            <p class="mb-0">Cover your entire business flows with simple given‑when‑then tests.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-number">
-            <div class="step-number-inner">3</div>
-          </div>
-          <div class="step-body">
-            <h3 class="h4 mb-3">Deploy Instantly</h3>
-            <p class="mb-0">Ship to Fluxzero Cloud with a single command.</p>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-number">
-            <div class="step-number-inner">∞</div>
-          </div>
-          <div class="step-body">
-            <h3 class="h4 mb-3">Keep Moving</h3>
-            <p class="mb-0">Add new features without rewrites, migrations, or slowdown.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Testimonials -->
-    <section class="pt-2 pt-sm-0 pb-lg-4" style="margin-top: 100px">
-      <div class="container pb-2">
-        <h2 class="h1 text-center">Shipped with Fluxzero</h2>
-        <p class="fs-lg text-center pb-4 pb-lg-5 mb-2 mb-sm-3 mb-xl-4">From mobility to logistics to energy, teams build and scale faster with Fluxzero.</p>
-        <div class="masonry-grid row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 g-sm-3 g-md-4">
-
-          <!-- Item -->
-          <div class="masonry-grid-item col-lg col-md-6 col-sm-12">
-            <div class="card border-0 bg-secondary p-1 p-sm-0 p-md-2">
-              <img src="/assets/fluxzero/moxi.svg" class="d-block d-dark-mode-none mx-auto py-4" width="120" alt="Moxi">
-              <img src="/assets/fluxzero/moxi-dark.svg" class="d-none d-dark-mode-block mx-auto py-4" width="120" alt="Moxi">
-              <div class="card-body text-center pt-1">
-                <p class="pb-3 mb-3">Fluxzero allows us to build exactly what we want without limits. We've gone from slow and constrained to delivering features at incredible speed. It's been a complete game-changer.</p>
-                <img src="/assets/fluxzero/felix.jpg" class="d-inline-block rounded-circle" width="80" alt="Avatar">
-                <div class="pt-2 mt-1">
-                  <h3 class="fs-lg mb-1">Felix Dohmeier</h3>
-                  <p class="fs-sm text-muted mb-0">Founder and CEO at MOXI</p>
+                <div class="system-split__face system-split__face--back" aria-hidden="true">
+                    <p class="system-split__eyebrow">Inside your product</p>
+                    <h3 class="system-split__panel-title">UIs and business logic</h3>
+                    <div class="system-split__apps" aria-label="Examples of domain apps">
+                        <span class="system-split__app--ui">
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 4.1h11.6v7.4H3.2V4.1Zm1.2 1.2v5h9.2v-5H4.4Zm3.7 7.3h1.8v1.2h2.4V15H5.7v-1.2h2.4v-1.2Z"/></svg>
+                            <small>UI</small><strong>Web UI</strong>
+                        </span>
+                        <span class="system-split__app--ui">
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M6 2.7h6c.7 0 1.3.6 1.3 1.3v10c0 .7-.6 1.3-1.3 1.3H6c-.7 0-1.3-.6-1.3-1.3V4c0-.7.6-1.3 1.3-1.3Zm0 1.2V14h6V3.9H6Zm2.1 8.8h1.8v.9H8.1v-.9Z"/></svg>
+                            <small>UI</small><strong>Mobile app</strong>
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 3.2h11.6v3.6H3.2V3.2Zm1.2 1.2v1.2h9.2V4.4H4.4Zm-1.2 3h11.6V11H3.2V7.4Zm1.2 1.2v1.2h9.2V8.6H4.4Zm-1.2 3h11.6v3.2H3.2v-3.2Zm1.2 1.2v.8h9.2v-.8H4.4Z"/></svg>
+                            <small>Domain app</small><strong>Shipping</strong>
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 3.2h11.6v3.6H3.2V3.2Zm1.2 1.2v1.2h9.2V4.4H4.4Zm-1.2 3h11.6V11H3.2V7.4Zm1.2 1.2v1.2h9.2V8.6H4.4Zm-1.2 3h11.6v3.2H3.2v-3.2Zm1.2 1.2v.8h9.2v-.8H4.4Z"/></svg>
+                            <small>Domain app</small><strong>Inventory</strong>
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 3.2h11.6v3.6H3.2V3.2Zm1.2 1.2v1.2h9.2V4.4H4.4Zm-1.2 3h11.6V11H3.2V7.4Zm1.2 1.2v1.2h9.2V8.6H4.4Zm-1.2 3h11.6v3.2H3.2v-3.2Zm1.2 1.2v.8h9.2v-.8H4.4Z"/></svg>
+                            <small>Domain app</small><strong>Billing</strong>
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 3.2h11.6v3.6H3.2V3.2Zm1.2 1.2v1.2h9.2V4.4H4.4Zm-1.2 3h11.6V11H3.2V7.4Zm1.2 1.2v1.2h9.2V8.6H4.4Zm-1.2 3h11.6v3.2H3.2v-3.2Zm1.2 1.2v.8h9.2v-.8H4.4Z"/></svg>
+                            <small>Domain app</small><strong>CRM</strong>
+                        </span>
+                    </div>
+                    <button class="system-split__inside-btn" type="button" data-inside-toggle aria-expanded="false" aria-label="Back to interfaces">
+                        <svg viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/>
+                        </svg>
+                        <span>Back</span>
+                    </button>
                 </div>
-              </div>
             </div>
-          </div>
-
-          <!-- Item -->
-          <div class="masonry-grid-item col-lg col-md-6 col-sm-12">
-            <div class="card border-0 bg-secondary p-1 p-sm-0 p-md-2">
-              <img src="/assets/fluxzero/portbase.svg" class="d-block d-dark-mode-none mx-auto py-4" width="160" alt="Moxi">
-              <img src="/assets/fluxzero/portbase-dark.svg" class="d-none d-dark-mode-block mx-auto py-4" width="160" alt="Moxi">
-              <div class="card-body text-center pt-1">
-                <p class="pb-3 mb-3">With Fluxzero, we no longer need to worry about the technology and all its related complications. Instead, we can concentrate on what is truly important — providing value to our customers.</p>
-                <div class="pt-2 mt-1">
-                  <h3 class="fs-lg mb-1">Iwan van der Wolf</h3>
-                  <p class="fs-sm text-muted mb-0">CEO at Portbase</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Item -->
-          <div class="masonry-grid-item col-lg col-md-6 col-sm-12">
-            <div class="card border-0 bg-secondary p-1 p-sm-0 p-md-2">
-              <img src="/assets/fluxzero/flowmaps.svg" class="d-block d-dark-mode-none mx-auto py-4" width="160" alt="Flowmaps">
-              <img src="/assets/fluxzero/flowmaps-dark.svg" class="d-none d-dark-mode-block mx-auto py-4" width="160" alt="Flowmaps">
-              <div class="card-body text-center pt-1">
-                <p class="pb-3 mb-3">The energy market is changing rapidly, and my customers require numerous new functionalities. However, previously, we had to wait months before we could deliver. Using Fluxzero, we build new functionalities within days!</p>
-                <img src="/assets/fluxzero/art.jpg" class="d-inline-block rounded-circle" width="80" alt="Avatar">
-                <div class="pt-2 mt-1">
-                  <h3 class="fs-lg mb-1">Art van Eeden Petersman</h3>
-                  <p class="fs-sm text-muted mb-0">Commercial Director at Flowmaps</p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-    </section>
 
-    <!-- CTA -->
-    <section class="container mt-4">
-      <div class="bg-dark bg-size-cover bg-position-center bg-repeat-0 position-relative overflow-hidden rounded-3 py-lg-3 py-xl-5 px-4 px-lg-5 px-xl-0" style="background-image: url(assets/img/landing/saas-3/cta-bg.jpg);" data-bs-theme="dark">
-        <div class="row position-relative zindex-2 py-5 my-1 my-md-3">
-          <div class="col-md-6">
-            <div class="mx-auto" style="max-width: 440px;">
-              <h2 class="h1 pb-1 pb-md-3 pb-lg-4">Your backend in hours, not months.</h2>
-              <ul class="list-unstyled fs-lg d-md-none pb-3">
-                <li class="d-flex text-body mb-2">
-                  <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
-                  Stop fighting frameworks — focus on your logic
-                </li>
-                <li class="d-flex text-body mb-2">
-                  <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
-                  95% less code, 10M+ requests/sec
-                </li>
-                <li class="d-flex text-body">
-                  <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
-                  Enterprise-ready from day one
-                </li>
-              </ul>
-
-              <!--CTA-->
-              <div class="d-grid gap-3 d-md-flex">
-                <a href="/docs/getting-started/installation" class="btn btn-lg btn-primary shadow-primary">Try locally in 2 mins</a>
-                <a href="/docs/tutorials/first-app" class="btn btn-lg btn-outline-secondary">Build your first app</a>
-              </div>
-
+        <div class="system-split__runtime" aria-hidden="true">
+            <div class="system-split__flows">
+                <span class="system-split__flow" style="--y: 62px; --line-opacity: 0.52"></span>
+                <span class="system-split__flow" style="--y: 92px; --line-opacity: 0.8"></span>
+                <span class="system-split__flow" style="--y: 125px; --line-opacity: 0.62"></span>
+                <span class="system-split__flow" style="--y: 158px; --line-opacity: 0.74"></span>
+                <span class="system-split__flow" style="--y: 188px; --line-opacity: 0.48"></span>
+                <span class="system-split__flow-dot" style="--y: 62px; --duration: 4.9s; --delay: -1.2s"></span>
+                <span class="system-split__flow-dot system-split__flow-dot--reverse" style="--y: 92px; --duration: 3.9s; --delay: -3.4s"></span>
+                <span class="system-split__flow-dot" style="--y: 125px; --duration: 4.5s; --delay: -4.8s"></span>
+                <span class="system-split__flow-dot system-split__flow-dot--reverse" style="--y: 158px; --duration: 5.3s; --delay: -2.1s"></span>
+                <span class="system-split__flow-dot" style="--y: 188px; --duration: 5.9s; --delay: -3s"></span>
             </div>
-          </div>
-          <div class="col-md-6 pt-lg-3 pt-xl-4">
-            <ul class="list-unstyled fs-lg d-none d-md-block">
-              <li class="d-flex text-body mb-2">
-                <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
-                Stop fighting frameworks — focus on your logic
-              </li>
-              <li class="d-flex text-body mb-2">
-                <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
-                95% less code, 10M+ requests/sec
-              </li>
-              <li class="d-flex text-body">
-                <i class="bx bx-check lead text-primary me-2" style="margin-top: .125rem;"></i>
-                Enterprise-ready from day one
-              </li>
-            </ul>
-          </div>
         </div>
-      </div>
-    </section>
 
-  </main>
+        <div class="system-split__panel system-split__panel--right system-split__panel--interactive" data-inside-panel>
+            <div class="system-split__panel-inner">
+                <div class="system-split__face system-split__face--front">
+                    <p class="system-split__eyebrow">Fluxzero provides</p>
+                    <h3 class="system-split__panel-title">The foundation underneath</h3>
+                    <ul class="system-split__list">
+                        <li>Everything behind the product</li>
+                        <li>The technical parts every product needs</li>
+                        <li>What makes it reliable and production-grade</li>
+                    </ul>
+                    <button class="system-split__inside-btn" type="button" data-inside-toggle aria-expanded="false" aria-label="See what Fluxzero provides inside">
+                        <svg viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/>
+                        </svg>
+                        <span>See inside</span>
+                    </button>
+                </div>
 
-  <Footer />
+                <div class="system-split__face system-split__face--back" aria-hidden="true">
+                    <p class="system-split__eyebrow">Inside Fluxzero</p>
+                    <h3 class="system-split__panel-title">The runtime behind your apps</h3>
+                    <div class="system-split__apps system-split__apps--fluxzero" aria-label="Fluxzero runtime capabilities">
+                        <span class="system-split__app--runtime">
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.4 14.7 5.7v6.6L9 15.6l-5.7-3.3V5.7L9 2.4Zm0 1.4L4.5 6.4v5.2L9 14.2l4.5-2.6V6.4L9 3.8Zm0 2.4 2.5 1.4v2.8L9 11.8l-2.5-1.4V7.6L9 6.2Z"/></svg>
+                            <small>Core</small><strong>Fluxzero runtime</strong>
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2.8 5.2h12.4v7.6H2.8V5.2Zm1.2 1.2v5.2h10V6.4H4Zm2 1.4h6v1.2H6V7.8Zm0 2h4.2V11H6V9.8Z"/></svg>
+                            <small>Web</small><strong>Web traffic</strong>
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.5 14 4.4v3.7c0 3.2-1.8 5.7-5 7.4-3.2-1.7-5-4.2-5-7.4V4.4L9 2.5Zm0 1.3-3.8 1.4v2.9c0 2.5 1.2 4.5 3.8 5.9 2.6-1.4 3.8-3.4 3.8-5.9V5.2L9 3.8Z"/></svg>
+                            <small>Security</small><strong>Built-in protection</strong>
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 4.2h11.6v2.4H3.2V4.2Zm0 3.6h11.6v2.4H3.2V7.8Zm0 3.6h11.6v2.4H3.2v-2.4Z"/></svg>
+                            <small>Messages</small><strong>Message history</strong>
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 3c3.2 0 5.8.9 5.8 2v8c0 1.1-2.6 2-5.8 2s-5.8-.9-5.8-2V5c0-1.1 2.6-2 5.8-2Zm0 1.2c-2.6 0-4.3.6-4.6.9.3.3 2 .9 4.6.9s4.3-.6 4.6-.9c-.3-.3-2-.9-4.6-.9Zm-4.6 3v1.6c.9.5 2.6.8 4.6.8s3.7-.3 4.6-.8V7.2c-1.1.6-2.8.9-4.6.9s-3.5-.3-4.6-.9Zm0 3.5V13c.3.3 2 .8 4.6.8s4.3-.5 4.6-.8v-2.3c-1.1.6-2.8.9-4.6.9s-3.5-.3-4.6-.9Z"/></svg>
+                            <small>Data</small><strong>Data storage</strong>
+                        </span>
+                        <span>
+                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.8 3.4a4.4 4.4 0 1 1 0 8.8 4.4 4.4 0 0 1 0-8.8Zm0 1.2a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Zm3.1 6.9.9-.9 3 3-.9.9-3-3Z"/></svg>
+                            <small>Query</small><strong>Search</strong>
+                        </span>
+                    </div>
+                    <button class="system-split__inside-btn" type="button" data-inside-toggle aria-expanded="false" aria-label="Back to Fluxzero foundation">
+                        <svg viewBox="0 0 16 16" aria-hidden="true">
+                            <path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/>
+                        </svg>
+                        <span>Back</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+</section>
 
-</BaseLayout>
+<section id="backend-any-product-content" aria-labelledby="backend-any-product-content-title" class="rv section-stack">
+    <header class="rv">
+        <h2 id="backend-any-product-content-title">The hard technical work already done</h2>
+        <p>AI can now build sophisticated software and focus entirely on your product.</p>
+    </header>
+
+    <div>
+        <article class="rv">
+            <h3>Ready for real users</h3>
+            <p>Your app starts with the checks, guardrails, and defaults it needs before real people and real data arrive.</p>
+            <div class="backend-card-visual backend-grade-visual" aria-hidden="true">
+                <div class="backend-launch-stage">
+                    <div class="backend-launch-glow"></div>
+                    <div class="backend-launch-stars">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <div class="backend-launch-pad"></div>
+                    <div class="backend-launch-rocket">
+                        <div class="backend-launch-body">
+                            <div class="backend-launch-window"></div>
+                        </div>
+                        <div class="backend-launch-nozzle"></div>
+                        <div class="backend-launch-fin backend-launch-fin--left"></div>
+                        <div class="backend-launch-fin backend-launch-fin--right"></div>
+                        <div class="backend-launch-flame"></div>
+                        <div class="backend-launch-trail"></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="rv">
+            <h3>No backend assembly</h3>
+            <p>No piecing together the technical concerns every real product needs before you can ship.</p>
+            <div class="backend-card-visual backend-assembly-visual" aria-hidden="true">
+                <div class="backend-assembly-stage">
+                    <div class="backend-assembly-list">
+                        <div class="backend-assembly-item" style="--item-delay: 0s">Sign in</div>
+                        <div class="backend-assembly-item" style="--item-delay: -0.2s">User access</div>
+                        <div class="backend-assembly-item" style="--item-delay: -0.4s">Data</div>
+                        <div class="backend-assembly-item" style="--item-delay: -0.6s">Search</div>
+                        <div class="backend-assembly-item" style="--item-delay: -0.8s">Tests</div>
+                        <div class="backend-assembly-item" style="--item-delay: -1s">Deploy</div>
+                        <div class="backend-assembly-item" style="--item-delay: -1.2s">Recovery</div>
+                        <div class="backend-assembly-item" style="--item-delay: -1.4s">Visibility</div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="rv">
+            <h3>Built by backenders</h3>
+            <p>Built by people with deep experience building systems and ops tooling for software that cannot fail.</p>
+            <div class="backend-card-visual backend-team-visual" aria-hidden="true">
+                <div class="backend-team-stage">
+                    <div class="backend-team-ring"></div>
+                    <div class="backend-team-line"></div>
+                    <div class="backend-team-line--vertical"></div>
+                    <div class="backend-team-chip backend-team-chip--scale">Scale</div>
+                    <div class="backend-team-chip backend-team-chip--ops">Ops</div>
+                    <div class="backend-team-chip backend-team-chip--frameworks">Uptime</div>
+                    <div class="backend-team-chip backend-team-chip--systems">Security</div>
+                    <div class="backend-team-core">Production<br>foundation</div>
+                </div>
+            </div>
+        </article>
+    </div>
+</section>
+
+<div class="sp"></div>
+
+<!-- 6 · FIRST USE -->
+<section class="flow rv section-stack" id="get-started" aria-labelledby="get-started-title">
+    <div class="section-intro">
+        <h2 class="h2-single" id="get-started-title">Get started</h2>
+        <p class="flow-intro">
+            <span>Generate an app in seconds and start building features.<br class="desktop-break"></span>
+            <span>Start today. Pay only when you launch.</span>
+        </p>
+    </div>
+
+    <div class="flow-stage">
+        <div class="steps section-grid">
+            <div class="step">
+                <div class="step-n">1</div>
+                <div>
+                    <h4>Open</h4>
+                    <p>Open your app in Codex, Claude Code, Cursor, or your IDE.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">2</div>
+                <div>
+                    <h4>Build</h4>
+                    <p>Use AI to shape your product&rsquo;s features, flows, and experience.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">3</div>
+                <div>
+                    <h4>Run locally</h4>
+                    <p>If it works on your device, it works in production.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-n">4</div>
+                <div>
+                    <h4>Launch</h4>
+                    <p>Launch without backend setup or ops work.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flow-end">
+            <div class="gen-box">
+                <div class="gen-title">Generate your <span class="gen-title__accent">app</span></div>
+                <p class="gen-subtitle">A clean project with production defaults and AI instructions already in place.</p>
+                <div class="gen-row">
+                    <input type="text" class="gen-input" id="gen-name" placeholder="My Application" value="">
+                    <button class="gen-btn" onclick="generateProject()">↓ Generate app</button>
+                </div>
+
+                <div class="gen-preview" aria-hidden="true">
+                    <div class="gen-preview-line">No tech team required</div>
+                    <div class="gen-preview-line">AI instructions included</div>
+                    <div class="gen-preview-line">Production foundation in place</div>
+                </div>
+
+                <button class="gen-toggle" id="gen-toggle" onclick="toggleAdvanced()" aria-expanded="false" aria-controls="gen-advanced">
+                    <span class="arrow">▸</span> Advanced options
+                </button>
+
+                <div class="gen-advanced" id="gen-advanced">
+                    <div class="gen-advanced-inner">
+                        <div class="gen-field">
+                            <label class="gen-label">Group</label>
+                            <input type="text" class="gen-input-sm" id="gen-group" placeholder="com.example" value="">
+                        </div>
+                        <div class="gen-field">
+                            <label class="gen-label">Artifact ID</label>
+                            <input type="text" class="gen-input-sm" id="gen-artifact" placeholder="my-app" value="">
+                        </div>
+                        <div class="gen-field">
+                            <label class="gen-label">Language</label>
+                            <div class="gen-pills" id="gen-lang">
+                                <div class="gen-pill active" onclick="selectPill(this)">Java</div>
+                                <div class="gen-pill" onclick="selectPill(this)">Kotlin</div>
+                            </div>
+                        </div>
+                        <div class="gen-field">
+                            <label class="gen-label">Build tool</label>
+                            <div class="gen-pills" id="gen-build">
+                                <div class="gen-pill active" onclick="selectPill(this)">Maven</div>
+                                <div class="gen-pill" onclick="selectPill(this)">Gradle</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="gen-note">Generate, unzip, and open in your coding agent</div>
+        </div>
+    </div>
+</section>
+
+<!-- 4 · AI -->
+<section class="ai rv section-stack" id="ai-works-better" aria-labelledby="ai-works-better-title">
+    <div class="section-intro">
+        <p class="ai-eyebrow">No technical noise</p>
+        <h2 class="h2-two-line" id="ai-works-better-title"><span class="ai-line-1">AI works better</span><span class="ai-line-2">when there's less to generate</span></h2>
+
+        <p class="ai-body">
+            When AI does not have to generate the backend, it can spend more context on the product behavior you actually care about.
+        </p>
+    </div>
+
+    <div class="ai-points section-grid">
+        <div class="ai-pt">
+            <h4>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 4.5v15" stroke-width="1.7" stroke-linecap="round"/>
+                    <path d="M7.5 8.5h9M8.8 13h6.4M10 17.5h4" stroke-width="1.7" stroke-linecap="round"/>
+                </svg>
+                Less risk
+            </h4>
+            <p>AI focuses on product behavior, not system-critical concerns.</p>
+            <div class="ai-card-anim" aria-hidden="true">
+                <span style="--x: 12%; --y: 34%; --s: 5px; --d: 0s"></span>
+                <span style="--x: 46%; --y: 54%; --s: 7px; --d: -1.4s"></span>
+                <span style="--x: 72%; --y: 28%; --s: 4px; --d: -2.6s"></span>
+            </div>
+        </div>
+        <div class="ai-pt">
+            <h4>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 7.5h14M5 12h10M5 16.5h7" stroke-width="1.7" stroke-linecap="round"/>
+                    <path d="m16 16.5 2 2 4-5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Judge what users see
+            </h4>
+            <p>Judge the user experience, not the technology underneath.</p>
+            <div class="ai-card-anim" aria-hidden="true">
+                <span style="--x: 18%; --y: 52%; --s: 6px; --d: -0.5s"></span>
+                <span style="--x: 50%; --y: 30%; --s: 4px; --d: -1.9s"></span>
+                <span style="--x: 78%; --y: 58%; --s: 7px; --d: -3s"></span>
+            </div>
+        </div>
+        <div class="ai-pt">
+            <h4>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M8 8.5h8v7H8z" stroke-width="1.7" stroke-linejoin="round"/>
+                    <path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3" stroke-width="1.7" stroke-linecap="round"/>
+                    <path d="M5.8 5.8 8 8M16 16l2.2 2.2M18.2 5.8 16 8M8 16l-2.2 2.2" stroke-width="1.45" stroke-linecap="round"/>
+                </svg>
+                Less technical debt
+            </h4>
+            <p>Your codebase stays clean and maintainable as it grows.</p>
+            <div class="ai-card-anim" aria-hidden="true">
+                <span style="--x: 10%; --y: 58%; --s: 4px; --d: -0.2s"></span>
+                <span style="--x: 42%; --y: 32%; --s: 6px; --d: -1.6s"></span>
+                <span style="--x: 74%; --y: 46%; --s: 5px; --d: -2.8s"></span>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<div class="sp"></div>
+
+<!-- 8 · PROOF -->
+<section class="proof rv section-stack" id="proven-foundation" aria-labelledby="proven-foundation-title">
+    <div class="proof-label">Built to scale</div>
+    <div class="section-intro">
+        <h2 class="h2-single" id="proven-foundation-title">Start small.<br>Build on something proven.</h2>
+        <div class="proof-body">
+            <p>Fluxzero is made for builders that want to move fast,<br class="desktop-break"> whether you&rsquo;re a startup or in need of a rebuild on a future-proof foundation.</p>
+        </div>
+    </div>
+
+    <div class="proof-logos" aria-label="Teams building with Fluxzero">
+        <a class="proof-logo" href="https://www.portbase.com/en/" target="_blank" rel="noreferrer"><img src="/assets/fluxzero/portbase-dark.svg" alt="Portbase"></a>
+        <a class="proof-logo" href="https://zoef.app/en/passenger" target="_blank" rel="noreferrer"><img src="/assets/fluxzero/zoef-dark.svg" alt="Zoef"></a>
+        <a class="proof-logo" href="https://openvoy.com" target="_blank" rel="noreferrer"><img src="/assets/fluxzero/openvoy-dark.svg" alt="OpenVoy"></a>
+        <a class="proof-logo" href="https://flowmaps.com" target="_blank" rel="noreferrer"><img src="/assets/fluxzero/flowmaps-dark.svg" alt="Flowmaps"></a>
+        <a class="proof-logo" href="https://moxi.health/en/" target="_blank" rel="noreferrer"><img src="/assets/fluxzero/moxi-dark.svg" alt="Moxi"></a>
+    </div>
+
+    <div class="proof-stats section-grid" data-proof-stats>
+        <div class="proof-stat">
+            <div class="num"><span>-</span><span class="proof-count" data-count-to="90">90</span><span>%</span></div>
+            <div class="label">token spend</div>
+        </div>
+        <div class="proof-stat">
+            <div class="num"><span class="proof-count" data-count-to="100">100</span><span>+</span></div>
+            <div class="label">GB / min throughput</div>
+        </div>
+        <div class="proof-stat">
+            <div class="num"><span class="proof-count" data-count-to="99.9" data-decimals="1">99.9</span><span>%</span></div>
+            <div class="label">Uptime</div>
+        </div>
+    </div>
+
+</section>
+
+<div class="sp"></div>
+
+<!-- 6b · CLOUD -->
+<section class="cloud-section rv section-stack" id="cloud-section-content" aria-labelledby="cloud-section-content-title">
+    <div class="section-intro">
+        <h2 class="h2-single" id="cloud-section-content-title">Launch without learning ops</h2>
+        <p class="cloud-sub">Go live in under a minute. Skip the backend and infra work that usually comes after building.</p>
+    </div>
+
+    <div class="cloud-grid section-grid">
+        <div class="cloud-card">
+            <h4><span class="cloud-icon" aria-hidden="true">&uarr;</span>No ops to manage</h4>
+            <p>Start, stop, and scale from your dashboard. No servers, retries, or failure handling to manage.</p>
+        </div>
+        <div class="cloud-card">
+            <h4><span class="cloud-icon" aria-hidden="true">&check;</span>On audited infrastructure</h4>
+            <p>ISO 27001 and SOC 2 Type 2 certified.</p>
+        </div>
+        <div class="cloud-card">
+            <h4><span class="cloud-icon cloud-icon--europe" aria-hidden="true">EU</span>European foundation</h4>
+            <p>Built and operated from Europe, with strong standards for data handling and privacy.</p>
+        </div>
+    </div>
+
+</section>
+
+<div class="sp"></div>
+
+<section class="obs section-stack" id="observability" aria-labelledby="observability-title">
+    <div class="section-intro obs-heading">
+        <h2 class="h2-single" id="observability-title">Once your app is live</h2>
+        <p class="obs-intro">Fluxzero shows you exactly what is happening.<br class="desktop-break"> Keep improving without losing momentum.</p>
+        <div class="obs-heading-trace" aria-hidden="true"><span></span></div>
+    </div>
+
+    <div class="obs-grid section-grid">
+        <div class="obs-card">
+            <h4>One dashboard</h4>
+            <p>See every user action in your app and understand what happened.</p>
+            <div class="obs-signal obs-signal--scope" aria-hidden="true">
+                <svg viewBox="0 0 210 48" preserveAspectRatio="none">
+                    <path d="M4 28 C18 28 20 28 32 28 C40 28 42 18 48 18 C56 18 57 36 66 36 C75 36 77 28 86 28 C98 28 102 28 112 28 C120 28 122 12 130 12 C139 12 140 40 150 40 C160 40 162 28 172 28 C186 28 194 28 206 28"/>
+                </svg>
+                <span></span>
+            </div>
+        </div>
+        <div class="obs-card">
+            <h4>Fix with context</h4>
+            <p>When something breaks, Fluxzero gives you the context to fix it fast with AI.</p>
+            <div class="obs-signal obs-signal--context" aria-hidden="true">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="obs-card">
+            <h4>Keep improving</h4>
+            <p>Every change stays visible, so you can keep shipping with confidence.</p>
+            <div class="obs-signal obs-signal--trail" aria-hidden="true">
+                <span style="--x: 22%;"></span>
+                <span style="--x: 48%;"></span>
+                <span style="--x: 74%;"></span>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<div class="sp"></div>
+
+<section class="docs-bridge rv section-stack" id="developer-docs" aria-labelledby="developer-docs-title">
+    <div class="section-intro">
+        <h2 class="h2-single" id="developer-docs-title">Want the technical version?</h2>
+        <p class="sub">Your app stays focused on product. The docs show what Fluxzero handles underneath.</p>
+    </div>
+
+    <div class="prod-docs">
+        <p class="prod-docs-kicker">Developer docs</p>
+        <h3 class="prod-docs-title">How Fluxzero works</h3>
+        <p class="prod-docs-copy">Explore the runtime, message flow, testing model, security model, and how your app runs in production.</p>
+        <a class="prod-docs-link" href="/docs">Read the technical docs &rarr;</a>
+    </div>
+</section>
+
+<div class="sp"></div>
+
+<!-- 9 · FAQ -->
+<section class="faq rv section-stack" id="faq" aria-labelledby="faq-title">
+    <div class="section-intro">
+        <h2 class="faq-heading h2-single" id="faq-title">Frequently asked questions</h2>
+    </div>
+
+    <div class="faq-list section-grid">
+        <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+                <span>Is my product code still mine?</span>
+                <span class="faq-arrow">+</span>
+            </button>
+            <div class="faq-a">
+                <p>Yes. You own the product you build: the features, flows, user experience, and product logic. Fluxzero provides the backend foundation and runtime underneath it.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+                <span>Can I export my data?</span>
+                <span class="faq-arrow">+</span>
+            </button>
+            <div class="faq-a">
+                <p>Yes. Your product data should never feel trapped. Fluxzero is built around clear product data and will support exporting it when you need to move, analyze, or back it up.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+                <span>How is Fluxzero different from Supabase, Firebase, or Vercel?</span>
+                <span class="faq-arrow">+</span>
+            </button>
+            <div class="faq-a">
+                <p>Those platforms give you services and building blocks. Fluxzero gives you an integrated product backend: auth, data, permissions, testing, deployment, and runtime behavior already designed to work together. You build the product layer on top.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+                <span>How is Fluxzero different from Lovable, Bolt, or Replit?</span>
+                <span class="faq-arrow">+</span>
+            </button>
+            <div class="faq-a">
+                <p>Those tools help you build or generate an app. You can use that output as the starting point for a Fluxzero app, so you do not have to start over.</p>
+                <p>Fluxzero adds the backend foundation that lets the app become real software: something you can run, test, launch, and keep improving with users.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+                <span>What kinds of products is Fluxzero good for?</span>
+                <span class="faq-arrow">+</span>
+            </button>
+            <div class="faq-a">
+                <p>Fluxzero is a good fit for products with users, data, permissions, workflows, and business logic: SaaS apps, marketplaces, portals, internal tools, workflow products, and AI-enabled software.</p>
+                <p>There is no scale ceiling on what you can build or run. Fluxzero is designed for products that may start small and grow into sophisticated, high-volume systems.</p>
+                <p>It is not meant for simple landing pages, content-only sites, throwaway demos, or products where you specifically want to design every layer of infrastructure yourself.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+                <span>Do I need to know backend development?</span>
+                <span class="faq-arrow">+</span>
+            </button>
+            <div class="faq-a">
+                <p>No. You need to understand the product you want to build. Your coding agent can work on features, flows, and behavior while Fluxzero keeps the backend foundation out of your prompt loop.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+                <span>Can developers take it further later?</span>
+                <span class="faq-arrow">+</span>
+            </button>
+            <div class="faq-a">
+                <p>Yes. Fluxzero gives your team a clean Java codebase focused on features, flows, and behavior, with behavior tests around the things that matter. Real developers can keep building in their own IDE, review the code, add more tests, and go deeper into the technical model when needed.</p>
+                <p>That makes it easy to hand over when the product grows. Java talent is widely available, and because backend complexity stays out of the product layer, founders can keep building with AI alongside the team.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+                <span>Can I use Codex, Claude Code, Cursor, or my own IDE?</span>
+                <span class="faq-arrow">+</span>
+            </button>
+            <div class="faq-a">
+                <p>Yes. Generate your app, unzip it, and open it in your coding agent or IDE. Fluxzero is designed to fit the way builders are already using AI to ship software.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-q" onclick="toggleFaq(this)">
+                <span>When do I pay?</span>
+                <span class="faq-arrow">+</span>
+            </button>
+            <div class="faq-a">
+                <p>You can start building before paying. You only pay when you go live.</p>
+            </div>
+        </div>
+    </div>
+
+    <p class="faq-help">Still wondering? <a href="https://fluxzero.io/support">Get in touch</a> and we'll help.</p>
+</section>
+
+<div class="sp"></div>
+
+<!-- 11 · FINAL CTA -->
+<section class="cta-end section-stack" id="final-cta" aria-labelledby="final-cta-title">
+    <div class="section-intro">
+        <h2 class="h2-two-line" id="final-cta-title">What would you build<br>if the tech <span class="italic">just worked?</span></h2>
+        <p>Generate your app now and start building for real.</p>
+    </div>
+    <div class="cta-btns">
+        <a href="/docs/tutorials/first-app/" class="btn-p">Generate your app →</a>
+        <a href="/docs" class="btn-s"><span>Explore the docs</span></a>
+    </div>
+    <p class="cta-note">Build today. <a href="mailto:info@fluxzero.io?subject=Request%20launch%20access">Request launch access</a> when your app is ready.</p>
+</section>
+
+<footer>
+    <div class="ft">
+        <div class="ft-l">© 2026 Fluxzero B.V.</div>
+        <div class="ft-r">
+            <a href="/docs">Docs</a>
+            <a href="https://github.com/fluxzero-io" target="_blank" rel="noreferrer">GitHub</a>
+            <a href="/docs/about/changelog/">Changelog</a>
+            <a href="/docs/about/terms/">Terms</a>
+            <a href="/docs/about/privacy/">Privacy</a>
+        </div>
+    </div>
+</footer>
+
+    <script src="/js/home.js" defer></script>
+</body>
+</html>
