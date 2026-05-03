@@ -406,9 +406,14 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 <div class="gen-title">Generate your <span class="gen-title__accent">app</span></div>
                 <p class="gen-subtitle">A clean project with production defaults and AI instructions already in place.</p>
                 <div class="gen-row">
-                    <input type="text" class="gen-input" id="gen-name" placeholder="My Application" value="">
-                    <button class="gen-btn" onclick="generateProject()">↓ Generate app</button>
+                    <input type="text" class="gen-input" id="gen-name" placeholder="My Application" value="" maxlength="50" aria-describedby="gen-name-error">
+                    <button class="gen-btn" id="gen-submit" onclick="generateProject()">
+                        <span id="gen-btn-icon" aria-hidden="true">↓</span>
+                        <span id="gen-btn-text">Generate app</span>
+                    </button>
                 </div>
+                <div class="gen-error" id="gen-name-error" aria-live="polite"></div>
+                <div class="gen-message" id="gen-message" role="status" aria-live="polite"></div>
 
                 <div class="gen-preview" aria-hidden="true">
                     <div class="gen-preview-line">No tech team required</div>
@@ -424,11 +429,13 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                     <div class="gen-advanced-inner">
                         <div class="gen-field">
                             <label class="gen-label">Group</label>
-                            <input type="text" class="gen-input-sm" id="gen-group" placeholder="com.example" value="">
+                            <input type="text" class="gen-input-sm" id="gen-group" placeholder="com.example" value="com.example" aria-describedby="gen-group-error">
+                            <div class="gen-error" id="gen-group-error" aria-live="polite"></div>
                         </div>
                         <div class="gen-field">
                             <label class="gen-label">Artifact ID</label>
-                            <input type="text" class="gen-input-sm" id="gen-artifact" placeholder="my-app" value="">
+                            <input type="text" class="gen-input-sm" id="gen-artifact" placeholder="my-app" value="" aria-describedby="gen-artifact-error">
+                            <div class="gen-error" id="gen-artifact-error" aria-live="polite"></div>
                         </div>
                         <div class="gen-field">
                             <label class="gen-label">Language</label>
@@ -757,6 +764,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
 <MarketingFooter />
 
+    <script src="/js/project-generator-core.js" defer></script>
     <script src="/js/home.js" defer></script>
 </body>
 </html>

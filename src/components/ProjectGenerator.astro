@@ -233,13 +233,12 @@ const templates: Record<string, Template> = {
 <script define:vars={{ templates }}>
   // Pass templates to Alpine
   window.FLUXZERO_TEMPLATES = templates;
-  console.log(templates);
 </script>
 
 <script>
   import Alpine from 'alpinejs';
   
-  document.addEventListener('DOMContentLoaded', () => {
+  function startProjectGenerator() {
     Alpine.data('projectGenerator', () => ({
       // State
       projectName: 'demo',
@@ -455,7 +454,13 @@ const templates: Record<string, Template> = {
     }));
     
     Alpine.start();
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startProjectGenerator);
+  } else {
+    startProjectGenerator();
+  }
 </script>
 
 <style>

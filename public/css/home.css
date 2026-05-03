@@ -4061,6 +4061,12 @@ section:not(.hero):not(.cta-end) {
     border-color: rgba(32, 134, 240, 0.78);
 }
 
+.gen-input.has-error,
+.gen-input-sm.has-error {
+    border-color: rgba(255, 103, 103, 0.68);
+    box-shadow: 0 0 0 1px rgba(255, 103, 103, 0.08);
+}
+
 .gen-input::placeholder {
     color: var(--text-tertiary);
 }
@@ -4087,6 +4093,44 @@ section:not(.hero):not(.cta-end) {
 }
 
 .gen-btn:hover { border-color: rgba(32, 134, 240, 0.3); filter: brightness(1.04); transform: translateY(-1px); }
+
+.gen-btn:disabled {
+    cursor: wait;
+    filter: grayscale(0.12) brightness(0.88);
+    transform: none;
+}
+
+.gen-btn.is-loading #gen-btn-icon {
+    animation: gen-spin 0.8s linear infinite;
+}
+
+@keyframes gen-spin {
+    to { transform: rotate(360deg); }
+}
+
+.gen-error,
+.gen-message {
+    display: none;
+    margin-top: -8px;
+    margin-bottom: 14px;
+    color: rgba(255, 142, 142, 0.92);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.gen-field .gen-error {
+    margin-top: 6px;
+    margin-bottom: 0;
+}
+
+.gen-error.show,
+.gen-message.show {
+    display: block;
+}
+
+.gen-message[data-type="success"] {
+    color: rgba(77, 225, 196, 0.94);
+}
 
 .gen-toggle {
     display: inline-flex;
