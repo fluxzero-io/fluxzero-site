@@ -74,6 +74,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
         html {
             min-height: 100%;
+            background: var(--bg);
             scroll-behavior: smooth;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -82,7 +83,8 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         body {
             position: relative;
             min-height: 100%;
-            background: transparent;
+            background: var(--bg-page-gradient);
+            background-attachment: fixed;
             color: var(--text);
             font-family: var(--font-body);
             font-size: var(--fs-body);
@@ -98,13 +100,13 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             pointer-events: none;
             background: var(--bg-page-gradient);
             background-repeat: no-repeat;
-            background-size: 100vw 100svh;
+            background-size: cover;
             opacity: 0.96;
         }
 
         @supports (height: 100dvh) {
             body::before {
-                background-size: 100vw 100dvh;
+                min-height: 100dvh;
             }
         }
 
