@@ -1522,11 +1522,10 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             min-height: 700px;
             padding: 28px;
             border-radius: 12px;
-            border: 1px solid rgba(0, 179, 255, 0.32);
+            border: 1px solid rgba(255, 255, 255, 0.11);
             background:
-                radial-gradient(circle at 50% 0%, rgba(0, 179, 255, 0.11), transparent 46%),
-                linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.016)),
-                rgba(8, 12, 18, 0.8);
+                linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.014)),
+                rgba(8, 10, 14, 0.68);
             box-shadow: 0 18px 48px rgba(0, 0, 0, 0.22);
             overflow: hidden;
             backface-visibility: hidden;
@@ -2801,7 +2800,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             </div>
 
             <div class="pricing-v2-panel pricing-v2-panel-scale">
-                <article class="pricing-v2-card">
+                <article class="pricing-v2-card is-featured">
                     <div class="pricing-v2-card-top">
                         <span class="pricing-v2-label">Grow</span>
                         <h3>Startup</h3>
@@ -2811,7 +2810,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                             <span class="pricing-v2-term">EUR per month</span>
                         </div>
                         <p class="pricing-v2-card-summary">For products gaining traction.</p>
-                        <a href="/contact" class="pricing-v2-card-action">Request startup</a>
+                        <a href="/contact" class="pricing-v2-card-action is-primary">Request startup plan</a>
                     </div>
                     <ul class="pricing-v2-list">
                         <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-cluster"></use></svg><strong>Small cluster included</strong></li>
@@ -2825,7 +2824,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                     </ul>
                 </article>
 
-                <article class="pricing-v2-card pricing-v2-flip-card is-featured" data-scale-card>
+                <article class="pricing-v2-card pricing-v2-flip-card" data-scale-card>
                     <div class="pricing-v2-flip-inner">
                         <div class="pricing-v2-flip-face pricing-v2-flip-face--front">
                             <div class="pricing-v2-card-top">
@@ -2837,7 +2836,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                                     <span class="pricing-v2-term">EUR per month</span>
                                 </div>
                                 <p class="pricing-v2-card-summary">For products that need more capacity.</p>
-                                <a href="/contact" class="pricing-v2-card-action is-primary">Request scale up</a>
+                                <a href="/contact" class="pricing-v2-card-action">Request scale up plan</a>
                             </div>
                             <ul class="pricing-v2-list">
                                 <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-cluster"></use></svg><strong>Medium cluster included</strong></li>
