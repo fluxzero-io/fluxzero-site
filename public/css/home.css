@@ -746,10 +746,14 @@ section:not(.hero):not(.cta-end) {
     text-wrap: balance;
 }
 .hero h1 .em {
+    display: inline-block;
     color: transparent;
     background: linear-gradient(90deg, #D9F5FF 0%, #2F7FBA 100%);
     -webkit-background-clip: text;
     background-clip: text;
+    -webkit-text-fill-color: transparent;
+    padding-right: 0.16em;
+    margin-right: -0.08em;
 }
 
 .hero h1 .em .hero-end {
@@ -758,6 +762,7 @@ section:not(.hero):not(.cta-end) {
     font-style: italic;
     font-size: 1.08em;
     font-weight: 400;
+    line-height: 1;
     letter-spacing: -0.055em;
     padding-right: 0.03em;
 }
