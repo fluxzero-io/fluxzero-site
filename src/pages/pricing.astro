@@ -73,6 +73,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         * { box-sizing: border-box; margin: 0; padding: 0; }
 
         html {
+            min-height: 100%;
             scroll-behavior: smooth;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -80,6 +81,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
         body {
             position: relative;
+            min-height: 100%;
             background: transparent;
             color: var(--text);
             font-family: var(--font-body);
@@ -96,8 +98,14 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             pointer-events: none;
             background: var(--bg-page-gradient);
             background-repeat: no-repeat;
-            background-size: 100vw 100vh;
+            background-size: 100vw 100svh;
             opacity: 0.96;
+        }
+
+        @supports (height: 100dvh) {
+            body::before {
+                background-size: 100vw 100dvh;
+            }
         }
 
         ::selection { background: rgba(0, 179, 255, 0.9); color: #140a18; }
@@ -1223,6 +1231,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             width: min(calc(100% - 32px), 1240px);
             margin: 0 auto;
             padding: 142px 0 96px;
+            padding-bottom: max(96px, calc(96px + env(safe-area-inset-bottom)));
         }
 
         .pricing-v2-hero {
@@ -2543,7 +2552,8 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         @media (max-width: 760px) {
             .pricing-v2 {
                 width: min(calc(100% - 28px), 1180px);
-                padding-top: 104px;
+                padding-top: max(104px, calc(74px + env(safe-area-inset-top)));
+                padding-bottom: max(112px, calc(112px + env(safe-area-inset-bottom)));
             }
 
             .pricing-v2-hero p {

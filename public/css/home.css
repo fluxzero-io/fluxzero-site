@@ -3651,6 +3651,8 @@ section:not(.hero):not(.cta-end) {
     letter-spacing: -0.03em;
     text-align: left;
     margin: 0 0 var(--stack-tight);
+    padding-bottom: 0.08em;
+    margin-bottom: calc(var(--stack-tight) - 0.08em);
     max-width: none;
     color: transparent;
     background: linear-gradient(90deg, #D9F5FF 0%, #2F7FBA 100%);
