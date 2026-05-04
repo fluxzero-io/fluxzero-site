@@ -1728,6 +1728,10 @@ section:not(.hero):not(.cta-end) {
 }
 
 @media (max-width: 860px) {
+    .system-split {
+        --section-pad: clamp(56px, 8vw, 76px);
+    }
+
     .system-split__map {
         grid-template-columns: 1fr;
         max-width: 620px;
@@ -1830,6 +1834,14 @@ section:not(.hero):not(.cta-end) {
 @media (max-width: 600px) {
     #production-gap-content .facts-sub span {
         white-space: normal;
+    }
+
+    .system-split {
+        --section-pad: 44px;
+    }
+
+    #production-gap-content {
+        padding-bottom: 34px;
     }
 
     .system-split__title {
@@ -5396,7 +5408,7 @@ footer::before {
 .d4 { transition-delay: 0.16s; }
 
 @media (max-width: 860px) {
-    :root { --section-pad: clamp(64px, 10vw, 88px); }
+    :root { --section-pad: clamp(56px, 8vw, 76px); }
     .nav-shell {
         min-height: 64px;
         padding: 0 20px;
@@ -5487,7 +5499,11 @@ footer::before {
 }
 
 @media (max-width: 600px) {
-    :root { --section-pad: clamp(56px, 12vw, 72px); }
+    :root {
+        --section-pad: clamp(44px, 10vw, 58px);
+        --stack-medium: 22px;
+        --stack-follow: 26px;
+    }
     .desktop-break {
         display: none;
     }
@@ -5717,8 +5733,8 @@ footer::before {
         margin: 0 auto;
     }
     .cta-end {
-        padding-top: 104px;
-        padding-bottom: 104px;
+        padding-top: 84px;
+        padding-bottom: 84px;
     }
     .cta-end h2 {
         font-size: clamp(32px, 9vw, 40px);
@@ -5761,6 +5777,16 @@ footer::before {
     .proof h2 {
         font-size: clamp(32px, 9vw, 40px);
         line-height: var(--lh-heading);
+    }
+    .proof {
+        padding-bottom: 160px;
+    }
+    .proof + .sp + .cloud-section {
+        margin-top: 36px;
+    }
+    .cloud-section {
+        --section-pad: clamp(52px, 12vw, 68px);
+        padding-top: 118px;
     }
     .proof-body {
         font-size: 18px;
