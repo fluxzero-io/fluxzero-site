@@ -1,204 +1,727 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import Sdk from './Sdk.astro';
-import '../styles/main.scss';
-import '../styles/fluxzero.css';
-import Runtime from './Runtime.astro';
-import Cloud from './Cloud.astro';
-import BringYourOwn from './BringYourOwn.astro';
+import BrandHead from '../components/BrandHead.astro';
+import MarketingFooter from '../components/marketing/MarketingFooter.astro';
+import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 ---
 
-<BaseLayout
-        title="About | Fluxzero"
-        description="Fluxzero is the fastest way to build scalable, message-driven apps. One unified SDK, zero boilerplate, full observability, and deploy anywhere."
->
-    <!-- Bootstrap icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-          slot="head">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <BrandHead title="About Fluxzero - Origin story" description="The origin story behind Fluxzero: why we made a production-ready foundation available to builders using AI." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
+    <style is:global>
+        @font-face {
+            font-family: 'Google Sans Flex';
+            src: url('/fonts/google-sans-flex/GoogleSansFlex-Black.ttf') format('truetype');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
 
-    <style slot="head">
-        .name-tooltip {
-            text-align: left !important;
+        @font-face {
+            font-family: 'Inter';
+            src: url('/fonts/inter/Inter-Regular.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        :root {
+            --bg: #05070B;
+            --text: #F4F7FF;
+            --text-secondary: #A7B4C8;
+            --text-tertiary: #6E7C93;
+            --accent: #00B3FF;
+            --green: #4de1c4;
+            --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, sans-serif;
+            --font-display: 'Google Sans Flex', sans-serif;
+            --font-mono: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, sans-serif;
+            --font-italic: 'Newsreader', serif;
+            --max-w: 1120px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background: #1E1E22;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            min-height: 100vh;
+            color: var(--text);
+            font-family: var(--font-body);
+            background:
+                radial-gradient(ellipse at 50% -6%, rgba(255, 150, 76, 0.18), transparent 34%),
+                radial-gradient(circle at 72% 12%, rgba(0, 179, 255, 0.07), transparent 28%),
+                linear-gradient(to top right, #1E1E22 0%, #000000 100%);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                linear-gradient(rgba(76, 101, 129, 0.022) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(76, 101, 129, 0.022) 1px, transparent 1px);
+            background-size: 42px 42px;
+            mask-image: linear-gradient(180deg, transparent, #000 18%, #000 74%, transparent);
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .nav-shell {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+            min-height: 72px;
+            padding: 0 32px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
+                rgba(5, 7, 11, 0.42);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                0 18px 46px rgba(0, 0, 0, 0.18);
+            backdrop-filter: blur(26px) saturate(150%);
+            -webkit-backdrop-filter: blur(26px) saturate(150%);
+        }
+
+        .nav-logo-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+            min-height: 72px;
+            padding: 0;
+            flex: 0 0 auto;
+        }
+
+        .logo-mark {
+            display: block;
+            flex: 0 0 auto;
+            background-image: var(--fluxzero-logo-url);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            aspect-ratio: 32 / 35;
+        }
+
+        .nav-logo-mark {
+            height: 24px;
+            width: 22px;
+        }
+
+        .nav-wordmark {
+            color: transparent;
+            background: linear-gradient(90deg, #D9F5FF 0%, #2F7FBA 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: -0.002em;
+            white-space: nowrap;
+        }
+
+        .nav-main,
+        .nav-actions {
+            min-height: 72px;
+        }
+
+        .nav-main {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .nav-main-links {
+            display: inline-flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 28px;
+            width: max-content;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 40px;
+            padding: 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.14s ease, opacity 0.14s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.is-active,
+        .nav-link[aria-current="page"] {
+            color: var(--text);
+        }
+
+        .nav-link-github {
+            color: rgba(244, 247, 255, 0.86);
+        }
+
+        .nav-link-github svg {
+            width: 18px;
+            height: 18px;
+            display: block;
+            fill: currentColor;
+            flex: 0 0 auto;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 14px;
+            flex: 0 0 auto;
+        }
+
+        .nav-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-height: 40px;
+            padding: 0;
+            color: rgba(167, 180, 200, 0.82);
+            font-family: var(--font-mono);
+            font-size: 10.5px;
+            line-height: 1;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            white-space: nowrap;
+            transition: color 0.14s ease, opacity 0.14s ease;
+        }
+
+        .nav-status:hover {
+            color: rgba(244, 247, 255, 0.9);
+        }
+
+        .status-dot {
+            --status-color: #4de1c4;
+            --status-glow: rgba(77, 225, 196, 0.18);
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--status-color);
+            box-shadow: 0 0 10px var(--status-glow);
+            flex: 0 0 auto;
+        }
+
+        .status-dot[data-status="minor"] {
+            --status-color: #f0c35a;
+            --status-glow: rgba(240, 195, 90, 0.24);
+        }
+
+        .status-dot[data-status="major"] {
+            --status-color: #ff8a4c;
+            --status-glow: rgba(255, 138, 76, 0.26);
+        }
+
+        .status-dot[data-status="critical"] {
+            --status-color: #ff5f6d;
+            --status-glow: rgba(255, 95, 109, 0.3);
+        }
+
+        .status-dot[data-status="maintenance"] {
+            --status-color: #5aa8ff;
+            --status-glow: rgba(90, 168, 255, 0.26);
+        }
+
+        .nav-status-label {
+            display: inline-block;
+        }
+
+        .nav-cta,
+        .story-cta {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            font-weight: 700;
+            transition: transform 0.14s ease, border-color 0.14s ease, background-color 0.14s ease;
+        }
+
+        .nav-cta {
+            min-height: 40px;
+            padding: 0 18px;
+            color: var(--text);
+            background: rgba(255, 255, 255, 0.055);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nav-cta:hover,
+        .story-cta:hover {
+            transform: translateY(-1px);
+        }
+
+        main {
+            width: min(100%, 960px);
+            margin: 0 auto;
+            padding: 142px 32px 0;
+        }
+
+        .origin-story {
+            display: grid;
+            gap: 68px;
+            padding-bottom: 104px;
+        }
+
+        .story-kicker {
+            margin: 0 0 22px;
+            color: transparent;
+            background: linear-gradient(90deg, #D9F5FF 0%, #2F7FBA 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        h1,
+        h2 {
+            font-family: var(--font-display);
+            font-weight: 900;
+            letter-spacing: -0.026em;
+            text-wrap: balance;
+            scroll-margin-top: 104px;
+        }
+
+        h1 {
+            max-width: 780px;
+            font-size: clamp(40px, 5.8vw, 58px);
+            line-height: 1.08;
+        }
+
+        .intro {
+            max-width: 760px;
+            margin-top: 30px;
+            color: rgba(221, 232, 247, 0.78);
+            font-size: clamp(20px, 2.3vw, 25px);
+            line-height: 1.62;
+        }
+
+        .intro-small {
+            max-width: 720px;
+            margin-top: 24px;
+            color: rgba(221, 232, 247, 0.68);
+            font-size: 18px;
+            line-height: 1.72;
+        }
+
+        .story-block {
+            display: grid;
+            grid-template-columns: minmax(0, 280px) minmax(0, 1fr);
+            gap: clamp(28px, 6vw, 72px);
+            align-items: start;
+        }
+
+        .story-block h2 {
+            max-width: 320px;
+            color: rgba(244, 247, 255, 0.94);
+            font-size: clamp(26px, 3.1vw, 34px);
+            line-height: 1.16;
+        }
+
+        .story-copy {
+            display: grid;
+            gap: 22px;
+        }
+
+        .story-copy p {
+            color: rgba(221, 232, 247, 0.76);
+            font-size: 19px;
+            line-height: 1.74;
+        }
+
+        .story-copy strong {
+            color: rgba(244, 247, 255, 0.95);
+            font-weight: 600;
+        }
+
+        .quote-panel {
+            position: relative;
+            overflow: hidden;
+            margin: 4px 0;
+            padding: clamp(26px, 4.5vw, 40px);
+            border: 1px solid rgba(244, 247, 255, 0.08);
+            border-radius: 18px;
+            background:
+                radial-gradient(circle at 84% 0%, rgba(0, 179, 255, 0.10), transparent 34%),
+                radial-gradient(circle at 18% 100%, rgba(255, 150, 76, 0.08), transparent 38%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.014)),
+                rgba(9, 12, 17, 0.72);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 22px 60px rgba(0, 0, 0, 0.22);
+        }
+
+        .quote-panel p {
+            max-width: 760px;
+            color: rgba(244, 247, 255, 0.92);
+            font-family: var(--font-display);
+            font-size: clamp(23px, 3.1vw, 32px);
+            font-weight: 600;
+            letter-spacing: -0.026em;
+            line-height: 1.24;
+            text-wrap: balance;
+        }
+
+        .final-block {
+            position: relative;
+            overflow: hidden;
+            padding: clamp(34px, 6vw, 58px);
+            border: 1px solid rgba(0, 179, 255, 0.16);
+            border-radius: 20px;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(255, 150, 76, 0.14), transparent 42%),
+                radial-gradient(circle at 82% 18%, rgba(0, 179, 255, 0.12), transparent 34%),
+                rgba(8, 12, 18, 0.66);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 24px 70px rgba(0, 0, 0, 0.24);
+        }
+
+        .final-block h2 {
+            max-width: 680px;
+            font-size: clamp(28px, 4vw, 40px);
+            line-height: 1.14;
+        }
+
+        .final-block .story-kicker {
+            margin-bottom: 16px;
+            font-size: 10px;
+            letter-spacing: 0.13em;
+        }
+
+        .final-block p {
+            max-width: 720px;
+            margin-top: 24px;
+            color: rgba(221, 232, 247, 0.78);
+            font-size: 20px;
+            line-height: 1.68;
+        }
+
+        .final-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 34px;
+        }
+
+        .story-cta {
+            min-height: 58px;
+            min-width: 220px;
+            padding: 0 28px;
+            color: #160719;
+            background: linear-gradient(135deg, #D9F5FF 0%, #2086F0 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.42),
+                0 0 32px rgba(0, 179, 255, 0.16);
+        }
+
+        footer {
+            position: relative;
+            border-top: 1px solid rgba(221, 247, 255, 0.055);
+            padding: 38px 32px 42px;
+            max-width: var(--max-w);
+            margin: 0 auto;
+        }
+
+        footer::before {
+            content: "";
+            position: absolute;
+            left: 32px;
+            right: 32px;
+            top: -1px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 179, 255, 0.16), transparent);
+            pointer-events: none;
+        }
+
+        .ft {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .ft-l {
+            font-size: 13px;
+            color: var(--text-tertiary);
+        }
+
+        .ft-r {
+            display: flex;
+            gap: 22px;
+            font-size: 13px;
+            color: var(--text-tertiary);
+            flex-wrap: wrap;
+        }
+
+        .ft-r a {
+            transition: color 0.14s ease;
+        }
+
+        .ft-r a:hover {
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 860px) {
+            .nav-shell {
+                min-height: 64px;
+                padding: 0 20px;
+                gap: 18px;
+            }
+
+            .nav-main-links {
+                gap: 18px;
+            }
+
+            .nav-actions {
+                gap: 12px;
+            }
+
+            .nav-link {
+                font-size: 12.5px;
+            }
+
+            .nav-status {
+                font-size: 10px;
+            }
+
+            .story-block {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .nav-shell {
+                min-height: 58px;
+                gap: 12px;
+                padding: 10px 12px;
+            }
+
+            .nav-logo-wrap {
+                min-height: 36px;
+                flex: 0 0 auto;
+            }
+
+            .nav-logo-mark {
+                height: 24px;
+            }
+
+            .nav-wordmark {
+                display: none;
+            }
+
+            .nav-main,
+            .nav-actions {
+                min-height: auto;
+                width: auto;
+            }
+
+            .nav-main {
+                flex: 1 1 auto;
+                justify-content: flex-start;
+            }
+
+            .nav-main-links {
+                gap: 10px;
+                flex-wrap: nowrap;
+            }
+
+            .nav-main-links .nav-link-github {
+                display: none;
+            }
+
+            .nav-link {
+                min-height: 36px;
+                font-size: 12.5px;
+            }
+
+            .nav-actions {
+                gap: 8px;
+            }
+
+            .nav-status {
+                min-height: 36px;
+                font-size: 10px;
+                letter-spacing: 0.08em;
+            }
+
+            .nav-cta {
+                min-height: 36px;
+                padding: 0 12px;
+                font-size: 13px;
+            }
+
+            main {
+                padding: 106px 20px 0;
+            }
+
+            .origin-story {
+                gap: 52px;
+                padding-bottom: 76px;
+            }
+
+            h1 {
+                font-size: clamp(34px, 9.5vw, 44px);
+            }
+
+            .intro {
+                margin-top: 24px;
+                font-size: 18px;
+            }
+
+            .intro-small {
+                margin-top: 18px;
+                font-size: 16.5px;
+            }
+
+            .story-copy p {
+                font-size: 17px;
+            }
+
+            .final-actions {
+                width: 100%;
+            }
+
+            .story-cta {
+                width: 100%;
+                min-width: 0;
+            }
+
+            footer {
+                padding: 24px 16px 32px;
+            }
+
+            .ft {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .ft-r {
+                justify-content: center;
+            }
         }
     </style>
+</head>
+<body>
+<MarketingHeader active="about" />
 
-    <!-- Page wrapper for sticky footer -->
-    <main class="page-wrapper">
-        <div class="bg-dark" style="height: 75px">
-            <Header/>
-        </div>
+<main>
+    <article class="origin-story">
+        <header>
+            <p class="story-kicker">Origin story</p>
+            <h1 id="origin-story">Fluxzero started with a simple frustration.</h1>
+            <p class="intro">Building software kept drifting away from the product itself.</p>
+            <p class="intro intro-small">The first time we tried to build a serious product, we thought the hard part would be the idea, the users, and the product itself. Instead, we got buried in everything around it.</p>
+        </header>
 
-
-        <!-- Testimonials -->
-        <section class="pt-2 pt-sm-0 pb-lg-4" style="margin-top: 100px">
-            <div class="container pb-2">
-                <h2 class="h1 text-center">Why we exist</h2>
-                <p class="fs-lg text-center pb-4">We believe software development can be effortless, regardless of scale.
-                    <br/> The potential of software is unlimited, yet much of it remains locked behind complexity.
-                    <br/> Imagine a world where all that potential is finally set free.
-                </p>
-
-                <hr class="my-5"/>
-
-                <section class="container my-lg-4 my-xl-5">
-                    <h2 class="h1 pb-4 pb-lg-2 text-center">Meet our team</h2>
-
-                    <p class="fs-lg text-center pb-4 pb-lg-5 mb-2 mb-sm-3 mb-xl-4">
-                        Our team is based in Rotterdam, The Netherlands. <br/> We imagine how things <em>should</em> work, and then make it happen by working backwards.
-                    </p>
-
-                    <div class="row text-start gy-5">
-
-                        <!-- Example card -->
-                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
-                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
-                                <img src="/assets/fluxzero/jeroen.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
-                                <div>
-                                    <h3 class="h5 mb-1">Jeroen Bruinink</h3>
-                                    <p class="fs-sm mb-2">Developer</p>
-                                    <div>
-                                        <a href="https://github.com/jbruinink" class="text-decoration-none mx-1"><i class="bi bi-github text-muted"></i></a>
-                                        <a href="https://www.linkedin.com/in/jeroen-bruinink-a719276/" class=" mx-1 text-decoration-none"><i class="bi bi-linkedin text-muted"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Repeat for each team member -->
-
-                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
-                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
-                                <img src="/assets/fluxzero/erhan.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
-                                <div>
-                                    <h3 class="h5 mb-1">Erhan Demirel</h3>
-                                    <p class="fs-sm mb-2">Co-founder + COO</p>
-                                    <div>
-                                        <a href="https://www.linkedin.com/in/erhandemirel" target="_blank" class=" mx-1 text-decoration-none"><i class="bi bi-linkedin text-muted"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
-                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
-                                <img src="/assets/fluxzero/ramon-gs.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
-                                <div>
-                                    <h3 class="h5 mb-1">Ramón Esteve Cuevas</h3>
-                                    <p class="fs-sm mb-2">Developer</p>
-                                    <div>
-                                        <a href="https://github.com/RamonEsteveCuevas" class="text-decoration-none mx-1"><i class="bi bi-github text-muted"></i></a>
-                                        <a href="https://www.linkedin.com/in/ramon-esteve-cuevas-bb285480/" class=" mx-1 text-decoration-none"><i class="bi bi-linkedin text-muted"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
-                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
-                                <img src="/assets/fluxzero/sander.webp" class="rounded-circle me-3 mt-1" width="80" alt="Avatar" style="filter: grayscale(100%) brightness(130%) contrast(70%);">
-                                <div>
-                                    <h3 class="h5 mb-1">Sander de Groot</h3>
-                                    <p class="fs-sm mb-2">Developer</p>
-                                    <div>
-                                        <a href="https://github.com/sdegroot" target="_blank" class="text-decoration-none mx-1"><i class="bi bi-github text-muted"></i></a>
-                                        <a href="https://www.linkedin.com/in/sdg91/" class=" mx-1 text-decoration-none"><i class="bi bi-linkedin text-muted"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
-                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
-                                <img src="/assets/fluxzero/alen.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
-                                <div>
-                                    <h3 class="h5 mb-1">Alen Stjepanovic</h3>
-                                    <p class="fs-sm mb-2">Co-founder + CCO</p>
-                                    <div>
-                                        <a href="https://www.linkedin.com/in/alen-stjepanovic-24082abb/" target="_blank" class=" mx-1 text-decoration-none"><i class="bi bi-linkedin text-muted"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
-                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
-                                <img src="/assets/fluxzero/michel.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
-                                <div>
-                                    <h3 class="h5 mb-1">Michel Tiemens</h3>
-                                    <p class="fs-sm mb-2">Developer</p>
-                                    <div>
-                                        <a href="https://github.com/michel-flux" class="text-decoration-none mx-1"><i class="bi bi-github text-muted"></i></a>
-                                        <a href="https://www.linkedin.com/in/micheltiemens/" class=" mx-1 text-decoration-none"><i class="bi bi-linkedin text-muted"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-sm-6 d-flex justify-content-center mb-4">
-                            <div class="d-flex align-items-start w-100" style="max-width: 320px;">
-                                <img src="/assets/fluxzero/rene.png" class="rounded-circle me-3 mt-1" width="80" alt="Avatar">
-                                <div>
-                                    <h3 class="h5 mb-1">René de Waele</h3>
-                                    <p class="fs-sm mb-2">Co-founder + CEO</p>
-                                    <div>
-                                        <a href="https://github.com/renedewaele" target="_blank" class="text-decoration-none mx-1"><i class="bi bi-github text-muted"></i></a>
-                                        <a href="https://www.linkedin.com/in/renedewaele/" target="_blank" class=" mx-1 text-decoration-none"><i class="bi bi-linkedin text-muted"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-4 col-md-6 d-flex justify-content-center mb-4">
-                            <a href="/contact" class="d-flex align-items-start text-decoration-none text-dark w-100" style="max-width: 320px;">
-                                <div class="rounded-circle d-flex align-items-center justify-content-center me-3 mt-1" style="width: 80px; height: 80px; border: 2px solid currentColor;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="80" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="h5 mb-1">Want to join?</h3>
-                                    <p class="fs-sm mb-0">Contact us</p>
-                                </div>
-                            </a>
-                        </div>
-
-                    </div>
-                </section>
-
-
-                <hr class="my-5"/>
-
-                <!--Partnering to build Europe’s developer cloud-->
-
-                <section class="px-lg-5 mx-auto text-center fs-lg" style="max-width: 700px;">
-                    <h1 class="my-5">For investors</h1>
-                    <p class="pb-4">
-                        Fluxzero is building something bold. We’re not just accelerating software development. We’re reimagining the infrastructure it runs on.
-                    </p>
-
-                    <h3 class="h2">Where we’re headed</h3>
-
-                    <p>
-                        Fluxzero is live in production and already powering business-critical applications at enterprise-level.
-                    </p>
-
-                    <p>As we prepare for our next chapter — including our public launch — we’re choosing partners who share our long-term vision.</p>
-
-                    <div class="text-center fs-lg">
-                        <p><span class="me-2">✉️</span>Reach us at: <strong class="ms-1"><a href="mailto:invest&#64;fluxzero.io">invest&#64;fluxzero.io</a></strong></p>
-                        <p>Or connect with one of our founders directly.</p>
-                    </div>
-                </section>
+        <section class="story-block">
+            <h2 id="work-around-product">The work around the product kept taking over</h2>
+            <div class="story-copy">
+                <p>Again and again, we saw the same thing happen. A team would start with a clear product idea, then slowly disappear into the foundation beneath it: auth, data, architecture, permissions, deployment, operations, monitoring, failures, security, scale.</p>
+                <p>None of that work is optional. It is the work that makes software trustworthy. But it is also the work that turns a product into an infrastructure project before anyone even gets to use it.</p>
             </div>
         </section>
 
-        <hr class="my-5"/>
+        <section class="quote-panel">
+            <p>We did not want another workaround. We wanted the foundation we wished had existed from the start.</p>
+        </section>
 
+        <section class="story-block">
+            <h2 id="ai-changed-who-could-build">Then AI changed who could build</h2>
+            <div class="story-copy">
+                <p>AI made it possible for founders, designers, frontenders, domain experts, and small teams to build working software at a speed that used to be impossible.</p>
+                <p>That is exciting. But it also exposes the same old problem in a sharper way. It makes little sense for AI to rebuild the foundation every time it builds a product. And it's risky too: builders are left trusting technical choices while trying to build the product itself.</p>
+            </div>
+        </section>
 
-    </main>
-    <Footer/>
+        <section class="story-block">
+            <h2 id="reusable-foundation">So we made our foundation reusable</h2>
+            <div class="story-copy">
+                <p>For years, we built systems where correctness, reliability, testing, operations, and scale mattered from day one. Fluxzero grew out of that work.</p>
+                <p>Our obsession is simple: build a best-in-class backend foundation, and keep it out of the product layer so it never slows builders down.</p>
+            </div>
+        </section>
 
-</BaseLayout>
+        <section class="final-block">
+            <p class="story-kicker">What this means now</p>
+            <h2 id="real-foundation">Every builder can start on a real foundation</h2>
+            <p>Fluxzero gives anyone building with AI a production-ready backend from the start. You focus on the product. Fluxzero handles the architecture underneath, so what you build can become real software.</p>
+            <div class="final-actions">
+                <a href="/#get-started" class="story-cta">Generate your app &rarr;</a>
+            </div>
+        </section>
+    </article>
+</main>
+
+<MarketingFooter />
+
+<script>
+    async function initSystemStatus() {
+        const link = document.querySelector('[data-status-link]');
+        const dot = document.querySelector('[data-status-dot]');
+        if (!link || !dot || typeof fetch !== 'function') return;
+
+        try {
+            const response = await fetch('https://fluxzero.statuspage.io/api/v2/status.json', { cache: 'no-store' });
+            if (!response.ok) return;
+
+            const payload = await response.json();
+            const status = payload && payload.status ? payload.status : {};
+            const indicator = ['none', 'minor', 'major', 'critical', 'maintenance'].includes(status.indicator)
+                ? status.indicator
+                : 'none';
+            const description = status.description || 'System status';
+
+            dot.dataset.status = indicator;
+            link.setAttribute('aria-label', 'System status: ' + description);
+            link.title = description;
+        } catch (error) {
+            /* Keep the default healthy dot if the status API is unavailable. */
+        }
+    }
+
+    initSystemStatus();
+</script>
+</body>
+</html>

@@ -1,0 +1,37 @@
+---
+import { fluxzeroBrand } from '../config/brand.mjs';
+
+const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
+---
+
+<a href={siteTitleHref} class="site-title sl-flex">
+    <img src={fluxzeroBrand.mark} width="32" height="35" alt="" aria-hidden="true">
+    <span translate="no">{siteTitle}</span>
+</a>
+
+<style>
+    @layer starlight.core {
+        .site-title {
+            align-items: center;
+            gap: var(--sl-nav-gap);
+            min-width: 0;
+            color: var(--sl-color-text-accent);
+            font-size: var(--sl-text-h4);
+            font-weight: 600;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        img {
+            width: auto;
+            height: calc(var(--sl-nav-height) - 2 * var(--sl-nav-pad-y));
+            max-width: 100%;
+            object-fit: contain;
+            object-position: 0 50%;
+        }
+
+        span {
+            overflow: hidden;
+        }
+    }
+</style>

@@ -1,0 +1,31 @@
+---
+interface Props {
+    active?: 'pricing' | 'about';
+}
+
+const { active } = Astro.props;
+const pricingClass = `nav-link${active === 'pricing' ? ' is-active' : ''}`;
+const aboutClass = `nav-link${active === 'about' ? ' is-active' : ''}`;
+---
+
+<nav class="nav-shell">
+    <a href="/" class="nav-logo-wrap" aria-label="Fluxzero home">
+        <span class="logo-mark nav-logo-mark" aria-hidden="true"></span>
+        <span class="nav-wordmark">FLUXZERO</span>
+    </a>
+
+    <div class="nav-main">
+        <div class="nav-main-links">
+            <a href="/pricing" class={pricingClass} aria-current={active === 'pricing' ? 'page' : undefined}>Pricing</a>
+            <a href="/about" class={aboutClass} aria-current={active === 'about' ? 'page' : undefined}>Our story</a>
+            <a href="/docs" class="nav-link">Docs</a>
+        </div>
+    </div>
+
+    <div class="nav-actions">
+        <a href="https://fluxzero.statuspage.io/" class="nav-status" aria-label="System status" target="_blank" rel="noreferrer" data-status-link>
+            <span class="status-dot" aria-hidden="true" data-status-dot></span>
+            <span class="nav-status-label">Status</span>
+        </a>
+    </div>
+</nav>

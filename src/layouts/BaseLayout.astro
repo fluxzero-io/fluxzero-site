@@ -1,5 +1,6 @@
 ---
 import '../styles/theme.css';
+import { fluxzeroBrand } from '../config/brand.mjs';
 
 export interface Props {
   title?: string;
@@ -33,13 +34,15 @@ const {
     <!-- Theme switcher (color modes) -->
 
     <!-- Favicon and Touch Icons-->
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/fluxzero/fluxzero-logo-180.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/fluxzero/fluxzero-logo-32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/fluxzero/fluxzero-logo-16.png">
-    <link rel="manifest" href="/assets/fluxzero/site.webmanifest">
-    <meta name="msapplication-TileColor" content="#080032">
-    <meta name="msapplication-config" content="/assets/fluxzero/browserconfig.xml">
-    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/svg+xml" href={fluxzeroBrand.faviconSvg}>
+    <link rel="apple-touch-icon" sizes="180x180" href={fluxzeroBrand.appleTouchIcon}>
+    <link rel="icon" type="image/png" sizes="32x32" href={fluxzeroBrand.favicon32}>
+    <link rel="icon" type="image/png" sizes="16x16" href={fluxzeroBrand.favicon16}>
+    <link rel="icon" sizes="any" href={fluxzeroBrand.faviconIco}>
+    <link rel="manifest" href={fluxzeroBrand.webManifest}>
+    <meta name="msapplication-TileColor" content="#05070B">
+    <meta name="msapplication-config" content={fluxzeroBrand.browserConfig}>
+    <meta name="theme-color" content="#05070B">
 
 
     

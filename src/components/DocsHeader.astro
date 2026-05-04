@@ -1,5 +1,6 @@
 ---
 // DocsHeader component for Starlight documentation - Tailwind version (isolated)
+import { fluxzeroBrand } from '../config/brand.mjs';
 ---
 
 <header id="docs-header">
@@ -7,7 +8,7 @@
     <div class="header-row">
       <!-- Logo and Brand -->
       <a href="/" class="logo-link">
-        <img src="/assets/fluxzero/fluxzero-logo.png" width="47" height="47" alt="Fluxzero" class="logo-img">
+        <img src={fluxzeroBrand.mark} width="47" height="47" alt="Fluxzero" class="logo-img">
         <span>Fluxzero</span>
       </a>
 

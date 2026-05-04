@@ -1,11 +1,12 @@
 ---
 // Header component for the Fluxzero website
+import { fluxzeroBrand } from '../config/brand.mjs';
 ---
 
 <header class="header navbar navbar-expand-lg position-absolute navbar-dark navbar-sticky" id="main-header">
   <div class="container px-3">
     <a href="/" class="navbar-brand pe-3 text-uppercase">
-      <img src="/assets/fluxzero/fluxzero-logo.png" width="47" alt="Fluxzero">
+      <img src={fluxzeroBrand.mark} width="47" alt="Fluxzero">
       Fluxzero
     </a>
     
