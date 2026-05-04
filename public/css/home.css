@@ -1945,6 +1945,8 @@ section:not(.hero):not(.cta-end) {
 .ai h2 .ai-line-1,
 .ai h2 .ai-line-2 {
     display: block;
+    padding-bottom: 0.08em;
+    margin-bottom: -0.08em;
 }
 
 .ai h2 .ai-line-1,
@@ -5742,10 +5744,26 @@ footer::before {
         line-height: 1.58;
     }
     .proof-stats {
-        grid-template-columns: 1fr;
-        border-radius: 24px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border-radius: 22px;
     }
-    .proof-stat:not(:last-child) { border-right: none; border-bottom: 1px solid rgba(221, 247, 255, 0.055); }
+    .proof-stat {
+        padding: 24px 10px 22px;
+        overflow: visible;
+    }
+    .proof-stat:not(:last-child) {
+        border-right: 1px solid rgba(235, 248, 255, 0.08);
+        border-bottom: none;
+    }
+    .proof-stat .num {
+        font-size: clamp(27px, 7.4vw, 38px);
+        margin-bottom: 8px;
+    }
+    .proof-stat .label {
+        font-size: 9px;
+        line-height: 1.35;
+        letter-spacing: 0.12em;
+    }
     footer { padding: 24px 16px 32px; }
     .ft { justify-content: center; text-align: center; }
     .ft-r { justify-content: center; }
