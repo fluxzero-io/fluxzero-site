@@ -5,6 +5,7 @@ import mermaid from 'astro-mermaid';
 import tailwindcss from '@tailwindcss/vite';
 import starlightLinksValidator from 'starlight-links-validator'
 import cloudflare from '@astrojs/cloudflare';
+import { fluxzeroBrand } from './src/config/brand.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -46,16 +47,20 @@ export default defineConfig({
         starlight({
             components: {
                 //  Header: './src/components/DocsHeader.astro', // disabled as we haven't gotten this right yet
+                SiteTitle: './src/components/DocsSiteTitle.astro',
                 MarkdownContent: './src/components/MarkdownContentWithFeedback.astro',
                 Footer: './src/components/DocsFooter.astro',
             },
             title: 'Fluxzero docs',
-            logo: {
-                light: './src/assets/fluxzero-logo.png',
-                dark: './src/assets/fluxzero-logo.png',
-                alt: 'Flux Logo'
-            },
-            favicon: '/assets/fluxzero/fluxzero-logo.png',
+            favicon: fluxzeroBrand.faviconSvg,
+            head: [
+                { tag: 'link', attrs: { rel: 'icon', href: fluxzeroBrand.favicon32, sizes: '32x32', type: 'image/png' } },
+                { tag: 'link', attrs: { rel: 'icon', href: fluxzeroBrand.favicon16, sizes: '16x16', type: 'image/png' } },
+                { tag: 'link', attrs: { rel: 'icon', href: fluxzeroBrand.faviconIco, sizes: 'any' } },
+                { tag: 'link', attrs: { rel: 'apple-touch-icon', href: fluxzeroBrand.appleTouchIcon } },
+                { tag: 'link', attrs: { rel: 'manifest', href: fluxzeroBrand.webManifest } },
+                { tag: 'meta', attrs: { name: 'theme-color', content: '#05070B' } },
+            ],
             social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/fluxzero-io' }],
             customCss: ['./src/styles/global.css'],
             plugins: [

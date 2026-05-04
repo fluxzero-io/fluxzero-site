@@ -1,4 +1,5 @@
 ---
+import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 ---
@@ -8,9 +9,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluxzero — Build the product. Trust the backend.</title>
-    <meta name="description" content="You write the logic. Fluxzero provides the backend runtime you never had time to build properly. Java or Kotlin. Cloud or self-hosted.">
-    <link rel="icon" href="/assets/fluxzero-logo-beb2804d3a4248cf9e5d05937269bfc6.svg" type="image/svg+xml">
+    <BrandHead title="Fluxzero — Build the product. Trust the backend." description="You write the logic. Fluxzero provides the backend runtime you never had time to build properly. Java or Kotlin. Cloud or self-hosted." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
@@ -39,7 +38,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
   <h1 class="rv d1" id="hero-title"><span class="em">We&rsquo;ve got your back<span class="hero-end">end.</span></span></h1>
 
     <p class="hero-sub rv d2">
-        Start with a production-ready foundation.<br>
+        Start with a <span class="hero-no-break">production-ready</span> foundation.<br>
         Prompt your product and launch it on a backend you can trust.
     </p>
 

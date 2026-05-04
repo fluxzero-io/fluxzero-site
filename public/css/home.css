@@ -42,7 +42,6 @@
     --font-display: 'Google Sans Flex', sans-serif;
     --font-mono: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, sans-serif;
     --font-italic: 'Newsreader', serif;
-    --fluxzero-logo-url: url('../assets/fluxzero-logo-beb2804d3a4248cf9e5d05937269bfc6.svg');
     --max-w: 1060px;
     --space-1: 8px;
     --space-2: 12px;
@@ -783,6 +782,10 @@ section:not(.hero):not(.cta-end) {
     margin: 0 auto clamp(48px, 5vw, 64px);
     white-space: normal;
     text-wrap: balance;
+}
+
+.hero-no-break {
+    white-space: nowrap;
 }
 
 .hero-ctas {
@@ -5652,7 +5655,11 @@ footer::before {
         width: min(100%, calc(100vw - 32px));
     }
     .hero-sub {
-        text-wrap: balance;
+        width: min(100%, calc(100vw - 20px));
+        max-width: 390px;
+        padding-left: 10px;
+        padding-right: 10px;
+        text-wrap: pretty;
     }
     h2 {
         font-size: clamp(32px, 9vw, 40px);

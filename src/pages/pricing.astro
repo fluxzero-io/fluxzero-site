@@ -1,4 +1,5 @@
 ---
+import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 ---
@@ -8,9 +9,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fluxzero Pricing — Build free. Launch, then run.</title>
-    <meta name="description" content="Fluxzero pricing for builders: build locally for free, put your app online with Starter, then run with Startup, Scale Up, or Enterprise.">
-    <link rel="icon" href="/assets/fluxzero-logo-beb2804d3a4248cf9e5d05937269bfc6.svg" type="image/svg+xml">
+    <BrandHead title="Fluxzero Pricing — Build free. Launch, then run." description="Fluxzero pricing for builders: build locally for free, put your app online with Starter, then run with Startup, Scale Up, or Enterprise." />
     <style is:global>
         @font-face {
             font-family: 'Google Sans Flex';
@@ -52,7 +51,6 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             --surface-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
             --surface-shadow-hover: 0 14px 28px rgba(0, 0, 0, 0.28);
             --accent-glow: 0 0 16px rgba(0, 179, 255, 0.16);
-            --fluxzero-logo-url: url('/assets/fluxzero-logo-beb2804d3a4248cf9e5d05937269bfc6.svg');
             --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, sans-serif;
             --font-display: 'Google Sans Flex', sans-serif;
             --font-mono: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro", system-ui, sans-serif;
