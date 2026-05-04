@@ -5412,7 +5412,7 @@ footer::before {
         gap: 12px;
     }
     .nav-link {
-        font-size: 12.5px;
+        font-size: 13.5px;
     }
     .nav-status {
         font-size: 10px;
@@ -5541,7 +5541,7 @@ footer::before {
         gap: 8px;
     }
     .nav-main-links {
-        gap: 10px;
+        gap: 9px;
         flex-wrap: nowrap;
     }
     .nav-main-links .nav-link-github {
@@ -5549,7 +5549,7 @@ footer::before {
     }
     .nav-link {
         min-height: 36px;
-        font-size: 12.5px;
+        font-size: 13.5px;
     }
     .nav-status {
         min-height: 36px;
