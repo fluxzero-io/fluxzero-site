@@ -1650,6 +1650,10 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             border-top: 0;
         }
 
+        .scale-row--storage {
+            border-top-color: rgba(111, 188, 255, 0.1);
+        }
+
         .scale-row-main {
             display: flex;
             align-items: center;
@@ -1794,11 +1798,40 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             align-self: center;
         }
 
+        .scale-summary {
+            display: grid;
+            gap: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(255, 255, 255, 0.025);
+        }
+
+        .scale-summary-row,
         .scale-total-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
             gap: 14px;
+        }
+
+        .scale-summary-row {
+            padding: 11px 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            color: rgba(167, 180, 200, 0.86);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .scale-summary-row:first-child {
+            border-top: 0;
+        }
+
+        .scale-summary-row strong {
+            color: rgba(244, 247, 255, 0.84);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .scale-total-row {
             padding: 15px 14px;
             border-top: 1px solid rgba(255, 255, 255, 0.12);
             color: rgba(244, 247, 255, 0.96);
@@ -2820,25 +2853,29 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                                 </div>
 
                                 <div class="scale-price-list" aria-live="polite">
-                                    <div class="scale-row">
-                                        <div class="scale-row-main">
-                                            <span class="scale-row-type scale-row-type--plan">Plan</span>
-                                            <span class="scale-row-name">Scale Up</span>
-                                        </div>
-                                        <strong class="scale-row-price">€890</strong>
-                                    </div>
-                                    <div class="scale-price-rows" data-scale-rows></div>
-                                    <div class="scale-row">
+                                    <div class="scale-row scale-row--storage">
                                         <div class="scale-row-main">
                                             <span class="scale-row-type scale-row-type--storage">Storage</span>
                                             <input class="scale-storage-input" type="number" min="400" step="50" value="400" inputmode="numeric" aria-label="Storage usage in GB" data-scale-storage-gb>
                                             <span class="scale-storage-unit">GB</span>
                                         </div>
                                         <strong class="scale-row-price" data-scale-storage-extra>€0</strong>
+                                        <input class="scale-row-range" type="range" min="400" max="10000" step="50" value="400" aria-label="Storage usage in GB" data-scale-storage-range>
                                     </div>
-                                    <div class="scale-total-row">
-                                        <span>Monthly total</span>
-                                        <strong data-scale-total>€890</strong>
+                                    <div class="scale-price-rows" data-scale-rows></div>
+                                    <div class="scale-summary">
+                                        <div class="scale-summary-row">
+                                            <span>Scale Up plan</span>
+                                            <strong>€890</strong>
+                                        </div>
+                                        <div class="scale-summary-row">
+                                            <span>Extra capacity &amp; storage</span>
+                                            <strong data-scale-extra-total>€0</strong>
+                                        </div>
+                                        <div class="scale-total-row">
+                                            <span>Monthly total</span>
+                                            <strong data-scale-total>€890</strong>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -3145,6 +3182,8 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         const includedSizeIndex = 2;
         const addedSizeIndex = 1;
         const includedStorageGb = 400;
+        const maxStorageGb = 10000;
+        const storageStepGb = 50;
         const storagePricePerGbPerDay = 0.0048;
         const state = [
             { type: 'cluster', sizeIndex: includedSizeIndex, included: true },
@@ -3162,6 +3201,13 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             const fullPrice = fullRowPrice(row.type, row.sizeIndex);
             if (!row.included) return fullPrice;
             return Math.max(0, fullPrice - fullRowPrice(row.type, includedSizeIndex));
+        }
+
+        function normalizeStorageGb(value, options = {}) {
+            const maxGb = options.maxGb ?? Infinity;
+            const parsed = Number(value || includedStorageGb);
+            const bounded = Math.min(maxGb, Math.max(includedStorageGb, parsed));
+            return Math.round(bounded / storageStepGb) * storageStepGb;
         }
 
         function renderRows() {
@@ -3230,13 +3276,18 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         }
 
         function updateTotals() {
-            const extraTotal = state.reduce((total, row) => total + extraRowPrice(row), 0);
+            const capacityExtra = state.reduce((total, row) => total + extraRowPrice(row), 0);
             const storageInput = calculator.querySelector('[data-scale-storage-gb]');
-            const storageGb = Math.max(includedStorageGb, Number(storageInput.value || includedStorageGb));
+            const storageRange = calculator.querySelector('[data-scale-storage-range]');
+            const parsedStorageGb = Number(storageInput.value);
+            const storageGb = Number.isFinite(parsedStorageGb) ? Math.max(0, parsedStorageGb) : includedStorageGb;
             const storageExtra = Math.max(0, storageGb - includedStorageGb) * 30 * storagePricePerGbPerDay;
+            const extraTotal = capacityExtra + storageExtra;
 
+            storageRange.value = String(Math.min(maxStorageGb, storageGb));
             calculator.querySelector('[data-scale-storage-extra]').textContent = formatEuro(storageExtra);
-            calculator.querySelector('[data-scale-total]').textContent = formatEuro(planPrice + extraTotal + storageExtra);
+            calculator.querySelector('[data-scale-extra-total]').textContent = formatEuro(extraTotal);
+            calculator.querySelector('[data-scale-total]').textContent = formatEuro(planPrice + extraTotal);
         }
 
         function render() {
@@ -3253,11 +3304,14 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         });
 
         const storageInput = calculator.querySelector('[data-scale-storage-gb]');
+        const storageRange = calculator.querySelector('[data-scale-storage-range]');
         storageInput.addEventListener('input', updateTotals);
+        storageRange.addEventListener('input', () => {
+            storageInput.value = String(normalizeStorageGb(storageRange.value, { maxGb: maxStorageGb }));
+            updateTotals();
+        });
         storageInput.addEventListener('blur', () => {
-            if (Number(storageInput.value || 0) < includedStorageGb) {
-                storageInput.value = String(includedStorageGb);
-            }
+            storageInput.value = String(normalizeStorageGb(storageInput.value));
             updateTotals();
         });
 
