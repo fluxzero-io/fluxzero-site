@@ -5,17 +5,33 @@
 
 /* Custom theme colors for Tailwind CSS v4 */
 @theme {
-  --color-primary-50: #eef2ff;
-  --color-primary-100: #e0e7ff;
-  --color-primary-200: #c7d2fe;
-  --color-primary-300: #a5b4fc;
-  --color-primary-400: #818cf8;
-  --color-primary-500: #6366f1;
-  --color-primary-600: #4f46e5;
-  --color-primary-700: #4338ca;
-  --color-primary-800: #3730a3;
-  --color-primary-900: #312e81;
-  --color-primary-950: #1e1b4b;
+  --color-primary-50: #edf8ff;
+  --color-primary-100: #d9efff;
+  --color-primary-200: #b9e3ff;
+  --color-primary-300: #8bd2ff;
+  --color-primary-400: #4abaff;
+  --color-primary-500: #00b2ff;
+  --color-primary-600: #2086f0;
+  --color-primary-700: #176fca;
+  --color-primary-800: #155aa3;
+  --color-primary-900: #164d86;
+  --color-primary-950: #102f52;
+}
+
+:root {
+  --sl-color-accent-low: #063856;
+  --sl-color-accent: #00B2FF;
+  --sl-color-accent-high: #00B2FF;
+  --sl-color-text-accent: #00B2FF;
+  --sl-color-bg-accent: #00B2FF;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-low: #D9ECFF;
+  --sl-color-accent: #2086F0;
+  --sl-color-accent-high: #1764B5;
+  --sl-color-text-accent: #2086F0;
+  --sl-color-bg-accent: #2086F0;
 }
 
 /* Custom base styles for the marketing website */
