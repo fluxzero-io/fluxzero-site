@@ -1340,7 +1340,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
         .pricing-v2-billing-note {
             grid-column: 1 / -1;
-            max-width: 760px;
+            max-width: 1040px;
             margin: 2px auto 0;
             color: rgba(167, 180, 200, 0.72);
             font-size: 14px;
@@ -1904,6 +1904,15 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         .pricing-v2-list strong {
             color: inherit;
             font-weight: 500;
+        }
+
+        .pricing-v2-footnote-ref {
+            margin-left: 2px;
+            color: rgba(118, 246, 213, 0.88);
+            font-size: 0.68em;
+            font-weight: 700;
+            line-height: 0;
+            vertical-align: super;
         }
 
         .pricing-v2-list .pricing-v2-list-intro {
@@ -2756,9 +2765,9 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                     <ul class="pricing-v2-list">
                         <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-cluster"></use></svg><strong>Small cluster included</strong></li>
                         <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-task"></use></svg><strong>2 small apps included</strong></li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-storage"></use></svg>200GB storage included</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-storage"></use></svg><span>200GB storage included<sup class="pricing-v2-footnote-ref">1</sup></span></li>
                         <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-users"></use></svg>1000 users included</li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-backup"></use></svg>7 days backup</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-backup"></use></svg><span>7 days backup<sup class="pricing-v2-footnote-ref">1</sup></span></li>
                         <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-domain"></use></svg>Unlimited domains</li>
                         <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-audit"></use></svg>Audit trail</li>
                         <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>Ticket support</li>
@@ -2782,10 +2791,10 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                             <ul class="pricing-v2-list">
                                 <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-cluster"></use></svg><strong>Medium cluster included</strong></li>
                                 <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-task"></use></svg><strong>2 medium apps included</strong></li>
-                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-scale"></use></svg>Unlimited clusters &amp; apps</li>
-                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-storage"></use></svg>400GB storage included</li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-scale"></use></svg><span>Unlimited clusters &amp; apps<sup class="pricing-v2-footnote-ref">1</sup></span></li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-storage"></use></svg><span>400GB storage included<sup class="pricing-v2-footnote-ref">1</sup></span></li>
                                 <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-users"></use></svg>Unlimited users included</li>
-                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-backup"></use></svg>Unlimited backups</li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-backup"></use></svg><span>Unlimited backups<sup class="pricing-v2-footnote-ref">1</sup></span></li>
                                 <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-domain"></use></svg>Unlimited domains</li>
                                 <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-sso"></use></svg>SSO</li>
                                 <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-uptime"></use></svg>99.9% uptime</li>
@@ -2793,7 +2802,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                                 <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-audit"></use></svg>Audit trail &amp; insights</li>
                                 <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>Priority support</li>
                             </ul>
-                            <button class="pricing-v2-card-action pricing-v2-card-action-secondary scale-calc-trigger" type="button" onclick="toggleScaleCalculator()">
+                            <button class="pricing-v2-card-action pricing-v2-card-action-secondary scale-calc-trigger" type="button">
                                 <svg viewBox="0 0 16 16" aria-hidden="true">
                                     <path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/>
                                 </svg>
@@ -2804,7 +2813,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                         <div class="pricing-v2-flip-face pricing-v2-flip-face--back">
                             <div class="scale-calculator" data-scale-calculator>
                                 <div class="scale-calculator-head">
-                                    <button class="scale-calculator-back" type="button" onclick="toggleScaleCalculator()">&lt;- Back</button>
+                                    <button class="scale-calculator-back" type="button">&lt;- Back</button>
                                     <div>
                                         <h3>Calculator</h3>
                                     </div>
@@ -2866,7 +2875,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                         <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>24/7 support</li>
                     </ul>
                 </article>
-                <p class="pricing-v2-billing-note">Startup and Scale Up are billed monthly. Extra capacity and storage are measured during the month and settled at month-end.</p>
+                <p class="pricing-v2-billing-note"><sup class="pricing-v2-footnote-ref">1</sup> Extra clusters, apps, backup storage, and storage above the included amount are measured during the month and settled at month-end.</p>
             </div>
         </div>
     </section>
@@ -2974,7 +2983,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
         <div class="pricing-v2-faq-list">
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q" onclick="togglePricingFaq(this)">
+                <button class="pricing-v2-faq-q">
                     <span>What are clusters and apps?</span>
                     <span class="pricing-v2-faq-arrow">+</span>
                 </button>
@@ -2984,7 +2993,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q" onclick="togglePricingFaq(this)">
+                <button class="pricing-v2-faq-q">
                     <span>When will I be billed?</span>
                     <span class="pricing-v2-faq-arrow">+</span>
                 </button>
@@ -2994,7 +3003,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q" onclick="togglePricingFaq(this)">
+                <button class="pricing-v2-faq-q">
                     <span>What capacity is included, and can I cap my bill?</span>
                     <span class="pricing-v2-faq-arrow">+</span>
                 </button>
@@ -3004,7 +3013,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q" onclick="togglePricingFaq(this)">
+                <button class="pricing-v2-faq-q">
                     <span>Is sales tax included?</span>
                     <span class="pricing-v2-faq-arrow">+</span>
                 </button>
@@ -3013,7 +3022,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q" onclick="togglePricingFaq(this)">
+                <button class="pricing-v2-faq-q">
                     <span>Will prices change in the future?</span>
                     <span class="pricing-v2-faq-arrow">+</span>
                 </button>
@@ -3022,7 +3031,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q" onclick="togglePricingFaq(this)">
+                <button class="pricing-v2-faq-q">
                     <span>What happens if I cancel or pause my plan?</span>
                     <span class="pricing-v2-faq-arrow">+</span>
                 </button>
@@ -3032,7 +3041,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q" onclick="togglePricingFaq(this)">
+                <button class="pricing-v2-faq-q">
                     <span>What happens if my payment fails?</span>
                     <span class="pricing-v2-faq-arrow">+</span>
                 </button>
@@ -3041,7 +3050,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q" onclick="togglePricingFaq(this)">
+                <button class="pricing-v2-faq-q">
                     <span>What is Starter for?</span>
                     <span class="pricing-v2-faq-arrow">+</span>
                 </button>
@@ -3051,7 +3060,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q" onclick="togglePricingFaq(this)">
+                <button class="pricing-v2-faq-q">
                     <span>What if I need development, test, or staging environments?</span>
                     <span class="pricing-v2-faq-arrow">+</span>
                 </button>
@@ -3060,7 +3069,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q" onclick="togglePricingFaq(this)">
+                <button class="pricing-v2-faq-q">
                     <span>What if I need more scale or higher availability?</span>
                     <span class="pricing-v2-faq-arrow">+</span>
                 </button>
@@ -3070,7 +3079,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q" onclick="togglePricingFaq(this)">
+                <button class="pricing-v2-faq-q">
                     <span>What happens if I go over included limits?</span>
                     <span class="pricing-v2-faq-arrow">+</span>
                 </button>
@@ -3089,7 +3098,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
 <MarketingFooter />
 
-<script>
+<script is:inline>
     function togglePricingFaq(btn) {
         const item = btn.parentElement;
         item.classList.toggle('open');
@@ -3103,6 +3112,14 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         scaleCard.querySelector('.pricing-v2-flip-face--front').setAttribute('aria-hidden', String(isFlipped));
         scaleCard.querySelector('.pricing-v2-flip-face--back').setAttribute('aria-hidden', String(!isFlipped));
     }
+
+    document.querySelectorAll('.pricing-v2-faq-q').forEach(button => {
+        button.addEventListener('click', () => togglePricingFaq(button));
+    });
+
+    document.querySelectorAll('.scale-calc-trigger, .scale-calculator-back').forEach(button => {
+        button.addEventListener('click', toggleScaleCalculator);
+    });
 
     (function () {
         const scaleCard = document.querySelector('[data-scale-card]');
