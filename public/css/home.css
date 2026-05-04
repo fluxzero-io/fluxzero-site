@@ -2043,45 +2043,6 @@ section:not(.hero):not(.cta-end) {
     mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 100%);
 }
 
-.ai-card-anim {
-    position: relative;
-    z-index: 1;
-    height: 42px;
-    margin-top: auto;
-    overflow: hidden;
-    border-radius: 10px;
-    opacity: 0.42;
-}
-
-.ai-card-anim::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 50%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0, 179, 255, 0.14), rgba(221, 247, 255, 0.08), transparent);
-}
-
-.ai-card-anim span {
-    position: absolute;
-    left: var(--x);
-    top: var(--y);
-    width: 44px;
-    height: 1px;
-    border-radius: 999px;
-    background: linear-gradient(90deg, transparent, rgba(0, 179, 255, 0.18), transparent);
-    box-shadow: none;
-}
-
-.ai-pt:nth-child(2) .ai-card-anim span {
-    background: linear-gradient(90deg, transparent, rgba(91, 185, 216, 0.22), transparent);
-}
-
-.ai-pt:nth-child(3) .ai-card-anim span {
-    background: linear-gradient(90deg, transparent, rgba(77, 225, 196, 0.16), transparent);
-}
-
 .ai-pt:nth-child(2) {
     border-color: rgba(0, 179, 255, 0.18);
     background:
@@ -5882,9 +5843,7 @@ footer::before {
     #backend-any-product-content .backend-launch-trail,
     #backend-any-product-content .backend-assembly-item,
     #backend-any-product-content .backend-assembly-item::before,
-    #backend-any-product-content .backend-assembly-summary::before,
     #backend-any-product-content .backend-ai-pulse,
-    .ai-card-anim span,
     .split-flow::after,
     .flow-packet,
     .runtime-core::after {

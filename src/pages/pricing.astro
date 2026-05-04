@@ -2172,9 +2172,10 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         .pricing-v2-included-hosting .pricing-v2-included-bar:nth-child(5) { left: 56px; right: calc(58% - 8px); top: 68px; }
         .pricing-v2-included-hosting .pricing-v2-included-bar:nth-child(6) { left: calc(42% + 46px); right: 124px; top: 52px; transform: rotate(-14deg) scale(0.9); transform-origin: left center; opacity: 0.28; }
         .pricing-v2-included-hosting .pricing-v2-included-bar:nth-child(7) { left: calc(42% + 46px); right: 82px; top: 86px; transform: rotate(4deg) scale(0.9); transform-origin: left center; opacity: 0.28; }
+        .pricing-v2-included-hosting .pricing-v2-included-dot { animation-duration: 3.4s; }
         .pricing-v2-included-hosting .pricing-v2-included-dot:nth-child(8) { left: 34px; top: 67px; animation-name: pricingIncludedRuntimeIn; }
-        .pricing-v2-included-hosting .pricing-v2-included-dot:nth-child(9) { left: calc(42% + 28px); top: 51px; animation-name: pricingIncludedRuntimeOutA; animation-delay: -1.4s; }
-        .pricing-v2-included-hosting .pricing-v2-included-dot:nth-child(10) { left: calc(42% + 28px); top: 85px; animation-name: pricingIncludedRuntimeOutB; animation-delay: -2.8s; background: linear-gradient(90deg, transparent, rgba(111, 188, 255, 0.38), rgba(221, 247, 255, 0.42)); }
+        .pricing-v2-included-hosting .pricing-v2-included-dot:nth-child(9) { left: calc(42% + 28px); top: 51px; animation-name: pricingIncludedRuntimeOutA; animation-delay: -0.9s; }
+        .pricing-v2-included-hosting .pricing-v2-included-dot:nth-child(10) { left: calc(42% + 28px); top: 85px; animation-name: pricingIncludedRuntimeOutB; animation-delay: -1.8s; background: linear-gradient(90deg, transparent, rgba(111, 188, 255, 0.38), rgba(221, 247, 255, 0.42)); }
 
         .pricing-v2-included-data .pricing-v2-included-node {
             width: 52px;
@@ -2689,6 +2690,13 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         <path d="M10 4h7v7"></path>
         <path d="M4 7v10h10"></path>
     </symbol>
+    <symbol id="pricing-icon-routing" viewBox="0 0 24 24">
+        <circle cx="5" cy="12" r="2.4"></circle>
+        <circle cx="18" cy="6" r="2.4"></circle>
+        <circle cx="18" cy="18" r="2.4"></circle>
+        <path d="M7.4 12h3.1c2.6 0 3.5-6 5.1-6"></path>
+        <path d="M7.4 12h3.1c2.6 0 3.5 6 5.1 6"></path>
+    </symbol>
     <symbol id="pricing-icon-sso" viewBox="0 0 24 24">
         <circle cx="8" cy="8" r="3"></circle>
         <circle cx="16" cy="16" r="3"></circle>
@@ -2939,8 +2947,8 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 <ul class="pricing-v2-list">
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-terminal"></use></svg>App and frontend hosting</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-domain"></use></svg>Secure web gateways</li>
-                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-scale"></use></svg>Automatic load balancing</li>
-                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-uptime"></use></svg>App and frontend scaling</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-routing"></use></svg>Automatic load balancing</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-scale"></use></svg>App and frontend scaling</li>
                 </ul>
                 <div class="pricing-v2-included-visual pricing-v2-included-hosting" aria-hidden="true">
                     <span class="pricing-v2-included-node"></span>
