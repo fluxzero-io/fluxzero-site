@@ -13,6 +13,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260505-1">
     <style is:global>
         @font-face {
             font-family: 'Google Sans Flex';
@@ -86,182 +87,6 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             text-decoration: none;
         }
 
-        .nav-shell {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 24px;
-            min-height: 72px;
-            padding: 0 32px;
-            background:
-                linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.012)),
-                rgba(5, 7, 11, 0.42);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.14);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.08),
-                0 18px 46px rgba(0, 0, 0, 0.18);
-            backdrop-filter: blur(26px) saturate(150%);
-            -webkit-backdrop-filter: blur(26px) saturate(150%);
-        }
-
-        .nav-logo-wrap {
-            display: inline-flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 10px;
-            min-height: 72px;
-            padding: 0;
-            flex: 0 0 auto;
-        }
-
-        .logo-mark {
-            display: block;
-            flex: 0 0 auto;
-            background-image: var(--fluxzero-logo-url);
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: contain;
-            aspect-ratio: 32 / 35;
-        }
-
-        .nav-logo-mark {
-            height: 24px;
-            width: 22px;
-        }
-
-        .nav-wordmark {
-            color: transparent;
-            background: linear-gradient(90deg, #D9F5FF 0%, #2F7FBA 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            font-family: var(--font-display);
-            font-size: 16px;
-            font-weight: 700;
-            line-height: 1;
-            letter-spacing: -0.002em;
-            white-space: nowrap;
-        }
-
-        .nav-main,
-        .nav-actions {
-            min-height: 72px;
-        }
-
-        .nav-main {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            flex: 1 1 auto;
-            min-width: 0;
-        }
-
-        .nav-main-links {
-            display: inline-flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 28px;
-            width: max-content;
-        }
-
-        .nav-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 40px;
-            padding: 0;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.14s ease, opacity 0.14s ease;
-        }
-
-        .nav-link:hover,
-        .nav-link.is-active,
-        .nav-link[aria-current="page"] {
-            color: var(--text);
-        }
-
-        .nav-link-github {
-            color: rgba(244, 247, 255, 0.86);
-        }
-
-        .nav-link-github svg {
-            width: 18px;
-            height: 18px;
-            display: block;
-            fill: currentColor;
-            flex: 0 0 auto;
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 14px;
-            flex: 0 0 auto;
-        }
-
-        .nav-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            min-height: 40px;
-            padding: 0;
-            color: rgba(167, 180, 200, 0.82);
-            font-family: var(--font-mono);
-            font-size: 10.5px;
-            line-height: 1;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            white-space: nowrap;
-            transition: color 0.14s ease, opacity 0.14s ease;
-        }
-
-        .nav-status:hover {
-            color: rgba(244, 247, 255, 0.9);
-        }
-
-        .status-dot {
-            --status-color: #4de1c4;
-            --status-glow: rgba(77, 225, 196, 0.18);
-            width: 6px;
-            height: 6px;
-            border-radius: 999px;
-            background: var(--status-color);
-            box-shadow: 0 0 10px var(--status-glow);
-            flex: 0 0 auto;
-        }
-
-        .status-dot[data-status="minor"] {
-            --status-color: #f0c35a;
-            --status-glow: rgba(240, 195, 90, 0.24);
-        }
-
-        .status-dot[data-status="major"] {
-            --status-color: #ff8a4c;
-            --status-glow: rgba(255, 138, 76, 0.26);
-        }
-
-        .status-dot[data-status="critical"] {
-            --status-color: #ff5f6d;
-            --status-glow: rgba(255, 95, 109, 0.3);
-        }
-
-        .status-dot[data-status="maintenance"] {
-            --status-color: #5aa8ff;
-            --status-glow: rgba(90, 168, 255, 0.26);
-        }
-
-        .nav-status-label {
-            display: inline-block;
-        }
-
-        .nav-cta,
         .story-cta {
             display: inline-flex;
             align-items: center;
@@ -271,18 +96,6 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             transition: transform 0.14s ease, border-color 0.14s ease, background-color 0.14s ease;
         }
 
-        .nav-cta {
-            min-height: 40px;
-            padding: 0 18px;
-            color: var(--text);
-            background: rgba(255, 255, 255, 0.055);
-            border: 1px solid rgba(255, 255, 255, 0.13);
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.055);
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .nav-cta:hover,
         .story-cta:hover {
             transform: translateY(-1px);
         }
@@ -455,76 +268,8 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 0 0 32px rgba(0, 179, 255, 0.16);
         }
 
-        footer {
-            position: relative;
-            border-top: 1px solid rgba(221, 247, 255, 0.055);
-            padding: 38px 32px 42px;
-            max-width: var(--max-w);
-            margin: 0 auto;
-        }
-
-        footer::before {
-            content: "";
-            position: absolute;
-            left: 32px;
-            right: 32px;
-            top: -1px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(0, 179, 255, 0.16), transparent);
-            pointer-events: none;
-        }
-
-        .ft {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 14px;
-        }
-
-        .ft-l {
-            font-size: 13px;
-            color: var(--text-tertiary);
-        }
-
-        .ft-r {
-            display: flex;
-            gap: 22px;
-            font-size: 13px;
-            color: var(--text-tertiary);
-            flex-wrap: wrap;
-        }
-
-        .ft-r a {
-            transition: color 0.14s ease;
-        }
-
-        .ft-r a:hover {
-            color: var(--text-secondary);
-        }
 
         @media (max-width: 860px) {
-            .nav-shell {
-                min-height: 64px;
-                padding: 0 20px;
-                gap: 18px;
-            }
-
-            .nav-main-links {
-                gap: 18px;
-            }
-
-            .nav-actions {
-                gap: 12px;
-            }
-
-            .nav-link {
-                font-size: 13.5px;
-            }
-
-            .nav-status {
-                font-size: 10px;
-            }
 
             .story-block {
                 grid-template-columns: 1fr;
@@ -532,65 +277,6 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         }
 
         @media (max-width: 600px) {
-            .nav-shell {
-                min-height: 58px;
-                gap: 12px;
-                padding: 10px 12px;
-            }
-
-            .nav-logo-wrap {
-                min-height: 36px;
-                flex: 0 0 auto;
-            }
-
-            .nav-logo-mark {
-                height: 24px;
-            }
-
-            .nav-wordmark {
-                display: none;
-            }
-
-            .nav-main,
-            .nav-actions {
-                min-height: auto;
-                width: auto;
-            }
-
-            .nav-main {
-                flex: 1 1 auto;
-                justify-content: flex-start;
-            }
-
-            .nav-main-links {
-                gap: 9px;
-                flex-wrap: nowrap;
-            }
-
-            .nav-main-links .nav-link-github {
-                display: none;
-            }
-
-            .nav-link {
-                min-height: 36px;
-                font-size: 13.5px;
-            }
-
-            .nav-actions {
-                gap: 8px;
-            }
-
-            .nav-status {
-                min-height: 36px;
-                font-size: 10px;
-                letter-spacing: 0.08em;
-            }
-
-            .nav-cta {
-                min-height: 36px;
-                padding: 0 12px;
-                font-size: 13px;
-            }
 
             main {
                 padding: 106px 20px 0;
@@ -628,18 +314,6 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 min-width: 0;
             }
 
-            footer {
-                padding: 24px 16px 32px;
-            }
-
-            .ft {
-                justify-content: center;
-                text-align: center;
-            }
-
-            .ft-r {
-                justify-content: center;
-            }
         }
     </style>
 </head>
