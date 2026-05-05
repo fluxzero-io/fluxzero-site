@@ -46,7 +46,6 @@ export default defineConfig({
     integrations: [
         starlight({
             components: {
-                //  Header: './src/components/DocsHeader.astro', // disabled as we haven't gotten this right yet
                 SiteTitle: './src/components/DocsSiteTitle.astro',
                 MarkdownContent: './src/components/MarkdownContentWithFeedback.astro',
                 Footer: './src/components/DocsFooter.astro',
