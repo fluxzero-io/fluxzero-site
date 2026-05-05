@@ -1273,10 +1273,29 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             overflow: hidden;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition: opacity 0.18s ease, visibility 0.18s ease;
         }
 
         .pricing-v2-flip-face--back {
             transform: rotateY(180deg);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .pricing-v2-flip-card.is-flipped .pricing-v2-flip-face--front {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .pricing-v2-flip-card.is-flipped .pricing-v2-flip-face--back {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         .pricing-v2-card-action-secondary {
@@ -2448,7 +2467,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                             <strong>0</strong>
                         </div>
                         <p class="pricing-v2-card-summary">Build your entire app before you pay.</p>
-                        <a href="https://dashboard.fluxzero.io" class="pricing-v2-card-action">Start building</a>
+                        <a href="/#get-started" class="pricing-v2-card-action">Start building</a>
                     </div>
                     <ul class="pricing-v2-list">
                         <li><img class="pricing-v2-brand-icon" src="/assets/openai-logo.svg" alt="" aria-hidden="true">Use Claude Code, Codex or other agent</li>
