@@ -244,8 +244,8 @@ section {
 }
 
 section:not(.hero):not(.cta-end) {
-    padding-top: var(--section-pad);
-    padding-bottom: var(--section-pad);
+    padding-top: var(--section-pad-top, var(--section-pad));
+    padding-bottom: var(--section-pad-bottom, var(--section-pad));
 }
 
 #hard-part,
@@ -679,13 +679,6 @@ section:not(.hero):not(.cta-end) {
 
 .hero-signal-label {
     color: rgba(188, 213, 234, 0.58);
-}
-
-.hero-signal-divider {
-    width: 1px;
-    height: 16px;
-    background: linear-gradient(180deg, transparent, rgba(221, 247, 255, 0.18), transparent);
-    flex: 0 0 auto;
 }
 
 .hero-signal-tools {
@@ -1129,7 +1122,8 @@ section:not(.hero):not(.cta-end) {
 }
 
 .system-split {
-    --section-pad: 160px;
+    --section-pad-top: clamp(104px, 9vw, 132px);
+    --section-pad-bottom: clamp(84px, 7vw, 112px);
     max-width: 1180px;
     text-align: left;
     isolation: isolate;
@@ -1536,7 +1530,8 @@ section:not(.hero):not(.cta-end) {
 
 @media (max-width: 860px) {
     .system-split {
-        --section-pad: clamp(56px, 8vw, 76px);
+        --section-pad-top: clamp(72px, 10vw, 92px);
+        --section-pad-bottom: clamp(64px, 8vw, 82px);
     }
 
     .system-split__map {
@@ -1643,12 +1638,14 @@ section:not(.hero):not(.cta-end) {
         white-space: normal;
     }
 
-    .system-split {
-        --section-pad: 44px;
+    #production-gap-content {
+        --section-pad-top: clamp(64px, 15vw, 84px);
+        --section-pad-bottom: clamp(52px, 12vw, 68px);
     }
 
-    #production-gap-content {
-        padding-bottom: 34px;
+    .system-split {
+        --section-pad-top: clamp(72px, 16vw, 96px);
+        --section-pad-bottom: clamp(60px, 13vw, 78px);
     }
 
     .system-split__title {
@@ -1723,6 +1720,8 @@ section:not(.hero):not(.cta-end) {
 
 /* AI */
 .ai {
+    --section-pad-top: clamp(148px, 12vw, 188px);
+    --section-pad-bottom: clamp(72px, 6vw, 96px);
     position: relative;
     max-width: 1120px;
     margin-left: auto;
@@ -2361,8 +2360,10 @@ section:not(.hero):not(.cta-end) {
 }
 
 #production-gap-content {
+    --section-pad-top: clamp(96px, 9vw, 132px);
+    --section-pad-bottom: clamp(64px, 6vw, 88px);
     max-width: 1180px;
-    margin-bottom: 160px;
+    margin-bottom: 0;
 }
 
 #production-gap-content .section-intro {
@@ -2692,16 +2693,11 @@ section:not(.hero):not(.cta-end) {
 }
 
 #backend-any-product-content {
-    --section-pad: 160px;
+    --section-pad-top: clamp(120px, 10vw, 156px);
+    --section-pad-bottom: clamp(72px, 6vw, 96px);
     max-width: 1180px;
     text-align: center;
     isolation: isolate;
-    padding-top: 220px;
-}
-
-.flow,
-.flow ~ section:not(.cta-end) {
-    --section-pad: clamp(72px, 8vw, 104px);
 }
 
 #backend-any-product-content::before {
@@ -3413,10 +3409,10 @@ section:not(.hero):not(.cta-end) {
 
 /* CLOUD */
 .cloud-section {
-    --section-pad: 160px;
+    --section-pad-top: clamp(96px, 8vw, 128px);
+    --section-pad-bottom: clamp(76px, 6vw, 104px);
     max-width: 1120px;
     text-align: left;
-    padding-top: 260px;
 }
 
 .cloud-section .section-intro {
@@ -3553,6 +3549,8 @@ section:not(.hero):not(.cta-end) {
 
 /* FLOW */
 .flow {
+    --section-pad-top: clamp(104px, 9vw, 136px);
+    --section-pad-bottom: clamp(56px, 5vw, 76px);
     position: relative;
     isolation: isolate;
     max-width: 1120px;
@@ -4190,6 +4188,8 @@ section:not(.hero):not(.cta-end) {
 }
 
 .obs {
+    --section-pad-top: clamp(92px, 8vw, 120px);
+    --section-pad-bottom: clamp(80px, 6vw, 104px);
     max-width: 1184px;
     margin-left: auto;
     margin-right: auto;
@@ -4543,6 +4543,8 @@ section:not(.hero):not(.cta-end) {
 }
 
 .docs-bridge {
+    --section-pad-top: clamp(88px, 7vw, 112px);
+    --section-pad-bottom: clamp(72px, 6vw, 96px);
     max-width: 860px;
     margin-left: auto;
     margin-right: auto;
@@ -4590,13 +4592,14 @@ section:not(.hero):not(.cta-end) {
 }
 /* PROOF */
 .proof {
+    --section-pad-top: clamp(92px, 8vw, 120px);
+    --section-pad-bottom: clamp(84px, 7vw, 112px);
     text-align: center;
     --proof-radius: 28px;
-    padding-bottom: 320px;
 }
 
 .proof + .sp + .cloud-section {
-    margin-top: 140px;
+    margin-top: 0;
 }
 
 .proof-label {
@@ -4604,15 +4607,16 @@ section:not(.hero):not(.cta-end) {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    font-family: var(--font-mono);
+    font-family: var(--font-body);
     font-size: 12px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.24em;
+    letter-spacing: 0.1em;
     color: transparent;
     background: linear-gradient(90deg, #D9F5FF 0%, #2F7FBA 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    margin-bottom: 34px;
+    margin-bottom: 18px;
     margin-left: auto;
     margin-right: auto;
     opacity: 0;
@@ -4846,7 +4850,13 @@ section:not(.hero):not(.cta-end) {
 }
 
 /* FAQ */
-.faq { max-width: 900px; margin-left: auto; margin-right: auto; }
+.faq {
+    --section-pad-top: clamp(72px, 6vw, 96px);
+    --section-pad-bottom: clamp(92px, 8vw, 120px);
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
 .faq .section-intro {
     text-align: center;
@@ -5224,7 +5234,43 @@ h4 {
     .desktop-break {
         display: none;
     }
+    .mobile-copy-break {
+        display: block;
+        margin-top: 14px;
+    }
     section { padding: 0 16px; }
+    #backend-any-product-content {
+        --section-pad-top: clamp(92px, 21vw, 122px);
+        --section-pad-bottom: clamp(56px, 13vw, 76px);
+    }
+    .flow {
+        --section-pad-top: clamp(76px, 18vw, 100px);
+        --section-pad-bottom: clamp(44px, 10vw, 58px);
+    }
+    .ai {
+        --section-pad-top: clamp(124px, 31vw, 164px);
+        --section-pad-bottom: clamp(56px, 14vw, 76px);
+    }
+    .proof {
+        --section-pad-top: clamp(72px, 18vw, 96px);
+        --section-pad-bottom: clamp(64px, 16vw, 84px);
+    }
+    .cloud-section {
+        --section-pad-top: clamp(76px, 18vw, 100px);
+        --section-pad-bottom: clamp(60px, 14vw, 76px);
+    }
+    .obs {
+        --section-pad-top: clamp(72px, 17vw, 94px);
+        --section-pad-bottom: clamp(60px, 14vw, 78px);
+    }
+    .docs-bridge {
+        --section-pad-top: clamp(70px, 16vw, 90px);
+        --section-pad-bottom: clamp(56px, 13vw, 72px);
+    }
+    .faq {
+        --section-pad-top: clamp(64px, 15vw, 82px);
+        --section-pad-bottom: clamp(72px, 18vw, 96px);
+    }
     .split-head {
         margin-bottom: 40px;
     }
@@ -5430,9 +5476,6 @@ h4 {
         margin-bottom: 0;
         font-size: 12.5px;
     }
-    .hero-signal-divider {
-        display: none;
-    }
     .hero-signal {
         white-space: normal;
     }
@@ -5447,15 +5490,8 @@ h4 {
         font-size: clamp(32px, 9vw, 40px);
         line-height: var(--lh-heading);
     }
-    .proof {
-        padding-bottom: 160px;
-    }
     .proof + .sp + .cloud-section {
-        margin-top: 36px;
-    }
-    .cloud-section {
-        --section-pad: clamp(52px, 12vw, 68px);
-        padding-top: 118px;
+        margin-top: 0;
     }
     .proof-body {
         font-size: 18px;
