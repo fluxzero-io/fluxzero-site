@@ -1241,6 +1241,10 @@ section:not(.hero):not(.cta-end) {
     padding-bottom: 40px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.18s ease, visibility 0.18s ease;
 }
 
 .system-split__face--front {
@@ -1248,9 +1252,10 @@ section:not(.hero):not(.cta-end) {
 }
 
 .system-split__face--back {
-    position: absolute;
-    inset: 0;
     transform: rotateY(180deg);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .system-split__face--back .system-split__eyebrow {
@@ -1262,7 +1267,15 @@ section:not(.hero):not(.cta-end) {
 }
 
 .system-split__panel.is-showing-inside .system-split__face--front {
+    opacity: 0;
+    visibility: hidden;
     pointer-events: none;
+}
+
+.system-split__panel.is-showing-inside .system-split__face--back {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
 .system-split__inside-btn {
@@ -1681,7 +1694,7 @@ section:not(.hero):not(.cta-end) {
     }
 
     .system-split__panel--right.is-showing-inside .system-split__panel-inner {
-        min-height: 354px;
+        min-height: 372px;
     }
 
     .system-split__face {
@@ -1700,17 +1713,23 @@ section:not(.hero):not(.cta-end) {
         gap: 7px;
     }
 
+    .system-split__apps span {
+        min-height: 50px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+    }
+
     .system-split__apps--fluxzero span {
-        min-height: 40px;
+        min-height: 50px;
     }
 
     .system-split__apps .system-split__app--runtime {
-        min-height: 48px;
+        min-height: 54px;
     }
 
     .system-split__apps strong {
         font-size: 13.5px;
-        line-height: 1.05;
+        line-height: 1.12;
     }
 
     .system-split__apps small {
