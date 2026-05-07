@@ -5059,12 +5059,12 @@ section:not(.hero):not(.cta-end) {
 
 .cta-end .section-intro > p,
 .cta-end > p {
-    font-size: 18px;
+    font-size: 21px;
     color: rgba(221, 232, 247, 0.76);
     font-weight: 500;
     margin: 22px auto 50px;
     max-width: 620px;
-    line-height: 1.6;
+    line-height: 1.5;
     text-wrap: balance;
 }
 
@@ -5486,8 +5486,8 @@ h4 {
         text-wrap: normal;
         width: 100%;
         max-width: 100%;
-        font-size: 16px;
-        line-height: 1.55;
+        font-size: 21px;
+        line-height: 1.46;
     }
     .rv {
         opacity: 1;
