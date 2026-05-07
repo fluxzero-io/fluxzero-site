@@ -5261,10 +5261,6 @@ h4 {
     .desktop-break {
         display: none;
     }
-    .mobile-copy-break {
-        display: block;
-        margin-top: 14px;
-    }
     section { padding: 0 16px; }
     #backend-any-product-content {
         --section-pad-top: clamp(92px, 21vw, 122px);
