@@ -5029,6 +5029,10 @@ section:not(.hero):not(.cta-end) {
     overflow: visible;
 }
 
+.cta-title-main {
+    display: inline;
+}
+
 .cta-end h2 .italic {
     display: inline-block;
     font-family: var(--font-italic);
@@ -5062,6 +5066,10 @@ section:not(.hero):not(.cta-end) {
     max-width: 620px;
     line-height: 1.6;
     text-wrap: balance;
+}
+
+.cta-end-sub {
+    text-wrap: normal;
 }
 
 .cta-btns {
@@ -5449,20 +5457,42 @@ h4 {
     }
     .cta-end {
         padding-top: 84px;
+        padding-left: 16px;
+        padding-right: 16px;
         padding-bottom: 84px;
     }
     .cta-end h2 {
-        font-size: clamp(32px, 9vw, 40px);
+        width: 100%;
+        max-width: 420px;
+        font-size: clamp(29px, 8vw, 34px);
         line-height: 1.08;
         letter-spacing: -0.035em;
+        text-wrap: normal;
+    }
+    .cta-title-main {
+        display: inline;
     }
     .cta-end h2 .italic {
-        font-size: clamp(38px, 11vw, 46px);
-        line-height: 1.08;
-        letter-spacing: -0.055em;
-        margin-left: -4px;
-        padding-left: 4px;
-        padding-right: 10px;
+        display: inline-block;
+        max-width: 100%;
+        margin: 0;
+        font-size: clamp(34px, 9vw, 39px);
+        line-height: 1;
+        letter-spacing: -0.045em;
+        padding-left: 0;
+        padding-right: 8px;
+    }
+    .cta-end .section-intro > p {
+        text-wrap: normal;
+        width: 100%;
+        max-width: 100%;
+        font-size: 16px;
+        line-height: 1.55;
+    }
+    .rv {
+        opacity: 1;
+        transform: none;
+        transition: none;
     }
     .hero-ctas,
     .hero-signals,

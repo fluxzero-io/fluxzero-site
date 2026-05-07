@@ -1,5 +1,19 @@
-const o=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('v')}),{threshold:0.06,rootMargin:'0px 0px -28px 0px'});
-document.querySelectorAll('.rv').forEach(el=>o.observe(el));
+const revealElements = Array.from(document.querySelectorAll('.rv'));
+const mobileRevealQuery = window.matchMedia('(max-width: 600px)');
+
+if (mobileRevealQuery.matches) {
+    revealElements.forEach(el => el.classList.add('v'));
+} else {
+    const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('v');
+            }
+        });
+    }, { threshold: 0.06, rootMargin: '0px 0px -28px 0px' });
+
+    revealElements.forEach(el => revealObserver.observe(el));
+}
 
     function initHeroHorizonGlow() {
         const hero = document.querySelector('.hero');

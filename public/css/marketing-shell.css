@@ -239,6 +239,12 @@ footer::before {
     transition: color 0.14s ease;
 }
 
+.ft-r .footer-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
 .ft-r a:hover {
     color: var(--text-secondary);
 }
