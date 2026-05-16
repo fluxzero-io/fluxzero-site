@@ -1,20 +1,20 @@
 (function () {
     const templates = {
         'flux-basic-java': {
-            name: 'Basic Java Starter',
-            description: 'A minimal Fluxzero setup for getting started.',
+            name: 'Java Starter',
+            description: 'A minimal Fluxzero setup for Java projects.',
             language: 'java',
             defaultBuildTool: 'maven'
         },
         'flux-basic-kotlin': {
-            name: 'Basic Kotlin Starter',
-            description: 'A minimal Fluxzero setup for getting started.',
+            name: 'Kotlin Starter',
+            description: 'A minimal Fluxzero setup for Kotlin projects.',
             language: 'kotlin',
             defaultBuildTool: 'gradle'
         },
         gamerental: {
-            name: 'Game Rental Example',
-            description: 'Complete application for game rentals.',
+            name: 'GameStore Demo',
+            description: 'A complete demo application for game rentals.',
             language: 'java',
             defaultBuildTool: 'maven'
         }
