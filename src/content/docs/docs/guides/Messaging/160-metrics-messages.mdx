@@ -50,6 +50,7 @@ All metric messages are published by the SDK, except for `ConnectEvent` and `Dis
 | **ProcessBatchEvent** | Marks the end of processing a message batch by a single tracker. |
 | **HandleMessageEvent** | Published once a handler is done handling a message. If the handler is asynchronous `HandleMessageEvent` may be published before the handler completes. |
 | **CompleteMessageEvent** | Published when an asynchronous handler completes. |
+| **IgnoreMessageEvent** | Published when a message matched a handler but was deliberately skipped before invocation. Currently used when an indexed request, such as a query, web request, or opt-in command, reached the handler after its expiry deadline. |
 | **ReadFromIndex** | Manual read starting from a specific index. |
 | **ReadFromIndexResult$Metric** | Response metrics for `ReadFromIndex`. |
 | **GetPosition** | Requests the current consumer position. |
