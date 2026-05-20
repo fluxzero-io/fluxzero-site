@@ -1929,7 +1929,7 @@ To support this, we simply add a list of tasks to the project and mark it with `
 public record Project(@EntityId ProjectId id,
                       @With ProjectDetails details,
                       UserId ownerId,
-                      @Member @With List<Task> tasks) {
+                      @Member List<Task> tasks) {
 }
 ```
 
@@ -1942,7 +1942,7 @@ data class Project(
     @EntityId val id: ProjectId,
     @With val details: ProjectDetails,
     val ownerId: UserId,
-    @Member @With val tasks: List<Task>
+    @Member val tasks: List<Task>
 )
 ```
 
@@ -1950,7 +1950,7 @@ data class Project(
 </Tabs>
 
 <Aside type="note">
-  When using Java records, remember to include <code>@With</code> on the member field. If you prefer, you can also define your aggregate as a regular class instead of a record.
+  Java records and Kotlin data classes do not need a member-specific wither here. Fluxzero rebuilds the parent immutably when a task is added, replaced, or removed.
 </Aside>
 
 Now simply initialize the tasks list as empty when creating a new Project in CreateProject.

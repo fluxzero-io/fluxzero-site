@@ -143,7 +143,7 @@ When a child entity is added, updated, or removed using an `@Apply` method, Flux
 - Apply the update to the child entity
 - And return a new instance of the parent (if it's immutable), with the updated child state included
 
-This allows you to use immutable models (e.g. Java records or Kotlin data classes) without extra boilerplate.
+Java records are rebuilt through their canonical constructor, so `@Member` record components do not need `@With`. Kotlin data classes are rebuilt through copy semantics. Custom immutable classes can still use explicit withers or builders.
 </Aside>
 
 ---

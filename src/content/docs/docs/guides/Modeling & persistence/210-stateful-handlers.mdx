@@ -154,6 +154,90 @@ Collections allow a stateful handler to fan out into multiple stateful instances
   </TabItem>
 </Tabs>
 
+## Stateful members
+
+A `@Stateful` parent can also own `@Member` children. Members can declare their own `@Handle...` methods and
+`@Association` fields; Fluxzero loads the parent, invokes every matching member, and stores the updated parent.
+
+Use this when a child has its own lifecycle but should remain inside the parent document, for example payments inside a
+customer.
+
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @Stateful
+    public record Customer(
+        @EntityId @Association String customerId,
+        @Member List<Payment> payments
+    ) {
+    }
+
+    public record Payment(@Association String paymentId, int captureCount) {
+        @HandleEvent
+        static Payment start(PaymentStarted event, Customer customer) {
+            return new Payment(event.paymentId(), 0);
+        }
+
+        @HandleEvent
+        Payment capture(PaymentCaptured event, Customer customer) {
+            return new Payment(paymentId, captureCount + 1);
+        }
+
+        @HandleEvent
+        Payment cancel(PaymentCancelled event) {
+            return null;
+        }
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @Stateful
+    data class Customer(
+        @EntityId @Association val customerId: String,
+        @Member val payments: List<Payment> = emptyList()
+    )
+
+    data class Payment(
+        @Association val paymentId: String,
+        val captureCount: Int = 0
+    ) {
+        companion object {
+            @HandleEvent
+            @JvmStatic
+            fun start(event: PaymentStarted, customer: Customer): Payment {
+                return Payment(event.paymentId)
+            }
+        }
+
+        @HandleEvent
+        fun capture(event: PaymentCaptured, customer: Customer): Payment {
+            return copy(captureCount = captureCount + 1)
+        }
+
+        @HandleEvent
+        fun cancel(event: PaymentCancelled): Payment? {
+            return null
+        }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+Key behavior:
+
+- A message with only the child association, such as `paymentId`, can target the matching member inside the parent
+- Static member handlers can create a child when the message can be associated with a parent; use
+  `@Association(always = true)` only when fan-out to all matching parents is intentional
+- Instance member handlers update by returning a member instance, delete by returning `null`, or add/replace multiple
+  members by returning a collection
+- If the parent and a member both handle the same message, Fluxzero applies the parent mutation first and then invokes
+  matching members from the updated parent
+- Multiple members may match one message, both within one parent and across parents
+- For map-backed members, newly added members use `@EntityId` or `@Member(idProperty = "...")` as the map key
+- Java record parents do not need `@With` on `@Member` components; records are rebuilt through the canonical
+  constructor. Kotlin data classes are rebuilt through copy semantics.
+
 ## Batch commit control
 
 By default, changes to a `@Stateful` handler are persisted immediately. Set `commitInBatch = true` to defer updates

@@ -1064,7 +1064,7 @@ You can model sub-entities by exposing them via methods annotated with `@Member`
 
   ```java
   @Aggregate
-  public record Project(ProjectId id, @Member @With List<Task> tasks) { ... }
+  public record Project(ProjectId id, @Member List<Task> tasks) { ... }
 
   public record Task(@EntityId TaskId id, String title, @With boolean completed) { ... }
   ```
@@ -1074,7 +1074,7 @@ You can model sub-entities by exposing them via methods annotated with `@Member`
 
   ```kotlin
   @Aggregate
-  data class Project(val id: ProjectId, @Member @With val tasks: List<Task>) { /* ... */ }
+  data class Project(val id: ProjectId, @Member val tasks: List<Task>) { /* ... */ }
 
   data class Task(@EntityId val id: TaskId, val title: String, @With val completed: Boolean)
   ```
@@ -1085,6 +1085,8 @@ You can model sub-entities by exposing them via methods annotated with `@Member`
 When you call `assertAndApply(update)` on the parent entity, Fluxzero **automatically routes** the update to the correct child entity.
 
 You don’t need to manually search the list — even if it’s deeply nested.
+
+For Java records and Kotlin data classes, the member component itself does not need `@With`; Fluxzero rebuilds the parent when the child changes.
 
 <Aside type="tip">
     Entities are simple and focused — just your evolving domain data, with the option to nest sub-entities where needed.
