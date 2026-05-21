@@ -96,6 +96,8 @@ In Spring environments, it can be customized by implementing the `FluxzeroCustom
 ### Parameter injection and handler behavior
 
 - `addParameterResolver(...)` registers a `ParameterResolver` to inject custom arguments into handler methods.
+- `replaceValidator(...)` replaces the validator used by payload validation, web parameter validation, and
+  `ValidationUtils` convenience methods.
 - `replaceDefaultResponseMapper(...)` and `replaceWebResponseMapper(...)` to change how handler return values are mapped
   into responses.
 

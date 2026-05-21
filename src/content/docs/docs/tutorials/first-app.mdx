@@ -230,8 +230,10 @@ This makes sure every Project has a name and an optional description, up to 1000
 
 <Aside type="note">
   Fluxzero automatically validates incoming request payloads using
-  <a href="https://beanvalidation.org/2.0/" target="_blank" rel="noopener noreferrer">JSR 380 (Bean Validation 2.0) ↗</a>.
-  Annotations like <code>@NotNull</code> on commands and queries will be enforced automatically.
+  <a href="https://jakarta.ee/specifications/bean-validation/3.1/" target="_blank" rel="noopener noreferrer">Jakarta Validation 3.1 ↗</a>.
+  Annotations like <code>@NotNull</code> on commands and queries will be enforced automatically. The default validator
+  can also inject the current message context, like <code>User</code> or <code>Metadata</code>, into constraint methods
+  such as <code>@AssertTrue</code> when validation runs during message handling.
 </Aside>
 
 ---
