@@ -75,7 +75,33 @@ If multiple consumers handle the same request message type, multiple results can
 
 ## Default Consumer Behavior
 
-By default, handlers join the **default consumer** for a given message type. For example:
+Handlers without an explicit `@Consumer` or matching custom `ConsumerConfiguration` are assigned according to the
+configured unconfigured-handler consumer mode. If no mode is configured explicitly, `fluxzero.defaults.version`
+selects the default behavior.
+
+For defaults versions `2026.05.20` and newer, the default behavior is `perHandler`:
+
+```properties
+fluxzero.defaults.version=2026.05.20
+# equivalent explicit setting:
+fluxzero.tracking.unconfiguredHandlerConsumerMode=perHandler
+```
+
+With this defaults version, Fluxzero creates an isolated default consumer per handler class. The generated consumer
+uses the default consumer configuration for the message type as its template and is named after the application and
+handler class, for example `my-app_MyHandler`.
+
+Existing applications without `fluxzero.defaults.version`, or with an older defaults version, keep the compatibility
+default: unconfigured handlers join the shared application default consumer for the message type. You can choose either
+behavior explicitly:
+
+```properties
+fluxzero.tracking.unconfiguredHandlerConsumerMode=perHandler
+# or
+fluxzero.tracking.unconfiguredHandlerConsumerMode=defaultAppConsumer
+```
+
+For example:
 
 <Tabs>
 <TabItem value="Java" label="Java">
@@ -104,7 +130,14 @@ class MyHandler {
 </TabItem>
 </Tabs>
 
-This handler will automatically join the **default command consumer**. If a consumer is configured through `FluxzeroBuilder` and matches the handler, that configuration is used before the app default. An explicit `@Consumer` on the handler remains most specific and therefore takes precedence.
+With `perHandler`, this handler gets its own generated command consumer. With `defaultAppConsumer`, it joins the shared
+default command consumer. If a consumer is configured through `FluxzeroBuilder` and matches the handler, that
+configuration is used before the fallback. An explicit `@Consumer` on the handler remains most specific and therefore
+takes precedence.
+
+The practical difference is that `perHandler` gives each unconfigured handler its own tracking position and error
+isolation. With `defaultAppConsumer`, unconfigured handlers for the same message type move together through one shared
+consumer, which preserves the original compatibility behavior for existing applications.
 
 ## Namespaces
 
@@ -119,7 +152,7 @@ Namespaces isolate message logs and tracking state, so a single Fluxzero Runtime
 
 ## Custom Consumers with @Consumer
 
-The `@Consumer` annotation creates a new, named consumer that runs independently of the default one. Each consumer maintains its own trackers and log position. This lets you:
+The `@Consumer` annotation creates or selects a named consumer that runs independently of other consumers. Each consumer maintains its own trackers and log position. This lets you:
 
 - Isolate heavy or latency-sensitive message flows into their own consumer.
 - Tune concurrency (via `threads`) and throughput (via `maxFetchSize`) separately.

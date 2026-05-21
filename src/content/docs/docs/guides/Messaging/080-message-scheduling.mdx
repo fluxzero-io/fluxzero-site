@@ -168,6 +168,22 @@ fun weeklySync(schedule: PollData) {
   Cron expressions use UTC by default. Use the <code>timeZone</code> parameter to run tasks in your local time zone.
 </Aside>
 
+### Initial autostart timing
+
+`initialDelay` defaults to `-1`, which means no explicit initial delay was configured. Compatibility defaults treat that
+implicit value as `0`, so an auto-started periodic schedule starts immediately. New defaults can be selected with:
+
+```properties
+fluxzero.defaults.version=2026.05.21
+# equivalent explicit setting:
+fluxzero.scheduling.periodic.useDefaultInitialDelay=true
+```
+
+With this behavior, fixed-delay schedules first run after `delay`, and cron schedules first run at the next cron match.
+For example, `@Periodic(delay = 60_000)` first runs after 60 seconds, while
+`@Periodic(cron = "*/5 * * * *")` first runs at the next five-minute boundary. Set `initialDelay = 0` when the first
+run should be immediate.
+
 ---
 
 ## Behavior and advanced options

@@ -311,12 +311,17 @@ may have been published in the same app or any other service connected to the Fl
 You can inject all kinds of parameters into handler methods, like the command sender, metadata, or full command message. For more info on handlers see [message handlers](/docs/guides/messaging/message-handling).
 
 <Aside type="note">
-  Behind the scenes, messages like commands are consumed from the command log in Fluxzero by your app’s
-  default command consumer.
+  Behind the scenes, messages like commands are consumed from the command log in Fluxzero by a consumer selected by
+  your app's tracking defaults. For <code>fluxzero.defaults.version</code> values on or after
+  <code>2026.05.20</code>, the default is a generated consumer per unconfigured handler; apps without that defaults
+  marker, or with an older value, use the shared default command consumer.
 
-  If you want more control, you can also create an isolated consumer with <code>@Consumer</code>.
-  For details on consumer behavior, tuning, and tracking positions, see
-  [Message tracking](/docs/guides/messaging/message-tracking/).
+  If you want more control, you can also select a mode with
+  <code>fluxzero.tracking.unconfiguredHandlerConsumerMode</code> or create an isolated consumer with
+  <code>@Consumer</code>.
+  For details on consumer behavior, tuning, tracking positions, and the full versioned-defaults table, see
+  [Message tracking](/docs/guides/messaging/message-tracking/) and
+  [Application properties](/docs/guides/configuration/application-properties/).
 </Aside>
 
 <Aside type="tip">

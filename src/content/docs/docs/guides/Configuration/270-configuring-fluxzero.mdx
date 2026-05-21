@@ -62,8 +62,9 @@ In Spring environments, it can be customized by implementing the `FluxzeroCustom
 
 ### Consumer and tracking configuration
 
-- `configureDefaultConsumer(MessageType, UnaryOperator<ConsumerConfiguration>)` to adjust the default consumer behavior
-  per message type.
+- `configureDefaultConsumer(MessageType, UnaryOperator<ConsumerConfiguration>)` to adjust the default consumer template
+  per message type. In `perHandler` mode this template is copied for generated handler consumers; in
+  `defaultAppConsumer` mode it is the shared fallback consumer.
 - `addConsumerConfiguration(...)` to register additional consumers for selected message types.
 - `forwardWebRequestsToLocalServer(...)` to redirect incoming `@HandleWeb` calls to an existing local HTTP server.
 
