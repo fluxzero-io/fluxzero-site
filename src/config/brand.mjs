@@ -11,6 +11,7 @@ export const fluxzeroBrand = {
     appleTouchIcon: `${base}/apple-touch-icon.png`,
     webManifest: `${base}/site.webmanifest`,
     browserConfig: `${base}/browserconfig.xml`,
+    socialImage: '/assets/fluxzero/social-card.png',
 };
 
 export const fluxzeroLogoCssUrl = `url('${fluxzeroBrand.mark}')`;
