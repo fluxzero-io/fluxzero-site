@@ -198,6 +198,47 @@ Fluxzero supports a rich set of constraints:
 
 ---
 
+## Async search operations
+
+Search execution also has asynchronous variants for request handlers and web endpoints that can return a
+`CompletableFuture`. Return the future directly instead of calling `.join()` inside the handler; this lets Fluxzero keep
+processing other work while the search request is in flight.
+
+- `fetchAsync(maxSize)` / `fetchAsync(maxSize, type)` fetch matching documents asynchronously.
+- `countAsync()` returns the matching document count asynchronously.
+- `aggregateAsync(fields...)` and `groupBy(paths...).aggregateAsync(fields...)` return search statistics
+  asynchronously.
+- `facetStatsAsync()` returns facet value counts asynchronously.
+
+<Tabs>
+  <TabItem label="Java">
+    ```java
+    @HandleQuery
+    CompletableFuture<List<UserAccount>> handle(SearchUsers query) {
+        return Fluxzero.search(UserAccount.class)
+                .lookAhead(query.term(), "profile.name", "email")
+                .fetchAsync(50, UserAccount.class);
+    }
+    ```
+  </TabItem>
+  <TabItem label="Kotlin">
+    ```kotlin
+    @HandleQuery
+    fun handle(query: SearchUsers): CompletableFuture<List<UserAccount>> =
+        Fluxzero.search(UserAccount::class.java)
+            .lookAhead(query.term, "profile.name", "email")
+            .fetchAsync(50, UserAccount::class.java)
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip">
+Use the async methods for high-throughput query handlers. Use the streaming APIs when you need to process very large
+result sets incrementally.
+</Aside>
+
+---
+
 ## Matching facet fields
 
 If you're filtering on a field that is marked with `@Facet`, it's better to use:
@@ -296,6 +337,8 @@ Each `FacetStats` object will contain:
 - the facet name (e.g., `category`)
 - the distinct values (e.g., `"electronics"`, `"clothing"`)
 - the number of documents per value
+
+Use `facetStatsAsync()` when the surrounding handler returns a `CompletableFuture`.
 
 ---
 
@@ -609,3 +652,4 @@ To remove documents from the index:
 - Use `@Searchable` to configure the collection name or time range for an object.
 - Use `@Aggregate(searchable = true)` or `@Stateful` for automatic indexing.
 - Use `Fluxzero.search(...)` to query, stream, sort, and aggregate your documents.
+- Use `fetchAsync(...)`, `countAsync()`, `aggregateAsync(...)`, and `facetStatsAsync()` in asynchronous handlers.
