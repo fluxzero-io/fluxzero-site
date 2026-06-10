@@ -73,6 +73,15 @@ Both the Requester and the Responder maintain continuous trackers:
 This ensures that services stay connected to Fluxzero and messages flow asynchronously without direct endpoints.
 If multiple consumers handle the same request message type, multiple results can be produced. The requester resolves the first stored result and ignores later ones.
 
+### Command followed by query
+
+When a command handler updates a searchable aggregate, Fluxzero waits for asynchronous after-handler aggregate commits
+before publishing the handler result by default. This means a command followed by a query can often read the
+just-committed aggregate or search document immediately.
+
+Do not rely on that for downstream side effects. If the query depends on indexing or projection work performed by an
+event handler, wait for that projection's own signal, or return the state the caller needs from the command handler.
+
 ## Default Consumer Behavior
 
 Handlers without an explicit `@Consumer` or matching custom `ConsumerConfiguration` are assigned according to the

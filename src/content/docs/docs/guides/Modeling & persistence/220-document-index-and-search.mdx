@@ -137,6 +137,17 @@ Use the fluent `search(...)` API:
   </TabItem>
 </Tabs>
 
+### Consistency after commands
+
+Search is optimized for current state, but indexing still follows the commit path. When a command directly updates a
+searchable aggregate, Fluxzero waits for asynchronous after-handler aggregate commits before publishing the command
+result by default. In many cases, calling `sendCommandAndWait(...)` and then querying the aggregate's document can read
+the just-committed state.
+
+This does not cover downstream projections or side-effect indexing. If a document is indexed by an event handler or
+projection handler, treat it as eventually consistent and wait for that projection's own completion signal when immediate
+read-after-write behavior matters.
+
 You can also query by class:
 
 <Tabs>
