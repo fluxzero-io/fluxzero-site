@@ -2,9 +2,11 @@ name: Deploy to Cloudflare Workers (PNPM + Previews)
 
 on:
   push:
-    branches: [ main ]   
+    branches: [ main ]
   pull_request:            # preview deploys on PRs
   workflow_dispatch:
+  repository_dispatch:
+    types: [ fluxzero-sdk-updated ]
 
 # Prevent overlapping deploys per ref
 concurrency:
@@ -22,26 +24,69 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout SDK docs
+        uses: actions/checkout@v4
+        with:
+          repository: fluxzero-io/fluxzero-sdk-java
+          ref: ${{ github.event.client_payload.sdk_sha || github.event.client_payload.after || github.event.client_payload.sha || 'main' }}
+          path: .cache/fluxzero-sdk-java
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Detect SDK docs changes
+        id: sdk-docs
+        run: |
+          if [ "${{ github.event_name }}" != "repository_dispatch" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          before="${{ github.event.client_payload.sdk_before || github.event.client_payload.before }}"
+          after="${{ github.event.client_payload.sdk_sha || github.event.client_payload.after || github.event.client_payload.sha || 'HEAD' }}"
+
+          if [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if ! git -C .cache/fluxzero-sdk-java cat-file -e "$before^{commit}"; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          changed_files="$(git -C .cache/fluxzero-sdk-java diff --name-only "$before" "$after" -- docs/developer)"
+          if printf '%s\n' "$changed_files" | grep -q '\.mdx$'; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Setup PNPM
+        if: steps.sdk-docs.outputs.changed == 'true'
         uses: pnpm/action-setup@v4
         with:
           version: 10
 
       - name: Setup Node
+        if: steps.sdk-docs.outputs.changed == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: pnpm
 
       - name: Install deps (frozen lockfile)
+        if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm install --frozen-lockfile
 
       - name: Build
+        if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FLUXZERO_SDK_DOCS_SOURCE: .cache/fluxzero-sdk-java/docs/developer
 
-      - name: Deploy to Cloudflare 
+      - name: Deploy to Cloudflare
+        if: steps.sdk-docs.outputs.changed == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           wranglerVersion: "4.40.3"

@@ -27,3 +27,5 @@ pnpm-debug.log*
 
 
 .dev.vars
+# SDK-sourced docs materialized by scripts/sync-sdk-docs.mjs
+src/content/docs/docs/
