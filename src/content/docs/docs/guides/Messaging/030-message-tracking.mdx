@@ -247,21 +247,30 @@ Fluxzero provides conservative defaults to ensure safe and sequential processing
 
 | Setting                | Description | Default value             |
 |------------------------|-------------|---------------------------|
-| `threads`              | Number of tracker threads. Each thread owns a disjoint segment of the log. | `1`                       |
-| `maxFetchSize`         | Maximum messages per batch; balances throughput and memory. | `1024`                    |
-| `maxWaitDuration`      | How long to wait before polling again if no messages are available. | `60`                      |
+| `awaitAsyncResults`    | If true, waits for asynchronous handler results before finishing the batch. | `false`                   |
+| `awaitSendAndForgetFutures` | If true, waits for fire-and-forget sends before storing position. | `true`                    |
+| `batchInterceptors`    | Batch processing interceptors for this consumer. | `{}`                      |
+| `clientControlledIndex` | If true, the app decides which messages to process. | `false`                   |
+| `dispatchInterceptors` | Dispatch interceptors active while this consumer handles a batch. | `{}`                      |
 | `durationUnit`         | Time unit for `maxWaitDuration`. | `SECONDS`                 |
 | `errorHandler`         | Logs processing errors and continues. | `LoggingErrorHandler`     |
-| `flowRegulator`        | Default backpressure strategy; no throttling. | `NoOpFlowRegulator`       |
-| `filterMessageTarget`  | If true, only messages targeted to this instance are processed. | `false`                   |
-| `ignoreSegment`        | If true, bypasses Runtime sharding and processes all segments. | `false`                   |
-| `singleTracker`        | If true, a single tracker processes all messages in strict global order. | `false`                   |
-| `clientControlledIndex`| If true, the app decides which messages to process. | `false`                   |
-| `storePositionManually`| If true, the app must commit tracker position explicitly. | `false`                   |
 | `exclusive`            | Handlers are active in only one consumer. | `true`                    |
-| `passive`              | If true, handler results are ignored and not published to the result log. | `false`                   |
-| `minIndex`             | Negative means start at the end of the log (only new messages). | `-1`                      |
+| `exclusiveAfterMaxIndex` | If true, keeps exclusivity after `maxIndexExclusive` is reached. | `true`                    |
+| `exclusiveBeforeMinIndex` | If true, keeps exclusivity before `minIndex` is reached. | `true`                    |
+| `filterMessageTarget`  | If true, only messages targeted to this instance are processed. | `false`                   |
+| `flowRegulator`        | Default backpressure strategy; no throttling. | `NoOpFlowRegulator`       |
+| `handlerInterceptors`  | Handler invocation interceptors for this consumer. | `{}`                      |
+| `ignoreSegment`        | If true, bypasses Runtime sharding and processes all segments. | `false`                   |
+| `maxFetchBytes`        | Serialized payload byte limit per fetch; `-1` inherits the global default. | `-1`                      |
+| `maxFetchSize`         | Maximum messages per batch; balances throughput and memory. | `1024`                    |
 | `maxIndexExclusive`    | Negative means no upper bound. | `-1`                      |
+| `maxWaitDuration`      | How long to wait before polling again if no messages are available. | `60`                      |
+| `minIndex`             | Negative means start at the end of the log (only new messages). | `-1`                      |
+| `namespace`            | Namespace for this consumer; empty uses the client default. | `""` (empty)              |
+| `passive`              | If true, handler results are ignored and not published to the result log. | `false`                   |
+| `singleTracker`        | If true, a single tracker processes all messages in strict global order. | `false`                   |
+| `storePositionManually` | If true, the app must commit tracker position explicitly. | `false`                   |
+| `threads`              | Number of tracker threads. Each thread owns a disjoint segment of the log. | `1`                       |
 | `typeFilter`           | No server-side filtering; all message types are delivered. | `""` (empty)              |
 
 ## Custom routing keys
