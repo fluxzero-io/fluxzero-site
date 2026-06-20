@@ -1,0 +1,1010 @@
+---
+import BrandHead from '../components/BrandHead.astro';
+import MarketingFooter from '../components/marketing/MarketingFooter.astro';
+import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+
+const formId = 'y3nhz6a59wy';
+const formEndpoint = `https://forminit.com/f/${formId}`;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <BrandHead title="Make it real | Fluxzero" description="Submit an AI-built app for a Fluxzero production review after Megathon." />
+    <link rel="stylesheet" href="/css/home.css?v=20260429-11">
+    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260505-1">
+    <script src="https://forminit.com/sdk/v1/forminit.js" defer></script>
+    <style>
+        body {
+            background:
+                radial-gradient(circle at 22% 12%, rgba(0, 179, 255, 0.13), transparent 30%),
+                radial-gradient(circle at 78% 4%, rgba(255, 150, 76, 0.12), transparent 34%),
+                var(--bg-page-gradient);
+        }
+
+        .forminit-page {
+            min-height: calc(100vh - 118px);
+            padding: clamp(88px, 10vh, 108px) 24px clamp(76px, 10vh, 112px);
+        }
+
+        .forminit-shell {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: clamp(32px, 5vw, 46px);
+            width: min(840px, 100%);
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        .forminit-copy {
+            padding-top: 0;
+        }
+
+        .forminit-kicker {
+            margin-bottom: 18px;
+            color: transparent;
+            background: linear-gradient(90deg, #D9F5FF 0%, #2F7FBA 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            font-family: var(--font-mono);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        .forminit-title {
+            max-width: 820px;
+            font-size: clamp(42px, 6vw, 68px);
+            line-height: 1.02;
+            text-wrap: balance;
+        }
+
+        .forminit-subtitle {
+            max-width: 780px;
+            margin-top: 24px;
+            color: rgba(221, 232, 247, 0.78);
+            font-size: clamp(17px, 1.8vw, 20px);
+            line-height: 1.68;
+        }
+
+        .forminit-steps {
+            display: grid;
+            grid-template-columns: repeat(3, max-content);
+            gap: clamp(12px, 2.6vw, 22px);
+            justify-content: center;
+            max-width: 840px;
+            margin: 28px 0 0;
+            padding: 22px 0 0;
+            border-top: 1px solid rgba(221, 247, 255, 0.12);
+            list-style: none;
+        }
+
+        .forminit-step {
+            display: grid;
+            grid-template-columns: 22px max-content;
+            gap: 7px;
+            align-items: center;
+            min-width: 0;
+        }
+
+        .forminit-step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border: 1px solid rgba(0, 179, 255, 0.35);
+            border-radius: 50%;
+            background:
+                linear-gradient(135deg, rgba(0, 179, 255, 0.18), rgba(255, 150, 76, 0.08)),
+                rgba(255, 255, 255, 0.04);
+            color: rgba(218, 244, 255, 0.94);
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+        }
+
+        .forminit-step-text {
+            margin: 0;
+            color: rgba(244, 247, 255, 0.82);
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+
+        .forminit-card {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(221, 247, 255, 0.13);
+            border-radius: 8px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.028)),
+                rgba(7, 11, 18, 0.82);
+            box-shadow:
+                0 26px 78px rgba(0, 0, 0, 0.28),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(24px) saturate(142%);
+            -webkit-backdrop-filter: blur(24px) saturate(142%);
+        }
+
+        .forminit-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(135deg, rgba(0, 179, 255, 0.12), transparent 34%),
+                linear-gradient(315deg, rgba(255, 150, 76, 0.12), transparent 32%);
+            pointer-events: none;
+        }
+
+        .forminit-form {
+            position: relative;
+            display: grid;
+            gap: 18px;
+            padding: clamp(24px, 4vw, 34px);
+        }
+
+        .forminit-form-head {
+            display: grid;
+            gap: 9px;
+            margin-bottom: 4px;
+        }
+
+        .forminit-form h2 {
+            width: auto;
+            margin: 0;
+            text-align: left;
+            font-size: clamp(24px, 3vw, 30px);
+            line-height: 1.1;
+        }
+
+        .forminit-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .forminit-multiselect-row {
+            align-items: start;
+        }
+
+        .forminit-field {
+            display: grid;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .forminit-field label,
+        .forminit-choice-label {
+            display: inline-flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+            color: rgba(244, 247, 255, 0.88);
+            font-size: 13px;
+            font-weight: 600;
+            line-height: 1.3;
+        }
+
+        .forminit-choice-label {
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .forminit-choice-hint {
+            margin: -5px 0 12px;
+            color: rgba(221, 232, 247, 0.62);
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .forminit-optional {
+            color: rgba(167, 180, 200, 0.62);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        .forminit-field input,
+        .forminit-field select,
+        .forminit-field textarea {
+            width: 100%;
+            min-height: 46px;
+            border: 1px solid rgba(221, 247, 255, 0.12);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.055);
+            color: var(--text);
+            font: inherit;
+            font-size: 15px;
+            line-height: 1.4;
+            outline: none;
+            transition: border-color 0.14s ease, background-color 0.14s ease, box-shadow 0.14s ease;
+        }
+
+        .forminit-field input,
+        .forminit-field select {
+            padding: 0 14px;
+        }
+
+        .forminit-field textarea {
+            min-height: 128px;
+            padding: 13px 14px;
+            resize: vertical;
+        }
+
+        .forminit-field select {
+            appearance: none;
+            background-image:
+                linear-gradient(45deg, transparent 50%, rgba(244, 247, 255, 0.78) 50%),
+                linear-gradient(135deg, rgba(244, 247, 255, 0.78) 50%, transparent 50%);
+            background-position:
+                calc(100% - 18px) 52%,
+                calc(100% - 13px) 52%;
+            background-size: 5px 5px, 5px 5px;
+            background-repeat: no-repeat;
+            padding-right: 38px;
+        }
+
+        .forminit-field option {
+            background: #F4F7FF;
+            color: #05070B;
+        }
+
+        .forminit-field input:focus,
+        .forminit-field select:focus,
+        .forminit-field textarea:focus {
+            border-color: rgba(0, 179, 255, 0.58);
+            background-color: rgba(255, 255, 255, 0.075);
+            box-shadow: 0 0 0 3px rgba(0, 179, 255, 0.1);
+        }
+
+        .forminit-field input::placeholder,
+        .forminit-field textarea::placeholder {
+            color: rgba(167, 180, 200, 0.5);
+        }
+
+        .forminit-choices {
+            display: grid;
+            gap: 11px;
+            min-width: 0;
+            margin: 2px 0 0;
+            padding: 0;
+            border: 0;
+        }
+
+        .forminit-choice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 9px;
+        }
+
+        .forminit-multiselect {
+            position: relative;
+            min-width: 0;
+        }
+
+        .forminit-multiselect[open] {
+            z-index: 14;
+        }
+
+        .forminit-multiselect-summary {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 46px;
+            padding: 0 42px 0 14px;
+            border: 1px solid rgba(221, 247, 255, 0.12);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.055);
+            color: rgba(244, 247, 255, 0.82);
+            font: inherit;
+            font-size: 15px;
+            line-height: 1.4;
+            cursor: pointer;
+            list-style: none;
+            transition: border-color 0.14s ease, background-color 0.14s ease, box-shadow 0.14s ease;
+        }
+
+        .forminit-multiselect-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .forminit-multiselect-summary-main {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+            min-width: 0;
+        }
+
+        [data-multiselect-label] {
+            display: block;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .forminit-multiselect-summary::after {
+            content: "";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            width: 8px;
+            height: 8px;
+            border-right: 1.5px solid rgba(244, 247, 255, 0.78);
+            border-bottom: 1.5px solid rgba(244, 247, 255, 0.78);
+            transform: translateY(-65%) rotate(45deg);
+            transition: transform 0.14s ease;
+        }
+
+        .forminit-multiselect[open] .forminit-multiselect-summary {
+            border-color: rgba(0, 179, 255, 0.58);
+            background-color: rgba(255, 255, 255, 0.075);
+            box-shadow: 0 0 0 3px rgba(0, 179, 255, 0.1);
+        }
+
+        .forminit-multiselect[open] .forminit-multiselect-summary::after {
+            transform: translateY(-35%) rotate(225deg);
+        }
+
+        .forminit-multiselect-menu {
+            position: absolute;
+            z-index: 12;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            max-height: min(320px, 52vh);
+            padding: 9px;
+            border: 1px solid rgba(221, 247, 255, 0.14);
+            border-radius: 10px;
+            background:
+                linear-gradient(180deg, rgba(23, 31, 43, 0.98), rgba(9, 13, 20, 0.98)),
+                #0B0F16;
+            box-shadow:
+                0 22px 44px rgba(0, 0, 0, 0.36),
+                inset 0 1px 0 rgba(255, 255, 255, 0.07);
+            overflow-y: auto;
+        }
+
+        .forminit-multiselect-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .forminit-choice {
+            position: relative;
+            display: flex;
+            align-items: center;
+            min-height: 50px;
+            padding: 12px 13px 12px 45px;
+            border: 1px solid rgba(221, 247, 255, 0.11);
+            border-radius: 8px;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.028)),
+                rgba(9, 14, 22, 0.68);
+            color: rgba(244, 247, 255, 0.84);
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.3;
+            cursor: pointer;
+            overflow: hidden;
+            transition: border-color 0.14s ease, background-color 0.14s ease, box-shadow 0.14s ease, color 0.14s ease;
+        }
+
+        .forminit-choice::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 179, 255, 0.12), rgba(255, 150, 76, 0.06));
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.14s ease;
+        }
+
+        .forminit-choice:hover {
+            border-color: rgba(221, 247, 255, 0.18);
+            background-color: rgba(255, 255, 255, 0.045);
+            color: rgba(244, 247, 255, 0.94);
+        }
+
+        .forminit-choice input {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            z-index: 1;
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            border: 1px solid rgba(221, 247, 255, 0.28);
+            border-radius: 6px;
+            appearance: none;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
+                rgba(3, 6, 11, 0.7);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            transform: translateY(-50%);
+            transition: border-color 0.14s ease, background 0.14s ease, box-shadow 0.14s ease;
+        }
+
+        .forminit-choice input::before {
+            content: "";
+            position: absolute;
+            inset: 4px;
+            border-radius: 3px;
+            background: linear-gradient(135deg, #00B3FF, #FF964C);
+            opacity: 0;
+            transform: scale(0.55);
+            transition: opacity 0.14s ease, transform 0.14s ease;
+        }
+
+        .forminit-choice input:checked {
+            border-color: rgba(0, 179, 255, 0.72);
+            background: rgba(0, 179, 255, 0.1);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                0 0 0 3px rgba(0, 179, 255, 0.08);
+        }
+
+        .forminit-choice input:checked::before {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .forminit-choice input:focus-visible {
+            outline: 2px solid rgba(0, 179, 255, 0.75);
+            outline-offset: 3px;
+        }
+
+        .forminit-choice span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .forminit-choice:has(input:checked) {
+            border-color: rgba(0, 179, 255, 0.36);
+            color: rgba(244, 247, 255, 0.96);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.07),
+                0 10px 22px rgba(0, 0, 0, 0.16);
+        }
+
+        .forminit-choice:has(input:checked)::after {
+            opacity: 1;
+        }
+
+        .forminit-actions {
+            display: grid;
+            justify-items: center;
+            gap: 10px;
+            min-height: 56px;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .forminit-submit {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: min(100%, 320px);
+            min-width: 240px;
+            min-height: 54px;
+            padding: 0 30px;
+            border: 0;
+            cursor: pointer;
+            font-size: 15px;
+            line-height: 1;
+            text-align: center;
+        }
+
+        .forminit-submit:disabled {
+            cursor: wait;
+            opacity: 0.72;
+        }
+
+        .forminit-status {
+            min-height: 22px;
+            color: rgba(221, 232, 247, 0.74);
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .forminit-megathon-note {
+            width: 100%;
+            margin: 8px 0 0;
+            color: rgba(221, 232, 247, 0.72);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .forminit-megathon-note strong {
+            color: rgba(244, 247, 255, 0.94);
+            font-weight: 700;
+        }
+
+        .forminit-megathon-note[hidden] {
+            display: none;
+        }
+
+        .forminit-status[data-state="success"] {
+            color: #84f0cf;
+        }
+
+        .forminit-status[data-state="error"] {
+            color: #ffb199;
+        }
+
+        @media (max-width: 860px) {
+            .forminit-page {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .forminit-title,
+            .forminit-subtitle {
+                max-width: 680px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .forminit-page {
+                padding-top: 92px;
+            }
+
+            .forminit-row,
+            .forminit-choice-grid,
+            .forminit-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .forminit-steps {
+                justify-content: stretch;
+            }
+
+            .forminit-step {
+                grid-template-columns: 22px minmax(0, 1fr);
+            }
+
+            .forminit-step-text {
+                white-space: normal;
+            }
+
+            .forminit-form {
+                padding: 22px;
+            }
+
+            .forminit-submit {
+                width: 100%;
+            }
+
+        }
+    </style>
+</head>
+<body>
+<MarketingHeader />
+
+<main class="forminit-page">
+    <section class="forminit-shell" aria-labelledby="forminit-title">
+        <div class="forminit-copy">
+            <p class="forminit-kicker">Make it real</p>
+            <h1 class="forminit-title" id="forminit-title">Turn your AI-built app into real software.</h1>
+            <p class="forminit-subtitle">
+                For AI-built apps moving from prototype to traction, revenue, or a second life.
+            </p>
+            <ol class="forminit-steps" aria-label="How it works">
+                <li class="forminit-step">
+                    <span class="forminit-step-number">1</span>
+                    <p class="forminit-step-text">Submit your app.</p>
+                </li>
+                <li class="forminit-step">
+                    <span class="forminit-step-number">2</span>
+                    <p class="forminit-step-text">We make it production-grade.</p>
+                </li>
+                <li class="forminit-step">
+                    <span class="forminit-step-number">3</span>
+                    <p class="forminit-step-text">Keep building with your current tools.</p>
+                </li>
+            </ol>
+        </div>
+
+        <div class="forminit-card">
+            <form action={formEndpoint} id="forminitContactForm" method="POST" class="forminit-form" data-form-id={formId} novalidate>
+                <div class="forminit-form-head">
+                    <h2>Submit your app</h2>
+                </div>
+
+                <div class="forminit-row">
+                    <div class="forminit-field">
+                        <label for="forminitName">Name</label>
+                        <input name="fi-sender-fullName" type="text" id="forminitName" autocomplete="name" required>
+                    </div>
+
+                    <div class="forminit-field">
+                        <label for="forminitEmail">Email address</label>
+                        <input name="fi-sender-email" type="email" id="forminitEmail" autocomplete="email" required>
+                    </div>
+                </div>
+
+                <div class="forminit-row">
+                    <div class="forminit-field">
+                        <label for="company">Company or product</label>
+                        <input name="fi-sender-company" type="text" id="company" autocomplete="organization" required>
+                    </div>
+
+                    <div class="forminit-field">
+                        <label for="productUrl">Product URL <span class="forminit-optional">Optional</span></label>
+                        <input name="fi-url-productUrl" type="url" id="productUrl" autocomplete="url" placeholder="https://">
+                    </div>
+                </div>
+
+                <div class="forminit-row">
+                    <div class="forminit-field">
+                        <label for="stage">Stage</label>
+                        <select name="fi-select-stage" id="stage" required>
+                            <option value="" selected disabled>Select stage</option>
+                            <option value="prototype">Prototype</option>
+                            <option value="test-users">Used by test users</option>
+                            <option value="real-users">Used by real users</option>
+                            <option value="generating-revenue">Generating revenue</option>
+                            <option value="paused">Paused / on the shelf</option>
+                        </select>
+                    </div>
+
+                    <div class="forminit-field">
+                        <label for="budget">Budget to go production-grade?</label>
+                        <select name="fi-select-budget" id="budget" required>
+                            <option value="" selected disabled>Select budget</option>
+                            <option value="not-yet">Not yet</option>
+                            <option value="up-to-1000">Up to €1,000</option>
+                            <option value="1000-5000">€1,000–€5,000</option>
+                            <option value="5000-10000">€5,000–€10,000</option>
+                            <option value="10000-plus">€10,000+</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="forminit-row forminit-multiselect-row">
+                    <fieldset class="forminit-choices">
+                        <legend class="forminit-choice-label">Built with</legend>
+                        <details class="forminit-multiselect" data-multiselect data-placeholder="Select tools">
+                            <summary class="forminit-multiselect-summary">
+                                <span class="forminit-multiselect-summary-main">
+                                    <span data-multiselect-label>Select tools</span>
+                                    <span class="forminit-optional">Select any</span>
+                                </span>
+                            </summary>
+                            <div class="forminit-multiselect-menu">
+                                <div class="forminit-choice-grid forminit-multiselect-grid">
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-built-with" type="checkbox" value="lovable">
+                                        <span>Lovable</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-built-with" type="checkbox" value="bolt">
+                                        <span>Bolt</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-built-with" type="checkbox" value="replit">
+                                        <span>Replit</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-built-with" type="checkbox" value="cursor">
+                                        <span>Cursor</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-built-with" type="checkbox" value="claude-code">
+                                        <span>Claude Code</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-built-with" type="checkbox" value="codex">
+                                        <span>Codex</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-built-with" type="checkbox" value="v0">
+                                        <span>v0</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-built-with" type="checkbox" value="supabase">
+                                        <span>Supabase</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-built-with" type="checkbox" value="vercel">
+                                        <span>Vercel</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-built-with" type="checkbox" value="other">
+                                        <span>Other</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </details>
+                    </fieldset>
+
+                    <fieldset class="forminit-choices">
+                        <legend class="forminit-choice-label">What is blocking you?</legend>
+                        <details class="forminit-multiselect" data-multiselect data-placeholder="Select blockers">
+                            <summary class="forminit-multiselect-summary">
+                                <span class="forminit-multiselect-summary-main">
+                                    <span data-multiselect-label>Select blockers</span>
+                                    <span class="forminit-optional">Select any</span>
+                                </span>
+                            </summary>
+                            <div class="forminit-multiselect-menu">
+                                <div class="forminit-choice-grid forminit-multiselect-grid">
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="backend-trust">
+                                        <span>I don’t trust the backend</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="breaks-often">
+                                        <span>It breaks too often</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="users-auth-permissions">
+                                        <span>I need users / auth / permissions</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="database-setup">
+                                        <span>I need a real database setup</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="payments">
+                                        <span>I need payments</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="workflows">
+                                        <span>I need better workflows</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="security">
+                                        <span>I need security</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="deployment-hosting">
+                                        <span>I need deployment / hosting</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="scaling">
+                                        <span>I need scaling</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="technical-review">
+                                        <span>I need someone technical to review it</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="developers-expensive">
+                                        <span>Developers are too expensive</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="unknown">
+                                        <span>I don’t know what is missing</span>
+                                    </label>
+                                    <label class="forminit-choice">
+                                        <input name="fi-checkbox-blocker" type="checkbox" value="other">
+                                        <span>Other</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </details>
+                    </fieldset>
+                </div>
+
+                <div class="forminit-field">
+                    <label for="forminitMessage">Tell us more <span class="forminit-optional">Optional</span></label>
+                    <textarea name="fi-text-message" id="forminitMessage"></textarea>
+                </div>
+
+                <div class="forminit-actions">
+                    <button type="submit" id="forminitSubmitButton" class="btn-p forminit-submit">Send</button>
+                    <p id="megathonCreditNote" class="forminit-megathon-note" hidden>
+                        The 3 highest-rated submissions receive <strong>€1,000 in cloud hosting credits</strong> each.
+                    </p>
+                    <div id="forminitStatus" class="forminit-status" aria-live="polite"></div>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+
+<MarketingFooter />
+
+<script>
+    const form = document.getElementById("forminitContactForm");
+    const status = document.getElementById("forminitStatus");
+    const submitButton = document.getElementById("forminitSubmitButton");
+    const megathonCreditNote = document.getElementById("megathonCreditNote");
+
+    if (megathonCreditNote instanceof HTMLElement) {
+        const currentPath = window.location.pathname.replace(/\/$/, "");
+
+        if (currentPath === "/megathon") {
+            megathonCreditNote.hidden = false;
+        }
+    }
+
+    if (form instanceof HTMLFormElement && status && submitButton instanceof HTMLButtonElement) {
+        const originalButtonText = submitButton.textContent || "Send";
+        const formId = form.dataset.formId || "";
+        const requiredCheckboxGroups = [
+            {
+                name: "fi-checkbox-built-with",
+                message: "Choose at least one tool you built with.",
+            },
+            {
+                name: "fi-checkbox-blocker",
+                message: "Choose at least one blocker.",
+            },
+        ];
+        const multiselects = Array.from(form.querySelectorAll("[data-multiselect]"))
+            .filter((details) => details instanceof HTMLDetailsElement);
+
+        const getCheckboxGroup = (name) => Array.from(form.querySelectorAll(`input[name="${name}"]`))
+            .filter((input) => input instanceof HTMLInputElement);
+
+        const updateMultiselectLabel = (details) => {
+            const label = details.querySelector("[data-multiselect-label]");
+            const inputs = Array.from(details.querySelectorAll('input[type="checkbox"]'))
+                .filter((input) => input instanceof HTMLInputElement);
+            const checkedInputs = inputs.filter((input) => input.checked);
+
+            if (!(label instanceof HTMLElement)) {
+                return;
+            }
+
+            if (!checkedInputs.length) {
+                label.textContent = details.dataset.placeholder || "Select options";
+                return;
+            }
+
+            if (checkedInputs.length === 1) {
+                label.textContent = checkedInputs[0].nextElementSibling?.textContent?.trim() || "1 selected";
+                return;
+            }
+
+            label.textContent = `${checkedInputs.length} selected`;
+        };
+
+        const validateCheckboxGroup = ({ name, message }) => {
+            const inputs = getCheckboxGroup(name);
+
+            if (!inputs.length) {
+                return true;
+            }
+
+            const isChecked = inputs.some((input) => input.checked);
+
+            inputs.forEach((input) => input.setCustomValidity(""));
+
+            if (!isChecked) {
+                const multiselect = inputs[0].closest("[data-multiselect]");
+
+                if (multiselect instanceof HTMLDetailsElement) {
+                    multiselect.open = true;
+                }
+
+                inputs[0].setCustomValidity(message);
+                return false;
+            }
+
+            return true;
+        };
+
+        const validateRequiredCheckboxGroups = () => {
+            for (const group of requiredCheckboxGroups) {
+                if (!validateCheckboxGroup(group)) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+        requiredCheckboxGroups.forEach((group) => {
+            getCheckboxGroup(group.name).forEach((input) => {
+                input.addEventListener("change", () => validateCheckboxGroup(group));
+            });
+        });
+
+        multiselects.forEach((details) => {
+            updateMultiselectLabel(details);
+
+            details.addEventListener("toggle", () => {
+                if (!details.open) {
+                    return;
+                }
+
+                multiselects.forEach((otherDetails) => {
+                    if (otherDetails !== details) {
+                        otherDetails.open = false;
+                    }
+                });
+            });
+
+            details.addEventListener("change", () => updateMultiselectLabel(details));
+        });
+
+        document.addEventListener("click", (event) => {
+            const target = event.target;
+
+            if (!(target instanceof Node)) {
+                return;
+            }
+
+            multiselects.forEach((details) => {
+                if (!details.contains(target)) {
+                    details.open = false;
+                }
+            });
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key !== "Escape") {
+                return;
+            }
+
+            multiselects.forEach((details) => {
+                details.open = false;
+            });
+        });
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const checkboxGroupsAreValid = validateRequiredCheckboxGroups();
+
+            if (!checkboxGroupsAreValid || !form.checkValidity()) {
+                status.textContent = "Please fill in the required fields.";
+                status.dataset.state = "error";
+                form.reportValidity();
+                return;
+            }
+
+            submitButton.disabled = true;
+            submitButton.textContent = "Sending...";
+            status.textContent = "";
+            delete status.dataset.state;
+
+            try {
+                const ForminitClient = window.Forminit;
+
+                if (typeof ForminitClient !== "function") {
+                    form.submit();
+                    return;
+                }
+
+                const forminit = new ForminitClient();
+                const { error } = await forminit.submit(formId, new FormData(form));
+
+                if (error) {
+                    status.textContent = error.message || "Something went wrong. Please try again.";
+                    status.dataset.state = "error";
+                    return;
+                }
+
+                status.textContent = "Thanks, our team will get back to you.";
+                status.dataset.state = "success";
+                form.reset();
+                multiselects.forEach((details) => {
+                    details.open = false;
+                    updateMultiselectLabel(details);
+                });
+            } catch {
+                status.textContent = "Network error. Please try again later.";
+                status.dataset.state = "error";
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        });
+    }
+</script>
+</body>
+</html>
