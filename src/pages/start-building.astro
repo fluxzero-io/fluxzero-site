@@ -1,0 +1,207 @@
+---
+import BrandHead from '../components/BrandHead.astro';
+import MarketingFooter from '../components/marketing/MarketingFooter.astro';
+import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+
+const codingTools = [
+    { id: 'codex', name: 'Codex', href: 'https://developers.openai.com/codex/cloud', action: 'Open' },
+    { id: 'cursor', name: 'Cursor', href: 'https://cursor.com/download', action: 'Download' },
+    { id: 'claude', name: 'Claude Code', href: 'https://code.claude.com/docs/en/desktop', action: 'Download' },
+    { id: 'windsurf', name: 'Windsurf', href: 'https://devin.ai/desktop/', action: 'Download' },
+    { id: 'vscode', name: 'VS Code', href: 'https://code.visualstudio.com/download', action: 'Download' },
+];
+const handledByFluxzero = ['Project structure', 'Database', 'Base interface', 'Deployment preparation'];
+const builderControls = ['Content', 'Features', 'Adjustments', 'Launch'];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <BrandHead title="Start building with Fluxzero" description="Set up your coding tool, install Fluxzero, shape your project brief, and launch your first build." />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/home.css?v=20260624-8">
+    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260623-1">
+</head>
+<body class="start-body">
+<MarketingHeader />
+
+<main class="start-page">
+    <section class="start-hero" aria-labelledby="start-hero-title">
+        <div class="start-hero__content">
+            <p class="start-eyebrow">Start building</p>
+            <h1 id="start-hero-title">Start building with Fluxzero</h1>
+            <p>Set up your coding tool, install Fluxzero, shape your project brief, and launch your first build on a production-ready foundation.</p>
+        </div>
+
+    </section>
+
+    <section class="start-guide" aria-label="Fluxzero build setup">
+        <article class="start-step start-step--launch" id="launch-tool">
+            <div class="start-step__number" aria-hidden="true">1</div>
+            <div class="start-step__body">
+                <p class="start-step__label">Launch</p>
+                <h2>Choose your coding tool</h2>
+                <p>Open the tool you want Fluxzero to work with. Your build prompt can move into the tool once the setup is ready.</p>
+                <div class="start-tools" aria-label="Coding tools">
+                    {codingTools.map((tool) => (
+                        <a class="start-tool" href={tool.href} target="_blank" rel="noreferrer">
+                            <span class="start-tool__icon" aria-hidden="true">
+                                {tool.id === 'codex' && (
+                                    <svg viewBox="0 0 24 24"><path d="M11.2 19.4a3.5 3.5 0 0 0 6.8-1.2V13l-6-3.4"/><path d="M5.2 15a3.5 3.5 0 0 0 4.5 5.3L14 17.7v-6.9"/><path d="M6 7.6a3.5 3.5 0 0 0-2.3 6.4L8 16.6l6-3.4"/><path d="M12.8 4.6A3.5 3.5 0 0 0 6 5.8v5.1l6 3.5"/><path d="M18.8 9A3.5 3.5 0 0 0 14.3 3.7L10 6.3v6.9"/><path d="M18 16.3a3.5 3.5 0 0 0 2.3-6.4L16 7.4l-6 3.4"/></svg>
+                                )}
+                                {tool.id === 'cursor' && (
+                                    <svg viewBox="0 0 24 24"><path d="M5 3.5 19.5 12 5 20.5V3.5Z"/><path d="m9 8 6.5 4L9 16V8Z"/></svg>
+                                )}
+                                {tool.id === 'claude' && (
+                                    <svg viewBox="0 0 24 24"><path d="M12 3.5 14.8 9l5.7 2.7-5.7 2.5L12 20.5l-2.8-6.3-5.7-2.5L9.2 9 12 3.5Z"/><path d="M12 8.2v7.6M8.4 11.9h7.2"/></svg>
+                                )}
+                                {tool.id === 'windsurf' && (
+                                    <svg viewBox="0 0 24 24"><path d="M3.5 14c3.3-5.6 6.8-5.6 10.5 0 2.1 3.1 4.2 3.1 6.5 0"/><path d="M3.5 9.6c3.3-3.2 6.8-3.2 10.5 0 2.1 2.2 4.2 2.2 6.5 0"/></svg>
+                                )}
+                                {tool.id === 'vscode' && (
+                                    <svg viewBox="0 0 24 24"><path d="M17.8 3.5 8.2 12l9.6 8.5 2.7-1.2V4.7l-2.7-1.2Z"/><path d="m8.2 12-4 3.2-1.7-1.2V10l1.7-1.2 4 3.2Z"/><path d="m8.2 12 9.6-8.5v17L8.2 12Z"/></svg>
+                                )}
+                            </span>
+                            <span class="start-tool__text">
+                                <strong>{tool.name}</strong>
+                                <small>{tool.action}</small>
+                            </span>
+                        </a>
+                    ))}
+                </div>
+                <p class="start-note">Already downloaded? Go to step 2.</p>
+            </div>
+        </article>
+
+        <article class="start-step start-step--installer" id="install-fluxzero">
+            <div class="start-step__number" aria-hidden="true">2</div>
+            <div class="start-step__body start-step__body--split">
+                <div>
+                    <p class="start-step__label">Install Fluxzero</p>
+                    <h2>Install the Fluxzero installer</h2>
+                    <p>The Fluxzero installer for macOS is required before your build prompt can run. The app is still in development, so this page reserves the download position and launch state.</p>
+                    <div class="start-actions">
+                        <button class="start-btn" type="button" disabled>Download for macOS</button>
+                        <span class="start-status">Coming soon</span>
+                    </div>
+                </div>
+                <div class="fluxzero-app-icon" aria-label="Fluxzero installer app icon">
+                    <span class="logo-mark fluxzero-app-icon__mark" aria-hidden="true"></span>
+                </div>
+            </div>
+        </article>
+
+        <article class="start-step start-step--brief" id="project-brief">
+            <div class="start-step__number" aria-hidden="true">3</div>
+            <div class="start-step__body">
+                <p class="start-step__label">Project brief</p>
+                <h2>Review and extend your prompt</h2>
+                <p>This project brief adds structure to your original idea. It keeps the prompt you entered on the homepage and adds the product details your coding agent needs.</p>
+
+                <form class="brief-form" id="project-brief-form">
+                    <div class="brief-grid">
+                        <label class="brief-field brief-field--wide" for="brief-idea">
+                            <span>Your idea</span>
+                            <textarea id="brief-idea" rows="4" data-brief-idea placeholder="A platform that helps..."></textarea>
+                        </label>
+
+                        <label class="brief-field brief-field--wide" for="brief-audience">
+                            <span>Audience</span>
+                            <textarea id="brief-audience" rows="3" data-brief-audience placeholder="Summarize who this is for"></textarea>
+                        </label>
+
+                        <div class="brief-field brief-field--wide">
+                            <span>Core features</span>
+                            <div class="brief-feature-list">
+                                <input type="text" data-brief-feature placeholder="Feature 1">
+                                <input type="text" data-brief-feature placeholder="Feature 2">
+                                <input type="text" data-brief-feature placeholder="Feature 3">
+                            </div>
+                        </div>
+
+                        <div class="brief-checklist">
+                            <h3>Fluxzero automatically handles</h3>
+                            <ul>
+                                {handledByFluxzero.map((item) => <li>{item}</li>)}
+                            </ul>
+                        </div>
+
+                        <div class="brief-checklist">
+                            <h3>You stay in control of</h3>
+                            <ul>
+                                {builderControls.map((item) => <li>{item}</li>)}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="combined-prompt" aria-live="polite">
+                        <div class="combined-prompt__head">
+                            <h3>Build-ready prompt</h3>
+                            <button type="button" data-copy-build-prompt>Copy prompt</button>
+                        </div>
+                        <pre data-combined-prompt>Original idea:
+A platform that helps...
+
+Project brief additions:
+Audience:
+[summary]
+
+Core features:
+- Feature 1
+- Feature 2
+- Feature 3
+
+Fluxzero automatically handles:
+- Project structure
+- Database
+- Base interface
+- Deployment preparation
+
+You stay in control of:
+- Content
+- Features
+- Adjustments
+- Launch</pre>
+                        <p class="combined-prompt__message" data-copy-message role="status" aria-live="polite"></p>
+                    </div>
+                </form>
+            </div>
+        </article>
+
+        <article class="start-step start-step--handoff" id="start-for-real">
+            <div class="start-step__number" aria-hidden="true">4</div>
+            <div class="start-step__body">
+                <div class="handoff-final">
+                    <p class="start-step__label">Start building for real</p>
+                    <h2>Open your AI build tool</h2>
+                    <p>Log in to Fluxzero first. Once connected, your coding tool becomes the main action and receives the build-ready prompt automatically.</p>
+                    <div class="handoff-readiness" aria-label="Build handoff status">
+                        <div class="handoff-ready-item">
+                            <span>Your prompt</span>
+                            <strong>Brief saved for handoff</strong>
+                        </div>
+                        <div class="handoff-ready-item">
+                            <span>Next action</span>
+                            <strong data-handoff-next-action>Connect Fluxzero</strong>
+                        </div>
+                    </div>
+                    <div class="start-actions handoff-actions" data-start-handoff>
+                        <a class="handoff-cta handoff-cta--login" href="/contact" data-login-button>Log in to Fluxzero</a>
+                        <button class="handoff-cta handoff-cta--codex" type="button" data-codex-button data-codex-prompt-key="fluxzeroCodexHandoff" disabled>Open build tool</button>
+                    </div>
+                    <p class="handoff-message" data-handoff-message role="status" aria-live="polite"></p>
+                </div>
+            </div>
+        </article>
+    </section>
+</main>
+
+<MarketingFooter />
+
+<script src="/js/start-building.js?v=20260624-3" defer></script>
+</body>
+</html>

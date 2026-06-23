@@ -13,7 +13,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/home.css?v=20260429-11">
+    <link rel="stylesheet" href="/css/home.css?v=20260624-5">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260505-1">
 </head>
 <body>
@@ -42,10 +42,28 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         Build your product without ever hitting a wall. Start with a <span class="hero-no-break">production-ready</span> foundation for AI.
     </p>
 
-    <div class="hero-ctas rv d3">
-        <a href="#get-started" class="btn-p">Generate your app →</a>
-        <a href="/contact" class="btn-s">Request launch access</a>
-    </div>
+    <form class="hero-builder hero-builder--simple rv d3" id="hero-builder-form" action="/start-building" method="get">
+        <label class="hero-builder__label" for="hero-builder-prompt">Start building</label>
+        <div class="hero-builder__window">
+            <textarea
+                class="hero-builder__input"
+                id="hero-builder-prompt"
+                name="idea"
+                rows="3"
+                maxlength="1200"
+                placeholder="Describe the product you want to build..."
+                aria-describedby="hero-builder-message"
+            ></textarea>
+            <div class="hero-builder__actions">
+                <button class="hero-builder__submit" type="submit" aria-label="Start building">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 19V5m0 0-6 6m6-6 6 6" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <p class="hero-builder__message" id="hero-builder-message" role="status" aria-live="polite"></p>
+    </form>
     <div class="hero-signals rv d4" aria-label="Product highlights">
         <p class="hero-signal hero-signal-tools" aria-label="Build with Codex, Claude Code, Cursor, or Copilot">
             <span class="hero-live-dot" aria-hidden="true"></span>
@@ -358,106 +376,6 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
 <div class="sp"></div>
 
-<!-- 6 · FIRST USE -->
-<section class="flow rv section-stack" id="get-started" aria-labelledby="get-started-title">
-    <div class="section-intro">
-        <h2 class="h2-single" id="get-started-title">Get started</h2>
-        <p class="flow-intro">
-            <span>Generate an app in seconds and start building features.<br class="desktop-break"></span>
-            <span>Start today. Pay only when you launch.</span>
-        </p>
-    </div>
-
-    <div class="flow-stage">
-        <div class="steps section-grid">
-            <div class="step">
-                <div class="step-n">1</div>
-                <div>
-                    <h4>Open</h4>
-                    <p>Open your app in Codex, Claude Code, Cursor, or your IDE.</p>
-                </div>
-            </div>
-            <div class="step">
-                <div class="step-n">2</div>
-                <div>
-                    <h4>Build</h4>
-                    <p>Use AI to shape your product&rsquo;s features, flows, and experience.</p>
-                </div>
-            </div>
-            <div class="step">
-                <div class="step-n">3</div>
-                <div>
-                    <h4>Run locally</h4>
-                    <p>If it works on your device, it works in production.</p>
-                </div>
-            </div>
-            <div class="step">
-                <div class="step-n">4</div>
-                <div>
-                    <h4>Launch</h4>
-                    <p>Launch without backend setup or ops work.</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="flow-end">
-            <div class="gen-box">
-                <div class="gen-title">Generate your <span class="gen-title__accent">app</span></div>
-                <p class="gen-subtitle">A clean project with production defaults and AI instructions already in place.</p>
-                <div class="gen-row">
-                    <input type="text" class="gen-input" id="gen-name" placeholder="My Application" value="" maxlength="50" aria-describedby="gen-name-error">
-                    <button class="gen-btn" id="gen-submit" onclick="generateProject()">
-                        <span id="gen-btn-icon" aria-hidden="true">↓</span>
-                        <span id="gen-btn-text">Generate app</span>
-                    </button>
-                </div>
-                <div class="gen-error" id="gen-name-error" aria-live="polite"></div>
-                <div class="gen-message" id="gen-message" role="status" aria-live="polite"></div>
-
-                <div class="gen-preview" aria-hidden="true">
-                    <div class="gen-preview-line">No tech team required</div>
-                    <div class="gen-preview-line">AI instructions included</div>
-                    <div class="gen-preview-line">Production foundation in place</div>
-                </div>
-
-                <button class="gen-toggle" id="gen-toggle" onclick="toggleAdvanced()" aria-expanded="false" aria-controls="gen-advanced">
-                    <span class="arrow">▸</span> Advanced options
-                </button>
-
-                <div class="gen-advanced" id="gen-advanced">
-                    <div class="gen-advanced-inner">
-                        <div class="gen-field">
-                            <label class="gen-label">Group</label>
-                            <input type="text" class="gen-input-sm" id="gen-group" placeholder="com.example" value="com.example" aria-describedby="gen-group-error">
-                            <div class="gen-error" id="gen-group-error" aria-live="polite"></div>
-                        </div>
-                        <div class="gen-field">
-                            <label class="gen-label">Artifact ID</label>
-                            <input type="text" class="gen-input-sm" id="gen-artifact" placeholder="my-app" value="" aria-describedby="gen-artifact-error">
-                            <div class="gen-error" id="gen-artifact-error" aria-live="polite"></div>
-                        </div>
-                        <div class="gen-field">
-                            <label class="gen-label">Language</label>
-                            <div class="gen-pills" id="gen-lang">
-                                <div class="gen-pill active" onclick="selectPill(this)">Java</div>
-                                <div class="gen-pill" onclick="selectPill(this)">Kotlin</div>
-                            </div>
-                        </div>
-                        <div class="gen-field">
-                            <label class="gen-label">Build tool</label>
-                            <div class="gen-pills" id="gen-build">
-                                <div class="gen-pill active" onclick="selectPill(this)">Maven</div>
-                                <div class="gen-pill" onclick="selectPill(this)">Gradle</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="gen-note">Generate, unzip, and open in your coding agent</div>
-        </div>
-    </div>
-</section>
-
 <!-- 4 · AI -->
 <section class="ai rv section-stack" id="ai-works-better" aria-labelledby="ai-works-better-title">
     <div class="section-intro">
@@ -713,7 +631,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 <span class="faq-arrow">+</span>
             </button>
             <div class="faq-a">
-                <p>Yes. Generate your app, unzip it, and open it in your coding agent or IDE. Fluxzero is designed to fit the way builders are already using AI to ship software.</p>
+                <p>Yes. Start with your product idea, review the project brief, and open the build in Codex, Claude Code, Cursor, or your IDE. Fluxzero is designed to fit the way builders are already using AI to ship software.</p>
             </div>
         </div>
 
@@ -740,10 +658,10 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             <span class="cta-title-main">What would you build if the tech</span>
             <span class="italic">just worked?</span>
         </h2>
-        <p class="cta-end-sub">Generate your app now and find out.</p>
+        <p class="cta-end-sub">Start with your idea and turn it into a build-ready prompt.</p>
     </div>
     <div class="cta-btns">
-        <a href="#get-started" class="btn-p">Generate your app →</a>
+        <a href="/start-building" class="btn-p">Start building →</a>
         <a href="/docs" class="btn-s"><span>Explore the docs</span></a>
     </div>
     <p class="cta-note">Build today. <a href="/contact">Request launch access</a> when your app is ready.</p>
@@ -751,7 +669,6 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
 <MarketingFooter />
 
-    <script src="/js/project-generator-core.js" defer></script>
-    <script src="/js/home.js" defer></script>
+    <script src="/js/home.js?v=20260624-3" defer></script>
 </body>
 </html>
