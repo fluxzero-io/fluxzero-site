@@ -5914,15 +5914,16 @@ body.is-build-exiting .hero-builder {
 .start-page {
     --start-text-micro: 10px;
     --start-text-xs: 11px;
-    --start-text-sm: 12px;
-    --start-text-body: 14px;
-    --start-text-lead: 15px;
-    --start-text-form: 14px;
-    --start-heading-step: clamp(24px, 2.45vw, 31px);
+    --start-text-sm: 13px;
+    --start-text-body: 15px;
+    --start-text-lead: 17px;
+    --start-text-form: 15px;
+    --start-heading-step: clamp(24px, 2.25vw, 30px);
     position: relative;
-    width: min(calc(100% - 64px), 1000px);
+    width: min(calc(100% - 80px), 1180px);
+    min-height: 100dvh;
     margin: 0 auto;
-    padding: clamp(108px, 9vw, 132px) 0 clamp(128px, 12vw, 168px);
+    padding: clamp(96px, 7.4vw, 116px) 0 56px;
 }
 
 .start-body {
@@ -5976,7 +5977,7 @@ body.is-build-exiting .hero-builder {
 
 .start-page > section.start-hero {
     max-width: none;
-    margin: 0 0 clamp(74px, 8vw, 104px);
+    margin: 0 0 clamp(46px, 5.2vw, 64px);
     padding: 0;
     animation: startContentReveal 760ms cubic-bezier(0.16, 1, 0.3, 1) 180ms both;
 }
@@ -5995,7 +5996,7 @@ body.is-build-exiting .hero-builder {
 
 .start-hero {
     display: flow-root;
-    margin-bottom: clamp(74px, 8vw, 104px);
+    margin-bottom: clamp(46px, 5.2vw, 64px);
 }
 
 .start-hero__content {
@@ -6023,14 +6024,14 @@ body.is-build-exiting .hero-builder {
 .start-hero h1 {
     width: auto;
     display: inline-block;
-    margin: 16px 0 14px;
+    margin: 10px 0 8px;
     padding-bottom: 0.08em;
     text-align: left;
     color: transparent;
     background: linear-gradient(90deg, #D9F5FF 0%, #6FAED1 100%);
     -webkit-background-clip: text;
     background-clip: text;
-    font-size: 40px;
+    font-size: clamp(42px, 4.4vw, 50px);
     line-height: 1.14;
     white-space: nowrap;
 }
@@ -6039,11 +6040,11 @@ body.is-build-exiting .hero-builder {
     max-width: 640px;
     color: rgba(244, 247, 255, 0.66);
     font-size: var(--start-text-lead);
-    line-height: 1.62;
+    line-height: 1.45;
 }
 
 .start-guide {
-    --start-guide-gap: clamp(72px, 7.4vw, 98px);
+    --start-guide-gap: clamp(46px, 4.8vw, 62px);
     display: grid;
     gap: var(--start-guide-gap);
     max-width: 880px;
@@ -6053,14 +6054,14 @@ body.is-build-exiting .hero-builder {
     position: relative;
     display: grid;
     grid-template-columns: 30px minmax(0, 1fr);
-    gap: clamp(22px, 3.6vw, 38px);
+    gap: clamp(22px, 3vw, 34px);
     padding: 0;
     border: 0;
     border-radius: 0;
     background: transparent;
     box-shadow: none;
     font-size: var(--start-text-body);
-    line-height: 1.62;
+    line-height: 1.45;
     animation: startContentReveal 760ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -6115,7 +6116,7 @@ body.is-build-exiting .hero-builder {
     top: 34px;
     z-index: 0;
     width: 1px;
-    height: calc(100% + var(--start-guide-gap) - 28px);
+    height: calc(100% + var(--start-guide-gap) - 20px);
     background: linear-gradient(180deg, rgba(185, 230, 250, 0.28), rgba(185, 230, 250, 0.08));
 }
 
@@ -6153,7 +6154,7 @@ body.is-build-exiting .hero-builder {
 
 .start-step h2 {
     width: auto;
-    margin: 0 0 11px;
+    margin: 0 0 9px;
     text-align: left;
     color: var(--text);
     font-size: var(--start-heading-step);
@@ -6165,7 +6166,7 @@ body.is-build-exiting .hero-builder {
     max-width: 680px;
     color: rgba(244, 247, 255, 0.62);
     font-size: var(--start-text-body);
-    line-height: 1.62;
+    line-height: 1.45;
 }
 
 .start-step p.start-step__label {
@@ -6184,13 +6185,13 @@ body.is-build-exiting .hero-builder {
 .agent-picker {
     display: grid;
     gap: 12px;
-    max-width: 560px;
+    max-width: 480px;
     margin-top: 18px;
 }
 
 .agent-dropdown {
     position: relative;
-    max-width: 520px;
+    max-width: 460px;
     isolation: isolate;
 }
 
@@ -6202,8 +6203,8 @@ body.is-build-exiting .hero-builder {
     position: relative;
     display: flex;
     align-items: center;
-    min-height: 76px;
-    padding: 13px 52px 13px 16px;
+    min-height: 64px;
+    padding: 11px 48px 11px 15px;
     border: 1px solid rgba(221, 247, 255, 0.12);
     border-radius: 14px;
     background: #0b141f;
@@ -6243,7 +6244,7 @@ body.is-build-exiting .hero-builder {
 .agent-selected {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 11px;
     min-width: 0;
 }
 
@@ -6251,16 +6252,16 @@ body.is-build-exiting .hero-builder {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
     color: rgba(221, 247, 255, 0.92);
     flex: 0 0 auto;
 }
 
 .agent-selected__icon svg {
     display: block;
-    width: 36px;
-    height: 36px;
+    width: 31px;
+    height: 31px;
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
@@ -6294,8 +6295,8 @@ body.is-build-exiting .hero-builder {
     left: 0;
     right: 0;
     display: grid;
-    gap: 6px;
-    padding: 8px;
+    gap: 5px;
+    padding: 7px;
     border: 1px solid rgba(221, 247, 255, 0.14);
     border-radius: 14px;
     background: #07101a;
@@ -6309,8 +6310,8 @@ body.is-build-exiting .hero-builder {
     display: flex;
     align-items: center;
     gap: 12px;
-    min-height: 58px;
-    padding: 10px 12px;
+    min-height: 50px;
+    padding: 8px 11px;
     border: 1px solid rgba(221, 247, 255, 0.08);
     border-radius: 10px;
     background: #0b1521;
@@ -6335,16 +6336,16 @@ body.is-build-exiting .hero-builder {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     color: currentColor;
     flex: 0 0 auto;
 }
 
 .agent-option__icon svg {
     display: block;
-    width: 27px;
-    height: 27px;
+    width: 25px;
+    height: 25px;
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
@@ -6354,7 +6355,7 @@ body.is-build-exiting .hero-builder {
 
 .agent-option__text {
     color: currentColor;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 720;
     line-height: 1.2;
 }
@@ -6380,7 +6381,7 @@ body.is-build-exiting .hero-builder {
     flex-wrap: wrap;
     margin: 0;
     color: rgba(188, 213, 234, 0.7);
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.45;
 }
 
@@ -6391,6 +6392,10 @@ body.is-build-exiting .hero-builder {
     color: rgba(221, 247, 255, 0.9);
     font-weight: 750;
     text-decoration: none;
+}
+
+.agent-download-note [hidden] {
+    display: none !important;
 }
 
 .agent-download-note a:hover {
@@ -6634,14 +6639,14 @@ body.is-build-exiting .hero-builder {
 }
 
 .fluxzero-install-action {
-    margin-top: 18px;
+    margin-top: 20px;
 }
 
 .start-step--installer .start-step__body--split {
-    grid-template-columns: minmax(0, 430px) auto;
+    grid-template-columns: minmax(0, 380px) auto;
     align-items: end;
-    gap: 20px;
-    max-width: 620px;
+    gap: 24px;
+    max-width: 560px;
 }
 
 .fluxzero-download-cta,
@@ -6650,8 +6655,8 @@ body.is-build-exiting .hero-builder {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    min-height: 58px;
-    padding: 0 24px;
+    min-height: 50px;
+    padding: 0 22px;
     border: 0;
     border-radius: 999px;
     background: linear-gradient(90deg, #D9F5FF 0%, #2F7FBA 100%);
@@ -6774,12 +6779,12 @@ body.is-build-exiting .hero-builder {
     position: relative;
     display: grid;
     place-items: center;
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
     justify-self: start;
     align-self: end;
     margin-bottom: 2px;
-    border-radius: 16px;
+    border-radius: 15px;
     background:
         radial-gradient(circle at 30% 22%, rgba(221, 247, 255, 0.36), transparent 22%),
         linear-gradient(145deg, #d9f5ff 0%, #2f7fba 74%, #0b2236 100%);
@@ -6790,15 +6795,17 @@ body.is-build-exiting .hero-builder {
 }
 
 .fluxzero-app-icon__mark {
-    width: 25px;
-    height: 28px;
+    width: 23px;
+    height: 25px;
     filter: brightness(0) saturate(100%) invert(5%) sepia(26%) saturate(1956%) hue-rotate(172deg) brightness(96%) contrast(99%);
 }
 
 .brief-form {
     display: grid;
-    gap: 13px;
-    margin-top: 18px;
+    grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.92fr);
+    align-items: end;
+    gap: clamp(22px, 3vw, 34px);
+    margin-top: 22px;
 }
 
 .brief-overview {
@@ -6812,16 +6819,16 @@ body.is-build-exiting .hero-builder {
 .brief-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    gap: 14px;
 }
 
 .brief-grid--direction {
-    gap: 12px;
+    gap: 14px;
 }
 
 .brief-field {
     display: grid;
-    gap: 6px;
+    gap: 7px;
     min-width: 0;
 }
 
@@ -6830,7 +6837,7 @@ body.is-build-exiting .hero-builder {
 }
 
 .brief-field--prompt {
-    gap: 8px;
+    gap: 9px;
 }
 
 .brief-field__head {
@@ -6886,8 +6893,8 @@ body.is-build-exiting .hero-builder {
 }
 
 .brief-field textarea {
-    height: 96px;
-    min-height: 96px;
+    height: 88px;
+    min-height: 88px;
     padding: 10px 11px;
     resize: vertical;
 }
@@ -7043,8 +7050,26 @@ body.is-build-exiting .hero-builder {
     display: grid;
     justify-items: start;
     gap: 12px;
-    margin-left: calc(30px + clamp(22px, 3.6vw, 38px));
-    padding-top: clamp(2px, 1.5vw, 12px);
+    margin-left: calc(30px + clamp(22px, 3vw, 34px));
+    padding-top: 10px;
+}
+
+@media (min-width: 981px) {
+    .start-page > section.start-guide {
+        max-width: none;
+    }
+
+    .start-guide {
+        max-width: 880px;
+    }
+
+    .start-step:not(:last-child)::after {
+        display: block;
+    }
+
+    .brief-form {
+        grid-template-columns: minmax(0, 1fr) minmax(340px, 0.86fr);
+    }
 }
 
 .open-project-cta {

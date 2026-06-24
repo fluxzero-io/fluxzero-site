@@ -156,7 +156,11 @@ function initStartBuildingPage() {
         if (agentDownloadCopy) agentDownloadCopy.hidden = isOther;
         if (agentDownloadLink) {
             agentDownloadLink.hidden = isOther;
-            if (href) agentDownloadLink.href = href;
+            if (href && !isOther) {
+                agentDownloadLink.href = href;
+            } else {
+                agentDownloadLink.removeAttribute('href');
+            }
         }
         if (agentOtherNote) agentOtherNote.hidden = !isOther;
         if (closeDropdown && agentDropdown) agentDropdown.open = false;
