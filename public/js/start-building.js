@@ -62,20 +62,34 @@ function hasFluxzeroSession() {
     return Boolean(window.FluxzeroSession && window.FluxzeroSession.isAuthenticated === true);
 }
 
-function buildPromptText({ idea, audience, features }) {
+function buildPromptText({ idea, agent, direction }) {
     const normalizedIdea = idea || 'A platform that helps...';
-    const normalizedAudience = audience || '[summary]';
-    const normalizedFeatures = features.length ? features : ['Feature 1', 'Feature 2', 'Feature 3'];
+    const normalizedAgent = agent || 'Claude Code';
+    const normalizedDirection = {
+        builderType: direction.builderType || 'Solo',
+        projectStage: direction.projectStage || 'Prototype',
+        experienceLevel: direction.experienceLevel || 'Non-technical',
+        role: direction.role || 'Founder'
+    };
 
     return `Original idea:
 ${normalizedIdea}
 
 Project brief additions:
-Audience:
-${normalizedAudience}
+Selected agent:
+${normalizedAgent}
 
-Core features:
-${normalizedFeatures.map(feature => `- ${feature}`).join('\n')}
+Builder type:
+${normalizedDirection.builderType}
+
+Project stage:
+${normalizedDirection.projectStage}
+
+Experience level:
+${normalizedDirection.experienceLevel}
+
+Role:
+${normalizedDirection.role}
 
 Fluxzero automatically handles:
 - Project structure
@@ -92,16 +106,21 @@ You stay in control of:
 
 function initStartBuildingPage() {
     const ideaField = document.querySelector('[data-brief-idea]');
-    const audienceField = document.querySelector('[data-brief-audience]');
-    const featureFields = Array.from(document.querySelectorAll('[data-brief-feature]'));
-    const promptPreview = document.querySelector('[data-start-prompt-preview]');
+    const promptEditButton = document.querySelector('[data-prompt-edit]');
+    const directionFields = Array.from(document.querySelectorAll('[data-direction-field]'));
+    const agentOptions = Array.from(document.querySelectorAll('[data-agent-option]'));
+    const agentDropdown = document.querySelector('[data-agent-dropdown]');
+    const agentSelectedIcon = document.querySelector('[data-agent-selected-icon]');
+    const agentSelectedName = document.querySelector('[data-agent-selected-name]');
+    const agentDownloadLink = document.querySelector('[data-agent-download-link]');
+    const agentDownloadName = document.querySelector('[data-agent-download-name]');
+    const agentDownloadCopy = document.querySelector('[data-agent-download-copy]');
+    const agentOtherNote = document.querySelector('[data-agent-other-note]');
     const combinedPrompt = document.querySelector('[data-combined-prompt]');
     const copyButton = document.querySelector('[data-copy-build-prompt]');
     const copyMessage = document.querySelector('[data-copy-message]');
     const handoff = document.querySelector('[data-start-handoff]');
-    const loginButton = document.querySelector('[data-login-button]');
     const codexButton = document.querySelector('[data-codex-button]');
-    const handoffNextAction = document.querySelector('[data-handoff-next-action]');
     const handoffMessage = document.querySelector('[data-handoff-message]');
 
     if (!ideaField || !combinedPrompt) return;
@@ -112,13 +131,50 @@ function initStartBuildingPage() {
         saveStoredPrompt(initialPrompt);
     }
 
+    function getSelectedAgentOption() {
+        return agentOptions.find(option => option.querySelector('input')?.checked) || agentOptions[0] || null;
+    }
+
+    function getSelectedAgent() {
+        const option = getSelectedAgentOption();
+        return option ? option.dataset.agentName || 'Claude Code' : 'Claude Code';
+    }
+
+    function syncAgentPicker(closeDropdown = false) {
+        const option = getSelectedAgentOption();
+        if (!option) return;
+
+        const name = option.dataset.agentName || 'Claude Code';
+        const href = option.dataset.agentHref || '';
+        const icon = option.querySelector('.agent-option__icon');
+
+        if (agentSelectedName) agentSelectedName.textContent = name;
+        if (agentSelectedIcon && icon) agentSelectedIcon.innerHTML = icon.innerHTML;
+        if (agentDownloadName) agentDownloadName.textContent = name;
+
+        const isOther = option.dataset.agentId === 'other';
+        if (agentDownloadCopy) agentDownloadCopy.hidden = isOther;
+        if (agentDownloadLink) {
+            agentDownloadLink.hidden = isOther;
+            if (href) agentDownloadLink.href = href;
+        }
+        if (agentOtherNote) agentOtherNote.hidden = !isOther;
+        if (closeDropdown && agentDropdown) agentDropdown.open = false;
+    }
+
+    function getDirectionData() {
+        return directionFields.reduce((data, field) => {
+            const key = field.dataset.directionKey;
+            if (key) data[key] = field.value.trim();
+            return data;
+        }, {});
+    }
+
     function getBriefData() {
         return {
             idea: ideaField.value.trim(),
-            audience: audienceField ? audienceField.value.trim() : '',
-            features: featureFields
-                .map(field => field.value.trim())
-                .filter(Boolean)
+            agent: getSelectedAgent(),
+            direction: getDirectionData()
         };
     }
 
@@ -128,16 +184,22 @@ function initStartBuildingPage() {
         combinedPrompt.textContent = promptText;
         saveBuildReadyPrompt(promptText);
 
-        if (promptPreview) {
-            promptPreview.textContent = data.idea || 'Your homepage idea will appear here and become the base prompt for the project brief.';
-        }
-
         saveStoredPrompt(data.idea);
         if (copyMessage) copyMessage.textContent = '';
     }
 
-    [ideaField, audienceField, ...featureFields].filter(Boolean).forEach(field => {
+    [ideaField, ...directionFields].filter(Boolean).forEach(field => {
         field.addEventListener('input', renderPrompt);
+        field.addEventListener('change', renderPrompt);
+    });
+
+    agentOptions.forEach(option => {
+        const input = option.querySelector('input');
+        if (!input) return;
+        input.addEventListener('change', () => {
+            syncAgentPicker(true);
+            renderPrompt();
+        });
     });
 
     if (copyButton) {
@@ -151,6 +213,17 @@ function initStartBuildingPage() {
         });
     }
 
+    if (promptEditButton) {
+        promptEditButton.addEventListener('click', () => {
+            const isEditing = ideaField.readOnly;
+            ideaField.readOnly = !isEditing;
+            promptEditButton.setAttribute('aria-pressed', String(isEditing));
+            promptEditButton.setAttribute('aria-label', isEditing ? 'Lock prompt' : 'Edit prompt');
+            promptEditButton.classList.toggle('is-editing', isEditing);
+            if (isEditing) ideaField.focus();
+        });
+    }
+
     function setHandoffMessage(message) {
         if (!handoffMessage) return;
         handoffMessage.textContent = message || '';
@@ -159,26 +232,16 @@ function initStartBuildingPage() {
 
     function setHandoffReady(isReady) {
         if (handoff) handoff.classList.toggle('is-login-ready', isReady);
-        if (codexButton) codexButton.disabled = !isReady;
-
-        if (loginButton) {
-            loginButton.textContent = isReady ? 'Fluxzero connected' : 'Log in to Fluxzero';
-            loginButton.setAttribute('aria-disabled', String(isReady));
-            loginButton.tabIndex = isReady ? -1 : 0;
-        }
-
-        if (codexButton) codexButton.textContent = 'Open build tool';
-
-        if (handoffNextAction) {
-            handoffNextAction.textContent = isReady ? 'Open build tool' : 'Connect Fluxzero';
-        }
+        if (codexButton) codexButton.textContent = 'Open project';
 
         if (isReady) {
-            setHandoffMessage('Fluxzero is connected. Your build-ready prompt is prepared for your coding tool.');
+            setHandoffMessage('Fluxzero is connected. Your project is ready to open.');
+        } else {
+            setHandoffMessage('');
         }
     }
 
-    async function openCodex() {
+    async function openProject() {
         const promptText = combinedPrompt.textContent || '';
         saveBuildReadyPrompt(promptText);
 
@@ -190,33 +253,26 @@ function initStartBuildingPage() {
 
         if (window.FluxzeroCodexHandoff && typeof window.FluxzeroCodexHandoff.open === 'function') {
             await window.FluxzeroCodexHandoff.open(handoffPayload);
-            setHandoffMessage('Opening your build tool with the build-ready prompt.');
+            setHandoffMessage('Opening your project with the build-ready prompt.');
             return;
         }
 
         try {
             await navigator.clipboard.writeText(promptText);
-            setHandoffMessage('Prompt prepared for your coding tool. The integration hook is ready; clipboard fallback copied the prompt.');
+            setHandoffMessage('Prompt prepared. The integration hook is ready; clipboard fallback copied the prompt.');
         } catch (error) {
-            setHandoffMessage('Prompt prepared for your coding tool. The integration hook is ready for your team to connect.');
+            setHandoffMessage('Prompt prepared. The integration hook is ready for your team to connect.');
         }
-    }
-
-    if (loginButton) {
-        loginButton.addEventListener('click', event => {
-            if (!hasFluxzeroSession()) return;
-            event.preventDefault();
-        });
     }
 
     if (codexButton) {
         codexButton.addEventListener('click', async () => {
             if (!hasFluxzeroSession()) {
-                setHandoffMessage('Connect Fluxzero first. Then your build tool becomes the main action.');
+                setHandoffMessage('Log in to Fluxzero before opening this project.');
                 return;
             }
 
-            await openCodex();
+            await openProject();
         });
     }
 
@@ -229,6 +285,7 @@ function initStartBuildingPage() {
         setHandoffReady(true);
     });
 
+    syncAgentPicker(false);
     renderPrompt();
     setHandoffReady(hasFluxzeroSession());
 }
