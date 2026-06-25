@@ -1,4 +1,6 @@
 ---
+import { fluxzeroBrand } from '../../config/brand.mjs';
+
 interface Props {
     active?: 'pricing' | 'about';
 }
@@ -10,8 +12,8 @@ const aboutClass = `nav-link${active === 'about' ? ' is-active' : ''}`;
 
 <nav class="nav-shell">
     <a href="/" class="nav-logo-wrap" aria-label="Fluxzero home">
+        <img class="nav-logo-lockup" src={fluxzeroBrand.logo} width="181" height="40" alt="Fluxzero">
         <span class="logo-mark nav-logo-mark" aria-hidden="true"></span>
-        <span class="nav-wordmark">FLUXZERO</span>
     </a>
 
     <div class="nav-main">
