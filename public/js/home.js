@@ -243,31 +243,10 @@ function initHeroBuilder() {
         form.classList.toggle('is-writing', document.activeElement === prompt);
     }
 
-    function navigateAfterExit(url) {
+    function navigateToBuild(url) {
         if (isSubmitting) return true;
         isSubmitting = true;
-
-        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduceMotion) {
-            window.location.href = url;
-            return true;
-        }
-
-        const overlay = document.createElement('div');
-        overlay.className = 'page-exit-transition';
-        overlay.setAttribute('aria-hidden', 'true');
-
-        prompt.blur();
-        prompt.readOnly = true;
-        document.body.appendChild(overlay);
-        document.documentElement.classList.add('is-build-exiting');
-        document.body.classList.add('is-build-exiting');
-        form.classList.add('is-transitioning');
-
-        window.setTimeout(() => {
-            window.location.href = url;
-        }, 1120);
-
+        window.location.href = url;
         return true;
     }
 
@@ -293,7 +272,7 @@ function initHeroBuilder() {
         }
 
         savePrompt(value);
-        return navigateAfterExit(`/start-building?idea=${encodeURIComponent(value)}`);
+        return navigateToBuild(`/start-building?idea=${encodeURIComponent(value)}`);
     }
 
     prompt.addEventListener('keydown', event => {
