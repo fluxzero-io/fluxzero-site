@@ -515,6 +515,12 @@ section:not(.hero):not(.cta-end) {
     margin: 0 0 28px;
 }
 
+.hero-logo-lockup {
+    display: block;
+    width: clamp(138px, 13vw, 176px);
+    height: auto;
+}
+
 .hero-logo-mark {
     height: 38px;
     width: 35px;
@@ -5331,6 +5337,9 @@ h4 {
     .hero-mobile-logo {
         gap: 9px;
         margin: 0 0 24px;
+    }
+    .hero-logo-lockup {
+        width: clamp(128px, 42vw, 154px);
     }
     .hero-logo-mark {
         height: 30px;
