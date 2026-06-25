@@ -2,41 +2,15 @@
 import BrandHead from '../components/BrandHead.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
-const defaultProjectTitle = 'CareOps Network';
-const defaultProductIdea = 'Care portal for visits, notes, updates, and invoices.';
+const defaultProjectTitle = 'Patient Portal';
+const defaultProductIdea = 'Patient portal for visits, notes, updates, and invoices.';
 const defaultGroupId = 'com.example';
-const defaultArtifactId = 'careops-network';
+const defaultArtifactId = 'patient-portal';
 const codingTools = [
     { id: 'claude', name: 'Claude Code', href: 'https://code.claude.com/docs/en/desktop', icon: '/assets/agent-tools/claude-code.svg' },
     { id: 'codex', name: 'Codex', href: 'https://developers.openai.com/codex/cloud', icon: '/assets/agent-tools/codex.svg' },
     { id: 'cursor', name: 'Cursor', href: 'https://cursor.com/download', icon: '/assets/agent-tools/cursor.svg' },
     { id: 'other', name: 'Other', href: '', icon: '' },
-];
-const directionFields = [
-    {
-        id: 'project-stage',
-        label: 'Stage',
-        key: 'projectStage',
-        options: ['New product', 'Prototype', 'Used by test users', 'Used by real users', 'Generating revenue', 'Paused / on the shelf'],
-    },
-    {
-        id: 'builder-type',
-        label: 'Setup',
-        key: 'builderType',
-        options: ['Solo', 'Startup', 'Team'],
-    },
-    {
-        id: 'builder-role',
-        label: 'Role',
-        key: 'role',
-        options: ['Founder', 'Product lead', 'Operator', 'Designer', 'Developer'],
-    },
-    {
-        id: 'experience-level',
-        label: 'Experience',
-        key: 'experienceLevel',
-        options: ['AI-native builder', 'Designer', 'Technical founder', 'Developer', 'Senior developer'],
-    },
 ];
 ---
 
@@ -49,7 +23,7 @@ const directionFields = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/home.css?v=20260625-12">
+    <link rel="stylesheet" href="/css/home.css?v=20260625-14">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260623-1">
 </head>
 <body class="start-body">
@@ -167,7 +141,7 @@ const directionFields = [
                         </div>
                     </div>
 
-                    <details class="generator-advanced zip-only" data-generator-advanced>
+                    <details class="generator-advanced generator-advanced--hidden zip-only" data-generator-advanced>
                         <summary>
                             <span>Advanced options</span>
                             <span class="generator-advanced__chevron" aria-hidden="true"></span>
@@ -220,17 +194,6 @@ const directionFields = [
                         </div>
                     </details>
 
-                    <div class="brief-grid brief-grid--direction">
-                        {directionFields.map((field) => (
-                            <label class="brief-field" for={field.id}>
-                                <span class="brief-field__label">{field.label} <span class="brief-field__optional">optional</span></span>
-                                <select id={field.id} data-direction-field data-direction-key={field.key}>
-                                    {field.options.map((option) => <option value={option}>{option}</option>)}
-                                </select>
-                            </label>
-                        ))}
-                    </div>
-
                     <pre data-combined-prompt hidden>Project title:
 {defaultProjectTitle}
 
@@ -240,18 +203,6 @@ Description:
 Build context:
 AI tool:
 Claude Code
-
-Stage:
-New product
-
-Setup:
-Solo
-
-Role:
-Founder
-
-Experience:
-AI-native builder
 
 Fluxzero automatically handles:
 - Project structure
@@ -279,6 +230,6 @@ You stay in control of:
 </main>
 
 <script src="/js/project-generator-core.js?v=20260625-1" defer></script>
-<script src="/js/start-building.js?v=20260625-9" defer></script>
+<script src="/js/start-building.js?v=20260625-15" defer></script>
 </body>
 </html>

@@ -6951,15 +6951,13 @@ body[data-project-delivery="zip"] .start-step--brief .brief-form {
     gap: 14px;
 }
 
-.brief-grid--direction {
-    padding-top: 16px;
-    border-top: 1px solid rgba(221, 247, 255, 0.065);
-    gap: 14px;
-}
-
 .generator-advanced {
     margin-top: 10px;
     padding-top: 0;
+}
+
+body[data-project-delivery] .generator-advanced.generator-advanced--hidden {
+    display: none !important;
 }
 
 .generator-advanced summary {

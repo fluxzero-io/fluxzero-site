@@ -2,8 +2,8 @@ const BUILD_PROMPT_STORAGE_KEY = 'fluxzeroBuildPrompt';
 const BUILD_READY_PROMPT_STORAGE_KEY = 'fluxzeroBuildReadyPrompt';
 const CODEX_HANDOFF_STORAGE_KEY = 'fluxzeroCodexHandoff';
 const FLUXZERO_SESSION_READY_KEY = 'fluxzeroSessionReady';
-const DEFAULT_PROJECT_TITLE = 'CareOps Network';
-const DEFAULT_PRODUCT_IDEA = 'Care portal for visits, notes, updates, and invoices.';
+const DEFAULT_PROJECT_TITLE = 'Patient Portal';
+const DEFAULT_PRODUCT_IDEA = 'Patient portal for visits, notes, updates, and invoices.';
 const FLUXZERO_DOWNLOADS = {
     macos: 'https://downloads.fluxzero.io/fluxzero-launchpad.dmg'
 };
@@ -100,16 +100,10 @@ function hasFluxzeroSession() {
     return Boolean(window.FluxzeroSession && window.FluxzeroSession.isAuthenticated === true);
 }
 
-function buildPromptText({ projectTitle, idea, agent, direction }) {
+function buildPromptText({ projectTitle, idea, agent }) {
     const normalizedTitle = projectTitle || DEFAULT_PROJECT_TITLE;
     const normalizedIdea = idea || DEFAULT_PRODUCT_IDEA;
     const normalizedAgent = agent || 'Claude Code';
-    const normalizedDirection = {
-        builderType: direction.builderType || 'Solo',
-        projectStage: direction.projectStage || 'New product',
-        experienceLevel: direction.experienceLevel || 'AI-native builder',
-        role: direction.role || 'Founder'
-    };
 
     return `Project title:
 ${normalizedTitle}
@@ -120,18 +114,6 @@ ${normalizedIdea}
 Build context:
 AI tool:
 ${normalizedAgent}
-
-Stage:
-${normalizedDirection.projectStage}
-
-Setup:
-${normalizedDirection.builderType}
-
-Role:
-${normalizedDirection.role}
-
-Experience:
-${normalizedDirection.experienceLevel}
 
 Fluxzero automatically handles:
 - Project structure
@@ -151,7 +133,6 @@ function initStartBuildingPage() {
     const ideaField = document.querySelector('[data-brief-idea]');
     const productField = ideaField ? ideaField.closest('.brief-field--prompt') : null;
     const promptEditButton = document.querySelector('[data-prompt-edit]');
-    const directionFields = Array.from(document.querySelectorAll('[data-direction-field]'));
     const agentOptions = Array.from(document.querySelectorAll('[data-agent-option]'));
     const agentStep = document.querySelector('[data-agent-step]');
     const agentDropdown = document.querySelector('[data-agent-dropdown]');
@@ -405,20 +386,11 @@ function initStartBuildingPage() {
         generatorArtifactField.value = fallbackArtifactId(projectTitleField.value.trim() || DEFAULT_PROJECT_TITLE);
     }
 
-    function getDirectionData() {
-        return directionFields.reduce((data, field) => {
-            const key = field.dataset.directionKey;
-            if (key) data[key] = field.value.trim();
-            return data;
-        }, {});
-    }
-
     function getBriefData() {
         return {
             projectTitle: projectTitleField.value.trim(),
             idea: ideaField.value.trim(),
-            agent: getSelectedAgent(),
-            direction: getDirectionData()
+            agent: getSelectedAgent()
         };
     }
 
@@ -436,7 +408,7 @@ function initStartBuildingPage() {
         clearGeneratorValidation();
     }
 
-    [projectTitleField, ideaField, ...directionFields].filter(Boolean).forEach(field => {
+    [projectTitleField, ideaField].filter(Boolean).forEach(field => {
         field.addEventListener('input', renderPrompt);
         field.addEventListener('change', renderPrompt);
     });
