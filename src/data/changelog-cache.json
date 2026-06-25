@@ -1,7 +1,16 @@
 {
-  "lastUpdated": "2026-06-23T11:47:52.424Z",
-  "latestVersion": "1.211.2",
+  "lastUpdated": "2026-06-25T22:16:28.482Z",
+  "latestVersion": "1.211.3",
   "releases": [
+    {
+      "version": "1.211.3",
+      "date": "2026-06-25",
+      "body": "##### [1.211.3](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.211.2...1.211.3) (2026-06-25)\n\n\n##### Bug Fixes\n\n* **web:** remove spring supplier from web response ([f379816](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/f379816b45444b901a0cc629badbf451ffd2d6a0))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.211.3",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
     {
       "version": "1.211.2",
       "date": "2026-06-23",
