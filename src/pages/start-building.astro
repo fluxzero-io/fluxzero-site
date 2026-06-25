@@ -23,7 +23,7 @@ const codingTools = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/home.css?v=20260625-15">
+    <link rel="stylesheet" href="/css/home.css?v=20260625-16">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260623-1">
 </head>
 <body class="start-body">
@@ -98,7 +98,12 @@ const codingTools = [
                 <div>
                     <h2>Install Fluxzero</h2>
                     <div class="start-actions fluxzero-install-action" data-fluxzero-download-action>
-                        <a class="fluxzero-download-cta" href="https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/Fluxzero-Launchpad.dmg" data-fluxzero-download>
+                        <a
+                            class="fluxzero-download-cta"
+                            href="https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/Fluxzero-Launchpad.dmg"
+                            title="Download the Fluxzero Launchpad macOS installer"
+                            data-fluxzero-download
+                        >
                             <span class="logo-mark fluxzero-download-cta__mark" aria-hidden="true"></span>
                             <span>Download Fluxzero Launchpad</span>
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/></svg>
@@ -140,6 +145,20 @@ const codingTools = [
                             <textarea id="brief-idea" rows="4" data-brief-idea data-default-product-idea={defaultProductIdea} placeholder={defaultProductIdea}></textarea>
                         </div>
                     </div>
+
+                    <label class="brief-field" for="builder-email">
+                        <span class="brief-field__label">Your email</span>
+                        <input
+                            id="builder-email"
+                            type="email"
+                            autocomplete="email"
+                            inputmode="email"
+                            maxlength="120"
+                            placeholder="you@company.com"
+                            data-user-email
+                            required
+                        >
+                    </label>
 
                     <details class="generator-advanced generator-advanced--hidden zip-only" data-generator-advanced>
                         <summary>
@@ -194,27 +213,7 @@ const codingTools = [
                         </div>
                     </details>
 
-                    <pre data-combined-prompt hidden>Project title:
-{defaultProjectTitle}
-
-Description:
-{defaultProductIdea}
-
-Build context:
-AI tool:
-Claude Code
-
-Fluxzero automatically handles:
-- Project structure
-- Database
-- Base interface
-- Deployment preparation
-
-You stay in control of:
-- Content
-- Features
-- Adjustments
-- Launch</pre>
+                    <pre data-combined-prompt hidden>{defaultProductIdea}</pre>
 
                     <div class="start-final" data-start-handoff>
                         <button class="open-project-cta" type="button" data-codex-button data-codex-prompt-key="fluxzeroCodexHandoff">
@@ -230,6 +229,6 @@ You stay in control of:
 </main>
 
 <script src="/js/project-generator-core.js?v=20260625-1" defer></script>
-<script src="/js/start-building.js?v=20260625-17" defer></script>
+<script src="/js/start-building.js?v=20260626-1" defer></script>
 </body>
 </html>

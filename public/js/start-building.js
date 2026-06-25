@@ -1,7 +1,8 @@
 const BUILD_PROMPT_STORAGE_KEY = 'fluxzeroBuildPrompt';
 const BUILD_READY_PROMPT_STORAGE_KEY = 'fluxzeroBuildReadyPrompt';
 const CODEX_HANDOFF_STORAGE_KEY = 'fluxzeroCodexHandoff';
-const FLUXZERO_SESSION_READY_KEY = 'fluxzeroSessionReady';
+const LAST_AGENT_CODE_STORAGE_KEY = 'fluxzeroLastAgentCode';
+const GENERATED_PROJECT_ENDPOINT = 'https://api.dashboard.fluxzero.io/generate-project/new';
 const DEFAULT_PROJECT_TITLE = 'Patient Portal';
 const DEFAULT_PRODUCT_IDEA = 'Patient portal for visits, notes, updates, and invoices.';
 const FALLBACK_PROJECT_DEFAULTS = {
@@ -24,6 +25,22 @@ function saveStoredPrompt(value) {
         localStorage.setItem('fluxzeroBuildPromptUpdatedAt', new Date().toISOString());
     } catch (error) {
         /* The form remains usable when storage is unavailable. */
+    }
+}
+
+function readStoredAgentCode() {
+    try {
+        return localStorage.getItem(LAST_AGENT_CODE_STORAGE_KEY) || '';
+    } catch (error) {
+        return '';
+    }
+}
+
+function saveStoredAgentCode(value) {
+    try {
+        if (value) localStorage.setItem(LAST_AGENT_CODE_STORAGE_KEY, value);
+    } catch (error) {
+        /* Agent selection falls back to the default when storage is unavailable. */
     }
 }
 
@@ -54,6 +71,11 @@ function readProjectTitleFromUrl() {
     return params.get('title') || params.get('projectTitle') || '';
 }
 
+function readUserEmailFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('email') || params.get('userEmail') || '';
+}
+
 function readPlatformOverrideFromUrl() {
     const params = new URLSearchParams(window.location.search);
     const value = (params.get('platform') || params.get('device') || params.get('fluxzeroPlatform') || '').trim().toLowerCase();
@@ -67,7 +89,8 @@ function readPlatformOverrideFromUrl() {
         ipad: 'ios',
         ios: 'ios',
         android: 'android',
-        linux: 'other',
+        linux: 'linux',
+        ubuntu: 'linux',
         other: 'other',
         zip: 'other',
         'non-mac': 'other',
@@ -77,57 +100,14 @@ function readPlatformOverrideFromUrl() {
     return aliases[value] || '';
 }
 
-function hasFluxzeroSession() {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('fluxzeroLogin') === 'success') {
-        try {
-            localStorage.setItem(FLUXZERO_SESSION_READY_KEY, 'true');
-        } catch (error) {
-            /* Query param is enough for this page load. */
-        }
-        return true;
-    }
-
-    try {
-        if (localStorage.getItem(FLUXZERO_SESSION_READY_KEY) === 'true') return true;
-    } catch (error) {
-        /* Ignore blocked storage. */
-    }
-
-    return Boolean(window.FluxzeroSession && window.FluxzeroSession.isAuthenticated === true);
-}
-
-function buildPromptText({ projectTitle, idea, agent }) {
-    const normalizedTitle = projectTitle || DEFAULT_PROJECT_TITLE;
-    const normalizedIdea = idea || DEFAULT_PRODUCT_IDEA;
-    const normalizedAgent = agent || 'Claude Code';
-
-    return `Project title:
-${normalizedTitle}
-
-Description:
-${normalizedIdea}
-
-Build context:
-AI tool:
-${normalizedAgent}
-
-Fluxzero automatically handles:
-- Project structure
-- Database
-- Base interface
-- Deployment preparation
-
-You stay in control of:
-- Content
-- Features
-- Adjustments
-- Launch`;
+function buildPromptText({ idea }) {
+    return idea || DEFAULT_PRODUCT_IDEA;
 }
 
 function initStartBuildingPage() {
     const projectTitleField = document.querySelector('[data-project-title]');
     const ideaField = document.querySelector('[data-brief-idea]');
+    const userEmailField = document.querySelector('[data-user-email]');
     const productField = ideaField ? ideaField.closest('.brief-field--prompt') : null;
     const promptEditButton = document.querySelector('[data-prompt-edit]');
     const agentOptions = Array.from(document.querySelectorAll('[data-agent-option]'));
@@ -142,7 +122,6 @@ function initStartBuildingPage() {
     const combinedPrompt = document.querySelector('[data-combined-prompt]');
     const copyButton = document.querySelector('[data-copy-build-prompt]');
     const copyMessage = document.querySelector('[data-copy-message]');
-    const handoff = document.querySelector('[data-start-handoff]');
     const codexButton = document.querySelector('[data-codex-button]');
     const handoffMessage = document.querySelector('[data-handoff-message]');
     const installerStep = document.querySelector('[data-installer-step]');
@@ -158,12 +137,15 @@ function initStartBuildingPage() {
     let artifactIdManuallyEdited = false;
     let buildToolManuallyEdited = false;
     let isGeneratingProject = false;
+    let handoffMessageTimer = 0;
 
-    if (!projectTitleField || !ideaField || !combinedPrompt) return;
+    if (!projectTitleField || !ideaField || !combinedPrompt || !userEmailField) return;
 
     const initialProjectTitle = readProjectTitleFromUrl().trim();
     const initialPrompt = readPromptFromUrl().trim();
+    const initialEmail = readUserEmailFromUrl().trim();
     if (initialProjectTitle) projectTitleField.value = initialProjectTitle;
+    if (initialEmail) userEmailField.value = initialEmail;
     if (initialPrompt) {
         ideaField.value = initialPrompt;
         saveStoredPrompt(initialPrompt);
@@ -182,6 +164,7 @@ function initStartBuildingPage() {
         if (/android/i.test(ua) || /android/i.test(platform)) return 'android';
         if (/win/i.test(platform) || /windows/i.test(ua)) return 'windows';
         if (/mac/i.test(platform)) return 'macos';
+        if (/linux|x11/i.test(platform) || /linux/i.test(ua)) return 'linux';
         return 'other';
     }
 
@@ -259,6 +242,101 @@ function initStartBuildingPage() {
         return option ? option.dataset.agentName || 'Claude Code' : 'Claude Code';
     }
 
+    function getSelectedAgentId() {
+        const option = getSelectedAgentOption();
+        return option?.dataset.agentId || 'claude';
+    }
+
+    function restoreStoredAgentCode() {
+        const agentCode = readStoredAgentCode();
+        if (!agentCode) return;
+
+        const option = agentOptions.find(candidate => candidate.dataset.agentId === agentCode);
+        const input = option?.querySelector('input');
+        if (input) input.checked = true;
+    }
+
+    function getLaunchpadAgent() {
+        switch (getSelectedAgentId()) {
+            case 'codex':
+                return 'codex';
+            case 'cursor':
+                return 'cursor';
+            case 'claude':
+                return 'claude';
+            default:
+                return 'finder';
+        }
+    }
+
+    function buildFluxzeroNewProjectUrl(promptText) {
+        const params = [
+            ['name', projectTitleField.value.trim()],
+            ['email', userEmailField.value.trim()],
+            ['platform', detectClientPlatform()],
+            ['prompt', promptText],
+            ['agent', getLaunchpadAgent()]
+        ];
+        const query = params
+            .filter(([, value]) => Boolean(value))
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join('&');
+
+        return `fluxzero://new?${query}`;
+    }
+
+    function packageNameForProjectData(projectData) {
+        return `${projectData.groupId}.${projectData.artifactId.toLowerCase().replace(/[^a-z0-9]/g, '')}`;
+    }
+
+    function createGeneratedProjectPayload(promptText, projectData) {
+        const payload = {
+            name: projectTitleField.value.trim(),
+            prompt: promptText,
+            email: userEmailField.value.trim(),
+            platform: detectClientPlatform()
+        };
+
+        if (!projectData) {
+            return {
+                ...payload,
+                agent: getLaunchpadAgent()
+            };
+        }
+
+        return {
+            ...payload,
+            template: projectData.selectedTemplate,
+            groupId: projectData.groupId,
+            artifactId: projectData.artifactId,
+            packageName: packageNameForProjectData(projectData),
+            build: projectData.buildTool,
+            git: true
+        };
+    }
+
+    function recordGeneratedProject(promptText, projectData) {
+        fetch(GENERATED_PROJECT_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(createGeneratedProjectPayload(promptText, projectData))
+        }).catch(() => {
+            /* Project delivery should not depend on dashboard recording while this endpoint is still optional. */
+        });
+    }
+
+    function invokeFluxzeroDeepLink(url) {
+        const frame = document.createElement('iframe');
+        frame.hidden = true;
+        frame.tabIndex = -1;
+        frame.setAttribute('aria-hidden', 'true');
+        frame.src = url;
+        document.body.appendChild(frame);
+        window.setTimeout(() => frame.remove(), 1500);
+    }
+
     function syncPrimaryActionLabel() {
         if (!codexButton) return;
 
@@ -292,6 +370,8 @@ function initStartBuildingPage() {
         const name = option.dataset.agentName || 'Claude Code';
         const href = option.dataset.agentHref || '';
         const icon = option.querySelector('.agent-option__icon');
+
+        saveStoredAgentCode(option.dataset.agentId || '');
 
         if (agentSelectedName) agentSelectedName.textContent = name;
         if (agentSelectedIcon && icon) agentSelectedIcon.innerHTML = icon.innerHTML;
@@ -406,6 +486,16 @@ function initStartBuildingPage() {
         field.addEventListener('change', renderPrompt);
     });
 
+    userEmailField.addEventListener('input', () => {
+        userEmailField.classList.remove('has-error');
+        setHandoffMessage('');
+    });
+
+    userEmailField.addEventListener('change', () => {
+        userEmailField.classList.remove('has-error');
+        setHandoffMessage('');
+    });
+
     agentOptions.forEach(option => {
         const input = option.querySelector('input');
         if (!input) return;
@@ -479,19 +569,26 @@ function initStartBuildingPage() {
         });
     }
 
-    function setHandoffMessage(message, tone = 'neutral') {
+    function setHandoffMessage(message, tone = 'neutral', options = {}) {
         if (!handoffMessage) return;
+        window.clearTimeout(handoffMessageTimer);
+        handoffMessageTimer = 0;
+
+        const autoDismissMs = Number(options.autoDismissMs || 0);
         handoffMessage.textContent = message || '';
         handoffMessage.classList.toggle('show', Boolean(message));
         handoffMessage.classList.toggle('is-error', Boolean(message) && tone === 'error');
         handoffMessage.classList.toggle('is-success', Boolean(message) && tone === 'success');
         handoffMessage.classList.toggle('is-busy', Boolean(message) && tone === 'busy');
-    }
+        handoffMessage.classList.toggle('is-transient', Boolean(message) && autoDismissMs > 0);
 
-    function setHandoffReady(isReady) {
-        if (handoff) handoff.classList.toggle('is-login-ready', isReady);
-        syncPrimaryActionLabel();
-        setHandoffMessage('');
+        if (message && autoDismissMs > 0) {
+            handoffMessageTimer = window.setTimeout(() => {
+                if (handoffMessage.textContent === message) {
+                    setHandoffMessage('');
+                }
+            }, autoDismissMs);
+        }
     }
 
     function setProjectGenerationLoading(isLoading) {
@@ -504,6 +601,19 @@ function initStartBuildingPage() {
         if (projectTitleField.value.trim()) return true;
         setHandoffMessage('Add a project title before continuing.', 'error');
         projectTitleField.focus();
+        return false;
+    }
+
+    function ensureUserEmail() {
+        const value = userEmailField.value.trim();
+        if (value && userEmailField.validity.valid) {
+            userEmailField.classList.remove('has-error');
+            return true;
+        }
+
+        userEmailField.classList.add('has-error');
+        setHandoffMessage(value ? 'Use a valid email before continuing.' : 'Add your email before continuing.', 'error');
+        userEmailField.focus();
         return false;
     }
 
@@ -539,7 +649,7 @@ function initStartBuildingPage() {
         };
     }
 
-    async function downloadFallbackProject() {
+    async function downloadFallbackProject(promptText) {
         const generator = window.FluxzeroProjectGenerator;
         if (!generator || typeof generator.downloadProject !== 'function') {
             setHandoffMessage('Project generator is still loading. Try again in a moment.', 'error');
@@ -568,9 +678,10 @@ function initStartBuildingPage() {
 
         setProjectGenerationLoading(true);
         setHandoffMessage('Generating project zip...', 'busy');
+        recordGeneratedProject(promptText, projectData);
         try {
             await generator.downloadProject(projectData);
-            setHandoffMessage('Project zip downloaded.', 'success');
+            setHandoffMessage('Project zip downloaded.', 'success', { autoDismissMs: 3200 });
         } catch (error) {
             setHandoffMessage('Project zip could not be generated. Please try again.', 'error');
         } finally {
@@ -580,62 +691,41 @@ function initStartBuildingPage() {
 
     async function openProject() {
         if (!ensureProjectTitle()) return;
-
-        if (getDeliveryMode() === 'zip') {
-            await downloadFallbackProject();
-            return;
-        }
+        if (!ensureUserEmail()) return;
 
         const promptText = combinedPrompt.textContent || '';
         saveBuildReadyPrompt(promptText);
 
-        const handoffPayload = {
-            prompt: promptText,
-            source: 'fluxzero-start-building',
-            updatedAt: new Date().toISOString()
-        };
-
-        if (window.FluxzeroCodexHandoff && typeof window.FluxzeroCodexHandoff.open === 'function') {
-            await window.FluxzeroCodexHandoff.open(handoffPayload);
-            setHandoffMessage('Opening your project with the build-ready prompt.');
+        if (getDeliveryMode() === 'zip') {
+            await downloadFallbackProject(promptText);
             return;
         }
 
+        recordGeneratedProject(promptText);
+
         try {
-            await navigator.clipboard.writeText(promptText);
-            setHandoffMessage('Prompt prepared. The integration hook is ready; clipboard fallback copied the prompt.');
+            navigator.clipboard?.writeText(promptText).catch(() => {});
         } catch (error) {
-            setHandoffMessage('Prompt prepared. The integration hook is ready for your team to connect.');
+            /* The deep link remains the primary handoff. */
         }
+
+        setHandoffMessage('Opening Fluxzero Launchpad...', 'success', { autoDismissMs: 3200 });
+        invokeFluxzeroDeepLink(buildFluxzeroNewProjectUrl(promptText));
     }
 
     if (codexButton) {
         codexButton.addEventListener('click', async () => {
-            if (getDeliveryMode() === 'launchpad' && !hasFluxzeroSession()) {
-                setHandoffMessage('Log in to Fluxzero before opening this project.', 'error');
-                return;
-            }
-
             await openProject();
         });
     }
 
-    window.addEventListener('fluxzero:login-ready', () => {
-        try {
-            localStorage.setItem(FLUXZERO_SESSION_READY_KEY, 'true');
-        } catch (error) {
-            /* The visible state still updates. */
-        }
-        setHandoffReady(true);
-    });
-
+    restoreStoredAgentCode();
     syncAgentPicker(false);
     setProductEditing(!initialPrompt);
     updateArtifactFromProjectTitle();
     syncBuildToolForLanguage();
     syncInstallerAvailability();
     renderPrompt();
-    setHandoffReady(hasFluxzeroSession());
 }
 
 initStartBuildingPage();
