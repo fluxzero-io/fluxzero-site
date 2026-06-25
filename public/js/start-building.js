@@ -4,9 +4,6 @@ const CODEX_HANDOFF_STORAGE_KEY = 'fluxzeroCodexHandoff';
 const FLUXZERO_SESSION_READY_KEY = 'fluxzeroSessionReady';
 const DEFAULT_PROJECT_TITLE = 'Patient Portal';
 const DEFAULT_PRODUCT_IDEA = 'Patient portal for visits, notes, updates, and invoices.';
-const FLUXZERO_DOWNLOADS = {
-    macos: 'https://downloads.fluxzero.io/fluxzero-launchpad.dmg'
-};
 const FALLBACK_PROJECT_DEFAULTS = {
     groupId: 'com.example',
     selectedTemplate: 'flux-basic-java',
@@ -203,10 +200,6 @@ function initStartBuildingPage() {
         if (agentStep) agentStep.hidden = !hasLaunchpad;
         if (installerStep) installerStep.hidden = !hasLaunchpad;
         if (fluxzeroDownloadAction) fluxzeroDownloadAction.hidden = !hasLaunchpad;
-
-        if (fluxzeroDownloadLink && hasLaunchpad) {
-            fluxzeroDownloadLink.href = FLUXZERO_DOWNLOADS.macos;
-        }
 
         if (installerNote) {
             installerNote.textContent = 'Make sure it is installed before proceeding.';
