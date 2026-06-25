@@ -31,6 +31,12 @@
     flex: 0 0 auto;
 }
 
+.nav-logo-lockup {
+    display: block;
+    width: clamp(120px, 10.5vw, 140px);
+    height: auto;
+}
+
 .logo-mark {
     display: block;
     flex: 0 0 auto;
@@ -42,6 +48,7 @@
 }
 
 .nav-logo-mark {
+    display: none;
     height: 24px;
     width: 22px;
 }
@@ -294,12 +301,13 @@ footer::before {
         flex: 0 0 auto;
     }
 
-    .nav-logo-mark {
-        height: 24px;
+    .nav-logo-lockup {
+        display: none;
     }
 
-    .nav-wordmark {
-        display: none;
+    .nav-logo-mark {
+        display: block;
+        height: 24px;
     }
 
     .nav-main,

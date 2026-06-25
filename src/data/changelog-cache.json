@@ -1,7 +1,241 @@
 {
-  "lastUpdated": "2026-06-08T12:20:15.729Z",
-  "latestVersion": "1.195.6",
+  "lastUpdated": "2026-06-25T22:16:28.482Z",
+  "latestVersion": "1.211.3",
   "releases": [
+    {
+      "version": "1.211.3",
+      "date": "2026-06-25",
+      "body": "##### [1.211.3](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.211.2...1.211.3) (2026-06-25)\n\n\n##### Bug Fixes\n\n* **web:** remove spring supplier from web response ([f379816](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/f379816b45444b901a0cc629badbf451ffd2d6a0))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.211.3",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.211.2",
+      "date": "2026-06-23",
+      "body": "##### [1.211.2](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.211.1...1.211.2) (2026-06-23)\n\n\n##### Dependency updates\n\n* bump io.fluxzero:lychee-maven-plugin from 0.2.0 to 0.2.1 ([480fd29](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/480fd29014f51f561dd55e4f2c6b091524d28f44))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.211.2",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.211.1",
+      "date": "2026-06-22",
+      "body": "##### [1.211.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.211.0...1.211.1) (2026-06-22)\n\n\n##### Dependency updates\n\n* bump io.fluxzero:lychee-maven-plugin from 0.1.1 to 0.2.0 ([26fd1d4](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/26fd1d40a28d0bf3533fbfe09df83764a28c1daa))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.211.1",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.211.0",
+      "date": "2026-06-21",
+      "body": "#### [1.211.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.210.6...1.211.0) (2026-06-21)\n\n\n##### Features\n\n* **handling:** add consumer handling modes ([f2ac3f3](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/f2ac3f336993cfe606988c94c6e3925ce9080981))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.211.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.210.6",
+      "date": "2026-06-21",
+      "body": "##### [1.210.6](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.210.5...1.210.6) (2026-06-21)\n\n\n##### Bug Fixes\n\n* **modeling:** order assert legal methods deterministically ([c465ad6](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/c465ad66734c6044acdf241550df9128820d2868))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.210.6",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.210.5",
+      "date": "2026-06-19",
+      "body": "##### [1.210.5](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.210.4...1.210.5) (2026-06-19)\n\n\n##### Bug Fixes\n\n* **reflection:** skip lambda metafactory without full lookup access ([c484c24](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/c484c249dc817e6f027051126c058a55988e4579))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.210.5",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.210.4",
+      "date": "2026-06-19",
+      "body": "##### [1.210.4](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.210.3...1.210.4) (2026-06-19)\n\n\n##### Bug Fixes\n\n* **web:** allow double dots in static filenames ([1da0766](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/1da07668c7d93cf01d33f9afe92d73cc5b8cd767))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.210.4",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.210.3",
+      "date": "2026-06-19",
+      "body": "##### [1.210.3](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.210.2...1.210.3) (2026-06-19)\n\n\n##### Bug Fixes\n\n* **web:** allow tildes in static file names ([4862d52](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/4862d52b1bc522dc7a3d7d8f2d96ff9999e1b0f2))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.210.3",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.210.2",
+      "date": "2026-06-18",
+      "body": "##### [1.210.2](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.210.1...1.210.2) (2026-06-18)\n\n\n##### Bug Fixes\n\n* **reflection:** ignore parameterized property methods ([c10d1df](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/c10d1df9fa7dd0ec507c86c8584dfbb51b9a4564))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.210.2",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.210.1",
+      "date": "2026-06-18",
+      "body": "##### [1.210.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.210.0...1.210.1) (2026-06-18)\n\n\n##### Bug Fixes\n\n* **routing:** resolve type routing keys via interfaces ([dcd605b](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/dcd605b01ed4075478320263f1ff98ccc21b0f29))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.210.1",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.210.0",
+      "date": "2026-06-18",
+      "body": "#### [1.210.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.209.0...1.210.0) (2026-06-18)\n\n\n##### Features\n\n* **web:** serve clean static URLs ([0f1df93](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/0f1df932be02a0fb2b0443c851db61e7ca456380))\n\n\n##### Bug Fixes\n\n* **modeling:** prefer alias owners when resolving entities ([92b3953](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/92b395394e55b03d334aad519ed0d5cb8bfe672c))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.210.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.209.0",
+      "date": "2026-06-18",
+      "body": "#### [1.209.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.208.3...1.209.0) (2026-06-18)\n\n\n##### Features\n\n* **configuration:** resolve property file placeholders ([e7bec6f](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/e7bec6f2b3150531dcee868a0dea18fd662fa7c7))\n\n\n##### Bug Fixes\n\n* **authentication:** align invocation user fallback ([1eff789](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/1eff7899989d637639a5601009e01ae91b913e0d))\n* **modeling:** deserialize id subtypes from scalar values ([f4bfdce](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/f4bfdce60ca083be327b783aa650d365e400c4e3))\n\n\n##### Documentation\n\n* **handling:** clarify document handler annotation styles ([1c44d8d](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/1c44d8d0cdde5ccad3d799fb4e89aa9f4a4200bc))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.209.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.208.2",
+      "date": "2026-06-17",
+      "body": "##### [1.208.2](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.208.1...1.208.2) (2026-06-17)\n\n\n##### Dependency updates\n\n* bump org.sonatype.central:central-publishing-maven-plugin ([84e9519](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/84e9519af98740e49a84c99755569d95674bcce3))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.208.2",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.208.1",
+      "date": "2026-06-16",
+      "body": "##### [1.208.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.208.0...1.208.1) (2026-06-16)\n\n\n##### Bug Fixes\n\n* **proxy:** avoid caching namespace headers ([3c06c22](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/3c06c22b2bd4263f3b6965548e0c179407f56e09))\n* **proxy:** gate namespace header handling ([462a3c8](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/462a3c80d4535ea0a366e56326188f98a851e3f4))\n* **proxy:** suppress implementation response headers ([4c0250d](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/4c0250d984430b6a5a36edde649b45a7a0c50594))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.208.1",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.208.0",
+      "date": "2026-06-16",
+      "body": "#### [1.208.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.207.0...1.208.0) (2026-06-16)\n\n\n##### Code Refactoring\n\n* **tests:** replace system properties with `TestFixture` ([0ecefb2](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/0ecefb2917d3fc5bf15ee5e16ea557e5b704149d))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.208.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.207.0",
+      "date": "2026-06-16",
+      "body": "#### [1.207.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.206.0...1.207.0) (2026-06-16)",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.207.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.205.0",
+      "date": "2026-06-15",
+      "body": "#### [1.205.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.204.1...1.205.0) (2026-06-15)",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.205.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.204.0",
+      "date": "2026-06-10",
+      "body": "#### [1.204.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.203.0...1.204.0) (2026-06-10)\n\n\n##### Continuous Integration\n\n* **docs:** notify site after sdk build ([3a13873](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/3a138736bd455ba9d8e2159dd55ca77455d1f3dc))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.204.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.203.0",
+      "date": "2026-06-10",
+      "body": "#### [1.203.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.202.0...1.203.0) (2026-06-10)\n\n\n##### Documentation\n\n* **sdk:** move developer docs into sdk repo ([d63bd20](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/d63bd20bce9dc2727e4c4b8d092686509912f5c3))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.203.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.202.0",
+      "date": "2026-06-10",
+      "body": "#### [1.202.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.201.0...1.202.0) (2026-06-10)\n\n\n##### Features\n\n* **tracking:** await send-and-forget futures ([db90113](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/db901135f968eef677d14253874a48a535c2227e))\n\n\n##### Documentation\n\n* **project-files:** clarify command query consistency ([bfc6082](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/bfc60824f36bc345b0fe8c3e385fc83593669cc2))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.202.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.201.0",
+      "date": "2026-06-10",
+      "body": "#### [1.201.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.200.0...1.201.0) (2026-06-10)\n\n\n##### Features\n\n* **tracking:** await aggregate commits before results ([60d0d31](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/60d0d31dd6b3e9252c66558b5f274793c4a54782))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.201.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.200.0",
+      "date": "2026-06-09",
+      "body": "#### [1.200.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.199.1...1.200.0) (2026-06-09)\n\n\n##### Features\n\n* **modeling:** add batch-awaited async aggregate commits ([6be4c7d](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/6be4c7d5e854caeff830fd6dfc78655b4e1d7731))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.200.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.199.1",
+      "date": "2026-06-09",
+      "body": "##### [1.199.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.199.0...1.199.1) (2026-06-09)\n\n\n##### Bug Fixes\n\n* **tracking:** complete tracker requests via futures ([913baa1](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/913baa1816221d93e01e087c493b63a22b632ee4))\n\n\n##### Code Refactoring\n\n* **tracking:** simplify strategy read contract ([ffd18f6](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/ffd18f6ba7d02db3582f17321cb64d546a6e8c9c))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.199.1",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.199.0",
+      "date": "2026-06-09",
+      "body": "#### [1.199.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.198.0...1.199.0) (2026-06-09)",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.199.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.196.1",
+      "date": "2026-06-09",
+      "body": "##### [1.196.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.196.0...1.196.1) (2026-06-09)\n\n\n##### Dependency updates\n\n* bump org.springframework:spring-framework-bom from 7.0.7 to 7.0.8 ([7d9c7a8](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/7d9c7a8ee35ba1874e8fbd21493008effef17f7a))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.196.1",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
+    {
+      "version": "1.196.0",
+      "date": "2026-06-08",
+      "body": "#### [1.196.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.195.6...1.196.0) (2026-06-08)\n\n\n##### Features\n\n* **search:** add async search operations ([2a3bb1c](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/2a3bb1c44a53ee2c04b9b2ae3dc10450ed8f8cfc))\n\n\n##### Bug Fixes\n\n* **proxy:** gate benchmark trace headers ([da7d5ba](https://github.com/fluxzero-io/fluxzero-sdk-java/commit/da7d5ba49b6bd94729522f19e942673e0432e38a))",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.196.0",
+      "quarterKey": "2026-Q2",
+      "year": 2026,
+      "quarter": "Q2"
+    },
     {
       "version": "1.195.6",
       "date": "2026-06-08",

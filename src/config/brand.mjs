@@ -3,6 +3,7 @@ export const fluxzeroBrandVersion = '6f850ace-8509-45ad-9664-4dcf381e181f';
 const base = `/assets/fluxzero/brand/${fluxzeroBrandVersion}`;
 
 export const fluxzeroBrand = {
+    logo: `${base}/fluxzero-logo.svg`,
     mark: `${base}/fluxzero-mark.svg`,
     faviconSvg: `${base}/fluxzero-mark.svg`,
     faviconIco: `${base}/favicon.ico`,

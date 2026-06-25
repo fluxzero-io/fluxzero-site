@@ -1,0 +1,234 @@
+---
+import BrandHead from '../components/BrandHead.astro';
+import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+
+const defaultProjectTitle = 'Patient Portal';
+const defaultProductIdea = 'Patient portal for visits, notes, updates, and invoices.';
+const defaultGroupId = 'com.example';
+const defaultArtifactId = 'patient-portal';
+const codingTools = [
+    { id: 'claude', name: 'Claude Code', href: 'https://code.claude.com/docs/en/desktop', icon: '/assets/agent-tools/claude-code.svg' },
+    { id: 'codex', name: 'Codex', href: 'https://developers.openai.com/codex/cloud', icon: '/assets/agent-tools/codex.svg' },
+    { id: 'cursor', name: 'Cursor', href: 'https://cursor.com/download', icon: '/assets/agent-tools/cursor.svg' },
+    { id: 'other', name: 'Other', href: '', icon: '' },
+];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <BrandHead title="Get started" description="Start building with Fluxzero" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/home.css?v=20260625-16">
+    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260623-1">
+</head>
+<body class="start-body">
+<MarketingHeader />
+
+<main class="start-page">
+    <section class="start-hero" aria-labelledby="start-hero-title">
+        <div class="start-hero__content">
+            <h1 id="start-hero-title">Get started</h1>
+            <p class="start-zip-intro zip-only">
+                Fluxzero will generate a project zip with the foundation, build files, and AI instructions in place.
+                Download it, unzip it, and open the folder in your coding agent.
+            </p>
+        </div>
+
+    </section>
+
+    <section class="start-guide" aria-label="Fluxzero build setup">
+        <article class="start-step start-step--agent" id="select-agent" data-agent-step>
+            <div class="start-step__number" aria-hidden="true">1</div>
+            <div class="start-step__body">
+                <h2>Select agent</h2>
+
+                <div class="agent-picker" data-agent-picker>
+                    <details class="agent-dropdown" data-agent-dropdown>
+                        <summary class="agent-dropdown__summary">
+                            <span class="agent-selected">
+                                <span class="agent-selected__icon" data-agent-selected-icon aria-hidden="true">
+                                    <img src="/assets/agent-tools/claude-code.svg" alt="" loading="lazy">
+                                </span>
+                                <span class="agent-selected__text">
+                                    <strong data-agent-selected-name>Claude Code</strong>
+                                </span>
+                            </span>
+                        </summary>
+                        <div class="agent-dropdown__menu">
+                            {codingTools.map((tool) => (
+                                <label
+                                    class={`agent-option${tool.id === 'other' ? ' agent-option--muted' : ''}`}
+                                    data-agent-option
+                                    data-agent-id={tool.id}
+                                    data-agent-name={tool.name}
+                                    data-agent-href={tool.href}
+                                >
+                                    <input type="radio" name="ai-agent" value={tool.id} checked={tool.id === 'claude'}>
+                                    <span class="agent-option__icon" aria-hidden="true">
+                                        {tool.icon && <img src={tool.icon} alt="" loading="lazy">}
+                                        {tool.id === 'other' && (
+                                            <svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                        )}
+                                    </span>
+                                    <span class="agent-option__text">{tool.name}</span>
+                                </label>
+                            ))}
+                        </div>
+                    </details>
+                    <p class="agent-download-note" data-agent-download-note>
+                        <span data-agent-download-copy>Not installed yet?</span>
+                        <a href="https://code.claude.com/docs/en/desktop" target="_blank" rel="noreferrer" data-agent-download-link>
+                            Download <span data-agent-download-name>Claude Code</span>
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7"/><path d="M9 7h8v8"/></svg>
+                        </a>
+                        <span data-agent-other-note hidden>Use the AI tool you already work with.</span>
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <article class="start-step start-step--installer" id="install-fluxzero" data-installer-step>
+            <div class="start-step__number" aria-hidden="true">2</div>
+            <div class="start-step__body start-step__body--split">
+                <div>
+                    <h2>Install Fluxzero</h2>
+                    <div class="start-actions fluxzero-install-action" data-fluxzero-download-action>
+                        <a
+                            class="fluxzero-download-cta"
+                            href="https://github.com/fluxzero-io/fluxzero-cli/releases/latest/download/Fluxzero-Launchpad.dmg"
+                            title="Download the Fluxzero Launchpad macOS installer"
+                            data-fluxzero-download
+                        >
+                            <span class="logo-mark fluxzero-download-cta__mark" aria-hidden="true"></span>
+                            <span>Download Fluxzero Launchpad</span>
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/></svg>
+                        </a>
+                    </div>
+                    <p class="start-installer-note" data-installer-note>Make sure it is installed before proceeding.</p>
+                </div>
+            </div>
+        </article>
+
+        <article class="start-step start-step--brief" id="project-brief">
+            <div class="start-step__number" aria-hidden="true">3</div>
+            <div class="start-step__body">
+                <h2>About your product</h2>
+
+                <form class="brief-form" id="project-brief-form">
+                    <label class="brief-field" for="project-title">
+                        <span class="brief-field__label">Project title</span>
+                        <input
+                            id="project-title"
+                            type="text"
+                            maxlength="50"
+                            autocomplete="off"
+                            data-project-title
+                            data-default-project-title={defaultProjectTitle}
+                            placeholder={defaultProjectTitle}
+                            required
+                        >
+                    </label>
+
+                    <div class="brief-field brief-field--prompt">
+                        <div class="brief-field__head">
+                            <label class="brief-field__label" for="brief-idea">Description</label>
+                            <button class="prompt-edit-button" type="button" data-prompt-edit aria-label="Edit prompt" aria-pressed="false">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.2-1 10.6-10.6a2.1 2.1 0 0 0-3-3L5.2 16 4 20Z"/><path d="m14.5 6.5 3 3"/></svg>
+                            </button>
+                        </div>
+                        <div class="brief-product-control">
+                            <textarea id="brief-idea" rows="4" data-brief-idea data-default-product-idea={defaultProductIdea} placeholder={defaultProductIdea}></textarea>
+                        </div>
+                    </div>
+
+                    <label class="brief-field" for="builder-email">
+                        <span class="brief-field__label">Your email</span>
+                        <input
+                            id="builder-email"
+                            type="email"
+                            autocomplete="email"
+                            inputmode="email"
+                            maxlength="120"
+                            placeholder="you@company.com"
+                            data-user-email
+                            required
+                        >
+                    </label>
+
+                    <details class="generator-advanced generator-advanced--hidden zip-only" data-generator-advanced>
+                        <summary>
+                            <span>Advanced options</span>
+                            <span class="generator-advanced__chevron" aria-hidden="true"></span>
+                        </summary>
+
+                        <div class="generator-advanced__body">
+                            <div class="generator-advanced__grid">
+                                <label class="brief-field" for="generator-group">
+                                    <span class="brief-field__label">Group <span class="brief-field__optional">optional</span></span>
+                                    <input
+                                        id="generator-group"
+                                        type="text"
+                                        value={defaultGroupId}
+                                        placeholder={defaultGroupId}
+                                        autocomplete="off"
+                                        data-generator-group
+                                    >
+                                    <p class="generator-field-error" data-generator-error="groupId" aria-live="polite"></p>
+                                </label>
+
+                                <label class="brief-field" for="generator-artifact">
+                                    <span class="brief-field__label">Artifact ID <span class="brief-field__optional">optional</span></span>
+                                    <input
+                                        id="generator-artifact"
+                                        type="text"
+                                        value={defaultArtifactId}
+                                        placeholder={defaultArtifactId}
+                                        autocomplete="off"
+                                        data-generator-artifact
+                                    >
+                                    <p class="generator-field-error" data-generator-error="artifactId" aria-live="polite"></p>
+                                </label>
+
+                                <div class="generator-option-group">
+                                    <span class="brief-field__label">Language</span>
+                                    <div class="generator-pills" role="group" aria-label="Language">
+                                        <button class="generator-pill is-active" type="button" data-generator-language value="java" aria-pressed="true">Java</button>
+                                        <button class="generator-pill" type="button" data-generator-language value="kotlin" aria-pressed="false">Kotlin</button>
+                                    </div>
+                                </div>
+
+                                <div class="generator-option-group">
+                                    <span class="brief-field__label">Build tool</span>
+                                    <div class="generator-pills" role="group" aria-label="Build tool">
+                                        <button class="generator-pill is-active" type="button" data-generator-build-tool value="maven" aria-pressed="true">Maven</button>
+                                        <button class="generator-pill" type="button" data-generator-build-tool value="gradle" aria-pressed="false">Gradle</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <pre data-combined-prompt hidden>{defaultProductIdea}</pre>
+
+                    <div class="start-final" data-start-handoff>
+                        <button class="open-project-cta" type="button" data-codex-button data-codex-prompt-key="fluxzeroCodexHandoff">
+                            <span data-codex-button-label>Open project</span>
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+                        </button>
+                        <p class="handoff-message" data-handoff-message role="status" aria-live="polite"></p>
+                    </div>
+                </form>
+            </div>
+        </article>
+    </section>
+</main>
+
+<script src="/js/project-generator-core.js?v=20260625-1" defer></script>
+<script src="/js/start-building.js?v=20260626-1" defer></script>
+</body>
+</html>
