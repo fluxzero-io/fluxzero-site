@@ -5907,8 +5907,9 @@ body.is-build-exiting .hero-builder {
 .hero-builder__message {
     display: none;
     margin: 10px 0 0;
-    color: rgba(255, 180, 132, 0.94);
+    color: rgba(255, 102, 102, 0.96);
     font-size: 13px;
+    font-weight: 750;
     line-height: 1.4;
 }
 
@@ -6910,6 +6911,19 @@ body[data-project-delivery="zip"] .start-step--brief .brief-form {
 
 .handoff-message.show {
     display: block;
+}
+
+.handoff-message.is-error {
+    color: rgba(255, 102, 102, 0.96);
+    font-weight: 750;
+}
+
+.handoff-message.is-success {
+    color: rgba(146, 239, 202, 0.92);
+}
+
+.handoff-message.is-busy {
+    color: rgba(187, 226, 249, 0.82);
 }
 
 .fluxzero-app-icon {

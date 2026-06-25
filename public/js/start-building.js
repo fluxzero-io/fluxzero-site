@@ -479,10 +479,13 @@ function initStartBuildingPage() {
         });
     }
 
-    function setHandoffMessage(message) {
+    function setHandoffMessage(message, tone = 'neutral') {
         if (!handoffMessage) return;
         handoffMessage.textContent = message || '';
         handoffMessage.classList.toggle('show', Boolean(message));
+        handoffMessage.classList.toggle('is-error', Boolean(message) && tone === 'error');
+        handoffMessage.classList.toggle('is-success', Boolean(message) && tone === 'success');
+        handoffMessage.classList.toggle('is-busy', Boolean(message) && tone === 'busy');
     }
 
     function setHandoffReady(isReady) {
@@ -499,7 +502,7 @@ function initStartBuildingPage() {
 
     function ensureProjectTitle() {
         if (projectTitleField.value.trim()) return true;
-        setHandoffMessage('Add a project title before continuing.');
+        setHandoffMessage('Add a project title before continuing.', 'error');
         projectTitleField.focus();
         return false;
     }
@@ -539,7 +542,7 @@ function initStartBuildingPage() {
     async function downloadFallbackProject() {
         const generator = window.FluxzeroProjectGenerator;
         if (!generator || typeof generator.downloadProject !== 'function') {
-            setHandoffMessage('Project generator is still loading. Try again in a moment.');
+            setHandoffMessage('Project generator is still loading. Try again in a moment.', 'error');
             return;
         }
 
@@ -558,18 +561,18 @@ function initStartBuildingPage() {
             const message = typeof generator.firstValidationError === 'function'
                 ? generator.firstValidationError(errors)
                 : 'Check the project title before continuing.';
-            setHandoffMessage(message || 'Check the project title before continuing.');
+            setHandoffMessage(message || 'Check the project title before continuing.', 'error');
             if (generatorAdvanced) generatorAdvanced.open = true;
             return;
         }
 
         setProjectGenerationLoading(true);
-        setHandoffMessage('Generating project zip...');
+        setHandoffMessage('Generating project zip...', 'busy');
         try {
             await generator.downloadProject(projectData);
-            setHandoffMessage('Project zip downloaded.');
+            setHandoffMessage('Project zip downloaded.', 'success');
         } catch (error) {
-            setHandoffMessage('Project zip could not be generated. Please try again.');
+            setHandoffMessage('Project zip could not be generated. Please try again.', 'error');
         } finally {
             setProjectGenerationLoading(false);
         }
@@ -609,7 +612,7 @@ function initStartBuildingPage() {
     if (codexButton) {
         codexButton.addEventListener('click', async () => {
             if (getDeliveryMode() === 'launchpad' && !hasFluxzeroSession()) {
-                setHandoffMessage('Log in to Fluxzero before opening this project.');
+                setHandoffMessage('Log in to Fluxzero before opening this project.', 'error');
                 return;
             }
 
