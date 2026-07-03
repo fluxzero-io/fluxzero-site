@@ -271,6 +271,7 @@ function formatChangelogRelease(release: GitHubRelease): ChangelogRelease {
   
   // Ensure all headings are at least h4
   body = body.replace(/^(#{1,3})\s/gm, '#### ');
+  body = expandCommitMessageDetails(body);
   
   return {
     version,
@@ -281,6 +282,10 @@ function formatChangelogRelease(release: GitHubRelease): ChangelogRelease {
     year,
     quarter,
   };
+}
+
+function expandCommitMessageDetails(body: string): string {
+  return body.replace(/<details class="commit-message-details">/g, '<details open class="commit-message-details">');
 }
 
 async function readCacheFile(): Promise<ChangelogCache> {
