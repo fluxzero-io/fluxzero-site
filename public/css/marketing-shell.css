@@ -334,6 +334,10 @@ footer::before {
         display: none;
     }
 
+    .nav-main-links .nav-link-about {
+        display: none;
+    }
+
     .nav-link {
         min-height: 36px;
         font-size: 13.5px;

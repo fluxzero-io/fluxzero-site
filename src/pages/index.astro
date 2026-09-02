@@ -3,6 +3,119 @@ import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 import { fluxzeroBrand } from '../config/brand.mjs';
+
+const comparisonRows = [
+    {
+        label: 'Built for',
+        values: [
+            { status: 'Developer teams', kind: 'owned' },
+            { status: 'Developer teams', kind: 'owned' },
+            { status: 'Anyone building with AI', kind: 'included' },
+        ],
+    },
+    {
+        label: 'Inside your application',
+        values: [
+            { status: 'Product + schemas, policies & infrastructure adapters', kind: 'owned' },
+            { status: 'Product + services, repositories & infrastructure architecture', kind: 'owned' },
+            { status: 'Product behavior only', kind: 'included' },
+        ],
+    },
+    {
+        label: 'What the cloud handles',
+        values: [
+            { status: 'Postgres capabilities + frontend hosting', kind: 'owned' },
+            { status: 'Deployments, networking & databases', kind: 'owned' },
+            { status: 'The complete technical execution', kind: 'included' },
+        ],
+    },
+    {
+        label: 'Adding a feature',
+        values: [
+            { status: 'Product behavior + schemas, policies & integrations', kind: 'owned' },
+            { status: 'Product behavior + services, repositories & deployment', kind: 'owned' },
+            { status: 'Product behavior only', kind: 'included' },
+        ],
+    },
+    {
+        label: 'AI must understand',
+        values: [
+            { status: 'Product + SQL + policies + integrations', kind: 'owned' },
+            { status: 'Product + services + operations', kind: 'owned' },
+            { status: 'Product behavior only', kind: 'included' },
+        ],
+    },
+    {
+        label: 'Security, recovery & audit',
+        values: [
+            { status: 'Designed across database and application', kind: 'owned' },
+            { status: 'Designed inside your application', kind: 'owned' },
+            { status: 'Handled by the cloud', kind: 'included' },
+        ],
+    },
+    {
+        label: 'Scaling',
+        values: [
+            { status: 'Scale and tune each layer', kind: 'owned' },
+            { status: 'Configure each service', kind: 'owned' },
+            { status: 'Automatic across the application', kind: 'included' },
+        ],
+    },
+    {
+        label: 'Engineering team',
+        values: [
+            { status: 'Needed as complexity grows', kind: 'owned' },
+            { status: 'Required for serious applications', kind: 'owned' },
+            { status: 'Not required', kind: 'included' },
+        ],
+    },
+    {
+        label: 'Platform improvements',
+        values: [
+            { status: 'You adopt and integrate the changes', kind: 'owned' },
+            { status: 'You upgrade your architecture', kind: 'owned' },
+            { status: 'Every application inherits it', kind: 'included' },
+        ],
+    },
+    {
+        label: 'Path to full scale',
+        values: [
+            { status: 'May require re-architecture or replatforming', kind: 'owned' },
+            { status: 'May require re-architecture or replatforming', kind: 'owned' },
+            { status: 'The same model at every scale', kind: 'included' },
+        ],
+    },
+    {
+        label: 'Home jurisdiction',
+        values: [
+            { status: 'Singapore + United States', kind: 'owned' },
+            { status: 'United States', kind: 'owned' },
+            { status: 'European Union', kind: 'included' },
+        ],
+    },
+];
+
+const comparisonOptions = [
+    {
+        name: 'Supabase + Vercel',
+        sub: 'Postgres platform + frontend cloud',
+        body: 'A powerful Postgres development platform paired with a frontend cloud. Your application continues to own database design, access policies, and how both sides evolve together.',
+        index: 0,
+    },
+    {
+        name: 'Railway',
+        sub: 'Application infrastructure',
+        body: 'A flexible deployment platform for services and databases. Your application continues to own how those services become one secure, resilient production system.',
+        index: 1,
+    },
+    {
+        name: 'Fluxzero',
+        sub: 'The complete application cloud',
+        body: 'Product behavior is the application. Fluxzero owns storage, communication, security, recovery, observability, and scale underneath.',
+        index: 2,
+        featured: true,
+    },
+];
 ---
 
 <!DOCTYPE html>
@@ -10,14 +123,15 @@ import { fluxzeroBrand } from '../config/brand.mjs';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <BrandHead title="Fluxzero – The production-ready foundation for AI" description="Fluxzero gives AI-built software a backend foundation from the first prompt, so builders can launch real products people can use, trust, and grow." />
+    <BrandHead title="Fluxzero — The European cloud for AI-built apps" description="Fluxzero is the European application cloud for people and AI agents building, running, and scaling real software." />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/home.css?v=20260625-2">
+    <link rel="stylesheet" href="/css/v4-home.css?v=20260902-2">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260625-logo-2">
 </head>
-<body>
+<body class="v4-home">
 <MarketingHeader />
 
 <!-- 1 · HERO -->
@@ -36,42 +150,22 @@ import { fluxzeroBrand } from '../config/brand.mjs';
   <div class="hero-mobile-logo" aria-hidden="true">
       <img class="hero-logo-lockup" src={fluxzeroBrand.logo} width="181" height="40" alt="">
   </div>
-  <h1 class="rv d1" id="hero-title"><span class="em">We&rsquo;ve got your back<span class="hero-end">end.</span></span></h1>
+  <h1 class="rv d1" id="hero-title"><span class="hero-title-main">The European cloud</span><br><span class="em">for AI-built apps</span></h1>
 
     <p class="hero-sub rv d2">
-        Build your product without ever hitting a wall. Start with a <span class="hero-no-break">production-ready</span> foundation for AI.
+        A complete application cloud with frontend, backend, data, security, deployment, and observability built in—and operated as one.
     </p>
 
-    <form class="hero-builder hero-builder--simple rv d3" id="hero-builder-form" action="/start-building" method="get">
-        <div class="hero-builder__window">
-            <textarea
-                class="hero-builder__input"
-                id="hero-builder-prompt"
-                name="idea"
-                rows="3"
-                maxlength="1200"
-                placeholder="Describe your product to get started..."
-                aria-describedby="hero-builder-message"
-            ></textarea>
-            <div class="hero-builder__actions">
-                <button class="hero-builder__submit" type="submit" aria-label="Start building">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 19V5m0 0-6 6m6-6 6 6" />
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <p class="hero-builder__message" id="hero-builder-message" role="status" aria-live="polite"></p>
-    </form>
-    <div class="hero-signals rv d4" aria-label="Product highlights">
-        <p class="hero-signal hero-signal-tools" aria-label="Use your existing subscription to build in Claude Code, Codex, or Cursor">
-            <span class="hero-live-dot" aria-hidden="true"></span>
-            <span class="hero-signal-label">Use your existing subscription to build in</span>
-            <span class="hero-tool-rotator" aria-hidden="true">
-                <span>Claude Code</span>
-                <span>Codex</span>
-                <span>Cursor</span>
+    <div class="hero-ctas rv d3">
+        <a href="/start-building" class="btn-p">Get started →</a>
+        <a href="#production-gap-content" class="btn-s">See how it works <span class="hero-cta-arrow" aria-hidden="true">→</span></a>
+    </div>
+    <div class="hero-signals rv d4" aria-label="European operation">
+        <p class="hero-signal hero-signal--eu">
+            <span class="hero-eu-stars" aria-hidden="true">
+                {Array.from({ length: 12 }, (_, index) => <span style={`--star:${index}`}>★</span>)}
             </span>
+            <span>100% EU-operated · Built on ISO 27001-certified and SOC 2 Type 2-audited infrastructure.</span>
         </p>
     </div>
 </section>
@@ -80,16 +174,16 @@ import { fluxzeroBrand } from '../config/brand.mjs';
 
 <section class="facts facts-carded rv section-stack" id="production-gap-content" aria-labelledby="production-gap-content-title">
     <div class="section-intro">
-        <h2 class="facts-heading h2-two-line" id="production-gap-content-title">For anyone who wants to launch real software, not demos</h2>
-        <p class="facts-sub"><span>With Fluxzero, what works on your device works in production.</span><br>No backend engineering before you go live.</p>
+        <h2 class="facts-heading h2-two-line" id="production-gap-content-title">The cloud for anyone</h2>
+        <p class="facts-sub"><span>Other clouds leave developers to integrate infrastructure.</span><br>Fluxzero keeps it out of your application—so anyone can build and ship serious products with AI.</p>
     </div>
 
     <div class="facts-g section-grid">
         <div class="fc">
             <div class="fc-head">
-                <h4>Never get stuck at demo</h4>
+                <h4>Ship without an engineering team</h4>
             </div>
-            <p>Just build your features and ship them. Launch knowing the backend is already taken care of. No setup or assembly.</p>
+            <p>AI gives you a software team. Fluxzero gives your product a world-class platform.</p>
             <div class="fc-visual pg-demo-visual" aria-hidden="true">
                 <svg viewBox="0 0 280 150">
                     <text class="pg-label" x="24" y="34">BUILT</text>
@@ -109,9 +203,29 @@ import { fluxzeroBrand } from '../config/brand.mjs';
 
         <div class="fc">
             <div class="fc-head">
-                <h4>Never break what already works</h4>
+                <h4>A feature stays a feature</h4>
             </div>
-            <p>New prompts do not break what you already shipped.<br class="desktop-break"> Feature one hundred builds as fast as feature one.</p>
+            <p>Every new feature is product behavior—not more infrastructure for AI to build and maintain.</p>
+            <div class="fc-visual v4-feature-visual" aria-hidden="true">
+                <div class="v4-feature-stage">
+                    <div class="v4-feature-app">
+                        <b>YOUR APPLICATION</b>
+                        <div><span>USERS</span><span>ORDERS</span><span>PAYMENTS</span><span>WORKFLOWS</span></div>
+                    </div>
+                    <div class="v4-feature-connectors"><i></i><i></i><i></i><i></i></div>
+                    <div class="v4-feature-cloud">
+                        <b>FLUXZERO CLOUD</b>
+                        <div><span>DATA</span><span>MESSAGING</span><span>SECURITY</span><span>RECOVERY</span><span>SCALE</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fc">
+            <div class="fc-head">
+                <h4>Secure and resilient by design</h4>
+            </div>
+            <p>Validation, authorization, isolation, retries, and recovery are built in from the start—not bolted on later.</p>
             <div class="fc-visual pg-traffic-visual" aria-hidden="true">
                 <div class="pg-traffic-row" style="--traffic-width: 72%; --traffic-delay: 0s"></div>
                 <div class="pg-traffic-row" style="--traffic-width: 54%; --traffic-delay: -1.1s"></div>
@@ -122,23 +236,9 @@ import { fluxzeroBrand } from '../config/brand.mjs';
 
         <div class="fc">
             <div class="fc-head">
-                <h4>Never leave security to chance</h4>
+                <h4>Scale without replatforming</h4>
             </div>
-            <p>Security and hardening are part of the architecture, not something AI has to invent.</p>
-            <div class="fc-visual pg-ready-visual" aria-hidden="true">
-                <div class="pg-ready-line"></div>
-                <div class="pg-ready-block">Auth</div>
-                <div class="pg-ready-block">Permissions</div>
-                <div class="pg-ready-block">Isolation</div>
-                <div class="pg-ready-block">Hardening</div>
-            </div>
-        </div>
-
-        <div class="fc">
-            <div class="fc-head">
-                <h4>Never rebuild due to success</h4>
-            </div>
-            <p>No matter how ambitious your business gets, the foundation is already there. From MVP to enterprise without rewrites.</p>
+            <p>The same application model works locally and at full scale, so growth does not force a new architecture.</p>
             <div class="fc-visual pg-business-visual" aria-hidden="true">
                 <svg viewBox="0 0 280 142">
                     <path class="pg-business-grid" d="M28 116 H244 M28 88 H244 M28 60 H244 M28 32 H244 M64 20 V116 M112 20 V116 M160 20 V116 M208 20 V116"/>
@@ -156,215 +256,75 @@ import { fluxzeroBrand } from '../config/brand.mjs';
     </div>
 </section>
 
-<!-- 3 · SPLIT -->
-<section class="system-split rv section-stack" id="system-split" aria-labelledby="system-split-title">
-    <div class="system-split__head">
-        <h2 class="system-split__title" id="system-split-title">Build only what matters</h2>
-        <p class="system-split__subtitle">The full potential of AI can only be unlocked if all technical concerns<br class="desktop-break"> move out of your product.</p>
+
+<section class="comparison comparison-v4 rv section-stack" id="platform-comparison" aria-labelledby="comparison-title">
+    <div class="section-intro comparison-v4__heading">
+        <h2 class="h2-two-line" id="comparison-title">Other clouds run infrastructure.<br><span>Fluxzero runs your application.</span></h2>
+        <p>Other clouds provide managed infrastructure components that your application must integrate into a correct production system. Fluxzero handles that technical execution, so every new feature adds product value without adding infrastructure to maintain.</p>
     </div>
 
-    <div class="system-split__map">
-        <div class="system-split__panel system-split__panel--interactive" data-inside-panel>
-            <div class="system-split__panel-inner">
-                <div class="system-split__face system-split__face--front">
-                    <p class="system-split__eyebrow">You build</p>
-                    <h3 class="system-split__panel-title">The products people use</h3>
-                    <ul class="system-split__list">
-                        <li>The product experience</li>
-                        <li>What users see and do</li>
-                        <li>The features unique to your product</li>
-                    </ul>
-                    <button class="system-split__inside-btn" type="button" data-inside-toggle aria-expanded="false" aria-label="See domain apps inside">
-                        <svg viewBox="0 0 16 16" aria-hidden="true">
-                            <path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/>
-                        </svg>
-                        <span>See inside</span>
-                    </button>
+    <div class="comparison-desktop section-grid">
+        <div class="comparison-head">
+            <div class="comparison-head__corner" aria-hidden="true"></div>
+            {comparisonOptions.map((option) => (
+                <div class:list={['comparison-head__option', { 'is-featured': option.featured }]}>
+                    <h3>{option.name}</h3>
+                    <p>{option.sub}</p>
                 </div>
-
-                <div class="system-split__face system-split__face--back" aria-hidden="true">
-                    <p class="system-split__eyebrow">Inside your product</p>
-                    <h3 class="system-split__panel-title">UIs and business logic</h3>
-                    <div class="system-split__apps" aria-label="Examples of domain apps">
-                        <span class="system-split__app--ui">
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 4.1h11.6v7.4H3.2V4.1Zm1.2 1.2v5h9.2v-5H4.4Zm3.7 7.3h1.8v1.2h2.4V15H5.7v-1.2h2.4v-1.2Z"/></svg>
-                            <small>UI</small><strong>Web UI</strong>
-                        </span>
-                        <span class="system-split__app--ui">
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M6 2.7h6c.7 0 1.3.6 1.3 1.3v10c0 .7-.6 1.3-1.3 1.3H6c-.7 0-1.3-.6-1.3-1.3V4c0-.7.6-1.3 1.3-1.3Zm0 1.2V14h6V3.9H6Zm2.1 8.8h1.8v.9H8.1v-.9Z"/></svg>
-                            <small>UI</small><strong>Mobile app</strong>
-                        </span>
-                        <span>
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 3.2h11.6v3.6H3.2V3.2Zm1.2 1.2v1.2h9.2V4.4H4.4Zm-1.2 3h11.6V11H3.2V7.4Zm1.2 1.2v1.2h9.2V8.6H4.4Zm-1.2 3h11.6v3.2H3.2v-3.2Zm1.2 1.2v.8h9.2v-.8H4.4Z"/></svg>
-                            <small>Domain app</small><strong>Shipping</strong>
-                        </span>
-                        <span>
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 3.2h11.6v3.6H3.2V3.2Zm1.2 1.2v1.2h9.2V4.4H4.4Zm-1.2 3h11.6V11H3.2V7.4Zm1.2 1.2v1.2h9.2V8.6H4.4Zm-1.2 3h11.6v3.2H3.2v-3.2Zm1.2 1.2v.8h9.2v-.8H4.4Z"/></svg>
-                            <small>Domain app</small><strong>Inventory</strong>
-                        </span>
-                        <span>
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 3.2h11.6v3.6H3.2V3.2Zm1.2 1.2v1.2h9.2V4.4H4.4Zm-1.2 3h11.6V11H3.2V7.4Zm1.2 1.2v1.2h9.2V8.6H4.4Zm-1.2 3h11.6v3.2H3.2v-3.2Zm1.2 1.2v.8h9.2v-.8H4.4Z"/></svg>
-                            <small>Domain app</small><strong>Billing</strong>
-                        </span>
-                        <span>
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 3.2h11.6v3.6H3.2V3.2Zm1.2 1.2v1.2h9.2V4.4H4.4Zm-1.2 3h11.6V11H3.2V7.4Zm1.2 1.2v1.2h9.2V8.6H4.4Zm-1.2 3h11.6v3.2H3.2v-3.2Zm1.2 1.2v.8h9.2v-.8H4.4Z"/></svg>
-                            <small>Domain app</small><strong>CRM</strong>
-                        </span>
-                    </div>
-                    <button class="system-split__inside-btn" type="button" data-inside-toggle aria-expanded="false" aria-label="Back to interfaces">
-                        <svg viewBox="0 0 16 16" aria-hidden="true">
-                            <path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/>
-                        </svg>
-                        <span>Back</span>
-                    </button>
-                </div>
-            </div>
+            ))}
         </div>
-
-        <div class="system-split__runtime" aria-hidden="true">
-            <div class="system-split__flows">
-                <span class="system-split__flow" style="--y: 62px; --line-opacity: 0.52"></span>
-                <span class="system-split__flow" style="--y: 92px; --line-opacity: 0.8"></span>
-                <span class="system-split__flow" style="--y: 125px; --line-opacity: 0.62"></span>
-                <span class="system-split__flow" style="--y: 158px; --line-opacity: 0.74"></span>
-                <span class="system-split__flow" style="--y: 188px; --line-opacity: 0.48"></span>
-                <span class="system-split__flow-dot" style="--y: 62px; --duration: 4.9s; --delay: -1.2s"></span>
-                <span class="system-split__flow-dot system-split__flow-dot--reverse" style="--y: 92px; --duration: 3.9s; --delay: -3.4s"></span>
-                <span class="system-split__flow-dot" style="--y: 125px; --duration: 4.5s; --delay: -4.8s"></span>
-                <span class="system-split__flow-dot system-split__flow-dot--reverse" style="--y: 158px; --duration: 5.3s; --delay: -2.1s"></span>
-                <span class="system-split__flow-dot" style="--y: 188px; --duration: 5.9s; --delay: -3s"></span>
-            </div>
-        </div>
-
-        <div class="system-split__panel system-split__panel--right system-split__panel--interactive" data-inside-panel>
-            <div class="system-split__panel-inner">
-                <div class="system-split__face system-split__face--front">
-                    <p class="system-split__eyebrow">Fluxzero provides</p>
-                    <h3 class="system-split__panel-title">The foundation underneath</h3>
-                    <ul class="system-split__list">
-                        <li>Everything behind the product</li>
-                        <li>The technical parts every product needs</li>
-                        <li>What makes it reliable and production-grade</li>
-                    </ul>
-                    <button class="system-split__inside-btn" type="button" data-inside-toggle aria-expanded="false" aria-label="See what Fluxzero provides inside">
-                        <svg viewBox="0 0 16 16" aria-hidden="true">
-                            <path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/>
-                        </svg>
-                        <span>See inside</span>
-                    </button>
+        <div class="comparison-table" role="table" aria-label="Comparison of application cloud approaches">
+            {comparisonRows.map((row) => (
+                <div class="comparison-table__row" role="row">
+                    <div class="comparison-table__label" role="rowheader">{row.label}</div>
+                    {comparisonOptions.map((option) => {
+                        const value = row.values[option.index];
+                        return (
+                            <div class:list={['comparison-table__cell', { 'is-featured': option.featured }]} role="cell">
+                                <span class:list={['comparison-table__mark', `is-${value.kind}`]} aria-hidden="true">
+                                    {value.kind === 'included' ? '✓' : '—'}
+                                </span>
+                                <strong>{value.status}</strong>
+                            </div>
+                        );
+                    })}
                 </div>
-
-                <div class="system-split__face system-split__face--back" aria-hidden="true">
-                    <p class="system-split__eyebrow">Inside Fluxzero</p>
-                    <h3 class="system-split__panel-title">The runtime behind your apps</h3>
-                    <div class="system-split__apps system-split__apps--fluxzero" aria-label="Fluxzero runtime capabilities">
-                        <span class="system-split__app--runtime">
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.4 14.7 5.7v6.6L9 15.6l-5.7-3.3V5.7L9 2.4Zm0 1.4L4.5 6.4v5.2L9 14.2l4.5-2.6V6.4L9 3.8Zm0 2.4 2.5 1.4v2.8L9 11.8l-2.5-1.4V7.6L9 6.2Z"/></svg>
-                            <small>Core</small><strong>Fluxzero runtime</strong>
-                        </span>
-                        <span>
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M2.8 5.2h12.4v7.6H2.8V5.2Zm1.2 1.2v5.2h10V6.4H4Zm2 1.4h6v1.2H6V7.8Zm0 2h4.2V11H6V9.8Z"/></svg>
-                            <small>Web</small><strong>Web traffic</strong>
-                        </span>
-                        <span>
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 2.5 14 4.4v3.7c0 3.2-1.8 5.7-5 7.4-3.2-1.7-5-4.2-5-7.4V4.4L9 2.5Zm0 1.3-3.8 1.4v2.9c0 2.5 1.2 4.5 3.8 5.9 2.6-1.4 3.8-3.4 3.8-5.9V5.2L9 3.8Z"/></svg>
-                            <small>Security</small><strong>Built-in protection</strong>
-                        </span>
-                        <span>
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3.2 4.2h11.6v2.4H3.2V4.2Zm0 3.6h11.6v2.4H3.2V7.8Zm0 3.6h11.6v2.4H3.2v-2.4Z"/></svg>
-                            <small>Messages</small><strong>Message history</strong>
-                        </span>
-                        <span>
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M9 3c3.2 0 5.8.9 5.8 2v8c0 1.1-2.6 2-5.8 2s-5.8-.9-5.8-2V5c0-1.1 2.6-2 5.8-2Zm0 1.2c-2.6 0-4.3.6-4.6.9.3.3 2 .9 4.6.9s4.3-.6 4.6-.9c-.3-.3-2-.9-4.6-.9Zm-4.6 3v1.6c.9.5 2.6.8 4.6.8s3.7-.3 4.6-.8V7.2c-1.1.6-2.8.9-4.6.9s-3.5-.3-4.6-.9Zm0 3.5V13c.3.3 2 .8 4.6.8s4.3-.5 4.6-.8v-2.3c-1.1.6-2.8.9-4.6.9s-3.5-.3-4.6-.9Z"/></svg>
-                            <small>Data</small><strong>Data storage</strong>
-                        </span>
-                        <span>
-                            <svg viewBox="0 0 18 18" aria-hidden="true"><path d="M7.8 3.4a4.4 4.4 0 1 1 0 8.8 4.4 4.4 0 0 1 0-8.8Zm0 1.2a3.2 3.2 0 1 0 0 6.4 3.2 3.2 0 0 0 0-6.4Zm3.1 6.9.9-.9 3 3-.9.9-3-3Z"/></svg>
-                            <small>Query</small><strong>Search</strong>
-                        </span>
-                    </div>
-                    <button class="system-split__inside-btn" type="button" data-inside-toggle aria-expanded="false" aria-label="Back to Fluxzero foundation">
-                        <svg viewBox="0 0 16 16" aria-hidden="true">
-                            <path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/>
-                        </svg>
-                        <span>Back</span>
-                    </button>
-                </div>
-            </div>
+            ))}
         </div>
     </div>
 
-</section>
-
-<section id="backend-any-product-content" aria-labelledby="backend-any-product-content-title" class="rv section-stack">
-    <header class="rv">
-        <h2 id="backend-any-product-content-title">The hard technical work already done</h2>
-        <p>AI can now build sophisticated software and focus entirely on your product.</p>
-    </header>
-
-    <div>
-        <article class="rv">
-            <h3>Ready for real users</h3>
-            <p>Your app starts with the checks, guardrails, and defaults it needs before real people and real data arrive.</p>
-            <div class="backend-card-visual backend-grade-visual" aria-hidden="true">
-                <div class="backend-launch-stage">
-                    <div class="backend-launch-glow"></div>
-                    <div class="backend-launch-stars">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
-                    <div class="backend-launch-pad"></div>
-                    <div class="backend-launch-rocket">
-                        <div class="backend-launch-body">
-                            <div class="backend-launch-window"></div>
-                        </div>
-                        <div class="backend-launch-nozzle"></div>
-                        <div class="backend-launch-fin backend-launch-fin--left"></div>
-                        <div class="backend-launch-fin backend-launch-fin--right"></div>
-                        <div class="backend-launch-flame"></div>
-                        <div class="backend-launch-trail"></div>
-                    </div>
+    <div class="comparison-mobile section-grid">
+        {comparisonOptions.map((option) => (
+            <details class:list={['comparison-disclosure', { 'is-featured': option.featured }]} open={option.featured}>
+                <summary>
+                    <span>
+                        <strong>{option.name}</strong>
+                        <small>{option.sub}</small>
+                    </span>
+                    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg>
+                </summary>
+                <div class="comparison-disclosure__body">
+                    <p>{option.body}</p>
+                    <dl>
+                        {comparisonRows.map((row) => (
+                            <>
+                                <dt>{row.label}</dt>
+                                <dd>
+                                    <span class:list={['comparison-table__mark', `is-${row.values[option.index].kind}`]} aria-hidden="true">
+                                        {row.values[option.index].kind === 'included' ? '✓' : '—'}
+                                    </span>
+                                    <strong>{row.values[option.index].status}</strong>
+                                </dd>
+                            </>
+                        ))}
+                    </dl>
                 </div>
-            </div>
-        </article>
+            </details>
+        ))}
+    </div>
 
-        <article class="rv">
-            <h3>No backend assembly</h3>
-            <p>No piecing together the technical concerns every real product needs before you can ship.</p>
-            <div class="backend-card-visual backend-assembly-visual" aria-hidden="true">
-                <div class="backend-assembly-stage">
-                    <div class="backend-assembly-list">
-                        <div class="backend-assembly-item" style="--item-delay: 0s">Sign in</div>
-                        <div class="backend-assembly-item" style="--item-delay: -0.2s">User access</div>
-                        <div class="backend-assembly-item" style="--item-delay: -0.4s">Data</div>
-                        <div class="backend-assembly-item" style="--item-delay: -0.6s">Search</div>
-                        <div class="backend-assembly-item" style="--item-delay: -0.8s">Tests</div>
-                        <div class="backend-assembly-item" style="--item-delay: -1s">Deploy</div>
-                        <div class="backend-assembly-item" style="--item-delay: -1.2s">Recovery</div>
-                        <div class="backend-assembly-item" style="--item-delay: -1.4s">Visibility</div>
-                    </div>
-                </div>
-            </div>
-        </article>
-
-        <article class="rv">
-            <h3>Built by backenders</h3>
-            <p>Built by people with deep experience building systems and ops tooling for software that cannot fail.</p>
-            <div class="backend-card-visual backend-team-visual" aria-hidden="true">
-                <div class="backend-team-stage">
-                    <div class="backend-team-ring"></div>
-                    <div class="backend-team-line"></div>
-                    <div class="backend-team-line--vertical"></div>
-                    <div class="backend-team-chip backend-team-chip--scale">Scale</div>
-                    <div class="backend-team-chip backend-team-chip--ops">Ops</div>
-                    <div class="backend-team-chip backend-team-chip--frameworks">Uptime</div>
-                    <div class="backend-team-chip backend-team-chip--systems">Security</div>
-                    <div class="backend-team-core">Production<br>foundation</div>
-                </div>
-            </div>
-        </article>
+    <div class="comparison-v4__actions">
+        <a class="btn-s" href="/agents">Explore the technical differences →</a>
     </div>
 </section>
 
@@ -374,10 +334,10 @@ import { fluxzeroBrand } from '../config/brand.mjs';
 <section class="ai rv section-stack" id="ai-works-better" aria-labelledby="ai-works-better-title">
     <div class="section-intro">
         <p class="ai-eyebrow">No technical noise</p>
-        <h2 class="h2-two-line" id="ai-works-better-title"><span class="ai-line-1">AI works better</span><span class="ai-line-2">when there's less to generate</span></h2>
+        <h2 class="h2-two-line" id="ai-works-better-title"><span class="ai-line-1">AI works better</span><span class="ai-line-2">when there&rsquo;s less to think about</span></h2>
 
         <p class="ai-body">
-            When AI does not have to generate the backend, it can stay focused on the product behavior you actually care about.
+            When AI does not have to integrate cloud infrastructure, it can stay focused on the product behavior you actually care about.
         </p>
     </div>
 
@@ -390,7 +350,7 @@ import { fluxzeroBrand } from '../config/brand.mjs';
                 </svg>
                 Spend fewer tokens
             </h4>
-            <p>Spend your prompt budget exclusively on product behavior.</p>
+            <p>Spend your prompt budget on product behavior, decisions, and user experience.</p>
         </div>
         <div class="ai-pt">
             <h4>
@@ -400,7 +360,7 @@ import { fluxzeroBrand } from '../config/brand.mjs';
                 </svg>
                 Less risk
             </h4>
-            <p>AI focuses on product behavior, not system-critical concerns.</p>
+            <p>Infrastructure correctness no longer depends on what AI happens to generate.</p>
         </div>
         <div class="ai-pt">
             <h4>
@@ -409,23 +369,23 @@ import { fluxzeroBrand } from '../config/brand.mjs';
                     <path d="m16 9 3 3-3 3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="m10.5 16.5 3-9" stroke-width="1.7" stroke-linecap="round"/>
                 </svg>
-                Less technical debt
+                100% product context
             </h4>
-            <p>Your codebase stays clean and maintainable as it grows.</p>
+            <p>Your agent reasons about users, rules, and workflows instead of infrastructure architecture.</p>
         </div>
     </div>
-
 </section>
 
 <div class="sp"></div>
+
 
 <!-- 8 · PROOF -->
 <section class="proof rv section-stack" id="proven-foundation" aria-labelledby="proven-foundation-title">
     <div class="proof-label">Built to scale</div>
     <div class="section-intro">
-        <h2 class="h2-single" id="proven-foundation-title">Start small.<br>Build on something proven.</h2>
+        <h2 class="h2-single" id="proven-foundation-title">Start small.<br>Scale without starting over.</h2>
         <div class="proof-body">
-            <p>Fluxzero is made for builders that want to move fast,<br class="desktop-break"> whether you&rsquo;re a startup or in need of a rebuild on a future-proof foundation.</p>
+            <p>The same application model already powers mission-critical systems<br class="desktop-break"> with high throughput and complex business logic.</p>
         </div>
     </div>
 
@@ -439,12 +399,12 @@ import { fluxzeroBrand } from '../config/brand.mjs';
 
     <div class="proof-stats section-grid" data-proof-stats>
         <div class="proof-stat">
-            <div class="num"><span>-</span><span class="proof-count" data-count-to="90">90</span><span>%</span></div>
-            <div class="label">token spend</div>
-        </div>
-        <div class="proof-stat">
             <div class="num"><span class="proof-count" data-count-to="100">100</span><span>+</span></div>
             <div class="label">GB / min throughput</div>
+        </div>
+        <div class="proof-stat">
+            <div class="num"><span class="proof-count" data-count-to="1">1</span><span>M+</span></div>
+            <div class="label">committed events / sec</div>
         </div>
         <div class="proof-stat">
             <div class="num"><span class="proof-count" data-count-to="99.9" data-decimals="1">99.9</span><span>%</span></div>
@@ -459,14 +419,14 @@ import { fluxzeroBrand } from '../config/brand.mjs';
 <!-- 6b · CLOUD -->
 <section class="cloud-section rv section-stack" id="cloud-section-content" aria-labelledby="cloud-section-content-title">
     <div class="section-intro">
-        <h2 class="h2-single" id="cloud-section-content-title">Launch without learning ops</h2>
-        <p class="cloud-sub">Go live in under a minute. Skip the backend and infra work that usually comes after building.</p>
+        <h2 class="h2-single" id="cloud-section-content-title">Hosted in Europe.<br>Managed end to end.</h2>
+        <p class="cloud-sub">Run the complete application on audited European infrastructure, without operating servers or stitching services together.</p>
     </div>
 
     <div class="cloud-grid section-grid">
         <div class="cloud-card">
-            <h4><span class="cloud-icon" aria-hidden="true">&uarr;</span>No ops to manage</h4>
-            <p>Start, stop, and scale from your dashboard. No servers, retries, or failure handling to manage.</p>
+            <h4><span class="cloud-icon" aria-hidden="true">&uarr;</span>A cloud that keeps improving</h4>
+            <p>New capabilities and runtime improvements reach your application without migrations or rewrites.</p>
         </div>
         <div class="cloud-card">
             <h4><span class="cloud-icon" aria-hidden="true">&check;</span>On audited infrastructure</h4>
@@ -482,61 +442,6 @@ import { fluxzeroBrand } from '../config/brand.mjs';
 
 <div class="sp"></div>
 
-<section class="obs section-stack" id="observability" aria-labelledby="observability-title">
-    <div class="section-intro obs-heading">
-        <h2 class="h2-single" id="observability-title">Once your app is live</h2>
-        <p class="obs-intro">Fluxzero shows you exactly what is happening.<br class="desktop-break"> Keep improving without losing momentum.</p>
-        <div class="obs-heading-trace" aria-hidden="true"><span></span></div>
-    </div>
-
-    <div class="obs-grid section-grid">
-        <div class="obs-card">
-            <h4>One dashboard</h4>
-            <p>See every user action in your app and understand what happened.</p>
-            <div class="obs-signal obs-signal--scope" aria-hidden="true">
-                <svg viewBox="0 0 210 48" preserveAspectRatio="none">
-                    <path d="M4 28 C18 28 20 28 32 28 C40 28 42 18 48 18 C56 18 57 36 66 36 C75 36 77 28 86 28 C98 28 102 28 112 28 C120 28 122 12 130 12 C139 12 140 40 150 40 C160 40 162 28 172 28 C186 28 194 28 206 28"/>
-                </svg>
-                <span></span>
-            </div>
-        </div>
-        <div class="obs-card">
-            <h4>Fix with context</h4>
-            <p>When something breaks, Fluxzero gives you the context to fix it fast with AI.</p>
-            <div class="obs-signal obs-signal--context" aria-hidden="true">
-                <span></span><span></span><span></span>
-            </div>
-        </div>
-        <div class="obs-card">
-            <h4>Keep improving</h4>
-            <p>Every change stays visible, so you can keep shipping with confidence.</p>
-            <div class="obs-signal obs-signal--trail" aria-hidden="true">
-                <span style="--x: 22%;"></span>
-                <span style="--x: 48%;"></span>
-                <span style="--x: 74%;"></span>
-            </div>
-        </div>
-    </div>
-
-</section>
-
-<div class="sp"></div>
-
-<section class="docs-bridge rv section-stack" id="developer-docs" aria-labelledby="developer-docs-title">
-    <div class="section-intro">
-        <h2 class="h2-single" id="developer-docs-title">Want the technical version?</h2>
-        <p class="sub">Your app stays focused on product. The docs show what Fluxzero handles underneath.</p>
-    </div>
-
-    <div class="prod-docs">
-        <p class="prod-docs-kicker">Developer docs</p>
-        <h3 class="prod-docs-title">How Fluxzero works</h3>
-        <p class="prod-docs-copy">Explore the runtime, message flow, testing model, security model, and how your app runs in production.</p>
-        <a class="prod-docs-link" href="/docs">Read the technical docs &rarr;</a>
-    </div>
-</section>
-
-<div class="sp"></div>
 
 <!-- 9 · FAQ -->
 <section class="faq rv section-stack" id="faq" aria-labelledby="faq-title">
@@ -567,11 +472,11 @@ import { fluxzeroBrand } from '../config/brand.mjs';
 
         <div class="faq-item">
             <button class="faq-q" onclick="toggleFaq(this)">
-                <span>How is Fluxzero different from Supabase, Firebase, or Vercel?</span>
+                <span>How is Fluxzero different from Supabase + Vercel or Railway?</span>
                 <span class="faq-arrow">+</span>
             </button>
             <div class="faq-a">
-                <p>Those platforms give you services and building blocks. Fluxzero gives you an integrated product backend: auth, data, permissions, testing, deployment, and runtime behavior already designed to work together. You build the product layer on top.</p>
+                <p>Supabase + Vercel and Railway are strong platforms for developer teams that want to compose or operate their own services. Fluxzero takes responsibility for the application foundation too, so your agent can focus on product behavior instead of assembling the architecture underneath.</p>
             </div>
         </div>
 
@@ -635,30 +540,12 @@ import { fluxzeroBrand } from '../config/brand.mjs';
                 <span class="faq-arrow">+</span>
             </button>
             <div class="faq-a">
-                <p>You can start building before paying. You only pay when you go live.</p>
+                <p>You can get started before paying. You only pay when you go live.</p>
             </div>
         </div>
     </div>
 
     <p class="faq-help">Still wondering? <a href="/contact">Get in touch</a> and we'll help.</p>
-</section>
-
-<div class="sp"></div>
-
-<!-- 11 · FINAL CTA -->
-<section class="cta-end section-stack" id="final-cta" aria-labelledby="final-cta-title">
-    <div class="section-intro">
-        <h2 class="h2-two-line" id="final-cta-title">
-            <span class="cta-title-main">What would you build if the tech</span>
-            <span class="italic">just worked?</span>
-        </h2>
-        <p class="cta-end-sub">Start with your idea and turn it into a build-ready prompt.</p>
-    </div>
-    <div class="cta-btns">
-        <a href="/start-building" class="btn-p">Start building →</a>
-        <a href="/docs" class="btn-s"><span>Explore the docs</span></a>
-    </div>
-    <p class="cta-note">Build today. <a href="/contact">Request launch access</a> when your app is ready.</p>
 </section>
 
 <MarketingFooter />
