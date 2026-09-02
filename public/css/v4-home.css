@@ -50,15 +50,11 @@
     transform: rotate(calc(var(--star) * 30deg)) translateY(-9px) rotate(calc(var(--star) * -30deg));
 }
 
-.hero-cta-arrow {
-    margin-left: 3px;
-    display: inline-block;
-    line-height: 1;
-    transform: rotate(90deg);
-    transition: transform 180ms ease;
+.v4-home .hero-ctas .btn-p,
+.v4-home .hero-ctas .btn-s {
+    min-width: 150px;
+    justify-content: center;
 }
-
-.hero-ctas .btn-s:hover .hero-cta-arrow { transform: rotate(90deg) translateX(3px); }
 
 /* Compact promise section */
 
@@ -243,7 +239,9 @@
     max-width: 760px;
     margin-top: 20px;
     color: rgba(244, 247, 255, 0.72);
-    font-size: 17px;
+    font-family: var(--font-body);
+    font-size: 21px;
+    font-weight: 500;
     line-height: 1.68;
     text-align: center;
 }

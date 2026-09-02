@@ -14,7 +14,7 @@ const comparisonRows = [
         ],
     },
     {
-        label: 'Inside your application',
+        label: 'Your application contains',
         values: [
             { status: 'Product + schemas, policies & infrastructure adapters', kind: 'owned' },
             { status: 'Product + services, repositories & infrastructure architecture', kind: 'owned' },
@@ -38,15 +38,7 @@ const comparisonRows = [
         ],
     },
     {
-        label: 'AI must understand',
-        values: [
-            { status: 'Product + SQL + policies + integrations', kind: 'owned' },
-            { status: 'Product + services + operations', kind: 'owned' },
-            { status: 'Product behavior only', kind: 'included' },
-        ],
-    },
-    {
-        label: 'Security, recovery & audit',
+        label: 'Security & recovery',
         values: [
             { status: 'Designed across database and application', kind: 'owned' },
             { status: 'Designed inside your application', kind: 'owned' },
@@ -54,31 +46,7 @@ const comparisonRows = [
         ],
     },
     {
-        label: 'Scaling',
-        values: [
-            { status: 'Scale and tune each layer', kind: 'owned' },
-            { status: 'Configure each service', kind: 'owned' },
-            { status: 'Automatic across the application', kind: 'included' },
-        ],
-    },
-    {
-        label: 'Engineering team',
-        values: [
-            { status: 'Needed as complexity grows', kind: 'owned' },
-            { status: 'Required for serious applications', kind: 'owned' },
-            { status: 'Not required', kind: 'included' },
-        ],
-    },
-    {
-        label: 'Platform improvements',
-        values: [
-            { status: 'You adopt and integrate the changes', kind: 'owned' },
-            { status: 'You upgrade your architecture', kind: 'owned' },
-            { status: 'Every application inherits it', kind: 'included' },
-        ],
-    },
-    {
-        label: 'Path to full scale',
+        label: 'Path to scale',
         values: [
             { status: 'May require re-architecture or replatforming', kind: 'owned' },
             { status: 'May require re-architecture or replatforming', kind: 'owned' },
@@ -110,7 +78,7 @@ const comparisonOptions = [
     },
     {
         name: 'Fluxzero',
-        sub: 'The complete application cloud',
+        sub: 'The product cloud',
         body: 'Product behavior is the application. Fluxzero owns storage, communication, security, recovery, observability, and scale underneath.',
         index: 2,
         featured: true,
@@ -153,12 +121,12 @@ const comparisonOptions = [
   <h1 class="rv d1" id="hero-title"><span class="hero-title-main">The European cloud</span><br><span class="em">for AI-built apps</span></h1>
 
     <p class="hero-sub rv d2">
-        A complete application cloud with frontend, backend, data, security, deployment, and observability built in—and operated as one.
+        A complete application cloud with frontend, backend, data, security, deployment, and observability built in and operated as one.
     </p>
 
     <div class="hero-ctas rv d3">
         <a href="/start-building" class="btn-p">Get started →</a>
-        <a href="#production-gap-content" class="btn-s">See how it works <span class="hero-cta-arrow" aria-hidden="true">→</span></a>
+        <a href="/contact#contactForm" class="btn-s">Talk to us</a>
     </div>
     <div class="hero-signals rv d4" aria-label="European operation">
         <p class="hero-signal hero-signal--eu">
@@ -175,7 +143,7 @@ const comparisonOptions = [
 <section class="facts facts-carded rv section-stack" id="production-gap-content" aria-labelledby="production-gap-content-title">
     <div class="section-intro">
         <h2 class="facts-heading h2-two-line" id="production-gap-content-title">The cloud for anyone</h2>
-        <p class="facts-sub"><span>Other clouds leave developers to integrate infrastructure.</span><br>Fluxzero keeps it out of your application—so anyone can build and ship serious products with AI.</p>
+        <p class="facts-sub"><span>AI lets anyone build products.</span><br>Fluxzero is the foundation they need to face the real world.</p>
     </div>
 
     <div class="facts-g section-grid">
@@ -183,7 +151,7 @@ const comparisonOptions = [
             <div class="fc-head">
                 <h4>Ship without an engineering team</h4>
             </div>
-            <p>AI gives you a software team. Fluxzero gives your product a world-class platform.</p>
+            <p>Build and launch serious products without assembling a backend or platform team.</p>
             <div class="fc-visual pg-demo-visual" aria-hidden="true">
                 <svg viewBox="0 0 280 150">
                     <text class="pg-label" x="24" y="34">BUILT</text>
@@ -205,7 +173,7 @@ const comparisonOptions = [
             <div class="fc-head">
                 <h4>A feature stays a feature</h4>
             </div>
-            <p>Every new feature is product behavior—not more infrastructure for AI to build and maintain.</p>
+            <p>Every new feature is product behavior. It does not add more infrastructure for AI to build and maintain.</p>
             <div class="fc-visual v4-feature-visual" aria-hidden="true">
                 <div class="v4-feature-stage">
                     <div class="v4-feature-app">
@@ -223,9 +191,9 @@ const comparisonOptions = [
 
         <div class="fc">
             <div class="fc-head">
-                <h4>Secure and resilient by design</h4>
+                <h4>Build with peace of mind</h4>
             </div>
-            <p>Validation, authorization, isolation, retries, and recovery are built in from the start—not bolted on later.</p>
+            <p>Security, reliability, and recovery are built in from day one—not left for you or your agent to get right.</p>
             <div class="fc-visual pg-traffic-visual" aria-hidden="true">
                 <div class="pg-traffic-row" style="--traffic-width: 72%; --traffic-delay: 0s"></div>
                 <div class="pg-traffic-row" style="--traffic-width: 54%; --traffic-delay: -1.1s"></div>
@@ -259,8 +227,8 @@ const comparisonOptions = [
 
 <section class="comparison comparison-v4 rv section-stack" id="platform-comparison" aria-labelledby="comparison-title">
     <div class="section-intro comparison-v4__heading">
-        <h2 class="h2-two-line" id="comparison-title">Other clouds run infrastructure.<br><span>Fluxzero runs your application.</span></h2>
-        <p>Other clouds provide managed infrastructure components that your application must integrate into a correct production system. Fluxzero handles that technical execution, so every new feature adds product value without adding infrastructure to maintain.</p>
+        <h2 class="h2-two-line" id="comparison-title">Other clouds run infrastructure.<br><span>Fluxzero runs your product.</span></h2>
+        <p>See what stays in your application and what the cloud handles.</p>
     </div>
 
     <div class="comparison-desktop section-grid">
@@ -324,7 +292,7 @@ const comparisonOptions = [
     </div>
 
     <div class="comparison-v4__actions">
-        <a class="btn-s" href="/agents">Explore the technical differences →</a>
+        <a class="btn-s" href="/how-it-works">Explore the technical differences →</a>
     </div>
 </section>
 

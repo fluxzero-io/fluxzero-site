@@ -2,13 +2,13 @@
 import { fluxzeroBrand } from '../../config/brand.mjs';
 
 interface Props {
-    active?: 'pricing' | 'about' | 'agents';
+    active?: 'pricing' | 'about' | 'how-it-works';
 }
 
 const { active } = Astro.props;
 const pricingClass = `nav-link nav-link-pricing${active === 'pricing' ? ' is-active' : ''}`;
 const aboutClass = `nav-link nav-link-about${active === 'about' ? ' is-active' : ''}`;
-const agentsClass = `nav-link nav-link-agents${active === 'agents' ? ' is-active' : ''}`;
+const howItWorksClass = `nav-link nav-link-agents${active === 'how-it-works' ? ' is-active' : ''}`;
 ---
 
 <nav class="nav-shell">
@@ -21,7 +21,7 @@ const agentsClass = `nav-link nav-link-agents${active === 'agents' ? ' is-active
         <div class="nav-main-links">
             <a href="/pricing" class={pricingClass} aria-current={active === 'pricing' ? 'page' : undefined}>Pricing</a>
             <a href="/about" class={aboutClass} aria-current={active === 'about' ? 'page' : undefined}>Our story</a>
-            <a href="/agents" class={agentsClass} aria-current={active === 'agents' ? 'page' : undefined}>For agents</a>
+            <a href="/how-it-works" class={howItWorksClass} aria-current={active === 'how-it-works' ? 'page' : undefined}>How it works</a>
             <a href="/docs" class="nav-link nav-link-docs">Docs</a>
         </div>
     </div>
