@@ -2408,7 +2408,7 @@ section:not(.hero):not(.cta-end) {
 }
 
 #production-gap-content .facts-g {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
     margin-bottom: 0;
 }
@@ -2476,6 +2476,12 @@ section:not(.hero):not(.cta-end) {
 
 #production-gap-content .fc-head h4 {
     margin-bottom: 0;
+}
+
+@media (min-width: 861px) {
+    #production-gap-content .fc-head h4 {
+        min-height: 2.24em;
+    }
 }
 
 #production-gap-content .fc h4 {
