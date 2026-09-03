@@ -38,17 +38,6 @@ const cloudLayers = [
     { name: 'Runtime', icon: 'bx-layer', items: ['Cross-app routing', 'ordering', 'concurrency', 'recovery', 'observability', 'scale'] },
 ];
 
-const runtimeMachinery = [
-    { icon: 'bx-data', label: 'Database schema and repository' },
-    { icon: 'bx-server', label: 'Message broker and worker loop' },
-    { icon: 'bx-refresh', label: 'Retry and replay infrastructure' },
-    { icon: 'bx-search', label: 'Search indexing infrastructure' },
-    { icon: 'bx-transfer', label: 'Routing, concurrency and ordering' },
-    { icon: 'bx-network-chart', label: 'Ingress, networking and discovery' },
-    { icon: 'bx-bar-chart-alt-2', label: 'Observability plumbing' },
-    { icon: 'bx-sitemap', label: 'Deployment and scaling topology' },
-];
-
 const javaExample = `<span class="tok-annotation">@Model</span>
 <span class="tok-keyword">record</span> <span class="tok-type">Project</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">ProjectId</span> <span class="tok-field">projectId</span>,
@@ -131,67 +120,19 @@ const comparisonOptions = [
     { name: 'Fluxzero', sub: 'The product cloud', key: 'fluxzero', featured: true },
 ] as const;
 
-const runtimeSteps = [
-    {
-        number: '01',
-        title: 'Enter',
-        icon: 'bx-log-in-circle',
-        copy: 'HTTP, commands, events, queries and schedules all enter as messages.',
-    },
-    {
-        number: '02',
-        title: 'Route',
-        icon: 'bx-git-branch',
-        copy: 'The runtime delivers work locally or across applications, with ordering where it matters.',
-    },
-    {
-        number: '03',
-        title: 'Execute',
-        icon: 'bx-bolt-circle',
-        copy: 'The handler receives model state and identity; product rules validate, authorize and decide.',
-    },
-    {
-        number: '04',
-        title: 'Commit',
-        icon: 'bx-data',
-        copy: 'State, events, snapshots and relationship changes become durable in one model commit.',
-    },
-    {
-        number: '05',
-        title: 'Continue',
-        icon: 'bx-refresh',
-        copy: 'Results return and follow-up work is distributed, observed, retried and scaled by the runtime.',
-    },
-];
-
 const choiceOptions = [
     {
         title: 'Fluxzero',
         icon: 'bx-check-circle',
-        copy: 'When the product should evolve without a private platform growing around it.',
-        points: [
-            'Product behavior is the main requirement',
-            'Persistence, delivery and recovery should stay shared',
-            'Growth should not require a platform team',
-        ],
+        copy: 'For builders who want product behavior to stay the source of differentiation while the technical foundation remains shared.',
     },
     {
         title: 'A component cloud',
         icon: 'bx-circle',
-        copy: 'When direct control of the infrastructure architecture is part of the requirement.',
-        points: [
-            'Direct database control is required',
-            'A bespoke service topology is intentional',
-            'Your team deliberately owns operations',
-        ],
+        copy: 'For teams that deliberately want to design, assemble and operate their own infrastructure architecture.',
     },
 ];
 
-const proofPoints = [
-    { icon: 'bx-code-alt', value: 'Up to 99%', label: 'less application code', note: 'Specific migrated applications' },
-    { icon: 'bx-bolt-circle', value: '1M+', label: 'fully committed events per second', note: 'Reproducible storage benchmark' },
-    { icon: 'bx-data', value: '100+ GB', label: 'of event data per minute', note: 'Approximate production read/write throughput' },
-];
 ---
 
 <!DOCTYPE html>
@@ -215,8 +156,8 @@ const proofPoints = [
         <img class="agent4-hero__backdrop" src="/assets/fluxzero/agent-hero-horizon.png" alt="" aria-hidden="true">
         <div class="v4-shell agent4-hero__inner">
             <div class="agent4-hero__copy">
-                <h1 id="agent4-title">AI let anyone become a builder.<br><span>Time for the cloud to catch up.</span></h1>
-                <p>Fluxzero is the product cloud for this new generation of builders. It keeps the product central from first idea to production.</p>
+                <h1 id="agent4-title">AI lets anyone become a builder.<br><span>Time for the cloud to catch up.</span></h1>
+                <p>Fluxzero is the product cloud for this new generation of builders. Product behavior stays explicit; the technical foundation becomes shared.</p>
                 <div class="v4-actions agent4-hero__actions">
                     <a class="v4-button v4-button--primary" href="/start-building">Get started <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
                     <a class="v4-button v4-button--secondary" href="/docs">Read the technical docs</a>
@@ -263,7 +204,7 @@ const proofPoints = [
                     <div class="agent4-product-box"><strong><i class="bx bx-cube-alt" aria-hidden="true"></i> Product behavior</strong></div>
                     <div class="agent4-cloud-box">
                         <div class="agent4-cloud-box__brand"><span class="logo-mark" aria-hidden="true"></span><strong>fluxzero <em>cloud</em></strong></div>
-                        <div class="agent4-cloud-box__items"><span><i class="bx bx-data"></i>State &amp; history</span><span><i class="bx bx-transfer-alt"></i>Message delivery</span><span><i class="bx bx-search"></i>Search</span><span><i class="bx bx-check-shield"></i>Policy enforcement</span><span><i class="bx bx-refresh"></i>Replay &amp; recovery</span><span><i class="bx bx-bar-chart-alt-2"></i>Observability</span><span><i class="bx bx-git-branch"></i>Runtime routing</span></div>
+                        <div class="agent4-cloud-box__foundation"><i class="bx bx-layer" aria-hidden="true"></i><strong>Shared technical foundation</strong></div>
                     </div>
                 </article>
             </div>
@@ -325,10 +266,6 @@ const proofPoints = [
                     <pre><code set:html={testExample}></code></pre>
                 </div>
             </div>
-            <div class="agent4-not-generated">
-                <div class="agent4-not-generated__header"><strong>Machinery provided by the cloud</strong></div>
-                <ul>{runtimeMachinery.map((item) => <li><i class={`bx ${item.icon}`} aria-hidden="true"></i>{item.label}</li>)}</ul>
-            </div>
         </div>
     </section>
 
@@ -382,41 +319,11 @@ const proofPoints = [
         </div>
     </section>
 
-    <section class="agent4-proof agent4-canvas-section" aria-labelledby="proof-title">
-        <div class="v4-shell">
-            <h2 id="proof-title">Less application code. <span>More operating proof.</span></h2>
-            <div class="agent4-proof__stats">
-                {proofPoints.map((proof) => (
-                    <article><i class={`bx ${proof.icon}`} aria-hidden="true"></i><p><strong>{proof.value}</strong> {proof.label}<small>{proof.note}</small></p></article>
-                ))}
-            </div>
-        </div>
-    </section>
-
-    <section class="agent4-runtime-path agent4-canvas-section" aria-labelledby="runtime-path-title">
-        <div class="v4-shell">
-            <header class="agent4-runtime-path__heading">
-                <h2 id="runtime-path-title">One runtime model for<br><span>every interaction.</span></h2>
-                <p>Every interaction follows the same path from intent to durable result. The application decides what should happen; the runtime makes sure it does.</p>
-            </header>
-            <div class="agent4-runtime-path__rail">
-                {runtimeSteps.map((step, index) => (
-                    <article data-number={step.number}>
-                        <i class={`bx ${step.icon}`} aria-hidden="true"></i>
-                        <h3>{step.title}</h3>
-                        <p>{step.copy}</p>
-                        {index < runtimeSteps.length - 1 && <i class="bx bx-right-arrow-alt agent4-runtime-path__arrow" aria-hidden="true"></i>}
-                    </article>
-                ))}
-            </div>
-        </div>
-    </section>
-
     <section class="agent4-decision agent4-canvas-section" aria-labelledby="decision-title">
         <div class="v4-shell">
             <header class="agent4-decision__heading">
                 <h2 id="decision-title">When to choose <span>Fluxzero.</span></h2>
-                <p>Choose how much of the platform you want to build yourself.</p>
+                <p>Choose what you want to build: the product, or the platform beneath it.</p>
             </header>
             <div class="agent4-decision__options">
                 {choiceOptions.map((option) => (
@@ -425,7 +332,6 @@ const proofPoints = [
                         <div>
                             <h3>{option.title}</h3>
                             <p>{option.copy}</p>
-                            <ul>{option.points.map((point) => <li>{point}</li>)}</ul>
                         </div>
                     </article>
                 ))}
