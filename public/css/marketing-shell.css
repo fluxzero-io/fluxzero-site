@@ -437,7 +437,8 @@ footer::before {
         display: none;
     }
 
-    .nav-main-links .nav-link-about {
+    .nav-main-links .nav-link-about,
+    .nav-main-links .nav-link-agents {
         display: none;
     }
 

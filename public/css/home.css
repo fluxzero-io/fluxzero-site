@@ -670,6 +670,23 @@ section:not(.hero):not(.cta-end) {
     opacity: 0.58;
 }
 
+@media (min-width: 601px) {
+    .hero-mobile-logo,
+    .hero h1,
+    .hero-sub,
+    .hero-ctas {
+        top: clamp(-68px, -6vh, -44px);
+    }
+
+    .hero-signals {
+        position: absolute;
+        right: 0;
+        bottom: 52px;
+        left: 0;
+        margin: 0 auto;
+    }
+}
+
 .hero-signal {
     display: inline-flex;
     align-items: center;

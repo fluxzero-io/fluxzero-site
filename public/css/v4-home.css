@@ -333,13 +333,39 @@
     .comparison-disclosure.is-featured dd strong { color: #8fc2ff; }
 }
 
+@media (min-width: 601px) and (max-width: 700px) {
+    .v4-home .hero-signals {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .v4-home .hero-signal--eu {
+        min-width: 0;
+        max-width: 100%;
+        font-size: 13px;
+        line-height: 1.35;
+        white-space: normal;
+    }
+}
+
 @media (max-width: 600px) {
-    .v4-home .hero h1 { max-width: 390px; }
+    .v4-home .hero h1 {
+        width: calc(100vw - 24px);
+        max-width: 390px;
+        padding-left: 0;
+        padding-right: 0;
+        font-size: clamp(29px, 9vw, 40px);
+    }
+
+    .v4-home .hero h1 br {
+        display: none;
+    }
 
     .v4-home .hero-title-main,
     .v4-home .hero h1 .em {
         display: block;
         max-width: none;
+        white-space: nowrap;
     }
 
     .v4-home #production-gap-content .facts-heading,
