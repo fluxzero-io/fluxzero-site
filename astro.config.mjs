@@ -9,6 +9,7 @@ import { fluxzeroBrand } from './src/config/brand.mjs';
 
 // https://astro.build/config
 export default defineConfig({
+    site: 'https://fluxzero.io',
     vite: {
         plugins: [tailwindcss()],
         css: {
@@ -34,6 +35,10 @@ export default defineConfig({
         }
     },
     redirects: {
+        "/start-building": {
+            status: 308,
+            destination: "/get-started"
+        },
         "/docs": {
             status: 302,
             destination: "/docs/getting-started/introduction"
