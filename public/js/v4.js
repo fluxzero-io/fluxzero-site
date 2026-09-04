@@ -18,6 +18,15 @@ document.addEventListener('DOMContentLoaded', () => {
         revealTargets.forEach((target) => target.classList.add('is-visible'));
     }
 
+    const browserBackLink = document.querySelector('[data-browser-back]');
+
+    browserBackLink?.addEventListener('click', (event) => {
+        if (window.history.length <= 1) return;
+
+        event.preventDefault();
+        window.history.back();
+    });
+
     const copyButton = document.querySelector('[data-copy-instruction]');
     const instruction = document.querySelector('#agent-instruction-text');
     const copyStatus = document.querySelector('[data-copy-status]');
