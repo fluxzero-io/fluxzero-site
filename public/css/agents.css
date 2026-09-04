@@ -46,6 +46,27 @@ html::-webkit-scrollbar {
     background-clip: text;
 }
 
+.agent4-page [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+        opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.agent4-page [data-reveal-delay="1"] {
+    transition-delay: 0.08s;
+}
+
+.agent4-page [data-reveal-delay="2"] {
+    transition-delay: 0.12s;
+}
+
+.agent4-page [data-reveal].is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .agent4-page .bx {
     display: inline-flex;
     align-items: center;
@@ -122,6 +143,8 @@ html::-webkit-scrollbar {
 /* The multiplication problem */
 .agent4-bottleneck {
     min-height: 680px;
+    border-top-color: transparent;
+    background: linear-gradient(180deg, #030507 0%, #05070a 42%, #0a0b0e 100%);
 }
 
 .agent4-bottleneck__layout {
@@ -1529,6 +1552,12 @@ html::-webkit-scrollbar {
     .agent4-page [id] {
         scroll-margin-top: 84px;
     }
+
+    .agent4-page [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1539,5 +1568,11 @@ html::-webkit-scrollbar {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+
+    .agent4-page [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
     }
 }

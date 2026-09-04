@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const revealTargets = document.querySelectorAll(
-        '.v4-benefit-card, .v4-handoff__flow article, .v4-comparison__row, .v4-proof__stats article, .agent-capability-grid article, .agent-links__grid a'
-    );
+    const revealTargets = document.querySelectorAll('[data-reveal]');
+    const revealDisabled = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        || window.matchMedia('(max-width: 600px)').matches;
 
-    if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if ('IntersectionObserver' in window && !revealDisabled) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     observer.unobserve(entry.target);
                 }
             });
-        }, { threshold: 0.12 });
+        }, { threshold: 0.06, rootMargin: '0px 0px -28px 0px' });
 
         revealTargets.forEach((target) => observer.observe(target));
     } else {

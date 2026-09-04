@@ -8,26 +8,26 @@ const contextBenefits = [
     {
         number: '01',
         icon: 'bx-code-alt',
-        title: 'Product models',
-        copy: 'Users, rules and workflows stay visible instead of disappearing behind infrastructure abstractions.',
+        title: 'The product stays visible',
+        copy: 'The application describes the product in its own terms, not through technical layers.',
     },
     {
         number: '02',
         icon: 'bx-history',
-        title: 'Complete behavioral history',
-        copy: 'Every interaction keeps its context, so failures can be traced back to the behavior that caused them.',
+        title: 'A complete history',
+        copy: 'Every interaction keeps its context, so you can trace what caused a problem.',
     },
     {
         number: '03',
         icon: 'bx-refresh',
-        title: 'Replayable by design',
+        title: 'Fix and replay',
         copy: 'After a fix, affected work can be replayed without rebuilding the application around it.',
     },
     {
         number: '04',
         icon: 'bx-shield-quarter',
-        title: 'Behavior-first tests',
-        copy: 'Agents can prove what a change should do directly against the model, without wiring external infrastructure.',
+        title: 'Test the behavior',
+        copy: 'Your agent can prove what a change does without setting up infrastructure first.',
     },
 ];
 
@@ -93,13 +93,13 @@ const comparisonRows = [
         label: 'Coordination',
         icon: 'bx-transfer-alt',
         other: 'App code owns routing, concurrency, ordering and cross-service coordination',
-        fluxzero: 'The runtime routes, orders and coordinates every interaction',
+        fluxzero: 'The cloud routes, orders and coordinates every interaction',
     },
     {
         label: 'Failure and recovery',
         icon: 'bx-shield-quarter',
         other: 'You build retries and recovery paths; crashes can still lose in-flight work',
-        fluxzero: 'Durable delivery, replay and recovery are built into the runtime',
+        fluxzero: 'Durable delivery, replay and recovery are built into the cloud',
     },
     {
         label: 'Ingress and networking',
@@ -124,12 +124,12 @@ const choiceOptions = [
     {
         title: 'Fluxzero',
         icon: 'bx-check-circle',
-        copy: 'For builders who want product behavior to stay the source of differentiation while the technical foundation remains shared.',
+        copy: 'For builders who want to focus on product features and expect the technology underneath to just work.',
     },
     {
         title: 'A component cloud',
         icon: 'bx-circle',
-        copy: 'For teams that deliberately want to design, assemble and operate their own infrastructure architecture.',
+        copy: 'For engineering teams that want full control over how their infrastructure is designed and operated, from service topology to capacity planning and failure recovery.',
     },
 ];
 
@@ -142,11 +142,11 @@ const choiceOptions = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <BrandHead
         title="Inside Fluxzero — The application cloud"
-        description="See how an application cloud keeps infrastructure architecture out of the product, and how the Fluxzero runtime handles state, routing, recovery and scale."
+        description="See how Fluxzero keeps infrastructure out of your application so people and AI agents can focus on building the product."
     />
     <link rel="stylesheet" href="/css/v4.css?v=20260902-2">
-    <link rel="stylesheet" href="/css/agents.css?v=20260902-18">
-    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260902-1">
+    <link rel="stylesheet" href="/css/agents.css?v=20260904-20">
+    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
 <body class="v4-page agent4-page">
     <MarketingHeader active="how-it-works" />
@@ -156,10 +156,10 @@ const choiceOptions = [
         <img class="agent4-hero__backdrop" src="/assets/fluxzero/agent-hero-horizon.png" alt="" aria-hidden="true">
         <div class="v4-shell agent4-hero__inner">
             <div class="agent4-hero__copy">
-                <h1 id="agent4-title">AI lets anyone become a builder.<br><span>Time for the cloud to catch up.</span></h1>
-                <p>Fluxzero is the product cloud for this new generation of builders. Product behavior stays explicit; the technical foundation becomes shared.</p>
-                <div class="v4-actions agent4-hero__actions">
-                    <a class="v4-button v4-button--primary" href="/start-building">Get started <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
+                <h1 id="agent4-title" data-reveal>AI lets anyone build products.<br><span>Time for the cloud to catch up.</span></h1>
+                <p data-reveal data-reveal-delay="1">Fluxzero is the cloud for this new generation of builders.<br>You decide what to build. Your agent builds it. Fluxzero makes it run.</p>
+                <div class="v4-actions agent4-hero__actions" data-reveal data-reveal-delay="2">
+                    <a class="v4-button v4-button--primary" href="/get-started">Get started <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
                     <a class="v4-button v4-button--secondary" href="/docs">Read the technical docs</a>
                 </div>
             </div>
@@ -168,11 +168,11 @@ const choiceOptions = [
 
     <section class="agent4-bottleneck agent4-canvas-section" aria-labelledby="bottleneck-title">
         <div class="v4-shell agent4-bottleneck__layout">
-            <div class="agent4-bottleneck__copy">
-                <h2 id="bottleneck-title">Software creation scaled.<br><span>Its technical foundation did not.</span></h2>
-                <p>The cloud was designed for a world where engineering teams built and operated one product at a time. As AI scales software creation, rebuilding the same technical foundation for every product becomes the bottleneck.</p>
+            <div class="agent4-bottleneck__copy" data-reveal>
+                <h2 id="bottleneck-title">More products should not mean<br><span>more infrastructure.</span></h2>
+                <p>Traditional clouds were designed for engineering teams building and operating one product at a time. As AI creates more products, duplicating the same backend for each one no longer makes sense.</p>
             </div>
-            <div class="agent4-duplication" aria-label="More products create more duplicated technical foundations on traditional clouds">
+            <div class="agent4-duplication" data-reveal data-reveal-delay="1" aria-label="More products create more duplicated technical foundations on traditional clouds">
                 {['Product 1', 'Product 2', 'Product 3', 'Product N'].map((product, index, products) => (
                     <>
                         {index === products.length - 1 && <div class="agent4-duplication__ellipsis" aria-hidden="true"><span></span><span></span><span></span></div>}
@@ -189,11 +189,11 @@ const choiceOptions = [
 
     <section class="agent4-boundary agent4-canvas-section" id="application-model" aria-labelledby="boundary-title">
         <div class="v4-shell agent4-boundary__layout">
-            <header class="agent4-boundary__copy">
-                <h2 id="boundary-title">The application<br><span>should be the product.</span></h2>
-                <p class="agent4-boundary__note">Traditional applications blur product decisions with technical execution. Fluxzero draws a clear boundary between them.</p>
+            <header class="agent4-boundary__copy" data-reveal>
+                <h2 id="boundary-title">Your product should be<br><span>the whole application.</span></h2>
+                <p class="agent4-boundary__note">Traditional applications mix product features with the technical work needed to run them. With Fluxzero, the application contains only what makes the product unique. The cloud handles the rest.</p>
             </header>
-            <div class="agent4-boundary__diagram">
+            <div class="agent4-boundary__diagram" data-reveal data-reveal-delay="1">
                 <article class="agent4-boundary__side agent4-boundary__side--traditional">
                     <div class="agent4-boundary__label"><strong>Inside a traditional application</strong><small>Everything below ships as part of the app</small></div>
                     <div class="agent4-app-stack"><span class="is-product"><i class="bx bx-cube-alt" aria-hidden="true"></i> Product behavior</span><span>Service wiring and orchestration</span><span>Integration adapters</span><span>Persistence code and schemas</span><span>Retry and recovery paths</span><span>Ingress and service networking</span><span>Observability plumbing</span><span>Deployment topology</span></div>
@@ -213,11 +213,11 @@ const choiceOptions = [
 
     <section class="agent4-layers agent4-canvas-section" aria-labelledby="layers-title">
         <div class="v4-shell agent4-layers__layout">
-            <header class="agent4-layers__copy">
-                <h2 id="layers-title">What the cloud<br><span>actually takes on.</span></h2>
-                <p>Fluxzero is not another set of components to assemble. It turns application intent into reliable execution as one cloud capability.</p>
+            <header class="agent4-layers__copy" data-reveal>
+                <h2 id="layers-title">Everything your product<br><span>needs to run.</span></h2>
+                <p>Built into Fluxzero, instead of assembled separately for every product.</p>
             </header>
-            <div class="agent4-layer-list">
+            <div class="agent4-layer-list" data-reveal data-reveal-delay="1">
                 {cloudLayers.map((layer) => (
                     <article>
                         <i class={`bx ${layer.icon}`} aria-hidden="true"></i>
@@ -231,11 +231,11 @@ const choiceOptions = [
 
     <section class="agent4-context agent4-canvas-section" aria-labelledby="context-title">
         <div class="v4-shell agent4-context__layout">
-            <div class="agent4-context__copy">
-                <h2 id="context-title">Let the agent reason about<br><span>the product.</span></h2>
-                <p>AI-built software evolves before the whole plan is known. A foundation that remembers what happened gives the next agent the context to take the product further.</p>
+            <div class="agent4-context__copy" data-reveal>
+                <h2 id="context-title">Let your agent<br><span>build the product.</span></h2>
+                <p>Fluxzero keeps infrastructure out of the application, so your agent can focus on what the product should do.</p>
             </div>
-            <div class="agent4-context__rail">
+            <div class="agent4-context__rail" data-reveal data-reveal-delay="1">
                 {contextBenefits.map((benefit, index) => (
                     <article data-number={benefit.number}>
                         <div class="agent4-context__node" aria-hidden="true"></div>
@@ -251,12 +251,12 @@ const choiceOptions = [
 
     <section class="agent4-code agent4-canvas-section" aria-labelledby="behavior-title">
         <div class="v4-shell agent4-code__layout">
-            <header class="agent4-code__copy">
-                <h2 id="behavior-title">Product behavior<br>is <span>the code.</span></h2>
-                <p>The model keeps state and rules explicit in the product. The machinery that executes them stays outside the application.</p>
+            <header class="agent4-code__copy" data-reveal>
+                <h2 id="behavior-title">The code describes<br><span>the product.</span></h2>
+                <p>Your product&rsquo;s behavior stays visible in the application. Fluxzero keeps the infrastructure out of the way.</p>
                 <a class="agent4-code__docs" href="/docs">Read the technical docs <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
             </header>
-            <div class="agent4-code__examples">
+            <div class="agent4-code__examples" data-reveal data-reveal-delay="1">
                 <div class="agent4-code__sample">
                     <div class="agent4-code__bar"><span>ProjectTasks</span><small>Java</small></div>
                     <pre><code set:html={javaExample}></code></pre>
@@ -271,11 +271,11 @@ const choiceOptions = [
 
     <section class="agent4-comparison agent4-canvas-section" id="evidence" aria-labelledby="comparison-title">
         <div class="v4-shell">
-            <header class="agent4-comparison__heading">
-                <h2 id="comparison-title">Compare what still lives inside the <span>application.</span></h2>
-                <p>Your product owns the behavior. Fluxzero takes care of the technical foundation.</p>
+            <header class="agent4-comparison__heading" data-reveal>
+                <h2 id="comparison-title">See what your application<br><span>is responsible for.</span></h2>
+                <p>With other clouds, your application includes the product and the infrastructure around it. With Fluxzero, it contains only the product.</p>
             </header>
-            <div class="agent4-comparison__table" role="table" aria-label="Comparison of application responsibilities">
+            <div class="agent4-comparison__table" data-reveal data-reveal-delay="1" role="table" aria-label="Comparison of application responsibilities">
                 <div class="agent4-comparison__row agent4-comparison__head" role="row">
                     <div role="columnheader"><span class="sr-only">Responsibility</span></div>
                     {comparisonOptions.map((option) => (
@@ -290,7 +290,7 @@ const choiceOptions = [
                     </div>
                 ))}
             </div>
-            <div class="agent4-comparison__mobile">
+            <div class="agent4-comparison__mobile" data-reveal data-reveal-delay="1">
                 {comparisonOptions.map((option) => (
                     <details class:list={[{ 'is-fluxzero': option.featured }]} open={option.featured}>
                         <summary><span><strong>{option.name}</strong><small>{option.sub}</small></span><i class="bx bx-chevron-down" aria-hidden="true"></i></summary>
@@ -303,11 +303,11 @@ const choiceOptions = [
 
     <section class="agent4-compounding agent4-canvas-section" aria-labelledby="compounding-title">
         <div class="v4-shell agent4-compounding__layout">
-            <header class="agent4-compounding__copy">
-                <h2 id="compounding-title">One runtime improvement.<br><span>Every product.</span></h2>
-                <p>Because the runtime is shared, products inherit each improvement without changing their application code.</p>
+            <header class="agent4-compounding__copy" data-reveal>
+                <h2 id="compounding-title">Fluxzero improves.<br><span>Every product benefits.</span></h2>
+                <p>Every improvement to Fluxzero reaches your product automatically. You do not have to rebuild or migrate it.</p>
             </header>
-            <div class="agent4-compounding__visual" aria-label="One Fluxzero improvement reaches every product">
+            <div class="agent4-compounding__visual" data-reveal data-reveal-delay="1" aria-label="One Fluxzero improvement reaches every product">
                 <div class="agent4-compounding__cloud"><div><span class="logo-mark" aria-hidden="true"></span><strong>fluxzero</strong><small>Shared cloud runtime</small></div></div>
                 <div class="agent4-compounding__connector"><small>Continuously improved</small><span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></span></div>
                 <div class="agent4-compounding__improvements">
@@ -321,11 +321,11 @@ const choiceOptions = [
 
     <section class="agent4-decision agent4-canvas-section" aria-labelledby="decision-title">
         <div class="v4-shell">
-            <header class="agent4-decision__heading">
+            <header class="agent4-decision__heading" data-reveal>
                 <h2 id="decision-title">When to choose <span>Fluxzero.</span></h2>
-                <p>Choose what you want to build: the product, or the platform beneath it.</p>
+                <p>Choose Fluxzero when you want to build the product—not the platform required to run it.</p>
             </header>
-            <div class="agent4-decision__options">
+            <div class="agent4-decision__options" data-reveal data-reveal-delay="1">
                 {choiceOptions.map((option) => (
                     <article>
                         <i class={`bx ${option.icon}`} aria-hidden="true"></i>
@@ -341,9 +341,9 @@ const choiceOptions = [
 
     <section class="agent4-final agent4-canvas-section" aria-labelledby="final-title">
         <div class="v4-shell agent4-final__inner">
-            <h2 id="final-title">Build what matters.<br>Let the cloud <span>carry the rest.</span></h2>
-            <div class="v4-actions">
-                <a class="v4-button v4-button--primary" href="/start-building">Get started <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
+            <h2 id="final-title" data-reveal>Build what matters.<br>Let the cloud <span>carry the rest.</span></h2>
+            <div class="v4-actions" data-reveal data-reveal-delay="1">
+                <a class="v4-button v4-button--primary" href="/get-started">Get started <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
                 <a class="v4-button v4-button--secondary" href="/docs">Explore the technical model</a>
             </div>
         </div>
@@ -351,6 +351,6 @@ const choiceOptions = [
 </main>
 
 <MarketingFooter />
-<script src="/js/v4.js?v=20260902-2" defer></script>
+<script src="/js/v4.js?v=20260904-3" defer></script>
 </body>
 </html>

@@ -1,0 +1,90 @@
+---
+import BrandHead from '../components/BrandHead.astro';
+import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+
+const isDevelopmentPreview = import.meta.env.DEV;
+const agentPrompt = 'Build my app with Fluxzero. Start at plugins.fluxzero.io';
+const compatibleAgents = [
+    { name: 'Claude Code', icon: '/assets/agent-tools/claude-code.svg', href: 'https://claude.com/product/claude-code' },
+    { name: 'Codex', icon: '/assets/agent-tools/codex.svg', href: 'https://openai.com/codex/' },
+    { name: 'Cursor', icon: '/assets/agent-tools/cursor.svg', href: 'https://cursor.com/' },
+    { name: 'Gemini CLI', icon: '/assets/agent-tools/gemini.svg', href: 'https://github.com/google-gemini/gemini-cli' },
+    { name: 'GitHub Copilot', icon: '/assets/agent-tools/github-copilot.svg', href: 'https://github.com/features/copilot' },
+];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <BrandHead
+        title="Start building with Fluxzero"
+        description="Connect Fluxzero to your coding agent and start building your product."
+    />
+    <link rel="stylesheet" href="/css/home.css?v=20260903-11">
+    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
+    <link rel="stylesheet" href="/css/start-building-v4.css?v=20260904-10">
+</head>
+<body class="start-body onboarding-body" data-preview-enabled={isDevelopmentPreview ? 'true' : 'false'}>
+<MarketingHeader />
+
+<main class="onboarding-page">
+    <section class="onboarding-auth" aria-labelledby="account-title" data-auth-view="signed-out">
+        <h1 id="account-title">Start building with <span class="onboarding-title-accent">Fluxzero.</span></h1>
+        <p class="onboarding-auth__lead">Create an account or sign in to continue.</p>
+
+        <div class="account-actions">
+            <button class="onboarding-button onboarding-button--primary" type="button" data-dev-sign-in disabled={!isDevelopmentPreview}>
+                Create account
+            </button>
+            <button class="onboarding-button onboarding-button--secondary" type="button" data-dev-sign-in disabled={!isDevelopmentPreview}>
+                Sign in
+            </button>
+        </div>
+
+    </section>
+
+    <section class="onboarding-workspace" aria-labelledby="workspace-title" data-auth-view="signed-in" hidden>
+        <header class="onboarding-intro">
+            <h1 id="workspace-title">Start building with <span class="onboarding-title-accent">Fluxzero.</span></h1>
+            <p>
+                Just copy this into your agent.
+            </p>
+        </header>
+
+        <article class="agent-instruction-card" data-prompt-card>
+            <pre class="agent-instruction-card__prompt"><code data-agent-prompt>{agentPrompt}</code></pre>
+            <button class="onboarding-copy" type="button" data-copy-prompt aria-label="Copy instruction" title="Copy instruction">
+                <svg class="onboarding-copy__copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></svg>
+                <svg class="onboarding-copy__check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+            </button>
+            <p class="agent-instruction-card__status" role="status" aria-live="polite" data-copy-status></p>
+        </article>
+
+        <div class="compatible-agents" aria-labelledby="compatible-agents-title">
+            <p id="compatible-agents-title">Works with</p>
+            <ul aria-label="Coding agents supported by the Fluxzero plugin">
+                {compatibleAgents.map((agent) => (
+                    <li>
+                        <a
+                            class="compatible-agent"
+                            href={agent.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`Open ${agent.name} in a new tab`}
+                            title={agent.name}
+                        >
+                            <img src={agent.icon} alt="" width="24" height="24">
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </div>
+
+    </section>
+</main>
+
+<script src="/js/start-building-v4.js?v=20260904-6" defer></script>
+</body>
+</html>

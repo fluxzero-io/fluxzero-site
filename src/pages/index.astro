@@ -8,8 +8,8 @@ const comparisonRows = [
     {
         label: 'Built for',
         values: [
-            { status: 'Developer teams', kind: 'owned' },
-            { status: 'Developer teams', kind: 'owned' },
+            { status: 'Developers', kind: 'owned' },
+            { status: 'Developers', kind: 'owned' },
             { status: 'Anyone building with AI', kind: 'included' },
         ],
     },
@@ -17,40 +17,40 @@ const comparisonRows = [
         label: 'What you set up',
         values: [
             { status: 'Database, frontend hosting, permissions & integrations', kind: 'owned' },
-            { status: 'Services, databases, networking & deployment', kind: 'owned' },
+            { status: 'Services, databases, networking, load balancing & deployment', kind: 'owned' },
             { status: 'No infrastructure setup', kind: 'included' },
         ],
     },
     {
         label: 'What the cloud handles',
         values: [
-            { status: 'Postgres capabilities + frontend hosting', kind: 'owned' },
+            { status: 'Auth, database & frontend hosting', kind: 'owned' },
             { status: 'Deployments, networking & databases', kind: 'owned' },
-            { status: 'The complete technical execution', kind: 'included' },
+            { status: 'Everything your product needs to run', kind: 'included' },
         ],
     },
     {
         label: 'When you add a feature',
         values: [
-            { status: 'Update the feature, data, permissions & integrations', kind: 'owned' },
-            { status: 'Update the feature, services & deployment', kind: 'owned' },
-            { status: 'Focus only on what the feature should do', kind: 'included' },
+            { status: 'Build the feature across every application layer', kind: 'owned' },
+            { status: 'Build the feature across services and infrastructure', kind: 'owned' },
+            { status: 'Define what the feature does', kind: 'included' },
         ],
     },
     {
         label: 'Security & recovery',
         values: [
-            { status: 'Designed across database and application', kind: 'owned' },
-            { status: 'Designed inside your application', kind: 'owned' },
+            { status: 'Database backups; application recovery is left to you', kind: 'owned' },
+            { status: 'Left for you to build into the application', kind: 'owned' },
             { status: 'Handled by the cloud', kind: 'included' },
         ],
     },
     {
         label: 'Path to scale',
         values: [
-            { status: 'May require re-architecture or replatforming', kind: 'owned' },
-            { status: 'May require re-architecture or replatforming', kind: 'owned' },
-            { status: 'The same model at every scale', kind: 'included' },
+            { status: 'Requires rearchitecting or replatforming', kind: 'owned' },
+            { status: 'Requires rearchitecting or replatforming', kind: 'owned' },
+            { status: 'Scale without rebuilding', kind: 'included' },
         ],
     },
     {
@@ -66,7 +66,7 @@ const comparisonRows = [
 const comparisonOptions = [
     {
         name: 'Supabase + Vercel',
-        sub: 'Postgres platform + frontend cloud',
+        sub: 'Database platform + frontend cloud',
         body: 'A powerful Postgres development platform paired with a frontend cloud. Your application continues to own database design, access policies, and how both sides evolve together.',
         index: 0,
     },
@@ -79,7 +79,7 @@ const comparisonOptions = [
     {
         name: 'Fluxzero',
         sub: 'The product cloud',
-        body: 'Product behavior is the application. Fluxzero owns storage, communication, security, recovery, observability, and scale underneath.',
+        body: 'Product behavior is the application. Fluxzero takes care of storage, communication, security, recovery, observability, and scale underneath.',
         index: 2,
         featured: true,
     },
@@ -95,9 +95,9 @@ const comparisonOptions = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/home.css?v=20260625-2">
-    <link rel="stylesheet" href="/css/v4-home.css?v=20260902-2">
-    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260625-logo-2">
+    <link rel="stylesheet" href="/css/home.css?v=20260903-11">
+    <link rel="stylesheet" href="/css/v4-home.css?v=20260903-2">
+    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
 <body class="v4-home">
 <MarketingHeader />
@@ -125,7 +125,7 @@ const comparisonOptions = [
     </p>
 
     <div class="hero-ctas rv d3">
-        <a href="/start-building" class="btn-p">Get started →</a>
+        <a href="/get-started" class="btn-p">Get started →</a>
         <a href="/contact#contactForm" class="btn-s">Talk to us</a>
     </div>
     <div class="hero-signals rv d4" aria-label="European operation">
@@ -174,11 +174,27 @@ const comparisonOptions = [
                 <h4>Build with peace of mind</h4>
             </div>
             <p>Security, reliability, and recovery are built in from day one—not left for you or your agent to get right.</p>
-            <div class="fc-visual pg-traffic-visual" aria-hidden="true">
-                <div class="pg-traffic-row" style="--traffic-width: 72%; --traffic-delay: 0s"></div>
-                <div class="pg-traffic-row" style="--traffic-width: 54%; --traffic-delay: -1.1s"></div>
-                <div class="pg-traffic-row" style="--traffic-width: 86%; --traffic-delay: -2.2s"></div>
-                <div class="pg-traffic-row" style="--traffic-width: 64%; --traffic-delay: -0.5s"></div>
+            <div class="fc-visual pg-guard-visual" aria-hidden="true">
+                <svg viewBox="0 0 280 150">
+                    <circle class="pg-guard-aura pg-guard-aura--outer" cx="140" cy="72" r="55"/>
+                    <circle class="pg-guard-aura pg-guard-aura--inner" cx="140" cy="72" r="41"/>
+
+                    <g class="pg-guard-node pg-guard-node--security" transform="translate(140 23)">
+                        <circle class="pg-guard-node-ring" r="6"/>
+                        <path d="m-2.5 0 1.8 1.8 3.6-4"/>
+                    </g>
+                    <g class="pg-guard-node pg-guard-node--reliability" transform="translate(96 96)">
+                        <circle class="pg-guard-node-ring" r="6"/>
+                        <path d="m-2.5 0 1.8 1.8 3.6-4"/>
+                    </g>
+                    <g class="pg-guard-node pg-guard-node--recovery" transform="translate(184 96)">
+                        <circle class="pg-guard-node-ring" r="6"/>
+                        <path d="m-2.5 0 1.8 1.8 3.6-4"/>
+                    </g>
+
+                    <path class="pg-guard-shield" d="m140 44 27 10v16c0 15-11 28-27 35-16-7-27-20-27-35V54l27-10Z"/>
+                    <path class="pg-guard-check" d="m130 72 7 7 14-16"/>
+                </svg>
             </div>
         </div>
 
@@ -272,7 +288,7 @@ const comparisonOptions = [
     </div>
 
     <div class="comparison-v4__actions">
-        <a class="btn-s" href="/how-it-works">Explore the technical differences →</a>
+        <a class="btn-s" href="/how-it-works">Explore how Fluxzero works →</a>
     </div>
 </section>
 
@@ -298,7 +314,7 @@ const comparisonOptions = [
                 </svg>
                 Spend fewer tokens
             </h4>
-            <p>Spend your prompt budget on product behavior, decisions, and user experience.</p>
+            <p>Spend your prompt budget on product behavior, features, and user experience.</p>
         </div>
         <div class="ai-pt">
             <h4>
@@ -308,7 +324,7 @@ const comparisonOptions = [
                 </svg>
                 Less risk
             </h4>
-            <p>Infrastructure correctness no longer depends on what AI happens to generate.</p>
+            <p>Infrastructure is no longer your AI agent’s responsibility.</p>
         </div>
         <div class="ai-pt">
             <h4>
@@ -319,7 +335,7 @@ const comparisonOptions = [
                 </svg>
                 100% product context
             </h4>
-            <p>Your agent reasons about users, rules, and workflows instead of infrastructure architecture.</p>
+            <p>The tech stack no longer consumes your agent&rsquo;s context, so every prompt can stay focused on the product.</p>
         </div>
     </div>
 </section>
@@ -331,65 +347,37 @@ const comparisonOptions = [
 <section class="proof rv section-stack" id="proven-foundation" aria-labelledby="proven-foundation-title">
     <div class="proof-label">Built to scale</div>
     <div class="section-intro">
-        <h2 class="h2-single" id="proven-foundation-title">Start small.<br>Scale without starting over.</h2>
+        <h2 class="h2-single" id="proven-foundation-title">Start small.<br>Scale as your product grows.</h2>
         <div class="proof-body">
-            <p>The same application model already powers mission-critical systems<br class="desktop-break"> with high throughput and complex business logic.</p>
+            <p>Fluxzero is built for startups and enterprises alike—from early products<br class="desktop-break"> to high-throughput systems with complex business logic.</p>
         </div>
-    </div>
-
-    <div class="proof-logos" aria-label="Teams building with Fluxzero">
-        <a class="proof-logo" href="https://www.portbase.com/en/" target="_blank" rel="noreferrer"><img src="/assets/fluxzero/portbase-dark.svg" alt="Portbase"></a>
-        <a class="proof-logo" href="https://zoef.app/en/passenger" target="_blank" rel="noreferrer"><img src="/assets/fluxzero/zoef-dark.svg" alt="Zoef"></a>
-        <a class="proof-logo" href="https://openvoy.com" target="_blank" rel="noreferrer"><img src="/assets/fluxzero/openvoy-dark.svg" alt="OpenVoy"></a>
-        <a class="proof-logo" href="https://flowmaps.com" target="_blank" rel="noreferrer"><img src="/assets/fluxzero/flowmaps-dark.svg" alt="Flowmaps"></a>
-        <a class="proof-logo" href="https://moxi.health/en/" target="_blank" rel="noreferrer"><img src="/assets/fluxzero/moxi-dark.svg" alt="Moxi"></a>
     </div>
 
     <div class="proof-stats section-grid" data-proof-stats>
         <div class="proof-stat">
             <div class="num"><span class="proof-count" data-count-to="100">100</span><span>+</span></div>
-            <div class="label">GB / min throughput</div>
+            <div class="label">GB / min production throughput</div>
+            <p class="proof-stat__context">About 700,000 tweets every second&mdash;nearly 5&times; x.com&rsquo;s published record.<sup><a href="#tweet-throughput-note" aria-label="How this estimate was calculated">*</a></sup></p>
         </div>
         <div class="proof-stat">
             <div class="num"><span class="proof-count" data-count-to="1">1</span><span>M+</span></div>
-            <div class="label">committed events / sec</div>
+            <div class="label">resolved requests / sec</div>
+            <p class="proof-stat__context">Commands and results, end to end across applications.</p>
         </div>
         <div class="proof-stat">
-            <div class="num"><span class="proof-count" data-count-to="99.9" data-decimals="1">99.9</span><span>%</span></div>
-            <div class="label">Uptime</div>
+            <div class="num"><small>up to</small> <span class="proof-count" data-count-to="99">99</span><span>%</span></div>
+            <div class="label">less application code</div>
+            <p class="proof-stat__context">Across legacy migrations with the same behavior.</p>
         </div>
     </div>
+
+    <p class="proof-source" id="tweet-throughput-note">
+        * Estimate based on a <a href="https://www.research-collection.ethz.ch/bitstreams/77b38ad3-f165-4bda-9fca-6a1d13913836/download" target="_blank" rel="noreferrer">2.3 kB average serialized tweet size</a> and <a href="https://blog.x.com/engineering/en_us/a/2013/new-tweets-per-second-record-and-how" target="_blank" rel="noreferrer">x.com&rsquo;s published record of 143,199 tweets per second</a>.
+    </p>
 
 </section>
 
 <div class="sp"></div>
-
-<!-- 6b · CLOUD -->
-<section class="cloud-section rv section-stack" id="cloud-section-content" aria-labelledby="cloud-section-content-title">
-    <div class="section-intro">
-        <h2 class="h2-single" id="cloud-section-content-title">Hosted in Europe.<br>Managed end to end.</h2>
-        <p class="cloud-sub">Run the complete application on audited European infrastructure, without operating servers or stitching services together.</p>
-    </div>
-
-    <div class="cloud-grid section-grid">
-        <div class="cloud-card">
-            <h4><span class="cloud-icon" aria-hidden="true">&uarr;</span>A cloud that keeps improving</h4>
-            <p>New capabilities and runtime improvements reach your application without migrations or rewrites.</p>
-        </div>
-        <div class="cloud-card">
-            <h4><span class="cloud-icon" aria-hidden="true">&check;</span>On audited infrastructure</h4>
-            <p>ISO 27001 and SOC 2 Type 2 certified.</p>
-        </div>
-        <div class="cloud-card">
-            <h4><span class="cloud-icon cloud-icon--europe" aria-hidden="true">EU</span>European foundation</h4>
-            <p>Built and operated from Europe, with strong standards for data handling and privacy.</p>
-        </div>
-    </div>
-
-</section>
-
-<div class="sp"></div>
-
 
 <!-- 9 · FAQ -->
 <section class="faq rv section-stack" id="faq" aria-labelledby="faq-title">
@@ -494,6 +482,19 @@ const comparisonOptions = [
     </div>
 
     <p class="faq-help">Still wondering? <a href="/contact">Get in touch</a> and we'll help.</p>
+</section>
+
+<section class="cta-end rv" aria-labelledby="cta-end-title">
+    <div class="section-intro">
+        <h2 id="cta-end-title">
+            <span class="cta-title-main">Launch what used to require</span>
+            <span class="cta-title-accent">an entire engineering team.</span>
+        </h2>
+    </div>
+    <div class="cta-btns">
+        <a href="/get-started" class="btn-p">Get started →</a>
+        <a href="/contact#contactForm" class="btn-s">Talk to us</a>
+    </div>
 </section>
 
 <MarketingFooter />

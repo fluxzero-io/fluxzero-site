@@ -34,6 +34,10 @@ export default defineConfig({
         }
     },
     redirects: {
+        "/start-building": {
+            status: 308,
+            destination: "/get-started"
+        },
         "/docs": {
             status: 302,
             destination: "/docs/getting-started/introduction"

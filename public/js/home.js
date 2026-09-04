@@ -272,7 +272,7 @@ function initHeroBuilder() {
         }
 
         savePrompt(value);
-        return navigateToBuild(`/start-building?idea=${encodeURIComponent(value)}`);
+        return navigateToBuild(`/get-started?idea=${encodeURIComponent(value)}`);
     }
 
     prompt.addEventListener('keydown', event => {

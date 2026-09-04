@@ -6,6 +6,7 @@ interface Props {
 }
 
 const { active } = Astro.props;
+const isDevelopmentPreview = import.meta.env.DEV;
 const pricingClass = `nav-link nav-link-pricing${active === 'pricing' ? ' is-active' : ''}`;
 const aboutClass = `nav-link nav-link-about${active === 'about' ? ' is-active' : ''}`;
 const howItWorksClass = `nav-link nav-link-agents${active === 'how-it-works' ? ' is-active' : ''}`;
@@ -26,7 +27,34 @@ const howItWorksClass = `nav-link nav-link-agents${active === 'how-it-works' ? '
         </div>
     </div>
 
-    <div class="nav-actions">
-        <a href="/start-building" class="nav-cta">Get started</a>
+    <div class="nav-actions" data-account-nav data-preview-enabled={isDevelopmentPreview ? 'true' : 'false'}>
+        <a href="/get-started" class="nav-cta" data-nav-sign-in>Sign in</a>
+
+        <div class="nav-authenticated" data-nav-authenticated hidden>
+            <a href="https://dashboard.fluxzero.io/" class="nav-cta">Dashboard</a>
+
+            <div class="nav-profile">
+                <button
+                    class="nav-profile-trigger"
+                    type="button"
+                    aria-label="Open account menu"
+                    aria-haspopup="menu"
+                    aria-expanded="false"
+                    data-nav-profile-trigger
+                >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="12" cy="8" r="3.25"></circle>
+                        <path d="M5.75 19c.5-3.2 2.58-5 6.25-5s5.75 1.8 6.25 5"></path>
+                    </svg>
+                </button>
+
+                <div class="nav-profile-menu" role="menu" aria-label="Account" data-nav-profile-menu hidden>
+                    <a href="https://dashboard.fluxzero.io/profile" role="menuitem">Profile</a>
+                    <button type="button" role="menuitem" data-nav-sign-out>Sign out</button>
+                </div>
+            </div>
+        </div>
     </div>
 </nav>
+
+<script is:inline src="/js/marketing-header.js?v=20260903-1" defer></script>

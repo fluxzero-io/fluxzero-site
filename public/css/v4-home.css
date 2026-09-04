@@ -114,6 +114,7 @@
 .comparison-head {
     display: grid;
     grid-template-columns: minmax(165px, 0.65fr) repeat(3, minmax(0, 1fr));
+    overflow: hidden;
     margin-top: 62px;
     border: 1px solid rgba(255, 255, 255, 0.07);
     border-bottom: 0;
