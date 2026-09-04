@@ -9,6 +9,7 @@ import { fluxzeroBrand } from './src/config/brand.mjs';
 
 // https://astro.build/config
 export default defineConfig({
+    site: 'https://fluxzero.io',
     vite: {
         plugins: [tailwindcss()],
         css: {
