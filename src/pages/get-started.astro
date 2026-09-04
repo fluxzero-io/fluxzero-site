@@ -1,8 +1,9 @@
 ---
 import BrandHead from '../components/BrandHead.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+import { launchAccess } from '../config/launch.mjs';
 
-const isDevelopmentPreview = import.meta.env.DEV;
+const isDevelopmentPreview = launchAccess.authenticationEnabled && import.meta.env.DEV;
 const agentPrompt = 'Build my app with Fluxzero. Start at plugins.fluxzero.io';
 const compatibleAgents = [
     { name: 'Claude Code', icon: '/assets/agent-tools/claude-code.svg', href: 'https://claude.com/product/claude-code' },
@@ -30,22 +31,23 @@ const compatibleAgents = [
 <MarketingHeader />
 
 <main class="onboarding-page">
-    <section class="onboarding-auth" aria-labelledby="account-title" data-auth-view="signed-out">
-        <h1 id="account-title">Start building with <span class="onboarding-title-accent">Fluxzero.</span></h1>
-        <p class="onboarding-auth__lead">Create an account or sign in to continue.</p>
+    {launchAccess.authenticationEnabled && (
+        <section class="onboarding-auth" aria-labelledby="account-title" data-auth-view="signed-out">
+            <h1 id="account-title">Start building with <span class="onboarding-title-accent">Fluxzero.</span></h1>
+            <p class="onboarding-auth__lead">Create an account or sign in to continue.</p>
 
-        <div class="account-actions">
-            <button class="onboarding-button onboarding-button--primary" type="button" data-dev-sign-in disabled={!isDevelopmentPreview}>
-                Create account
-            </button>
-            <button class="onboarding-button onboarding-button--secondary" type="button" data-dev-sign-in disabled={!isDevelopmentPreview}>
-                Sign in
-            </button>
-        </div>
+            <div class="account-actions">
+                <button class="onboarding-button onboarding-button--primary" type="button" data-dev-sign-in disabled={!isDevelopmentPreview}>
+                    Create account
+                </button>
+                <button class="onboarding-button onboarding-button--secondary" type="button" data-dev-sign-in disabled={!isDevelopmentPreview}>
+                    Sign in
+                </button>
+            </div>
+        </section>
+    )}
 
-    </section>
-
-    <section class="onboarding-workspace" aria-labelledby="workspace-title" data-auth-view="signed-in" hidden>
+    <section class="onboarding-workspace" aria-labelledby="workspace-title" data-auth-view="signed-in" hidden={launchAccess.authenticationEnabled}>
         <header class="onboarding-intro">
             <h1 id="workspace-title">Start building with <span class="onboarding-title-accent">Fluxzero.</span></h1>
             <p>
