@@ -5088,15 +5088,14 @@ section:not(.hero):not(.cta-end) {
     position: absolute;
     z-index: -2;
     left: 50%;
-    top: 42%;
-    width: min(1080px, 112vw);
-    height: 330px;
-    transform: translate(-50%, -50%);
+    bottom: 38px;
+    width: min(560px, 76vw);
+    height: 190px;
+    transform: translateX(-50%);
     background:
-        radial-gradient(ellipse at center, rgba(0, 179, 255, 0.16) 0%, rgba(32, 134, 240, 0.08) 30%, rgba(0, 179, 255, 0.025) 55%, transparent 74%);
-    filter: blur(18px);
-    mask-image: linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%);
-    opacity: 0.82;
+        radial-gradient(ellipse at 50% 84%, rgba(255, 254, 225, 0.78) 0%, rgba(255, 221, 128, 0.54) 26%, rgba(255, 167, 65, 0.28) 54%, transparent 100%);
+    filter: blur(34px);
+    opacity: 0.68;
     pointer-events: none;
 }
 
@@ -5105,14 +5104,26 @@ section:not(.hero):not(.cta-end) {
     position: absolute;
     z-index: -1;
     left: 50%;
-    bottom: 0;
-    width: min(1180px, 118vw);
-    height: 52%;
+    bottom: -430px;
+    width: min(1860px, 190vw);
+    height: 540px;
     transform: translateX(-50%);
-    background:
-        linear-gradient(180deg, transparent 0%, rgba(30, 30, 34, 0.58) 58%, rgba(30, 30, 34, 0.92) 100%),
-        radial-gradient(ellipse at center bottom, rgba(0, 179, 255, 0.055), transparent 62%);
+    border-radius: 50%;
+    background: linear-gradient(180deg, #060709 0, #0d0e11 44px, #1e1e22 110px, #1e1e22 100%);
+    box-shadow:
+        inset 0 2px 18px rgba(255, 255, 255, 0.62),
+        0 -10px 58px 3px rgba(255, 250, 218, 0.3),
+        0 -18px 78px rgba(0, 179, 255, 0.045),
+        0 -18px 104px 8px rgba(255, 181, 64, 0.32);
     pointer-events: none;
+}
+
+.v4-home footer {
+    border-top-color: transparent;
+}
+
+.v4-home footer::before {
+    opacity: 0;
 }
 
 .cta-end h2 {
@@ -5573,6 +5584,14 @@ h4 {
         padding-left: 16px;
         padding-right: 16px;
         padding-bottom: 84px;
+    }
+    .cta-end::before {
+        bottom: -6px;
+        opacity: 0.58;
+    }
+    .cta-end::after {
+        bottom: -482px;
+        background: linear-gradient(180deg, #060709 0, #121317 26px, #1e1e22 58px, #1e1e22 100%);
     }
     .cta-end h2 {
         width: 100%;
