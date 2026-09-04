@@ -290,15 +290,6 @@
     .comparison-disclosure[open] summary svg { transform: rotate(180deg); }
     .comparison-disclosure__body { padding: 0 20px 24px; }
 
-    .comparison-disclosure__body > p {
-        max-width: 680px;
-        padding: 20px 0 23px;
-        border-top: 1px solid rgba(255, 255, 255, 0.07);
-        color: rgba(224, 234, 245, 0.68);
-        font-size: 14px;
-        line-height: 1.65;
-    }
-
     .comparison-disclosure dl {
         display: grid;
         grid-template-columns: minmax(140px, 0.42fr) 1fr;

@@ -172,6 +172,20 @@ function toggleFaq(btn) {
     item.classList.toggle('open');
 }
 
+function initComparisonAccordion() {
+    const disclosures = Array.from(document.querySelectorAll('.comparison-mobile .comparison-disclosure'));
+
+    disclosures.forEach(disclosure => {
+        disclosure.addEventListener('toggle', () => {
+            if (!disclosure.open) return;
+
+            disclosures.forEach(otherDisclosure => {
+                if (otherDisclosure !== disclosure) otherDisclosure.open = false;
+            });
+        });
+    });
+}
+
 function initInsidePanels() {
     document.querySelectorAll('[data-inside-panel]').forEach(panel => {
         const buttons = Array.from(panel.querySelectorAll('[data-inside-toggle]'));
@@ -294,6 +308,7 @@ function initHeroBuilder() {
 
 initHeroHorizonGlow();
 initProofStats();
+initComparisonAccordion();
 initInsidePanels();
 initSystemStatus();
 initHeroBuilder();
