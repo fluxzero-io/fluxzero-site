@@ -54,7 +54,7 @@ const comparisonRows = [
         ],
     },
     {
-        label: 'Home jurisdiction',
+        label: 'Based in',
         values: [
             { status: 'Singapore + United States', kind: 'owned' },
             { status: 'United States', kind: 'owned' },
@@ -81,6 +81,96 @@ const comparisonOptions = [
         featured: true,
     },
 ];
+
+const homepageFaqs = [
+    {
+        question: 'What is Fluxzero?',
+        answer: [
+            'Fluxzero is a cloud platform for applications built with AI. It hosts your frontend and backend, stores your data, and runs the application in production.',
+            'Unlike other clouds, Fluxzero gives every product a reliable backend, so your agent can focus on the product instead of its tech stack.',
+        ],
+    },
+    {
+        question: 'Can I really launch serious software with Fluxzero?',
+        answer: [
+            'Yes. Fluxzero is built for products with real users, valuable data, permissions, integrations, and complex business rules.',
+            'You and your coding agent build the product behavior. Fluxzero takes responsibility for the technical foundation underneath your product, including security, reliable message delivery, recovery, auditability, and scale.',
+            'That hardened foundation already runs demanding enterprise workloads, so you can launch without hiring backend engineers and will not need a different backend when your product becomes successful.',
+        ],
+    },
+    {
+        question: 'My agent can generate a backend. Why should it use Fluxzero?',
+        answer: [
+            'An agent can generate a backend quickly. But that first version becomes a codebase you must keep understandable, secure, reliable, and ready to scale. Every shortcut taken to launch becomes something you own.',
+            'Fluxzero gives your product a hardened backend foundation built by experienced backend engineers for demanding enterprise workloads. It keeps improving without adding infrastructure code to your application, so the codebase stays focused and you do not have to replatform when the product grows.',
+        ],
+    },
+    {
+        question: 'How is Fluxzero different from Supabase + Vercel, Railway, or other clouds?',
+        answer: [
+            'Those clouds give you infrastructure and services that still need to be selected, connected, secured, scaled, and operated. You or your agent remains responsible for turning them into one reliable product.',
+            'Fluxzero provides and operates that application foundation as one cloud, so you can focus on your product, not the tech stack.',
+        ],
+    },
+    {
+        question: 'What does building with Fluxzero look like?',
+        answer: [
+            'Start by copying one instruction into your coding agent. This is the easiest way to build with Fluxzero, but the application it creates is real code. Developers can inspect it, test it, and contribute from their own IDE. When the product is ready, the same application can be deployed to Fluxzero Cloud.',
+        ],
+    },
+    {
+        question: 'What kinds of products can I build?',
+        answer: [
+            'Fluxzero is for products with real users, data, permissions, workflows, integrations, or business rules. That includes SaaS products, marketplaces, portals, internal tools, and AI-enabled software.',
+            'It is usually unnecessary for a simple website.',
+        ],
+    },
+    {
+        question: 'What kinds of companies run on Fluxzero in production?',
+        answer: [
+            'Fluxzero is trusted in production across product domains and workload sizes, from single-founder companies and scale-ups to enterprises such as the organization behind the digital infrastructure of Europe\'s largest port.',
+        ],
+    },
+    {
+        question: 'Will I outgrow Fluxzero or need to rebuild later?',
+        answer: [
+            'No. The same application works locally and at production scale. Individual workloads can receive more capacity as your product grows, without forcing the whole product onto a new architecture.',
+            'If developers join later, they work in a real codebase, not a generated black box. They can inspect, test, and extend the product in their own IDE while Fluxzero continues to run the foundation.',
+        ],
+    },
+    {
+        question: 'Do I lose visibility by trusting my backend to Fluxzero?',
+        answer: [
+            'No. Fluxzero is not a black box. It works more like an X-ray of your product: you can see its messages, web requests, application logs, errors, and the user or system behind each interaction.',
+            'Every interaction is part of a searchable audit trail. Correlation and tracing let you follow a single request across applications or zoom out to find patterns, performance issues, and failures across the whole product.',
+        ],
+    },
+    {
+        question: 'Do I own my code and data?',
+        answer: [
+            'Yes. Your application code and product data remain yours. The code does not depend on proprietary Fluxzero annotations, and your data can be exported in a machine-readable format.',
+        ],
+    },
+    {
+        question: 'When do I start paying?',
+        answer: [
+            'Building and running locally is free. You start paying when you activate a plan to put your product online.',
+        ],
+    },
+];
+
+const homepageFaqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: homepageFaqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.question,
+        acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer.join('\n\n'),
+        },
+    })),
+};
 ---
 
 <!DOCTYPE html>
@@ -92,9 +182,10 @@ const comparisonOptions = [
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/home.css?v=20260903-11">
+    <link rel="stylesheet" href="/css/home.css?v=20260904-14">
     <link rel="stylesheet" href="/css/v4-home.css?v=20260903-2">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
+    <script type="application/ld+json" set:html={JSON.stringify(homepageFaqSchema)}></script>
 </head>
 <body class="v4-home">
 <MarketingHeader />
@@ -345,7 +436,7 @@ const comparisonOptions = [
     <div class="section-intro">
         <h2 class="h2-single" id="proven-foundation-title">Start small.<br>Scale as your product grows.</h2>
         <div class="proof-body">
-            <p>Fluxzero is built for startups and enterprises alike, from early products<br class="desktop-break"> to high-throughput systems with complex business logic.</p>
+            <p>The same foundation already supports early products<br class="desktop-break"> and high-throughput systems with complex business logic.</p>
         </div>
     </div>
 
@@ -382,99 +473,21 @@ const comparisonOptions = [
     </div>
 
     <div class="faq-list section-grid">
-        <div class="faq-item">
-            <button class="faq-q" onclick="toggleFaq(this)">
-                <span>Is my product code still mine?</span>
-                <span class="faq-arrow">+</span>
-            </button>
-            <div class="faq-a">
-                <p>Yes. You own the product you build: the features, flows, user experience, and product logic. Fluxzero provides the backend foundation and runtime underneath it.</p>
-            </div>
-        </div>
+        {homepageFaqs.map((faq, index) => {
+            const answerId = `homepage-faq-answer-${index + 1}`;
 
-        <div class="faq-item">
-            <button class="faq-q" onclick="toggleFaq(this)">
-                <span>Can I export my data?</span>
-                <span class="faq-arrow">+</span>
-            </button>
-            <div class="faq-a">
-                <p>Yes. Your product data should never feel trapped. Fluxzero is built around clear product data and will support exporting it when you need to move, analyze, or back it up.</p>
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <button class="faq-q" onclick="toggleFaq(this)">
-                <span>How is Fluxzero different from Supabase + Vercel or Railway?</span>
-                <span class="faq-arrow">+</span>
-            </button>
-            <div class="faq-a">
-                <p>Supabase + Vercel and Railway are strong platforms for developer teams that want to compose or operate their own services. Fluxzero takes responsibility for the application foundation too, so your agent can focus on product behavior instead of assembling the architecture underneath.</p>
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <button class="faq-q" onclick="toggleFaq(this)">
-                <span>How is Fluxzero different from Lovable, Bolt, or Replit?</span>
-                <span class="faq-arrow">+</span>
-            </button>
-            <div class="faq-a">
-                <p>Those tools help you build or generate an app. You can use that output as the starting point for a Fluxzero app, so you do not have to start over.</p>
-                <p>Fluxzero adds the backend foundation that lets the app become real software: something you can run, test, launch, and keep improving with users.</p>
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <button class="faq-q" onclick="toggleFaq(this)">
-                <span>What kinds of products is Fluxzero good for?</span>
-                <span class="faq-arrow">+</span>
-            </button>
-            <div class="faq-a">
-                <p>Fluxzero is a good fit for products with users, data, permissions, workflows, and business logic: SaaS apps, marketplaces, portals, internal tools, workflow products, and AI-enabled software.</p>
-                <p>There is no scale ceiling on what you can build or run. Fluxzero is designed for products that may start small and grow into sophisticated, high-volume systems.</p>
-                <p>It is not meant for simple landing pages, content-only sites, throwaway demos, or products where you specifically want to design every layer of infrastructure yourself.</p>
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <button class="faq-q" onclick="toggleFaq(this)">
-                <span>Do I need to know backend development?</span>
-                <span class="faq-arrow">+</span>
-            </button>
-            <div class="faq-a">
-                <p>No. You need to understand the product you want to build. Your coding agent can work on features, flows, and behavior while Fluxzero keeps the backend foundation out of your prompt loop.</p>
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <button class="faq-q" onclick="toggleFaq(this)">
-                <span>Can developers take it further later?</span>
-                <span class="faq-arrow">+</span>
-            </button>
-            <div class="faq-a">
-                <p>Yes. Fluxzero gives your team a clean Java codebase focused on features, flows, and behavior, with behavior tests around the things that matter. Real developers can keep building in their own IDE, review the code, add more tests, and go deeper into the technical model when needed.</p>
-                <p>That makes it easy to hand over when the product grows. Java talent is widely available, and because backend complexity stays out of the product layer, founders can keep building with AI alongside the team.</p>
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <button class="faq-q" onclick="toggleFaq(this)">
-                <span>Can I use Codex, Claude Code, Cursor, or my own IDE?</span>
-                <span class="faq-arrow">+</span>
-            </button>
-            <div class="faq-a">
-                <p>Yes. Start with your product idea, review the project brief, and open the build in Codex, Claude Code, Cursor, or your IDE. Fluxzero is designed to fit the way builders are already using AI to ship software.</p>
-            </div>
-        </div>
-
-        <div class="faq-item">
-            <button class="faq-q" onclick="toggleFaq(this)">
-                <span>When do I pay?</span>
-                <span class="faq-arrow">+</span>
-            </button>
-            <div class="faq-a">
-                <p>You can get started before paying. You only pay when you go live.</p>
-            </div>
-        </div>
+            return (
+                <div class="faq-item">
+                    <button class="faq-q" type="button" onclick="toggleFaq(this)" aria-expanded="false" aria-controls={answerId}>
+                        <span>{faq.question}</span>
+                        <span class="faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                    <div class="faq-a" id={answerId}>
+                        {faq.answer.map((paragraph) => <p>{paragraph}</p>)}
+                    </div>
+                </div>
+            );
+        })}
     </div>
 
     <p class="faq-help">Still wondering? <a href="/contact">Get in touch</a> and we'll help.</p>
@@ -495,6 +508,6 @@ const comparisonOptions = [
 
 <MarketingFooter />
 
-    <script src="/js/home.js?v=20260904-1" defer></script>
+    <script src="/js/home.js?v=20260904-2" defer></script>
 </body>
 </html>

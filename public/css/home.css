@@ -5072,6 +5072,14 @@ section:not(.hero):not(.cta-end) {
     margin-top: 16px;
 }
 
+.faq-a a {
+    color: #9BDFFF;
+    font-weight: 650;
+    text-decoration: underline;
+    text-decoration-color: rgba(155, 223, 255, 0.42);
+    text-underline-offset: 3px;
+}
+
 .faq-help {
     margin-top: 10px;
     color: var(--text-secondary);
@@ -5223,10 +5231,11 @@ section:not(.hero):not(.cta-end) {
 
 .cta-end .btn-p,
 .cta-end .btn-s {
-    width: 150px;
-    min-width: 150px;
+    width: 164px;
+    min-width: 164px;
     min-height: 58px;
     justify-content: center;
+    white-space: nowrap;
 }
 
 .cta-end .btn-s,

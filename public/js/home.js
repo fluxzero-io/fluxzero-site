@@ -169,8 +169,13 @@ if (mobileRevealQuery.matches) {
 
 function toggleFaq(btn) {
     const item = btn.parentElement;
-    item.classList.toggle('open');
+    const isOpen = item.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(isOpen));
 }
+
+document.querySelectorAll('.faq-q').forEach(button => {
+    button.setAttribute('aria-expanded', String(button.parentElement.classList.contains('open')));
+});
 
 function initComparisonAccordion() {
     const disclosures = Array.from(document.querySelectorAll('.comparison-mobile .comparison-disclosure'));
