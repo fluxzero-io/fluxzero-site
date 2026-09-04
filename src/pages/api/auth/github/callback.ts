@@ -1,6 +1,14 @@
 export const prerender = false;
 import type { APIRoute } from 'astro';
-import { parseCookies, makeCookie, absoluteCallbackURL, sealCookiePayload, unsealCookiePayload } from '../_utils';
+import { makeCookie, absoluteCallbackURL, parseCookies, sealCookiePayload, unsealCookiePayload } from '../_utils';
+
+const STATE_MAX_AGE_MS = 10 * 60 * 1000;
+
+function safeReturnTo(value: unknown): string {
+  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) return '/';
+  return value;
+}
+
 export const GET: APIRoute = async ({ url, request, locals }) => {
 
   const {
@@ -17,29 +25,21 @@ export const GET: APIRoute = async ({ url, request, locals }) => {
   const qpState = url.searchParams.get('state') || '';
   const code = url.searchParams.get('code') || '';
   const cookies = parseCookies(request.headers.get('cookie'));
-  let returnTo = cookies['fx_return_to'] || '/';
-  // Prefer sealed `state` content for validation + returnTo; fall back to cookie comparison
+  const cookieState = cookies['fx_gh_state'] || '';
+  let returnTo = '/';
   let stateOk = false;
-  if (qpState && COOKIE_SECRET) {
+  if (qpState && cookieState && COOKIE_SECRET) {
     try {
       const parsed = await unsealCookiePayload(qpState, COOKIE_SECRET);
-      if (parsed && parsed.n && typeof parsed.ts === 'number') {
+      const age = parsed && typeof parsed.ts === 'number' ? Date.now() - parsed.ts : Number.NaN;
+      if (parsed && parsed.n === cookieState && age >= 0 && age <= STATE_MAX_AGE_MS) {
         stateOk = true;
-        if (parsed.returnTo) returnTo = parsed.returnTo;
+        returnTo = safeReturnTo(parsed.returnTo);
       }
     } catch { }
   }
-  if (!stateOk) {
-    const cookieState = cookies['fx_gh_state'] || '';
-    const isLocalhost = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
-    if (!isLocalhost) {
-      if (!qpState || !code || !cookieState || qpState !== cookieState) {
-        return new Response('Invalid state', { status: 400 });
-      }
-    } else {
-      // In local development, relax state enforcement to unblock testing
-      if (!returnTo) returnTo = '/';
-    }
+  if (!code || !stateOk) {
+    return new Response('Invalid state', { status: 400 });
   }
 
   const callback = absoluteCallbackURL(url);
@@ -86,6 +86,5 @@ export const GET: APIRoute = async ({ url, request, locals }) => {
   const secure = url.protocol === 'https:';
   headers.append('Set-Cookie', makeCookie('fx_gh_auth', sealed, { path: '/api', maxAge: expiresIn || (24 * 3600), secure }));
   headers.append('Set-Cookie', makeCookie('fx_gh_state', '', { path: '/api/auth/github', secure, expires: new Date(0) }));
-  headers.append('Set-Cookie', makeCookie('fx_return_to', '', { path: '/', secure, expires: new Date(0) }));
   return new Response(null, { status: 302, headers });
 };

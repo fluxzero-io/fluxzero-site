@@ -64,6 +64,19 @@
 
 /* Component layer for reusable patterns */
 @layer components {
+  .sl-markdown-content a[href='#schedule-1---nldigital-terms-2025'] {
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .sl-markdown-content a[href='#schedule-1---nldigital-terms-2025']:hover,
+  .sl-markdown-content a[href='#schedule-1---nldigital-terms-2025']:focus-visible {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.15em;
+  }
+
   .btn {
     @apply px-4 py-2 font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2;
   }
