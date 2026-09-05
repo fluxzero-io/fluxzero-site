@@ -1228,7 +1228,13 @@ html::-webkit-scrollbar {
 /* Final CTA */
 .agent4-final {
     min-height: 470px;
-    background: radial-gradient(circle at 50% 100%, rgba(44, 105, 180, 0.18), transparent 46%);
+    background: radial-gradient(
+        ellipse 70% 88% at 50% 44%,
+        rgba(44, 105, 180, 0.16) 0%,
+        rgba(44, 105, 180, 0.08) 38%,
+        rgba(44, 105, 180, 0.025) 62%,
+        transparent 82%
+    );
 }
 
 .agent4-final__inner {
