@@ -145,7 +145,7 @@ const choiceOptions = [
         description="See how Fluxzero keeps infrastructure out of your application so people and AI agents can focus on building the product."
     />
     <link rel="stylesheet" href="/css/v4.css?v=20260902-2">
-    <link rel="stylesheet" href="/css/agents.css?v=20260904-20">
+    <link rel="stylesheet" href="/css/agents.css?v=20260905-1">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
 <body class="v4-page agent4-page">
@@ -176,11 +176,11 @@ const choiceOptions = [
                 {['Product 1', 'Product 2', 'Product 3', 'Product N'].map((product, index, products) => (
                     <>
                         {index === products.length - 1 && <div class="agent4-duplication__ellipsis" aria-hidden="true"><span></span><span></span><span></span></div>}
-                        <div class="agent4-private-stack">
-                            <div class="agent4-product-node"><i class="bx bx-cube-alt" aria-hidden="true"></i><span>{product}</span></div>
+                        <article class="agent4-private-stack">
+                            <h3 class="agent4-product-node"><i class="bx bx-cube-alt" aria-hidden="true"></i><span>{product}</span></h3>
                             <div class="agent4-stack-line" aria-hidden="true"></div>
-                            <div class="agent4-stack-box"><span class="is-product">Unique product logic</span><span>Services &amp; workers</span><span>Persistence</span><span>Messaging &amp; recovery</span><span>Gateways &amp; proxies</span><span>Load balancing</span><span>Security &amp; discovery</span><span>Observability</span><span>Deployment</span></div>
-                        </div>
+                            <ul class="agent4-stack-box"><li class="is-product">Unique product logic</li><li>Services &amp; workers</li><li>Persistence</li><li>Messaging &amp; recovery</li><li>Gateways &amp; proxies</li><li>Load balancing</li><li>Security &amp; discovery</li><li>Observability</li><li>Deployment</li></ul>
+                        </article>
                     </>
                 ))}
             </div>
@@ -196,7 +196,7 @@ const choiceOptions = [
             <div class="agent4-boundary__diagram" data-reveal data-reveal-delay="1">
                 <article class="agent4-boundary__side agent4-boundary__side--traditional">
                     <div class="agent4-boundary__label"><strong>Inside a traditional application</strong><small>Everything below ships as part of the app</small></div>
-                    <div class="agent4-app-stack"><span class="is-product"><i class="bx bx-cube-alt" aria-hidden="true"></i> Product behavior</span><span>Service wiring and orchestration</span><span>Integration adapters</span><span>Persistence code and schemas</span><span>Retry and recovery paths</span><span>Ingress and service networking</span><span>Observability plumbing</span><span>Deployment topology</span></div>
+                    <ul class="agent4-app-stack"><li class="is-product"><i class="bx bx-cube-alt" aria-hidden="true"></i> Product behavior</li><li>Service wiring and orchestration</li><li>Integration adapters</li><li>Persistence code and schemas</li><li>Retry and recovery paths</li><li>Ingress and service networking</li><li>Observability plumbing</li><li>Deployment topology</li></ul>
                 </article>
                 <i class="bx bx-right-arrow-alt agent4-boundary__arrow" aria-hidden="true"></i>
                 <article class="agent4-boundary__side agent4-boundary__side--fluxzero">
@@ -204,7 +204,7 @@ const choiceOptions = [
                     <div class="agent4-product-box"><strong><i class="bx bx-cube-alt" aria-hidden="true"></i> Product behavior</strong></div>
                     <div class="agent4-cloud-box">
                         <div class="agent4-cloud-box__brand"><span class="logo-mark" aria-hidden="true"></span><strong>fluxzero <em>cloud</em></strong></div>
-                        <div class="agent4-cloud-box__items"><span><i class="bx bx-data"></i>State &amp; history</span><span><i class="bx bx-transfer-alt"></i>Message delivery</span><span><i class="bx bx-search"></i>Search</span><span><i class="bx bx-check-shield"></i>Policy enforcement</span><span><i class="bx bx-refresh"></i>Replay &amp; recovery</span><span><i class="bx bx-bar-chart-alt-2"></i>Observability</span><span><i class="bx bx-git-branch"></i>Runtime routing</span><span><i class="bx bx-cloud-upload"></i>Deployment &amp; scale</span></div>
+                        <ul class="agent4-cloud-box__items"><li><i class="bx bx-data" aria-hidden="true"></i>State &amp; history</li><li><i class="bx bx-transfer-alt" aria-hidden="true"></i>Message delivery</li><li><i class="bx bx-search" aria-hidden="true"></i>Search</li><li><i class="bx bx-check-shield" aria-hidden="true"></i>Policy enforcement</li><li><i class="bx bx-refresh" aria-hidden="true"></i>Replay &amp; recovery</li><li><i class="bx bx-bar-chart-alt-2" aria-hidden="true"></i>Observability</li><li><i class="bx bx-git-branch" aria-hidden="true"></i>Runtime routing</li><li><i class="bx bx-cloud-upload" aria-hidden="true"></i>Deployment &amp; scale</li></ul>
                     </div>
                 </article>
             </div>
@@ -257,14 +257,14 @@ const choiceOptions = [
                 <a class="agent4-code__docs" href="/docs">Read the technical docs <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
             </header>
             <div class="agent4-code__examples" data-reveal data-reveal-delay="1">
-                <div class="agent4-code__sample">
-                    <div class="agent4-code__bar"><span>ProjectTasks</span><small>Java</small></div>
-                    <pre><code set:html={javaExample}></code></pre>
-                </div>
-                <div class="agent4-code__test">
-                    <div class="agent4-code__bar"><span>CompleteTaskTest</span><small>Test</small></div>
-                    <pre><code set:html={testExample}></code></pre>
-                </div>
+                <figure class="agent4-code__sample">
+                    <figcaption class="agent4-code__bar"><strong>ProjectTasks</strong><small>Java</small></figcaption>
+                    <pre><code class="language-java" set:html={javaExample}></code></pre>
+                </figure>
+                <figure class="agent4-code__test">
+                    <figcaption class="agent4-code__bar"><strong>CompleteTaskTest</strong><small>Test</small></figcaption>
+                    <pre><code class="language-java" set:html={testExample}></code></pre>
+                </figure>
             </div>
         </div>
     </section>
@@ -285,8 +285,8 @@ const choiceOptions = [
                 {comparisonRows.map((row) => (
                     <div class="agent4-comparison__row" role="row">
                         <div role="rowheader"><i class={`bx ${row.icon}`} aria-hidden="true"></i><strong>{row.label}</strong></div>
-                        <div role="cell" data-label="Other clouds"><span class="agent4-comparison__mark">—</span>{row.other}</div>
-                        <div class="is-fluxzero" role="cell" data-label="Fluxzero"><span class="agent4-comparison__mark is-included">✓</span>{row.fluxzero}</div>
+                        <div role="cell" data-label="Other clouds"><span class="agent4-comparison__mark" aria-hidden="true">—</span>{row.other}</div>
+                        <div class="is-fluxzero" role="cell" data-label="Fluxzero"><span class="agent4-comparison__mark is-included" aria-hidden="true">✓</span>{row.fluxzero}</div>
                     </div>
                 ))}
             </div>
@@ -310,9 +310,9 @@ const choiceOptions = [
             <div class="agent4-compounding__visual" data-reveal data-reveal-delay="1" aria-label="One Fluxzero improvement reaches every product">
                 <div class="agent4-compounding__cloud"><div><span class="logo-mark" aria-hidden="true"></span><strong>fluxzero</strong><small>Shared cloud runtime</small></div></div>
                 <div class="agent4-compounding__connector"><small>Continuously improved</small><span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></span></div>
-                <div class="agent4-compounding__improvements">
-                    <span><i class="bx bx-tachometer"></i>Performance</span><span><i class="bx bx-shield-quarter"></i>Hardening</span><span><i class="bx bx-bar-chart-alt-2"></i>Operational insight</span><span><i class="bx bx-refresh"></i>Recovery</span>
-                </div>
+                <ul class="agent4-compounding__improvements">
+                    <li><i class="bx bx-tachometer" aria-hidden="true"></i>Performance</li><li><i class="bx bx-shield-quarter" aria-hidden="true"></i>Hardening</li><li><i class="bx bx-bar-chart-alt-2" aria-hidden="true"></i>Operational insight</li><li><i class="bx bx-refresh" aria-hidden="true"></i>Recovery</li>
+                </ul>
                 <div class="agent4-compounding__connector"><small>Inherited automatically</small><span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></span></div>
                 <div class="agent4-compounding__products"><small>Every product</small><div>{Array.from({ length: 8 }).map(() => <i class="bx bx-cube-alt" aria-hidden="true"></i>)}</div></div>
             </div>

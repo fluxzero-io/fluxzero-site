@@ -1,5 +1,42 @@
 {
-  "lastUpdated": "",
-  "latestVersion": "",
-  "releases": []
+  "lastUpdated": "2026-09-05T05:34:53.288Z",
+  "latestVersion": "1.257.0",
+  "releases": [
+    {
+      "version": "1.257.0",
+      "date": "2026-09-04",
+      "body": "#### [1.257.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.256.0...1.257.0) (2026-09-04)\n\n##### Bug Fixes\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>web: align OpenAPI object constraints <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/5e3c960f2a87ddbafa5381640feedcffcb104ab8\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Expose closed unions and explicit unknown-property policies in generated schemas, while mapping size validation to the matching schema shape.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.257.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.256.0",
+      "date": "2026-09-04",
+      "body": "#### [1.256.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.255.0...1.256.0) (2026-09-04)\n\n##### Features\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>serialization: support untyped JSON sequences <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/c2e432eb713bfec744143e4110412c29b79ab744\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Load root arrays and newline-delimited resources element by element so fixture setup can preserve order, per-record type resolution, revision metadata, and user context.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.256.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.255.0",
+      "date": "2026-09-04",
+      "body": "#### [1.255.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.254.0...1.255.0) (2026-09-04)\n\n##### Dependency updates\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>bump org.apache.maven.plugins:maven-surefire-plugin <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/d46697e57d49760ec350aafd2866593a76eff346\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>org.apache.maven.plugins:maven-surefire-plugin</strong>: 3.5.6 -> 3.6.0 <a href=\"https://github.com/apache/maven-surefire/releases\">changelog</a></p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.255.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.254.0",
+      "date": "2026-09-04",
+      "body": "#### [1.254.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.253.0...1.254.0) (2026-09-04)\n\n##### Dependency updates\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>bump io.fluxzero.tools:fluxzero-maven-plugin from 1.17.0 to 1.17.3 <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/cd72a44c457a478331e2a9219efd0ee1dcd38591\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>io.fluxzero.tools:fluxzero-maven-plugin</strong>: 1.17.0 -> 1.17.3 <a href=\"https://github.com/fluxzero-io/fluxzero-cli/blob/main/CHANGELOG.md\">changelog</a></p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.254.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    }
+  ]
 }

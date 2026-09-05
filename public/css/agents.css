@@ -191,6 +191,8 @@ html::-webkit-scrollbar {
     gap: 7px;
     color: #d8e5f4;
     font-size: 13px;
+    font-weight: 400;
+    margin: 0;
 }
 
 .agent4-product-node .bx {
@@ -209,9 +211,12 @@ html::-webkit-scrollbar {
     border: 1px solid rgba(104, 175, 239, 0.72);
     border-radius: 8px;
     background: rgba(6, 11, 17, 0.66);
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
-.agent4-stack-box span {
+.agent4-stack-box li {
     display: block;
     overflow: hidden;
     min-height: 31px;
@@ -224,11 +229,11 @@ html::-webkit-scrollbar {
     white-space: nowrap;
 }
 
-.agent4-stack-box span:first-child {
+.agent4-stack-box li:first-child {
     border-top: 0;
 }
 
-.agent4-stack-box span.is-product {
+.agent4-stack-box li.is-product {
     min-height: 38px;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -325,6 +330,9 @@ html::-webkit-scrollbar {
     border: 1px solid rgba(109, 153, 196, 0.32);
     border-radius: 9px;
     background: rgba(5, 9, 14, 0.58);
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .agent4-app-stack > * {
@@ -427,12 +435,14 @@ html::-webkit-scrollbar {
 
 .agent4-cloud-box__items {
     display: grid;
-    padding-top: 20px;
+    padding: 20px 0 0;
     grid-template-columns: repeat(4, 1fr);
     gap: 14px 8px;
+    list-style: none;
+    margin: 0;
 }
 
-.agent4-cloud-box__items span {
+.agent4-cloud-box__items li {
     display: flex;
     min-width: 0;
     flex-direction: column;
@@ -476,18 +486,26 @@ html::-webkit-scrollbar {
 }
 
 .agent4-context__rail {
+    --agent4-context-border: rgba(124, 178, 228, 0.3);
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    border-top: 1px solid rgba(124, 178, 228, 0.5);
-    border-left: 1px solid rgba(124, 178, 228, 0.22);
+    overflow: hidden;
+    border: 1px solid var(--agent4-context-border);
+    border-radius: 18px;
 }
 
 .agent4-context__rail article {
     position: relative;
     min-height: 220px;
     padding: 34px 30px;
-    border-right: 1px solid rgba(124, 178, 228, 0.22);
-    border-bottom: 1px solid rgba(124, 178, 228, 0.22);
+}
+
+.agent4-context__rail article:nth-child(odd) {
+    border-right: 1px solid var(--agent4-context-border);
+}
+
+.agent4-context__rail article:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--agent4-context-border);
 }
 
 .agent4-context__node,
@@ -668,6 +686,7 @@ html::-webkit-scrollbar {
 .agent4-code__sample,
 .agent4-code__test {
     overflow: hidden;
+    margin: 0;
     border: 1px solid rgba(92, 139, 184, 0.6);
     border-radius: 9px;
     background: rgba(7, 11, 17, 0.78);
@@ -689,6 +708,10 @@ html::-webkit-scrollbar {
     border-bottom: 1px solid rgba(127, 153, 180, 0.22);
     color: #d6e2ef;
     font-size: 14px;
+}
+
+.agent4-code__bar strong {
+    font-weight: 400;
 }
 
 .agent4-code__bar small {
@@ -1003,9 +1026,12 @@ html::-webkit-scrollbar {
 .agent4-compounding__improvements {
     display: grid;
     gap: 11px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
-.agent4-compounding__improvements span {
+.agent4-compounding__improvements li {
     display: flex;
     min-height: 44px;
     padding: 0 12px;
@@ -1320,7 +1346,7 @@ html::-webkit-scrollbar {
         justify-self: center;
     }
 
-    .agent4-stack-box span {
+    .agent4-stack-box li {
         font-size: 10px;
     }
 
@@ -1345,6 +1371,18 @@ html::-webkit-scrollbar {
     .agent4-context__rail article {
         min-height: 0;
         padding: 30px 26px 34px;
+    }
+
+    .agent4-context__rail article:nth-child(odd) {
+        border-right: 0;
+    }
+
+    .agent4-context__rail article:nth-child(-n + 2) {
+        border-bottom: 0;
+    }
+
+    .agent4-context__rail article:not(:last-child) {
+        border-bottom: 1px solid var(--agent4-context-border);
     }
 
     .agent4-layers__copy {

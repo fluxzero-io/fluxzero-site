@@ -99,6 +99,9 @@ importers:
       '@types/alpinejs':
         specifier: ^3.13.11
         version: 3.13.11
+      parse5:
+        specifier: ^7.3.0
+        version: 7.3.0
       sass:
         specifier: ^1.80.3
         version: 1.92.0

@@ -168,13 +168,24 @@ if (mobileRevealQuery.matches) {
     }
 
 function toggleFaq(btn) {
-    const item = btn.parentElement;
-    const isOpen = item.classList.toggle('open');
-    btn.setAttribute('aria-expanded', String(isOpen));
+    const item = btn.closest('.faq-item');
+    if (!item) return;
+    const shouldOpen = !item.classList.contains('open');
+
+    if (shouldOpen) {
+        item.closest('.faq-list')?.querySelectorAll('.faq-item.open').forEach(openItem => {
+            if (openItem === item) return;
+            openItem.classList.remove('open');
+            openItem.querySelector('.faq-q')?.setAttribute('aria-expanded', 'false');
+        });
+    }
+
+    item.classList.toggle('open', shouldOpen);
+    btn.setAttribute('aria-expanded', String(shouldOpen));
 }
 
 document.querySelectorAll('.faq-q').forEach(button => {
-    button.setAttribute('aria-expanded', String(button.parentElement.classList.contains('open')));
+    button.setAttribute('aria-expanded', String(button.closest('.faq-item')?.classList.contains('open')));
 });
 
 function initComparisonAccordion() {

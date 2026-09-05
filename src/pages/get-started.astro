@@ -32,7 +32,7 @@ const compatibleAgents = [
 
 <main class="onboarding-page">
     {launchAccess.authenticationEnabled && (
-        <section class="onboarding-auth" aria-labelledby="account-title" data-auth-view="signed-out">
+        <section class="onboarding-auth" aria-labelledby="account-title" data-auth-view="signed-out" data-llms-exclude>
             <h1 id="account-title">Start building with <span class="onboarding-title-accent">Fluxzero.</span></h1>
             <p class="onboarding-auth__lead">Create an account or sign in to continue.</p>
 
@@ -47,7 +47,7 @@ const compatibleAgents = [
         </section>
     )}
 
-    <section class="onboarding-workspace" aria-labelledby="workspace-title" data-auth-view="signed-in" hidden={launchAccess.authenticationEnabled}>
+    <section class="onboarding-workspace" aria-labelledby="workspace-title" data-auth-view="signed-in" data-llms-include hidden={launchAccess.authenticationEnabled}>
         <header class="onboarding-intro">
             <h1 id="workspace-title">Start building with <span class="onboarding-title-accent">Fluxzero.</span></h1>
             <p>
@@ -74,10 +74,9 @@ const compatibleAgents = [
                             href={agent.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            aria-label={`Open ${agent.name} in a new tab`}
                             title={agent.name}
                         >
-                            <img src={agent.icon} alt="" width="24" height="24">
+                            <img src={agent.icon} alt={agent.name} width="24" height="24">
                         </a>
                     </li>
                 ))}

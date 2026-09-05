@@ -23,6 +23,8 @@ const imageUrl = new URL(image, siteUrl).toString();
 <title>{title}</title>
 {description && <meta name="description" content={description}>}
 <link rel="canonical" href={pageUrl}>
+<link rel="describedby" href="/llms.txt" title="Fluxzero site content for AI agents">
+<link rel="alternate" type="text/plain" href="/llms-full.txt" title="Complete Fluxzero site content for AI agents">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Fluxzero">
 <meta property="og:title" content={title}>

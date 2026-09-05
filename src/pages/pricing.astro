@@ -2174,6 +2174,11 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             border-top: 1px solid var(--border);
         }
 
+        .pricing-v2-faq-question-heading {
+            margin: 0;
+            font: inherit;
+        }
+
         .pricing-v2-faq-q {
             display: flex;
             width: 100%;
@@ -2529,7 +2534,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
                 <article class="pricing-v2-card pricing-v2-flip-card" data-scale-card>
                     <div class="pricing-v2-flip-inner">
-                        <div class="pricing-v2-flip-face pricing-v2-flip-face--front">
+                        <div class="pricing-v2-flip-face pricing-v2-flip-face--front" aria-hidden="false">
                             <div class="pricing-v2-card-top">
                                 <span class="pricing-v2-label">Scale</span>
                                 <h3>Scale Up</h3>
@@ -2563,7 +2568,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                             </button>
                         </div>
 
-                        <div class="pricing-v2-flip-face pricing-v2-flip-face--back">
+                        <div class="pricing-v2-flip-face pricing-v2-flip-face--back" aria-hidden="true">
                             <div class="scale-calculator" data-scale-calculator>
                                 <div class="scale-calculator-head">
                                     <button class="scale-calculator-back" type="button">&lt;- Back</button>
@@ -2740,106 +2745,128 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
         <div class="pricing-v2-faq-list">
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q">
-                    <span>What are clusters and apps?</span>
-                    <span class="pricing-v2-faq-arrow">+</span>
-                </button>
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What are clusters and apps?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
                 <div class="pricing-v2-faq-a">
                     <p>A cluster is the managed environment your app runs on. An app is one running application inside that environment.</p>
                     <p>Starter capacity gets you online quickly; Scale Up lets you add more clusters and apps when your product needs more room.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q">
-                    <span>When will I be billed?</span>
-                    <span class="pricing-v2-faq-arrow">+</span>
-                </button>
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>When will I be billed?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
                 <div class="pricing-v2-faq-a">
                     <p>You can build locally for free. Billing starts when you activate a paid plan for an app. Your billing schedule starts on the day your first payment is made. Starter is billed every 7 days; Startup and Scale Up are billed monthly unless agreed otherwise.</p>
                     <p>Extra or larger clusters and apps, and storage above the included amount, are measured during the month and billed at the end of the month.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q">
-                    <span>Why can I pay weekly for Starter?</span>
-                    <span class="pricing-v2-faq-arrow">+</span>
-                </button>
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>Why can I pay weekly for Starter?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
                 <div class="pricing-v2-faq-a">
                     <p>The weekly Starter option is there so you can experiment with a real Fluxzero cluster for a short period without committing to a full month.</p>
                     <p>It is not meant as a discounted version of the monthly plan. It gives builders a low-friction way to try a live production foundation, validate an idea, or test launch readiness before choosing a longer-running plan.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q">
-                    <span>Is sales tax included?</span>
-                    <span class="pricing-v2-faq-arrow">+</span>
-                </button>
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>Is sales tax included?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
                 <div class="pricing-v2-faq-a">
                     <p>Prices are shown excluding sales tax, VAT, and similar taxes unless stated otherwise. Any required tax may be added during billing based on your billing details and local rules.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q">
-                    <span>What capacity is included, and can I cap my bill?</span>
-                    <span class="pricing-v2-faq-arrow">+</span>
-                </button>
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What capacity is included, and can I cap my bill?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
                 <div class="pricing-v2-faq-a">
                     <p>Every paid plan includes fixed cluster, app, and storage capacity as shown on the plan card. That included capacity is part of the plan price.</p>
                     <p>From Scale Up, you decide which extra clusters, apps, storage, or options are added before they affect your bill. Fluxzero is designed to make usage visible before it becomes a surprise.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q">
-                    <span>Will prices change in the future?</span>
-                    <span class="pricing-v2-faq-arrow">+</span>
-                </button>
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>Will prices change in the future?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
                 <div class="pricing-v2-faq-a">
                     <p>Pricing may evolve as Fluxzero grows and the platform changes. If a price change affects an active paid plan, we will communicate it before it applies.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q">
-                    <span>What happens if I cancel or pause my plan?</span>
-                    <span class="pricing-v2-faq-arrow">+</span>
-                </button>
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What happens if I cancel or pause my plan?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
                 <div class="pricing-v2-faq-a">
                     <p>Your app will stop running on the paid plan after cancellation takes effect. In many cases you can stop runtime capacity when an app is not actively running.</p>
                     <p>If you need to pause while keeping data or configuration, contact support and we will help choose the safest option.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q">
-                    <span>What happens if my payment fails?</span>
-                    <span class="pricing-v2-faq-arrow">+</span>
-                </button>
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What happens if my payment fails?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
                 <div class="pricing-v2-faq-a">
                     <p>We will notify you and give you time to fix the payment method. If payment remains unresolved, paid runtime access may be paused until billing is restored.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q">
-                    <span>What if I need development, test, or staging environments?</span>
-                    <span class="pricing-v2-faq-arrow">+</span>
-                </button>
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What if I need development, test, or staging environments?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
                 <div class="pricing-v2-faq-a">
                     <p>Additional clusters for development, test, staging, or preview environments can be added from Scale Up. We can help you choose the right size and setup.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q">
-                    <span>What if I need more scale or higher availability?</span>
-                    <span class="pricing-v2-faq-arrow">+</span>
-                </button>
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What if I need more scale or higher availability?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
                 <div class="pricing-v2-faq-a">
                     <p>Scale Up supports additional clusters and apps and includes a 99.9% uptime target.</p>
                     <p>Enterprise adds custom workloads, additional sizes, private hardware, custom SLAs, and dedicated operational support. Fluxzero currently runs from Europe, with more regions planned.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
-                <button class="pricing-v2-faq-q">
-                    <span>What happens if I go over included limits?</span>
-                    <span class="pricing-v2-faq-arrow">+</span>
-                </button>
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What happens if I go over included limits?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
                 <div class="pricing-v2-faq-a">
                     <p>Extra or larger clusters and apps can be added from Scale Up. These are measured during the month and billed at the end of the month.</p>
                     <p>If your data volume exceeds included storage, additional storage is billed at €0.0048 per GB per day.</p>
@@ -2857,7 +2884,8 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 
 <script is:inline>
     function togglePricingFaq(btn) {
-        const item = btn.parentElement;
+        const item = btn.closest('.pricing-v2-faq-item');
+        if (!item) return;
         item.classList.toggle('open');
     }
 

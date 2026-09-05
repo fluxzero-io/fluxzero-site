@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "astro sync && pnpm sync:docs && astro dev",
     "start": "pnpm dev",
-    "build": "astro sync && pnpm sync:docs && astro build",
+    "build": "astro sync && pnpm sync:docs && astro build && node scripts/generate-llms.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "sync:docs": "node scripts/sync-sdk-docs.mjs"
@@ -52,6 +52,7 @@
     "@tailwindcss/cli": "^4.0.0",
     "@tailwindcss/vite": "^4.1.13",
     "@types/alpinejs": "^3.13.11",
+    "parse5": "^7.3.0",
     "sass": "^1.80.3",
     "sass-embedded": "^1.92.0",
     "tailwindcss": "^4.0.0",

@@ -93,40 +93,40 @@ const homepageFaqs = [
     {
         question: 'Can I really launch serious software with Fluxzero?',
         answer: [
-            'Yes. Fluxzero is built for products with real users, valuable data, permissions, integrations, and complex business rules.',
+            'Yes. Fluxzero is built for products where reliability matters: products with valuable data, complex workflows, permissions, integrations, and business rules.',
             'You and your coding agent build the product behavior. Fluxzero takes responsibility for the technical foundation underneath your product, including security, reliable message delivery, recovery, auditability, and scale.',
-            'That hardened foundation already runs demanding enterprise workloads, so you can launch without hiring backend engineers and will not need a different backend when your product becomes successful.',
+            'The same hardened foundation supports early-stage products and high-throughput enterprise workloads, so you can launch without hiring backend engineers and keep the same backend as your product grows.',
         ],
     },
     {
         question: 'My agent can generate a backend. Why should it use Fluxzero?',
         answer: [
-            'An agent can generate a backend quickly. But that first version becomes a codebase you must keep understandable, secure, reliable, and ready to scale. Every shortcut taken to launch becomes something you own.',
-            'Fluxzero gives your product a hardened backend foundation built by experienced backend engineers for demanding enterprise workloads. It keeps improving without adding infrastructure code to your application, so the codebase stays focused and you do not have to replatform when the product grows.',
+            'An agent can generate a backend quickly. But building your product is a different job from building a hardened backend. Your agent is focused on the product. The backend it generates becomes a codebase you must keep secure, reliable, understandable, and ready to scale as the product evolves. Every shortcut taken to launch becomes something you own.',
+            'Fluxzero gives your product a hardened backend foundation built and operated by experienced backend engineers for demanding enterprise workloads. Because products run on a shared platform foundation, improvements to security, reliability, recovery, and scale compound and benefit every product, without adding infrastructure code to your application.',
+            'Your codebase stays focused on the product. As usage and complexity increase, you keep building on the same foundation instead of rebuilding or replatforming.',
         ],
     },
     {
         question: 'How is Fluxzero different from Supabase + Vercel, Railway, or other clouds?',
         answer: [
             'Those clouds give you infrastructure and services that still need to be selected, connected, secured, scaled, and operated. You or your agent remains responsible for turning them into one reliable product.',
-            'Fluxzero provides and operates that application foundation as one cloud, so you can focus on your product, not the tech stack.',
+            'Fluxzero provides and operates that application foundation as one cloud, so you can focus on the product instead of operating the platform underneath it. If you prefer to design, tune, and operate every infrastructure layer yourself, a component cloud may suit you better.',
         ],
     },
     {
         question: 'What does building with Fluxzero look like?',
         answer: [
-            'Start by copying one instruction into your coding agent. This is the easiest way to build with Fluxzero, but the application it creates is real code. Developers can inspect it, test it, and contribute from their own IDE. When the product is ready, the same application can be deployed to Fluxzero Cloud.',
+            'Start by copying one instruction into your coding agent. This is the easiest way to build with Fluxzero. The application your agent helps you build is real code that developers can inspect, test, and extend from their own IDE. When the product is ready, the same application can be deployed to Fluxzero Cloud.',
         ],
     },
     {
         question: 'What kinds of products can I build?',
         answer: [
-            'Fluxzero is for products with real users, data, permissions, workflows, integrations, or business rules. That includes SaaS products, marketplaces, portals, internal tools, and AI-enabled software.',
-            'It is usually unnecessary for a simple website.',
+            'Any application can run on Fluxzero, across product domains and workload sizes. That includes SaaS products, marketplaces, portals, internal tools, consumer apps, and AI-enabled software.',
         ],
     },
     {
-        question: 'What kinds of companies run on Fluxzero in production?',
+        question: 'What kinds of companies run on Fluxzero?',
         answer: [
             'Fluxzero is trusted in production across product domains and workload sizes, from single-founder companies and scale-ups to enterprises such as the organization behind the digital infrastructure of Europe\'s largest port.',
         ],
@@ -312,20 +312,20 @@ const homepageFaqSchema = {
 <section class="comparison comparison-v4 rv section-stack" id="platform-comparison" aria-labelledby="comparison-title">
     <div class="section-intro comparison-v4__heading">
         <h2 class="h2-two-line" id="comparison-title">Other clouds run infrastructure.<br><span>Fluxzero runs your product.</span></h2>
-        <p>With other clouds, you remain responsible for the tech stack.<br>With Fluxzero, your only responsibility is the product.</p>
+        <p>Infrastructure clouds leave you responsible for the tech stack.<br>With Fluxzero, your only responsibility is the product.</p>
     </div>
 
-    <div class="comparison-desktop section-grid">
-        <div class="comparison-head">
-            <div class="comparison-head__corner" aria-hidden="true"></div>
+    <div class="comparison-desktop section-grid" role="table" aria-label="Comparison of application cloud approaches">
+        <div class="comparison-head" role="row">
+            <div class="comparison-head__corner" role="columnheader" aria-label="Comparison category"></div>
             {comparisonOptions.map((option) => (
-                <div class:list={['comparison-head__option', { 'is-featured': option.featured }]}>
+                <div class:list={['comparison-head__option', { 'is-featured': option.featured }]} role="columnheader">
                     <h3>{option.name}</h3>
                     <p>{option.sub}</p>
                 </div>
             ))}
         </div>
-        <div class="comparison-table" role="table" aria-label="Comparison of application cloud approaches">
+        <div class="comparison-table" role="rowgroup">
             {comparisonRows.map((row) => (
                 <div class="comparison-table__row" role="row">
                     <div class="comparison-table__label" role="rowheader">{row.label}</div>
@@ -436,30 +436,30 @@ const homepageFaqSchema = {
     <div class="section-intro">
         <h2 class="h2-single" id="proven-foundation-title">Start small.<br>Scale as your product grows.</h2>
         <div class="proof-body">
-            <p>The same foundation already supports early products<br class="desktop-break"> and high-throughput systems with complex business logic.</p>
+            <p>The same foundation supports early products<br class="desktop-break"> and high-throughput systems with complex business logic.</p>
         </div>
     </div>
 
     <div class="proof-stats section-grid" data-proof-stats>
-        <div class="proof-stat">
-            <div class="num"><span class="proof-count" data-count-to="100">100</span><span>+</span></div>
-            <div class="label">GB / min production throughput</div>
-            <p class="proof-stat__context">About 700,000 tweets every second, nearly 5&times; x.com&rsquo;s published record.<sup><a href="#tweet-throughput-note" aria-label="How this estimate was calculated">*</a></sup></p>
-        </div>
-        <div class="proof-stat">
-            <div class="num"><span class="proof-count" data-count-to="1">1</span><span>M+</span></div>
-            <div class="label">resolved requests / sec</div>
-            <p class="proof-stat__context">Commands and results, end to end across applications.</p>
-        </div>
-        <div class="proof-stat">
-            <div class="num"><small>up to</small> <span class="proof-count" data-count-to="99">99</span><span>%</span></div>
-            <div class="label">less application code</div>
-            <p class="proof-stat__context">Across legacy migrations with the same behavior.</p>
-        </div>
+        <dl class="proof-stat">
+            <dt class="label">GB / min production throughput</dt>
+            <dd class="num"><span class="proof-count" data-count-to="100">100</span><span>+</span></dd>
+            <dd class="proof-stat__context">About 700,000 tweets every second, nearly 5 times X.com&rsquo;s record.<sup><a href="#tweet-throughput-note" aria-label="How this estimate was calculated">*</a></sup></dd>
+        </dl>
+        <dl class="proof-stat">
+            <dt class="label">resolved requests / sec</dt>
+            <dd class="num"><span class="proof-count" data-count-to="1">1</span><span>M+</span></dd>
+            <dd class="proof-stat__context">Commands and results, end to end across applications.</dd>
+        </dl>
+        <dl class="proof-stat">
+            <dt class="label">less application code</dt>
+            <dd class="num"><small>up to</small> <span class="proof-count" data-count-to="99">99</span><span>%</span></dd>
+            <dd class="proof-stat__context">Across legacy migrations with the same behavior.</dd>
+        </dl>
     </div>
 
     <p class="proof-source" id="tweet-throughput-note">
-        * Estimate based on a <a href="https://www.research-collection.ethz.ch/bitstreams/77b38ad3-f165-4bda-9fca-6a1d13913836/download" target="_blank" rel="noreferrer">2.3 kB average serialized tweet size</a> and <a href="https://blog.x.com/engineering/en_us/a/2013/new-tweets-per-second-record-and-how" target="_blank" rel="noreferrer">x.com&rsquo;s published record of 143,199 tweets per second</a>.
+        * Estimate based on a <a href="https://www.research-collection.ethz.ch/bitstreams/77b38ad3-f165-4bda-9fca-6a1d13913836/download" target="_blank" rel="noreferrer">2.3 kB average serialized tweet size</a> and <a href="https://blog.x.com/engineering/en_us/a/2013/new-tweets-per-second-record-and-how" target="_blank" rel="noreferrer">X.com&rsquo;s published record of 143,199 tweets per second</a>.
     </p>
 
 </section>
@@ -478,10 +478,12 @@ const homepageFaqSchema = {
 
             return (
                 <div class="faq-item">
-                    <button class="faq-q" type="button" onclick="toggleFaq(this)" aria-expanded="false" aria-controls={answerId}>
-                        <span>{faq.question}</span>
-                        <span class="faq-arrow" aria-hidden="true">+</span>
-                    </button>
+                    <h3 class="faq-question-heading">
+                        <button class="faq-q" type="button" onclick="toggleFaq(this)" aria-expanded="false" aria-controls={answerId}>
+                            <span>{faq.question}</span>
+                            <span class="faq-arrow" aria-hidden="true">+</span>
+                        </button>
+                    </h3>
                     <div class="faq-a" id={answerId}>
                         {faq.answer.map((paragraph) => <p>{paragraph}</p>)}
                     </div>

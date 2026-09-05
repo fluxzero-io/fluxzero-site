@@ -4829,6 +4829,9 @@ section:not(.hero):not(.cta-end) {
 .proof-stat {
     position: relative;
     z-index: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
     padding: 34px 24px 32px;
     text-align: center;
     overflow: hidden;
@@ -4853,13 +4856,14 @@ section:not(.hero):not(.cta-end) {
 }
 
 .proof-stat .num {
+    order: 1;
     font-family: var(--font-display);
     position: relative;
     font-size: 48px;
     font-weight: 900;
     letter-spacing: 0;
     line-height: 1;
-    margin-bottom: 10px;
+    margin: 0 0 10px;
     color: var(--text);
     font-variant-numeric: tabular-nums;
     text-shadow: 0 14px 28px rgba(0, 0, 0, 0.3);
@@ -4891,6 +4895,7 @@ section:not(.hero):not(.cta-end) {
 }
 
 .proof-stat .label {
+    order: 2;
     position: relative;
     font-size: 12px;
     color: rgba(167, 180, 200, 0.82);
@@ -4907,6 +4912,7 @@ section:not(.hero):not(.cta-end) {
 }
 
 .proof-stat__context {
+    order: 3;
     position: relative;
     max-width: 220px;
     margin: 11px auto 0;
@@ -5017,6 +5023,11 @@ section:not(.hero):not(.cta-end) {
 
 .faq-item:first-child {
     border-top: 1px solid var(--border);
+}
+
+.faq-question-heading {
+    margin: 0;
+    font: inherit;
 }
 
 .faq-q {
@@ -5175,6 +5186,10 @@ section:not(.hero):not(.cta-end) {
 }
 
 @media (min-width: 861px) {
+    .cta-end::after {
+        width: max(1860px, 142vw);
+    }
+
     .cta-title-main,
     .cta-title-accent {
         white-space: nowrap;
@@ -5448,6 +5463,9 @@ h4 {
         top: calc(50% + 72px);
     }
     .hero {
+        --mobile-horizon-top: clamp(625px, calc(602px + 7vw), 632px);
+        min-height: 100vh;
+        min-height: 100svh;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -5488,22 +5506,29 @@ h4 {
         white-space: nowrap;
     }
     .hero-bg-core {
-        bottom: 0;
+        inset: 0;
         width: 100vw;
-        height: 560px;
+        height: 100%;
+    }
+    .hero-bg-core::before {
+        top: calc(var(--mobile-horizon-top) - 98px);
+        bottom: auto;
     }
     .hero-bg-radial {
-        bottom: 160px;
+        top: calc(var(--mobile-horizon-top) - 100px);
+        bottom: auto;
         width: min(680px, 136vw);
         height: 118px;
     }
     .hero-bg-ellipse {
-        bottom: -444px;
+        top: calc(var(--mobile-horizon-top) + 12px);
+        bottom: auto;
         width: 248vw;
         height: 600px;
     }
     .hero-bg-base {
-        bottom: -458px;
+        top: var(--mobile-horizon-top);
+        bottom: auto;
         width: 270vw;
         height: 626px;
     }
@@ -5664,6 +5689,9 @@ h4 {
         margin-bottom: 0;
         font-size: 12.5px;
     }
+    .hero-signals::before {
+        display: none;
+    }
     .hero-signal {
         white-space: normal;
     }
@@ -5719,7 +5747,7 @@ h4 {
     .proof-source {
         max-width: 330px;
         padding: 0 4px;
-        text-align: left;
+        text-align: center;
     }
 }
 

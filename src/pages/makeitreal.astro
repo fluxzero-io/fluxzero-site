@@ -517,27 +517,6 @@ const formEndpoint = `https://forminit.com/f/${formId}`;
             line-height: 1.45;
         }
 
-        .forminit-megathon-note {
-            width: 100%;
-            margin: 8px 0 0;
-            color: rgba(221, 232, 247, 0.72);
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        .forminit-megathon-note strong {
-            color: rgba(244, 247, 255, 0.94);
-            font-weight: 700;
-        }
-
-        .forminit-megathon-note span {
-            display: block;
-        }
-
-        .forminit-megathon-note[hidden] {
-            display: none;
-        }
-
         .forminit-status[data-state="success"] {
             color: #84f0cf;
         }
@@ -801,10 +780,6 @@ const formEndpoint = `https://forminit.com/f/${formId}`;
 
                 <div class="forminit-actions">
                     <button type="submit" id="forminitSubmitButton" class="btn-p forminit-submit">Send</button>
-                    <p id="megathonCreditNote" class="forminit-megathon-note" hidden>
-                        <span>We'll select the best three submissions and turn them into production-grade software for free.</span>
-                        <span>Deadline: <strong>June 26, 23:59</strong>. One app per submission.</span>
-                    </p>
                     <div id="forminitStatus" class="forminit-status" aria-live="polite"></div>
                 </div>
             </form>
@@ -818,15 +793,6 @@ const formEndpoint = `https://forminit.com/f/${formId}`;
     const form = document.getElementById("forminitContactForm");
     const status = document.getElementById("forminitStatus");
     const submitButton = document.getElementById("forminitSubmitButton");
-    const megathonCreditNote = document.getElementById("megathonCreditNote");
-
-    if (megathonCreditNote instanceof HTMLElement) {
-        const currentPath = window.location.pathname.replace(/\/$/, "");
-
-        if (currentPath === "/megathon") {
-            megathonCreditNote.hidden = false;
-        }
-    }
 
     if (form instanceof HTMLFormElement && status && submitButton instanceof HTMLButtonElement) {
         const originalButtonText = submitButton.textContent || "Send";
