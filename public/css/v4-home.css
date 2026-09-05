@@ -340,6 +340,10 @@
 }
 
 @media (max-width: 600px) {
+    .v4-home #production-gap-content {
+        background-color: #1e1e22;
+    }
+
     .v4-home .hero h1 {
         width: calc(100vw - 24px);
         max-width: 390px;
