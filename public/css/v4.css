@@ -1423,10 +1423,6 @@ h3 {
         width: calc(100% - 32px);
     }
 
-    .v4-page .nav-link-about {
-        display: none;
-    }
-
     .v4-section {
         padding: 82px 0;
     }
