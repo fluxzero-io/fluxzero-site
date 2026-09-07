@@ -156,10 +156,14 @@ html::-webkit-scrollbar {
 }
 
 .agent4-page .v4-button--primary {
-    border-color: transparent;
+    overflow: hidden;
+    border: 0;
     background: linear-gradient(90deg, #d9f5ff 0%, #2f7fba 100%);
+    background-clip: padding-box;
     box-shadow: 0 16px 38px rgba(0, 179, 255, 0.12);
     color: #170b1d;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 .agent4-page .v4-button--secondary,
@@ -172,8 +176,12 @@ html::-webkit-scrollbar {
 
 .agent4-page .v4-button--primary:hover,
 .agent4-page .v4-button--primary:focus-visible {
-    border-color: rgba(32, 134, 240, 0.3);
     box-shadow: 0 18px 42px rgba(0, 179, 255, 0.17);
+}
+
+.agent4-page .v4-button--primary:focus-visible {
+    outline: 2px solid #69c7ff;
+    outline-offset: 3px;
 }
 
 .agent4-page .v4-button--secondary:hover,
