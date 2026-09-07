@@ -150,7 +150,7 @@
 .comparison-head p {
     margin-top: 7px;
     color: var(--text-tertiary);
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1.4;
 }
 
@@ -182,7 +182,7 @@
     display: flex;
     align-items: center;
     color: rgba(244, 247, 255, 0.86);
-    font-size: 12.5px;
+    font-size: 13.5px;
     font-weight: 600;
     line-height: 1.42;
 }
@@ -190,37 +190,14 @@
 .comparison-table__cell {
     display: flex;
     align-items: center;
-    gap: 9px;
     border-left: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .comparison-table__cell strong {
     color: rgba(225, 233, 244, 0.76);
-    font-size: 11.5px;
-    font-weight: 600;
-    line-height: 1.42;
-}
-
-.comparison-table__mark {
-    display: inline-grid;
-    width: 21px;
-    height: 21px;
-    flex: 0 0 21px;
-    place-items: center;
-    border: 1px solid rgba(126, 146, 174, 0.2);
-    border-radius: 50%;
-    color: #65738a;
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1;
-}
-
-.comparison-table__mark.is-included {
-    border-color: rgba(111, 181, 255, 0.64);
-    background: rgba(61, 126, 216, 0.22);
-    color: #a9d1ff;
-    box-shadow: 0 0 15px rgba(65, 136, 228, 0.14);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.48;
 }
 
 .comparison-table__cell.is-featured { background: rgba(38, 86, 151, 0.12); }
@@ -312,13 +289,12 @@
     .comparison-disclosure dd {
         display: flex;
         align-items: center;
-        gap: 8px;
     }
 
     .comparison-disclosure dd strong {
         color: rgba(225, 233, 244, 0.76);
-        font-size: 11.5px;
-        font-weight: 600;
+        font-size: 13px;
+        font-weight: 500;
     }
 
     .comparison-disclosure.is-featured dd strong { color: #8fc2ff; }
