@@ -1,4 +1,4 @@
-export const fluxzeroBrandVersion = '6f850ace-8509-45ad-9664-4dcf381e181f';
+export const fluxzeroBrandVersion = 'ea5f28b5-8e77-4cd0-ac01-fa8b5114a472';
 
 const base = `/assets/fluxzero/brand/${fluxzeroBrandVersion}`;
 

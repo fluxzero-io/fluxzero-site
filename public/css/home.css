@@ -5220,6 +5220,11 @@ section:not(.hero):not(.cta-end) {
     z-index: 1;
 }
 
+.cta-end .section-intro,
+.cta-end .cta-btns {
+    transform: translateY(-24px);
+}
+
 .cta-end .section-intro > p,
 .cta-end > p {
     font-size: 21px;
@@ -5651,6 +5656,10 @@ h4 {
         line-height: 1.08;
         letter-spacing: -0.035em;
         text-wrap: normal;
+    }
+    .cta-end .section-intro,
+    .cta-end .cta-btns {
+        transform: translateY(-18px);
     }
     .cta-title-main {
         display: inline;
