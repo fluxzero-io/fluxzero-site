@@ -26,8 +26,8 @@ All commands are run from the root of the project, from a terminal:
 | `pnpm preview`         | Preview your build locally, before deploying     |
 | `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
 | `pnpm astro -- --help` | Get help using the Astro CLI                     |
-| `pnpm update-changelog` | Update changelog with new releases from GitHub   |
-| `pnpm update-changelog:full` | Rebuild entire changelog from GitHub           |
+| `pnpm astro sync`          | Refresh release notes from GitHub              |
+| `pnpm test:changelog`      | Run changelog import regression tests          |
 
 
 ## Environment Setup
@@ -63,8 +63,9 @@ wrangler secret put GITHUB_TOKEN
 
 The site includes automated changelog generation from GitHub releases:
 
-- **Incremental updates**: `pnpm update-changelog` fetches only new releases since the last update
-- **Full rebuild**: `pnpm update-changelog:full` rebuilds the entire changelog from GitHub  
+- **Complete synchronization**: `pnpm astro sync` fetches every GitHub release page and reconciles the cache, including edited notes and older maintenance releases. The production build runs this automatically.
+- **Prereleases**: Semantic versions such as `2.0.0-RC6` are included. Unknown tags, drafts, and versions below the cutoff are skipped without stopping pagination.
+- **Failure handling**: An API failure aborts the build without writing a partial cache. The existing optional-release setting can fall back to cached notes.
 - **Smart filtering**: Automatically skips releases without meaningful content
 - **Organized structure**: Groups releases by year and quarter with version ranges
 - **Version cutoff**: Only includes releases from v0.1192.0 onwards

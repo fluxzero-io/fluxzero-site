@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { mkdir, readdir, readFile, rm, stat, copyFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { rcompare } from 'semver';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -43,22 +44,9 @@ async function copyDirectory(source, target) {
   return mdxCount;
 }
 
-function compareReleaseVersions(a, b) {
-  const versionA = a.split('.').map(Number);
-  const versionB = b.split('.').map(Number);
-
-  for (let i = 0; i < Math.max(versionA.length, versionB.length); i++) {
-    const numA = versionA[i] || 0;
-    const numB = versionB[i] || 0;
-    if (numA !== numB) return numB - numA;
-  }
-
-  return 0;
-}
-
 function compareReleasesByDate(a, b) {
   const dateCompare = String(b.date).localeCompare(String(a.date));
-  return dateCompare || compareReleaseVersions(a.version, b.version);
+  return dateCompare || rcompare(a.version, b.version);
 }
 
 function formatReleaseDate(date) {
@@ -416,10 +404,6 @@ function groupReleasesByYear(releases) {
 
 function renderChangelogPage(releases) {
   const yearGroups = groupReleasesByYear(releases);
-  const releaseBodies = Object.fromEntries(
-    releases.map((release) => [release.version, normalizeReleaseBody(release.body)])
-  );
-  const bodyMap = JSON.stringify(releaseBodies, null, 2);
   const styles = `
   .changelog-hero {
     display: grid;
@@ -934,7 +918,7 @@ tableOfContents:
 
 import { marked } from 'marked';
 
-export const releaseBodies = ${bodyMap};
+import releaseBodies from './changelog-release-bodies.json';
 export const changelogTocScript = ${JSON.stringify(tocScript)};
 
 <style>{\`${styles}\`}</style>
@@ -962,6 +946,12 @@ async function generateChangelogPage() {
     return false;
   }
 
+  // Keep the full release history out of MDX's JavaScript-expression parser.
+  const releaseBodies = Object.fromEntries(
+    cache.releases.map((release) => [release.version, normalizeReleaseBody(release.body)])
+  );
+  await writeFile(path.join(path.dirname(changelogTargetFile), 'changelog-release-bodies.json'),
+    JSON.stringify(releaseBodies), 'utf8');
   await writeFile(changelogTargetFile, renderChangelogPage(cache.releases), 'utf8');
   return true;
 }

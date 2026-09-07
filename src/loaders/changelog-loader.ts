@@ -1,19 +1,9 @@
 import type { Loader } from 'astro/loaders';
-import { z } from 'astro:content';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 
-const GITHUB_API_BASE = 'https://api.github.com';
-const REPO = 'fluxzero-io/fluxzero-sdk-java';
+import { fetchReleases, type GitHubRelease } from './github-releases';
 const CACHE_FILE = join(process.cwd(), 'src', 'data', 'changelog-cache.json');
-
-interface GitHubRelease {
-  tag_name: string;
-  name: string;
-  body: string;
-  published_at: string;
-  html_url: string;
-}
 
 interface ChangelogRelease {
   version: string;
@@ -31,16 +21,6 @@ interface ChangelogCache {
   releases: ChangelogRelease[];
 }
 
-const changelogReleaseSchema = z.object({
-  version: z.string(),
-  date: z.string(),
-  body: z.string(),
-  url: z.string(),
-  quarterKey: z.string(),
-  year: z.number(),
-  quarter: z.string(),
-});
-
 export function changelogLoader(): Loader {
   return {
     name: 'changelog-loader',
@@ -57,71 +37,29 @@ export function changelogLoader(): Loader {
         
         // Read cached data if it exists
         const cachedData = await readCacheFile();
-        let allReleases = cachedData.releases.map(normalizeChangelogRelease);
-        const cacheWasNormalized = cachedData.releases.some((release, index) => {
-          return release.body !== allReleases[index]?.body;
-        });
-        
-        if (cachedData.releases.length > 0) {
-          logger.info(`Found ${cachedData.releases.length} cached releases (latest: ${cachedData.latestVersion})`);
-          
-          // Fetch only new releases since the cached version
-          const newGitHubReleases = await fetchReleases(cachedData.latestVersion);
-          
-          if (newGitHubReleases.length > 0) {
-            logger.info(`Found ${newGitHubReleases.length} new releases`);
-            
-            // Process new releases
-            const newReleases = newGitHubReleases.map(formatChangelogRelease);
-            
-            // Add new releases to the beginning (most recent first)
-            allReleases = [...newReleases, ...allReleases];
-            
-            // Update cache file
-            await writeCacheFile({
-              lastUpdated: new Date().toISOString(),
-              latestVersion: newReleases[0].version,
-              releases: allReleases
-            });
-            
-            logger.info(`Updated cache with ${newReleases.length} new releases`);
-          } else {
-            if (cacheWasNormalized) {
-              await writeCacheFile({
-                ...cachedData,
-                releases: allReleases
-              });
-              logger.info("Normalized cached release notes");
-            } else {
-              logger.info("No new releases found, using cached data");
-            }
-          }
-        } else {
-          logger.info("No cached data found, fetching all releases");
-          
-          // Fetch all releases
-          const gitHubReleases = await fetchReleases();
-          allReleases = gitHubReleases.map(formatChangelogRelease);
-          
-          // Create initial cache file
+        // Reconcile the complete release history. Version order is not publication
+        // order: prereleases and maintenance releases can interleave, and existing
+        // release notes can change after publication.
+        const gitHubReleases = await fetchReleases();
+        const allReleases = gitHubReleases.map(formatChangelogRelease);
+        if (JSON.stringify(cachedData.releases) !== JSON.stringify(allReleases)) {
           await writeCacheFile({
             lastUpdated: new Date().toISOString(),
             latestVersion: allReleases[0]?.version || '',
             releases: allReleases
           });
-          
-          logger.info(`Cached ${allReleases.length} releases`);
+          logger.info(`Reconciled cache with ${allReleases.length} releases`);
         }
-        
+
         // Add all releases to the store
         for (const release of allReleases) {
           const data = await parseData({
             id: release.version,
-            data: release
+            data: { ...release }
           });
           
           store.set({
-            id: data.version,
+            id: release.version,
             data
           });
         }
@@ -144,11 +82,11 @@ export function changelogLoader(): Loader {
             for (const release of cachedData.releases) {
               const data = await parseData({
                 id: release.version,
-                data: release
+                data: { ...normalizeChangelogRelease(release) }
               });
               
               store.set({
-                id: data.version,
+                id: release.version,
                 data
               });
             }
@@ -161,24 +99,6 @@ export function changelogLoader(): Loader {
   };
 }
 
-function parseVersion(tag: string): number[] {
-  const match = tag.match(/^v?(\d+)\.(\d+)\.(\d+)$/);
-  if (!match) return [0, 0, 0];
-  return [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
-}
-
-function compareVersions(a: string, b: string): number {
-  const versionA = parseVersion(a);
-  const versionB = parseVersion(b);
-  
-  for (let i = 0; i < 3; i++) {
-    if (versionA[i] !== versionB[i]) {
-      return versionA[i] - versionB[i];
-    }
-  }
-  return 0;
-}
-
 function getQuarterKey(date: string): { year: number; quarter: string; quarterNum: number } {
   const d = new Date(date);
   const year = d.getFullYear();
@@ -187,77 +107,6 @@ function getQuarterKey(date: string): { year: number; quarter: string; quarterNu
   const quarter = `Q${quarterNum}`;
   
   return { year, quarter, quarterNum };
-}
-
-async function fetchReleases(sinceVersion?: string): Promise<GitHubRelease[]> {
-  const releases: GitHubRelease[] = [];
-  let page = 1;
-  const perPage = 100;
-  
-  // Prepare headers with GitHub token if available
-  const headers: Record<string, string> = {
-    'Accept': 'application/vnd.github.v3+json',
-    'User-Agent': 'flux-docs-changelog-loader'
-  };
-  
-  if (process.env.GITHUB_TOKEN) {
-    headers['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
-    console.log('Using GitHub token for API requests');
-  } else {
-    console.warn('No GITHUB_TOKEN found, using unauthenticated requests (rate limited)');
-  }
-  
-  while (page <= 20) { // GitHub API has a limit
-    const url = `${GITHUB_API_BASE}/repos/${REPO}/releases?per_page=${perPage}&page=${page}`;
-    const response = await fetch(url, { headers });
-    
-    if (!response.ok) {
-      if (response.status === 422 && page > 10) {
-        // GitHub API pagination limit reached
-        break;
-      }
-      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
-    }
-    
-    const pageReleases: GitHubRelease[] = await response.json();
-    
-    if (pageReleases.length === 0) break;
-    
-    let foundCutoff = false;
-    for (const release of pageReleases) {
-      const cleanVersion = release.tag_name.replace(/^v/, '');
-      
-      // Stop if we've reached a version we already have cached
-      if (sinceVersion && compareVersions(sinceVersion, cleanVersion) >= 0) {
-        foundCutoff = true;
-        break;
-      }
-      
-      // Skip versions before 0.1192.0
-      if (compareVersions(cleanVersion, '0.1192.0') < 0) {
-        foundCutoff = true;
-        break;
-      }
-      
-      // Skip releases with no meaningful content
-      if (!release.body || release.body.trim().length === 0 || 
-          release.body.trim() === release.name || 
-          release.body.trim() === `Flux Capacitor ${cleanVersion}`) {
-        continue;
-      }
-      
-      releases.push(release);
-    }
-    
-    if (foundCutoff) break;
-    
-    page++;
-    
-    // Respect rate limits
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
-  
-  return releases;
 }
 
 function formatChangelogRelease(release: GitHubRelease): ChangelogRelease {

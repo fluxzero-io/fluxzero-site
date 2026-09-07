@@ -78,6 +78,10 @@ jobs:
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm install --frozen-lockfile
 
+      - name: Test changelog import
+        if: steps.sdk-docs.outputs.changed == 'true'
+        run: pnpm test:changelog
+
       - name: Build
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm build

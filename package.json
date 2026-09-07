@@ -13,7 +13,8 @@
     "build": "astro sync && pnpm sync:docs && astro build && node scripts/generate-llms.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "sync:docs": "node scripts/sync-sdk-docs.mjs"
+    "sync:docs": "node scripts/sync-sdk-docs.mjs",
+    "test:changelog": "node --import tsx --test src/loaders/*releases.test.ts"
   },
   "config": {
     "javadoc.optional": false,
@@ -40,6 +41,7 @@
     "nouislider": "^15.8.1",
     "parallax-js": "^3.1.0",
     "rellax": "^1.12.1",
+    "semver": "^7.8.5",
     "sharp": "^0.34.2",
     "shufflejs": "^6.1.2",
     "smooth-scroll": "^16.1.3",
@@ -52,6 +54,7 @@
     "@tailwindcss/cli": "^4.0.0",
     "@tailwindcss/vite": "^4.1.13",
     "@types/alpinejs": "^3.13.11",
+    "@types/semver": "^7.8.0",
     "parse5": "^7.3.0",
     "sass": "^1.80.3",
     "sass-embedded": "^1.92.0",

@@ -68,6 +68,9 @@ importers:
       rellax:
         specifier: ^1.12.1
         version: 1.12.1
+      semver:
+        specifier: ^7.8.5
+        version: 7.8.5
       sharp:
         specifier: ^0.34.2
         version: 0.34.2
@@ -99,6 +102,9 @@ importers:
       '@types/alpinejs':
         specifier: ^3.13.11
         version: 3.13.11
+      '@types/semver':
+        specifier: ^7.8.0
+        version: 7.8.0
       parse5:
         specifier: ^7.3.0
         version: 7.3.0
@@ -1717,6 +1723,9 @@ packages:
 
   '@types/sax@1.2.7':
     resolution: {integrity: sha512-rO73L89PJxeYM3s3pPPjiPgVVcymqU490g0YO5n5By0k2Erzj6tay/4lr1CHAAU4JyOWd1rpQ8bCf6cZfHU96A==}
+
+  '@types/semver@7.8.0':
+    resolution: {integrity: sha512-1mAINjtQCXXeLkJ9ehXkwOcBpqtLxiVtKhpUf83DdRNdQKV0iXZpaHYqRr7nj+wvxuJzoAmAwXI+sCNMv1CzLQ==}
 
   '@types/trusted-types@2.0.7':
     resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
@@ -3516,6 +3525,11 @@ packages:
 
   semver@7.7.2:
     resolution: {integrity: sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==}
+    engines: {node: '>=10'}
+    hasBin: true
+
+  semver@7.8.5:
+    resolution: {integrity: sha512-Y7/KDsb8LjooZpwaqGyulO6DQlksgCncchHGk+sZIY4SBvUocMBEFH5Ur1fI4dV+Jvl0w6cjvucaIi40puRioA==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -5553,6 +5567,8 @@ snapshots:
   '@types/sax@1.2.7':
     dependencies:
       '@types/node': 22.15.29
+
+  '@types/semver@7.8.0': {}
 
   '@types/trusted-types@2.0.7':
     optional: true
@@ -8042,6 +8058,8 @@ snapshots:
       object-assign: 4.1.1
 
   semver@7.7.2: {}
+
+  semver@7.8.5: {}
 
   sharp@0.33.5:
     dependencies:
