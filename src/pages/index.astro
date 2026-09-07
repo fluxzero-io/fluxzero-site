@@ -8,57 +8,57 @@ const comparisonRows = [
     {
         label: 'Built for',
         values: [
-            { status: 'Developers' },
-            { status: 'Developers' },
-            { status: 'Anyone building with AI' },
+            { status: 'Developers', kind: 'owned' },
+            { status: 'Developers', kind: 'owned' },
+            { status: 'Anyone building with AI', kind: 'included' },
         ],
     },
     {
         label: 'What you set up',
         values: [
-            { status: 'Database schema, frontend hosting, permissions & integrations' },
-            { status: 'Services, databases, networking & deployment' },
-            { status: 'No infrastructure setup' },
+            { status: 'Database, frontend hosting, permissions & integrations', kind: 'owned' },
+            { status: 'Services, databases, networking, load balancing & deployment', kind: 'owned' },
+            { status: 'No infrastructure setup', kind: 'included' },
         ],
     },
     {
-        label: 'What the cloud manages',
+        label: 'What the cloud handles',
         values: [
-            { status: 'Database, authentication & frontend infrastructure' },
-            { status: 'Application infrastructure' },
-            { status: 'Everything your product needs to run' },
+            { status: 'Auth, database & frontend hosting', kind: 'owned' },
+            { status: 'Deployments, networking & databases', kind: 'owned' },
+            { status: 'Everything your product needs to run', kind: 'included' },
         ],
     },
     {
-        label: 'When your agent adds a feature',
+        label: 'When you add a feature',
         values: [
-            { status: 'Updates product code, schemas, permissions & integrations' },
-            { status: 'Updates product code, services & infrastructure' },
-            { status: 'Just adds the feature' },
+            { status: 'Build the feature across every application layer', kind: 'owned' },
+            { status: 'Build the feature across services and infrastructure', kind: 'owned' },
+            { status: 'Define what the feature does', kind: 'included' },
         ],
     },
     {
         label: 'Security & recovery',
         values: [
-            { status: 'Shared across your application, Supabase & Vercel' },
-            { status: 'Infrastructure is managed; application security & recovery remain yours' },
-            { status: 'Handled by the cloud' },
+            { status: 'Database backups; application recovery is left to you', kind: 'owned' },
+            { status: 'Left for you to build into the application', kind: 'owned' },
+            { status: 'Handled by the cloud', kind: 'included' },
         ],
     },
     {
-        label: 'As your product grows',
+        label: 'Path to scale',
         values: [
-            { status: 'Scale components separately; may require rearchitecting' },
-            { status: 'Scale services separately; may require rearchitecting' },
-            { status: 'Scale without rebuilding or replatforming' },
+            { status: 'Requires rearchitecting or replatforming', kind: 'owned' },
+            { status: 'Requires rearchitecting or replatforming', kind: 'owned' },
+            { status: 'Scale without rebuilding', kind: 'included' },
         ],
     },
     {
         label: 'Based in',
         values: [
-            { status: 'Singapore + United States' },
-            { status: 'United States' },
-            { status: 'European Union' },
+            { status: 'Singapore + United States', kind: 'owned' },
+            { status: 'United States', kind: 'owned' },
+            { status: 'European Union', kind: 'included' },
         ],
     },
 ];
@@ -190,7 +190,7 @@ const homepageFaqSchema = {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/home.css?v=20260907-1">
-    <link rel="stylesheet" href="/css/v4-home.css?v=20260907-1">
+    <link rel="stylesheet" href="/css/v4-home.css?v=20260905-1">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
     <script type="application/ld+json" set:html={JSON.stringify(homepageFaqSchema)}></script>
 </head>
@@ -338,6 +338,9 @@ const homepageFaqSchema = {
                         const value = row.values[option.index];
                         return (
                             <div class:list={['comparison-table__cell', { 'is-featured': option.featured }]} role="cell">
+                                <span class:list={['comparison-table__mark', `is-${value.kind}`]} aria-hidden="true">
+                                    {value.kind === 'included' ? '✓' : '—'}
+                                </span>
                                 <strong>{value.status}</strong>
                             </div>
                         );
@@ -363,6 +366,9 @@ const homepageFaqSchema = {
                             <>
                                 <dt>{row.label}</dt>
                                 <dd>
+                                    <span class:list={['comparison-table__mark', `is-${row.values[option.index].kind}`]} aria-hidden="true">
+                                        {row.values[option.index].kind === 'included' ? '✓' : '—'}
+                                    </span>
                                     <strong>{row.values[option.index].status}</strong>
                                 </dd>
                             </>
