@@ -58,10 +58,10 @@ export default defineConfig({
             title: 'Fluxzero docs',
             favicon: fluxzeroBrand.faviconSvg,
             head: [
+                { tag: 'link', attrs: { rel: 'icon', href: fluxzeroBrand.faviconIco, sizes: '16x16 32x32 48x48' } },
                 { tag: 'link', attrs: { rel: 'icon', href: fluxzeroBrand.favicon32, sizes: '32x32', type: 'image/png' } },
-                { tag: 'link', attrs: { rel: 'icon', href: fluxzeroBrand.favicon16, sizes: '16x16', type: 'image/png' } },
-                { tag: 'link', attrs: { rel: 'icon', href: fluxzeroBrand.faviconIco, sizes: 'any' } },
-                { tag: 'link', attrs: { rel: 'apple-touch-icon', href: fluxzeroBrand.appleTouchIcon } },
+                { tag: 'link', attrs: { rel: 'apple-touch-icon', href: fluxzeroBrand.appleTouchIcon, sizes: '180x180' } },
+                { tag: 'link', attrs: { rel: 'mask-icon', href: fluxzeroBrand.safariPinnedTab, color: '#2f78b6' } },
                 { tag: 'link', attrs: { rel: 'manifest', href: fluxzeroBrand.webManifest } },
                 { tag: 'meta', attrs: { name: 'theme-color', content: '#05070B' } },
             ],

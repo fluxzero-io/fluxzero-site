@@ -41,11 +41,11 @@ const imageUrl = new URL(image, siteUrl).toString();
 {description && <meta name="twitter:description" content={description}>}
 <meta name="twitter:image" content={imageUrl}>
 <meta name="twitter:image:alt" content={imageAlt}>
-<link rel="icon" href={fluxzeroBrand.faviconSvg} type="image/svg+xml">
+<link rel="icon" href={fluxzeroBrand.faviconIco} sizes="16x16 32x32 48x48">
 <link rel="icon" href={fluxzeroBrand.favicon32} sizes="32x32" type="image/png">
-<link rel="icon" href={fluxzeroBrand.favicon16} sizes="16x16" type="image/png">
-<link rel="icon" href={fluxzeroBrand.faviconIco} sizes="any">
-<link rel="apple-touch-icon" href={fluxzeroBrand.appleTouchIcon}>
+<link rel="icon" href={fluxzeroBrand.faviconSvg} sizes="any" type="image/svg+xml">
+<link rel="apple-touch-icon" href={fluxzeroBrand.appleTouchIcon} sizes="180x180">
+<link rel="mask-icon" href={fluxzeroBrand.safariPinnedTab} color="#2f78b6">
 <link rel="manifest" href={fluxzeroBrand.webManifest}>
 <meta name="msapplication-config" content={fluxzeroBrand.browserConfig}>
 <meta name="theme-color" content="#05070B">
