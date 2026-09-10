@@ -11,6 +11,7 @@ const outputDirectory = join(process.cwd(), 'dist');
 const pages = [
     { path: '/', file: 'index.html' },
     { path: '/how-it-works/', file: 'how-it-works/index.html' },
+    { path: '/technical-foundation/', file: 'technical-foundation/index.html' },
     { path: '/pricing/', file: 'pricing/index.html' },
     { path: '/about/', file: 'about/index.html' },
     { path: '/get-started/', file: 'get-started/index.html' },
@@ -90,6 +91,22 @@ function normalizeInline(value) {
         .replace(/[\t\r\f ]+/g, ' ')
         .replace(/ *\n */g, '\n')
         .trim();
+}
+
+function joinRenderedParts(parts) {
+    return parts.reduce((result, part) => {
+        if (!part) return result;
+        if (!result || /\s$/.test(result) || /^\s/.test(part)) return result + part;
+
+        const startsWithClosingPunctuation = /^[,.;:!?%)\]}]/.test(part);
+        const startsWithContraction = /^[’'](?:s|t|re|ve|ll|d|m)\b/i.test(part);
+        const endsWithOpeningPunctuation = /[(\[{/]$/.test(result);
+        const separator = startsWithClosingPunctuation || startsWithContraction || endsWithOpeningPunctuation
+            ? ''
+            : ' ';
+
+        return result + separator + part;
+    }, '');
 }
 
 function shouldSkip(node) {
@@ -215,9 +232,9 @@ function accessibleName(node) {
 
 function renderChildrenInline(node, pageUrl, headingOffset) {
     return normalizeInline(
-        (node.childNodes ?? [])
-            .map((child) => renderNode(child, pageUrl, headingOffset))
-            .join(''),
+        joinRenderedParts(
+            (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset)),
+        ),
     );
 }
 
@@ -243,7 +260,9 @@ function renderNode(node, pageUrl, headingOffset = 1) {
         const hasTextLabel = normalizeInline(plainTextContent(node));
         const renderedLabel = hasTextLabel
             ? normalizeInline(
-                (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset)).join(''),
+                joinRenderedParts(
+                    (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset)),
+                ),
             )
             : '';
         const label = renderedLabel || accessibleName(node);
@@ -253,7 +272,9 @@ function renderNode(node, pageUrl, headingOffset = 1) {
 
     if (tagName === 'strong' || tagName === 'b') {
         const value = normalizeInline(
-            (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset)).join(''),
+            joinRenderedParts(
+                (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset)),
+            ),
         );
         return value ? `**${value}**` : '';
     }
@@ -326,9 +347,9 @@ function renderNode(node, pageUrl, headingOffset = 1) {
         return lines.length ? `\n\n${lines.join('\n')}\n\n` : '';
     }
 
-    const children = (node.childNodes ?? [])
-        .map((child) => renderNode(child, pageUrl, headingOffset))
-        .join('');
+    const children = joinRenderedParts(
+        (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset)),
+    );
     const value = normalizeInline(children);
 
     if (!value) return '';

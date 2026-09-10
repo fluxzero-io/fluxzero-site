@@ -703,6 +703,15 @@ html::-webkit-scrollbar {
     white-space: nowrap;
 }
 
+.agent4-layers__actions {
+    margin-top: 36px;
+    justify-content: center;
+}
+
+.agent4-layers__actions .bx {
+    font-size: 20px;
+}
+
 /* Real SDK shape */
 .agent4-code {
     min-height: 900px;
@@ -1500,6 +1509,17 @@ html::-webkit-scrollbar {
         font-size: 14px;
         line-height: 1.5;
         white-space: normal;
+    }
+
+    .agent4-layers__actions {
+        margin-top: 34px;
+    }
+
+    .agent4-layers__actions .v4-button {
+        width: 100%;
+        padding-right: 20px;
+        padding-left: 20px;
+        border-radius: 999px;
     }
 
     .agent4-code__examples {

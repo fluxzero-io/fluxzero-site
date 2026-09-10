@@ -11,261 +11,392 @@ import 'boxicons/css/boxicons.min.css';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <BrandHead
-        title="How the cloud keeps products running — Fluxzero"
-        description="How Fluxzero preserves work, protects state and data, isolates failures, and keeps application load bounded."
+        title="How Fluxzero keeps products running — Fluxzero"
+        description="See how Fluxzero gives every product the correctness, security, privacy, recovery, auditability, and scale enterprises require from day zero."
     />
     <link rel="stylesheet" href="/css/v4.css?v=20260905-1">
     <link rel="stylesheet" href="/css/agents.css?v=20260904-20">
     <link rel="stylesheet" href="/css/technical-foundation.css?v=20260904-5">
+    <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260910-2">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
-<body class="v4-page agent4-page cloud-proof-page">
+<body class="v4-page agent4-page cloud-proof-page cloud-proof-next-page">
     <MarketingHeader active="how-it-works" />
 
     <main>
-        <header class="cloud-proof-hero">
+        <header class="cloud-proof-hero cloud-proof-next-hero">
             <span class="cloud-proof-hero__sun" aria-hidden="true"></span>
             <div class="v4-shell cloud-proof-shell">
                 <p class="cloud-proof-hero__back" data-reveal><a href="/how-it-works#layers-title" data-browser-back><i class="bx bx-left-arrow-alt" aria-hidden="true"></i> Back</a></p>
+                <p class="cloud-proof-next__eyebrow" data-reveal>Technical foundation</p>
                 <h1 data-reveal data-reveal-delay="1">How Fluxzero keeps<br><span>products running.</span></h1>
-                <p class="cloud-proof-hero__lead" data-reveal data-reveal-delay="2">Read this when you want to understand why Fluxzero can take responsibility for running your product, and what makes those guarantees hold.</p>
+                <p class="cloud-proof-hero__lead" data-reveal data-reveal-delay="2">Enterprises expect critical systems to keep their promises under pressure. That standard matters long before a product reaches enterprise size. With Fluxzero, it is built into every product from day zero.</p>
             </div>
         </header>
 
-        <article class="cloud-proof-section cloud-proof-model" id="cloud-model" aria-labelledby="cloud-model-title">
+        <article class="cloud-proof-section cloud-proof-next-section" id="customer-isolation" aria-labelledby="customer-isolation-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <h2 id="cloud-model-title">Your applications connect outward<br><span>to one isolated cloud.</span></h2>
-                    <p>Every running instance opens its own outbound connection to Fluxzero. Add more instances or split a product into more applications without giving them public endpoints or creating network routes between them. The work that keeps them running stays in one shared cloud, inside a cluster isolated from other customers.</p>
+                    <p class="cloud-proof-next__number">01 · Customer isolation</p>
+                    <h2 id="customer-isolation-title">Your product is sealed off<br> <span>from every other customer.</span></h2>
+                    <p>Fluxzero runs your product in its own cluster: a dedicated environment containing its applications, data, and technical foundation. Other customers have no access to anything inside it, and their software, traffic, or failures cannot cross its boundary.</p>
                 </header>
-                <figure class="cloud-diagram model-diagram" data-reveal data-reveal-delay="1" aria-label="Multiple application instances connect outward to the Fluxzero cloud inside one isolated customer cluster">
+
+                <figure class="cloud-diagram model-diagram" data-reveal data-reveal-delay="1" aria-label="Applications and the Fluxzero foundation run inside one customer cluster">
+                    <div class="model-diagram__external"><i class="bx bx-globe" aria-hidden="true"></i><strong>External traffic</strong><span aria-hidden="true"></span></div>
                     <div class="model-diagram__frame">
                         <span class="model-diagram__cluster-label"><i class="bx bx-shield-quarter" aria-hidden="true"></i>Your isolated cluster</span>
                         <div class="model-diagram__applications">
-                            <div class="model-diagram__application">
-                                <strong>Application A</strong>
-                                <div aria-label="Three running instances">
-                                    <span><i class="bx bx-cube-alt" aria-hidden="true"></i></span>
-                                    <span><i class="bx bx-cube-alt" aria-hidden="true"></i></span>
-                                    <span><i class="bx bx-cube-alt" aria-hidden="true"></i></span>
+                            <div class="model-diagram__application model-diagram__application--three" aria-label="Application A, three running instances">
+                                <span class="model-diagram__instance model-diagram__instance--back" aria-hidden="true"></span>
+                                <span class="model-diagram__instance model-diagram__instance--middle" aria-hidden="true"></span>
+                                <div class="model-diagram__instance model-diagram__instance--front">
+                                    <span><i class="bx bx-cube-alt" aria-hidden="true"></i><strong>Application A</strong><small>3 instances</small></span>
                                 </div>
                             </div>
-                            <div class="model-diagram__application">
-                                <strong>Application B</strong>
-                                <div aria-label="Two running instances">
-                                    <span><i class="bx bx-cube-alt" aria-hidden="true"></i></span>
-                                    <span><i class="bx bx-cube-alt" aria-hidden="true"></i></span>
+                            <div class="model-diagram__application model-diagram__application--two" aria-label="Application B, two running instances">
+                                <span class="model-diagram__instance model-diagram__instance--back" aria-hidden="true"></span>
+                                <div class="model-diagram__instance model-diagram__instance--front">
+                                    <span><i class="bx bx-cube-alt" aria-hidden="true"></i><strong>Application B</strong><small>2 instances</small></span>
                                 </div>
                             </div>
                         </div>
                         <div class="model-diagram__connections" aria-hidden="true"><span></span><span></span></div>
                         <div class="model-diagram__cloud">
                             <span class="logo-mark" aria-hidden="true"></span>
-                            <strong>Fluxzero cloud</strong>
+                            <strong>Fluxzero foundation</strong>
                             <div class="model-diagram__capabilities">
+                                <span>Public edge</span>
+                                <span>Secure delivery</span>
                                 <span>State</span>
-                                <span>Delivery</span>
                                 <span>Recovery</span>
-                                <span>Security</span>
-                                <span>Scale</span>
+                                <span>Audit trail</span>
                             </div>
                         </div>
                     </div>
-                    <figcaption class="sr-only">Three instances of application A and two instances of application B each connect outward to one Fluxzero cloud inside an isolated customer cluster.</figcaption>
+                    <figcaption class="sr-only">The complete product runs inside a cluster boundary dedicated to one customer.</figcaption>
                 </figure>
             </div>
         </article>
 
-        <article class="cloud-proof-section" id="requests-survive" aria-labelledby="requests-survive-title">
+        <article class="cloud-proof-section cloud-proof-next-section" id="valid-state" aria-labelledby="valid-state-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <h2 id="requests-survive-title">Requests survive<br><span>application restarts.</span></h2>
-                    <p>An incoming request is recorded before an application is asked to handle it. The application reads from that record and stores its progress separately. If the process disconnects, the request stays available and work resumes from the last completed position.</p>
+                    <p class="cloud-proof-next__number">02 · Correctness</p>
+                    <h2 id="valid-state-title">Every action leaves the product<br><span>in a valid state.</span></h2>
+                    <p>Your product defines what must always be true. Fluxzero makes sure those rules still hold when many users act at the same time. A change either succeeds completely or leaves nothing half-finished behind.</p>
                 </header>
-                <figure class="cloud-diagram request-diagram" data-reveal data-reveal-delay="1" aria-label="A request is recorded before an application handles it, so work can resume after a restart">
-                    <div class="request-diagram__step"><i class="bx bx-log-in" aria-hidden="true"></i><span>Received</span></div>
-                    <div class="request-diagram__track" aria-hidden="true"><span></span></div>
-                    <div class="request-diagram__step request-diagram__step--record"><i class="bx bx-layer" aria-hidden="true"></i><span>Recorded</span></div>
-                    <div class="request-diagram__restart"><i class="bx bx-refresh" aria-hidden="true"></i><span>Restart</span></div>
-                    <div class="request-diagram__track" aria-hidden="true"><span></span></div>
-                    <div class="request-diagram__step"><i class="bx bx-check" aria-hidden="true"></i><span>Handled</span></div>
-                    <figcaption class="sr-only">The request remains in the durable record while the application restarts.</figcaption>
-                </figure>
-            </div>
-        </article>
-
-        <article class="cloud-proof-section" id="single-claim" aria-labelledby="single-claim-title">
-            <div class="v4-shell cloud-proof-shell">
-                <header class="cloud-proof-copy" data-reveal>
-                    <h2 id="single-claim-title">Two buyers cannot reserve<br><span>the same ticket.</span></h2>
-                    <p>When a ticket is modeled as one resource, competing commands are checked against the same current state. Only a legal change can commit. After the first reservation changes the ticket, a second reservation cannot commit against the old state.</p>
-                </header>
-                <figure class="cloud-diagram ticket-diagram" data-reveal data-reveal-delay="1" aria-label="Two buyers attempt to reserve one ticket; one reservation commits and the other is rejected">
-                    <div class="ticket-diagram__buyer"><i class="bx bx-user" aria-hidden="true"></i><span>Buyer A</span></div>
-                    <div class="ticket-diagram__path ticket-diagram__path--top" aria-hidden="true"></div>
-                    <div class="ticket-diagram__ticket"><i class="bx bx-purchase-tag-alt" aria-hidden="true"></i><strong>42</strong><span>Ticket</span></div>
-                    <div class="ticket-diagram__path ticket-diagram__path--bottom" aria-hidden="true"></div>
-                    <div class="ticket-diagram__buyer"><i class="bx bx-user" aria-hidden="true"></i><span>Buyer B</span></div>
-                    <div class="ticket-diagram__outcome ticket-diagram__outcome--accepted"><i class="bx bx-check" aria-hidden="true"></i><span>Reserved</span></div>
-                    <div class="ticket-diagram__outcome ticket-diagram__outcome--rejected"><i class="bx bx-x" aria-hidden="true"></i><span>Rejected</span></div>
-                    <figcaption class="sr-only">A single commit boundary prevents both buyers from reserving ticket 42.</figcaption>
-                </figure>
-            </div>
-        </article>
-
-        <article class="cloud-proof-section" id="isolated-work" aria-labelledby="isolated-work-title">
-            <div class="v4-shell cloud-proof-shell">
-                <header class="cloud-proof-copy" data-reveal>
-                    <h2 id="isolated-work-title">Slow work does not hold up<br><span>unrelated work.</span></h2>
-                    <p>Different kinds of work can follow the same recorded events while keeping their own progress. A slow search index can stop without holding up the product or an integration. When it returns, it continues from its own position.</p>
-                </header>
-                <figure class="cloud-diagram lanes-diagram" data-reveal data-reveal-delay="1" aria-label="Three independent workloads follow the same recorded events while one pauses">
-                    <div class="lanes-diagram__source"><i class="bx bx-layer" aria-hidden="true"></i><span>Recorded events</span></div>
-                    <div class="lanes-diagram__lane"><strong>Product</strong><span class="lane-progress lane-progress--full"></span><i class="bx bx-check" aria-hidden="true"></i></div>
-                    <div class="lanes-diagram__lane lanes-diagram__lane--paused"><strong>Search</strong><span class="lane-progress lane-progress--short"></span><i class="bx bx-pause" aria-hidden="true"></i></div>
-                    <div class="lanes-diagram__lane"><strong>Integration</strong><span class="lane-progress lane-progress--full"></span><i class="bx bx-check" aria-hidden="true"></i></div>
-                    <figcaption class="sr-only">The search workload pauses without stopping product handling or an integration.</figcaption>
-                </figure>
-            </div>
-        </article>
-
-        <article class="cloud-proof-section" id="independent-scale" aria-labelledby="independent-scale-title">
-            <div class="v4-shell cloud-proof-shell">
-                <header class="cloud-proof-copy" data-reveal>
-                    <h2 id="independent-scale-title">Heavy work can scale<br><span>on its own.</span></h2>
-                    <p>Work is divided into stable lanes. Messages for the same resource stay ordered in one lane, while unrelated resources can run in parallel. More instances can claim different lanes, so heavy work can receive more capacity without changing the product code or scaling everything else with it.</p>
-                </header>
-                <figure class="cloud-diagram scale-diagram" data-reveal data-reveal-delay="1" aria-label="One heavy workload is distributed over four workers while other workloads remain unchanged">
-                    <div class="scale-diagram__work"><i class="bx bx-loader-circle" aria-hidden="true"></i><span>Heavy work</span></div>
-                    <div class="scale-diagram__fan" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-                    <div class="scale-diagram__workers">
-                        <span><i class="bx bx-cube-alt" aria-hidden="true"></i></span>
-                        <span><i class="bx bx-cube-alt" aria-hidden="true"></i></span>
-                        <span><i class="bx bx-cube-alt" aria-hidden="true"></i></span>
-                        <span><i class="bx bx-cube-alt" aria-hidden="true"></i></span>
-                    </div>
-                    <strong>4 workers</strong>
-                    <figcaption class="sr-only">The heavy workload fans out over four independent workers.</figcaption>
-                </figure>
-            </div>
-        </article>
-
-        <article class="cloud-proof-section" id="repair-and-replay" aria-labelledby="repair-and-replay-title">
-            <div class="v4-shell cloud-proof-shell">
-                <header class="cloud-proof-copy" data-reveal>
-                    <h2 id="repair-and-replay-title">Failed work can be fixed<br><span>and replayed.</span></h2>
-                    <p>A failed handling attempt is stored with the original message, its cause and its position. After the handler is fixed, a selected range can be replayed while normal processing continues from where it was.</p>
-                </header>
-                <figure class="cloud-diagram replay-diagram" data-reveal data-reveal-delay="1" aria-label="A failed message is fixed and replayed over a selected part of the recorded timeline">
-                    <div class="replay-diagram__timeline" aria-hidden="true"><span></span></div>
+                <figure class="cloud-diagram ticket-sequence" data-reveal data-reveal-delay="1" aria-label="Buyer A reserves ticket 42 first. Buyer B then attempts to reserve it and is rejected.">
                     <ol>
-                        <li><span>1</span></li>
-                        <li><span>2</span></li>
-                        <li class="is-failed"><i class="bx bx-x" aria-hidden="true"></i><small>Failed</small></li>
-                        <li><span>4</span></li>
-                        <li><span>5</span></li>
+                        <li class="ticket-sequence__accepted">
+                            <span class="ticket-sequence__number">1</span>
+                            <span class="ticket-sequence__buyer"><i class="bx bx-user" aria-hidden="true"></i><strong>Buyer A</strong></span>
+                            <i class="bx bx-right-arrow-alt ticket-sequence__arrow" aria-hidden="true"></i>
+                            <span class="ticket-sequence__ticket"><i class="bx bx-purchase-tag-alt" aria-hidden="true"></i><strong>Ticket 42</strong><small>Available</small></span>
+                            <i class="bx bx-right-arrow-alt ticket-sequence__arrow" aria-hidden="true"></i>
+                            <span class="ticket-sequence__outcome"><i class="bx bx-check" aria-hidden="true"></i><strong>Reserved</strong></span>
+                        </li>
+                        <li class="ticket-sequence__rejected">
+                            <span class="ticket-sequence__number">2</span>
+                            <span class="ticket-sequence__buyer"><i class="bx bx-user" aria-hidden="true"></i><strong>Buyer B</strong></span>
+                            <i class="bx bx-right-arrow-alt ticket-sequence__arrow" aria-hidden="true"></i>
+                            <span class="ticket-sequence__ticket"><i class="bx bx-purchase-tag-alt" aria-hidden="true"></i><strong>Ticket 42</strong><small>Already reserved</small></span>
+                            <i class="bx bx-right-arrow-alt ticket-sequence__arrow" aria-hidden="true"></i>
+                            <span class="ticket-sequence__outcome"><i class="bx bx-x" aria-hidden="true"></i><strong>Rejected</strong></span>
+                        </li>
                     </ol>
-                    <div class="replay-diagram__fix"><i class="bx bx-wrench" aria-hidden="true"></i><span>Fix</span></div>
-                    <div class="replay-diagram__return"><i class="bx bx-revision" aria-hidden="true"></i><span>Replay</span></div>
-                    <figcaption class="sr-only">The failed third item is fixed and replayed without moving the live end of the timeline.</figcaption>
+                    <figcaption class="sr-only">Buyer A acts first and reserves ticket 42. Buyer B acts second and cannot reserve the same ticket.</figcaption>
                 </figure>
             </div>
         </article>
 
-        <article class="cloud-proof-section" id="data-removal" aria-labelledby="data-removal-title">
+        <article class="cloud-proof-section cloud-proof-next-section" id="recoverable-work" aria-labelledby="recoverable-work-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <h2 id="data-removal-title">Sensitive data can disappear<br><span>from recorded history.</span></h2>
-                    <p>The application marks a protected field once. Fluxzero separates its value from the recorded message and leaves a reference in its place. The value can be restored while the application needs it, then removed so later reads only see the redacted reference.</p>
+                    <p class="cloud-proof-next__number">03 · Reliability and recovery</p>
+                    <h2 id="recoverable-work-title">Failure does not mean<br><span>lost work.</span></h2>
+                    <p>Fluxzero records work before your application starts it. If an instance restarts, the work waits and continues when it is ready. One failing part does not stop the rest of the product.</p>
+                    <p>Fix the cause, then replay only the affected work. Failed work remains visible and recoverable without first building a separate recovery system.</p>
                 </header>
-                <figure class="cloud-diagram privacy-diagram" data-reveal data-reveal-delay="1" aria-label="A protected email field is used and then removed while the rest of the recorded message remains">
+                <div class="cloud-proof-next__diagram-stack cloud-proof-next__diagram-stack--split">
+                    <figure class="cloud-diagram request-diagram" data-reveal data-reveal-delay="1" aria-label="A request is recorded before it is handled">
+                        <div class="request-diagram__step"><i class="bx bx-log-in" aria-hidden="true"></i><span>Received</span></div>
+                        <div class="request-diagram__track" aria-hidden="true"><span></span></div>
+                        <div class="request-diagram__step request-diagram__step--record"><i class="bx bx-layer" aria-hidden="true"></i><span>Recorded</span></div>
+                        <div class="request-diagram__track" aria-hidden="true"><span></span></div>
+                        <div class="request-diagram__step"><i class="bx bx-check" aria-hidden="true"></i><span>Handled</span></div>
+                        <figcaption>Recorded first. Handled when the application is ready.</figcaption>
+                    </figure>
+                    <figure class="cloud-diagram replay-diagram" data-reveal data-reveal-delay="2" aria-label="A failed message is fixed and replayed over a selected part of the recorded timeline">
+                        <div class="replay-diagram__timeline" aria-hidden="true"><span></span></div>
+                        <ol>
+                            <li><span>1</span></li>
+                            <li><span>2</span></li>
+                            <li class="is-failed"><i class="bx bx-x" aria-hidden="true"></i><small>Failed</small></li>
+                            <li><span>4</span></li>
+                            <li><span>5</span></li>
+                        </ol>
+                        <div class="replay-diagram__fix"><i class="bx bx-wrench" aria-hidden="true"></i><span>Fix</span></div>
+                        <div class="replay-diagram__return"><i class="bx bx-revision" aria-hidden="true"></i><span>Replay</span></div>
+                        <figcaption>Repair the cause. Replay the affected range.</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section" id="privacy" aria-labelledby="privacy-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">04 · Privacy and data control</p>
+                    <h2 id="privacy-title">Keep the history.<br><span>Remove the personal data.</span></h2>
+                    <p>Sensitive values stay separate from the durable history. Trusted code can use them without exposing them in logs, and they can be permanently erased without destroying the surrounding record.</p>
+                    <p>Fluxzero protects PII and makes it erasable while you decide how it is used. Each recipient sees only the data the product allows, making data minimization and erasure practical.</p>
+                </header>
+                <figure class="cloud-diagram privacy-diagram" data-reveal data-reveal-delay="1" aria-label="A protected email value is removed while the non-sensitive order history remains">
                     <div class="privacy-diagram__record privacy-diagram__record--before">
                         <strong>Order 42</strong>
                         <span>size&nbsp; M</span>
                         <span class="is-protected"><i class="bx bx-lock-alt" aria-hidden="true"></i> email</span>
                     </div>
-                    <div class="privacy-diagram__action"><i class="bx bx-trash" aria-hidden="true"></i><span>Remove</span></div>
+                    <div class="privacy-diagram__action"><i class="bx bx-trash" aria-hidden="true"></i><span>Erase</span></div>
                     <div class="privacy-diagram__record privacy-diagram__record--after">
                         <strong>Order 42</strong>
                         <span>size&nbsp; M</span>
                         <span class="is-redacted"><i class="bx bx-check" aria-hidden="true"></i> redacted</span>
                     </div>
-                    <figcaption class="sr-only">The protected email value is removed while the non-sensitive order history remains.</figcaption>
+                    <figcaption class="sr-only">The protected email is erased while the rest of order 42 remains available.</figcaption>
                 </figure>
             </div>
         </article>
 
-        <article class="cloud-proof-section" id="private-application" aria-labelledby="private-application-title">
+        <article class="cloud-proof-section cloud-proof-next-section cloud-proof-model" id="protected" aria-labelledby="protected-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <h2 id="private-application-title">Your application can stay off<br><span>the public internet.</span></h2>
-                    <p>Public HTTP and WebSocket traffic ends at a managed cloud entrance, where identity and access rules can run before a request becomes recorded work. The application connects outward to receive it, so the standard hosted path needs no inbound application port.</p>
+                    <p class="cloud-proof-next__number">05 · Secure by design</p>
+                    <h2 id="protected-title">Your applications stay off<br> <span>the public internet.</span></h2>
+                    <p>Fluxzero receives public web traffic at its managed edge. Your applications pull incoming traffic and send outbound traffic over connections they open themselves, so none of them needs a public endpoint.</p>
+                    <p>Your applications still decide who someone is, what they may do, and whether a request is valid. Fluxzero gives every request a protected path to those product decisions.</p>
                 </header>
-                <figure class="cloud-diagram edge-diagram" data-reveal data-reveal-delay="1" aria-label="Public traffic reaches the managed cloud entrance while the application stays behind it and connects outward">
-                    <div class="edge-diagram__public"><i class="bx bx-globe" aria-hidden="true"></i><span>Public</span></div>
-                    <div class="edge-diagram__arrow" aria-hidden="true"><span></span></div>
-                    <div class="edge-diagram__cloud"><i class="bx bx-shield-quarter" aria-hidden="true"></i><strong>Cloud entrance</strong></div>
-                    <div class="edge-diagram__wall" aria-hidden="true"><span></span></div>
-                    <div class="edge-diagram__application"><i class="bx bx-cube-alt" aria-hidden="true"></i><span>Application</span><small>outbound</small></div>
-                    <figcaption class="sr-only">The cloud entrance receives public traffic; the application remains behind the boundary and connects outward.</figcaption>
-                </figure>
-            </div>
-        </article>
 
-        <article class="cloud-proof-section" id="bounded-load" aria-labelledby="bounded-load-title">
-            <div class="v4-shell cloud-proof-shell">
-                <header class="cloud-proof-copy" data-reveal>
-                    <h2 id="bounded-load-title">Traffic cannot create unlimited work<br><span>inside your application.</span></h2>
-                    <p>Fluxzero keeps explicit limits on work that is waiting or in progress. When capacity is full, more work is held back or rejected instead of growing an unbounded in-memory queue. Capacity can then be added to the workload that needs it.</p>
-                </header>
-                <figure class="cloud-diagram capacity-diagram" data-reveal data-reveal-delay="1" aria-label="Incoming work passes through a fixed capacity gate and excess work is held back">
-                    <div class="capacity-diagram__incoming" aria-hidden="true">
-                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                <figure class="cloud-diagram secure-edge-diagram" data-reveal data-reveal-delay="1" aria-label="Public traffic enters the Fluxzero foundation while applications pull and send traffic over outbound connections and expose no public endpoints">
+                    <div class="secure-edge-diagram__internet">
+                        <i class="bx bx-globe" aria-hidden="true"></i>
+                        <strong>Public internet</strong>
                     </div>
-                    <div class="capacity-diagram__gate">
-                        <strong>Capacity</strong>
-                        <div><span></span><span></span><span></span><span></span><span class="is-empty"></span><span class="is-empty"></span></div>
+                    <div class="secure-edge-diagram__public-line" aria-hidden="true"></div>
+                    <div class="secure-edge-diagram__foundation">
+                        <i class="bx bx-shield-quarter" aria-hidden="true"></i>
+                        <strong>Fluxzero foundation</strong>
+                        <small>Traffic in and out</small>
                     </div>
-                    <div class="capacity-diagram__application"><i class="bx bx-cube-alt" aria-hidden="true"></i><span>Application</span></div>
-                    <div class="capacity-diagram__held"><i class="bx bx-pause" aria-hidden="true"></i><span>Held back</span></div>
-                    <figcaption class="sr-only">Only bounded work enters the application; excess incoming work is held back.</figcaption>
+                    <div class="secure-edge-diagram__connection">
+                        <span aria-hidden="true"></span>
+                        <strong><i class="bx bx-lock-alt" aria-hidden="true"></i>Applications pull and send</strong>
+                        <small>Outbound connections</small>
+                    </div>
+                    <div class="secure-edge-diagram__cluster">
+                        <span><i class="bx bx-shield" aria-hidden="true"></i>Your cluster</span>
+                        <div><i class="bx bx-cube-alt" aria-hidden="true"></i><strong>Application A</strong><small>No public endpoint</small></div>
+                        <div><i class="bx bx-cube-alt" aria-hidden="true"></i><strong>Application B</strong><small>No public endpoint</small></div>
+                    </div>
+                    <figcaption class="sr-only">Fluxzero receives public traffic while applications stay private and pull and send traffic over connections they open themselves.</figcaption>
                 </figure>
             </div>
         </article>
 
-        <article class="cloud-proof-section" id="state-and-history" aria-labelledby="state-and-history-title">
+        <article class="cloud-proof-section cloud-proof-next-section cloud-proof-next-audit" id="audit-trail" aria-labelledby="audit-trail-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <h2 id="state-and-history-title">You can answer what is true now<br><span>and how it got there.</span></h2>
-                    <p>Fluxzero keeps the events that changed a product and the current state built from them. The current state can be filtered and searched, while correlation data connects a request to the commands, events and results it caused.</p>
+                    <p class="cloud-proof-next__number">06 · Auditability</p>
+                    <h2 id="audit-trail-title">If it is not in the audit trail,<br><span>it did not happen.</span></h2>
+                    <p>Fluxzero records every request and response, together with every internal message and interaction that followed. Their connection is preserved from the first cause to the final outcome.</p>
+                    <p>The dashboard makes that history searchable from beginning to end. It shows what happened, where progress stopped, and which part of the product was affected. The complete operational view is available without setup.</p>
+                    <p class="cloud-proof-next__statement">Current state tells you what is true. The audit trail tells you why—and everything that happened along the way.</p>
                 </header>
-                <figure class="cloud-diagram history-diagram" data-reveal data-reveal-delay="1" aria-label="Current product state is connected to the recorded sequence of changes that produced it">
-                    <div class="history-diagram__now"><small>Now</small><strong>Ticket 42</strong><span>Reserved</span></div>
-                    <div class="history-diagram__link" aria-hidden="true"><span></span></div>
-                    <ol class="history-diagram__events">
-                        <li><i class="bx bx-plus" aria-hidden="true"></i><span>Created</span></li>
-                        <li><i class="bx bx-lock-alt" aria-hidden="true"></i><span>Held</span></li>
-                        <li><i class="bx bx-check" aria-hidden="true"></i><span>Reserved</span></li>
-                    </ol>
-                    <figcaption class="sr-only">The current reservation state is linked to each recorded change that produced it.</figcaption>
+                <figure class="cloud-proof-next__audit-diagram" data-reveal data-reveal-delay="1" aria-label="An example ticket reservation audit trail is available in the Fluxzero dashboard">
+                    <div class="cloud-proof-next__audit-stream">
+                        <strong>Ticket reservation · #42</strong>
+                        <ol>
+                            <li><time>09:41:02.103</time><span><small>Request</small>Reserve ticket</span></li>
+                            <li><time>09:41:02.114</time><span><small>Event</small>Ticket reserved</span></li>
+                            <li><time>09:41:02.119</time><span><small>Response</small>Reservation confirmed</span></li>
+                        </ol>
+                    </div>
+                    <div class="cloud-proof-next__audit-line" aria-hidden="true"><span></span></div>
+                    <div class="cloud-proof-next__dashboard">
+                        <div class="cloud-proof-next__dashboard-header"><span class="logo-mark" aria-hidden="true"></span><strong>Fluxzero dashboard</strong><small>Available without setup</small></div>
+                        <div class="cloud-proof-next__dashboard-grid">
+                            <span><i class="bx bx-list-ul" aria-hidden="true"></i><strong>Audit trail</strong><small>Every interaction</small></span>
+                            <span><i class="bx bx-git-branch" aria-hidden="true"></i><strong>Traces</strong><small>Cause to outcome</small></span>
+                            <span><i class="bx bx-error" aria-hidden="true"></i><strong>Issues</strong><small>Occurrences and versions</small></span>
+                            <span><i class="bx bx-line-chart" aria-hidden="true"></i><strong>Application graph</strong><small>Flow and performance</small></span>
+                        </div>
+                    </div>
+                    <figcaption class="sr-only">A ticket reservation can be followed through each connected message in the Fluxzero dashboard.</figcaption>
                 </figure>
             </div>
         </article>
 
-        <section class="cloud-proof-sources" aria-labelledby="sources-title">
+        <article class="cloud-proof-section cloud-proof-next-section" id="bounded-traffic" aria-labelledby="bounded-traffic-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">07 · Bounded traffic</p>
+                    <h2 id="bounded-traffic-title">Traffic spikes don’t overwhelm<br> <span>your applications.</span></h2>
+                    <p>Fluxzero limits how much work reaches each application at once. Excess demand waits outside instead of flooding it, so DDoS-like overload cannot cascade through the product.</p>
+                </header>
+                <div class="cloud-proof-next__diagram-stack cloud-proof-next__scale-stack">
+                    <figure class="cloud-diagram capacity-diagram" data-reveal data-reveal-delay="1" aria-label="Incoming work passes through a bounded capacity gate">
+                        <div class="capacity-diagram__incoming" aria-hidden="true">
+                            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                        <div class="capacity-diagram__gate">
+                            <strong>Bounded capacity</strong>
+                            <div><span></span><span></span><span></span><span></span><span class="is-empty"></span><span class="is-empty"></span></div>
+                        </div>
+                        <div class="capacity-diagram__application"><i class="bx bx-cube-alt" aria-hidden="true"></i><span>Application</span></div>
+                        <div class="capacity-diagram__held"><i class="bx bx-pause" aria-hidden="true"></i><span>Held back</span></div>
+                        <figcaption>Excess demand stays outside the application.</figcaption>
+                    </figure>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section" id="independent-scale" aria-labelledby="independent-scale-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">08 · Independent scale</p>
+                    <h2 id="independent-scale-title">Each part of the product<br> <span>scales independently.</span></h2>
+                    <p>Slow work cannot stall the rest of the product. Capacity grows exactly where it is needed.</p>
+                    <p>Start as one application, then split it into separate services—or bring it together again—without changing what the product does.</p>
+                </header>
+                <div class="cloud-proof-next__diagram-stack cloud-proof-next__scale-stack">
+                    <figure class="cloud-diagram lanes-diagram" data-reveal data-reveal-delay="1" aria-label="Ticketing, payments, and notifications keep their own progress and capacity">
+                        <div class="lanes-diagram__source"><i class="bx bx-layer" aria-hidden="true"></i><span>Recorded events</span></div>
+                        <div class="lanes-diagram__lane"><strong>Ticketing</strong><span class="lane-progress lane-progress--full"></span><i class="bx bx-check" aria-hidden="true"></i></div>
+                        <div class="lanes-diagram__lane lanes-diagram__lane--paused"><strong>Payments</strong><span class="lane-progress lane-progress--short"></span><i class="bx bx-pause" aria-hidden="true"></i></div>
+                        <div class="lanes-diagram__lane"><strong>Notifications</strong><span class="lane-progress lane-progress--full"></span><i class="bx bx-check" aria-hidden="true"></i></div>
+                        <figcaption>Independent progress keeps slow work isolated.</figcaption>
+                    </figure>
+                </div>
+                <div class="cloud-proof-next__shape" data-reveal>
+                    <div><i class="bx bx-cube-alt" aria-hidden="true"></i><strong>One application</strong></div>
+                    <span><i class="bx bx-transfer-alt" aria-hidden="true"></i><small>same product behavior</small></span>
+                    <div><i class="bx bx-cube-alt" aria-hidden="true"></i><i class="bx bx-cube-alt" aria-hidden="true"></i><i class="bx bx-cube-alt" aria-hidden="true"></i><strong>Independent services</strong></div>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section" id="evolution" aria-labelledby="evolution-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">09 · Safe evolution</p>
+                    <h2 id="evolution-title">New capabilities can reach<br><span>into the product’s past.</span></h2>
+                    <p>Your product can change without abandoning the data and decisions it has already recorded. Older information remains usable by the current application, even as the product evolves.</p>
+                    <p>Add a new capability later and run it across existing history. It can work retroactively instead of starting empty on the day it is introduced.</p>
+                </header>
+                <figure class="cloud-proof-next__evolution-diagram" data-reveal data-reveal-delay="1" aria-label="A long audit trail feeds existing product capabilities and customer rewards added later">
+                    <div class="cloud-proof-next__history-heading">
+                        <span><i class="bx bx-history" aria-hidden="true"></i><strong>Audit trail</strong></span>
+                        <small>The complete product history</small>
+                    </div>
+                    <div class="cloud-proof-next__history">
+                        <span class="cloud-proof-next__history-ellipsis" aria-hidden="true">…</span>
+                        <div><small>Event</small><strong>Ticket reserved</strong></div>
+                        <div><small>Event</small><strong>Payment received</strong></div>
+                        <div><small>Event</small><strong>Reservation confirmed</strong></div>
+                        <span class="cloud-proof-next__history-ellipsis" aria-hidden="true">…</span>
+                    </div>
+                    <div class="cloud-proof-next__evolution-path"><span>Every capability can use the full history</span></div>
+                    <div class="cloud-proof-next__capabilities">
+                        <div class="cloud-proof-next__existing-capabilities">
+                            <small>Already running</small>
+                            <div>
+                                <span><i class="bx bx-calendar-check" aria-hidden="true"></i><strong>Ticket reservations</strong></span>
+                                <span><i class="bx bx-credit-card" aria-hidden="true"></i><strong>Payment processing</strong></span>
+                                <span><i class="bx bx-envelope" aria-hidden="true"></i><strong>Customer confirmations</strong></span>
+                                <span><i class="bx bx-x-circle" aria-hidden="true"></i><strong>Cancellation handling</strong></span>
+                            </div>
+                        </div>
+                        <div class="cloud-proof-next__retroactive">
+                            <small>Added later</small>
+                            <span><i class="bx bx-gift" aria-hidden="true"></i><strong>Customer rewards</strong><em>Built from all previous purchases</em></span>
+                        </div>
+                    </div>
+                    <figcaption class="sr-only">Ticket reservations, payment processing, customer confirmations, cancellation handling, and customer rewards can all use the complete product history.</figcaption>
+                </figure>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section" id="zero-ops" aria-labelledby="zero-ops-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">10 · ZeroOps cloud</p>
+                    <h2 id="zero-ops-title">Launch with production-grade<br> <span>operations already in place.</span></h2>
+                    <p>Deploy to as many clusters as your products require. From their first deployment, every cluster has the operational foundation expected of an enterprise environment. A complete monitoring view is available from the moment a cluster starts.</p>
+                    <p>Create a new cluster or duplicate one from an earlier point in time. Each cluster can be paused without losing its identity or state, while access and secrets remain protected.</p>
+                </header>
+                <figure class="cloud-proof-next__operations" data-reveal data-reveal-delay="1" aria-label="Production and acceptance clusters include operated lifecycle controls and monitoring">
+                    <div class="cloud-proof-next__operations-clusters" aria-label="Production and acceptance clusters">
+                        <div><i class="bx bx-network-chart" aria-hidden="true"></i><strong>Production</strong><small>Cluster</small></div>
+                        <div><i class="bx bx-network-chart" aria-hidden="true"></i><strong>Acceptance</strong><small>Cluster</small></div>
+                    </div>
+                    <div class="cloud-proof-next__operations-columns">
+                        <div class="cloud-proof-next__operations-lifecycle">
+                            <strong>Built into every cluster</strong>
+                            <ul>
+                                <li><i class="bx bx-rocket" aria-hidden="true"></i><span><strong>Deploy</strong><small>Start a new cluster</small></span></li>
+                                <li><i class="bx bx-pause-circle" aria-hidden="true"></i><span><strong>Pause and resume</strong><small>Preserve identity and state</small></span></li>
+                                <li><i class="bx bx-history" aria-hidden="true"></i><span><strong>Restore or duplicate</strong><small>Start from a chosen moment</small></span></li>
+                                <li><i class="bx bx-key" aria-hidden="true"></i><span><strong>Protected access</strong><small>Secrets stay encrypted</small></span></li>
+                            </ul>
+                        </div>
+                        <div class="cloud-proof-next__operations-lifecycle">
+                            <strong>Monitoring in every cluster</strong>
+                            <ul>
+                                <li><i class="bx bx-list-ul" aria-hidden="true"></i><span><strong>Audit trail</strong><small>Every message and interaction</small></span></li>
+                                <li><i class="bx bx-terminal" aria-hidden="true"></i><span><strong>Application logs</strong><small>Search all application output</small></span></li>
+                                <li><i class="bx bx-git-branch" aria-hidden="true"></i><span><strong>Traces and issues</strong><small>Follow causes and failures</small></span></li>
+                                <li><i class="bx bx-line-chart" aria-hidden="true"></i><span><strong>Insights and visualizations</strong><small>Performance and trends</small></span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <figcaption class="sr-only">Production and acceptance clusters share the same operated lifecycle and complete monitoring view.</figcaption>
+                </figure>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section cloud-proof-next-compounding" id="shared-foundation" aria-labelledby="shared-foundation-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">11 · A shared foundation</p>
+                    <h2 id="shared-foundation-title">The foundation keeps improving<br><span>underneath every product.</span></h2>
+                    <p>Every Fluxzero product runs on the same hardened foundation. When that foundation becomes stronger, every product benefits without taking on more infrastructure code.</p>
+                    <p>Your application remains the product itself. It does not become a permanent record of every technical decision made on the way to launch.</p>
+                </header>
+                <div class="cloud-proof-next__foundation" data-reveal data-reveal-delay="1" aria-label="Product behavior rests on an improving shared foundation">
+                    <div class="cloud-proof-next__product-layer"><i class="bx bx-cube-alt" aria-hidden="true"></i><span><strong>Your product</strong><small>Behavior, rules, experience</small></span></div>
+                    <div class="cloud-proof-next__foundation-layer">
+                        <strong>Fluxzero foundation</strong>
+                        <span>Correctness</span><span>Security</span><span>Privacy</span><span>Recovery</span><span>Auditability</span><span>Scale</span>
+                    </div>
+                    <p><i class="bx bx-up-arrow-alt" aria-hidden="true"></i> Continuously improved by the cloud</p>
+                </div>
+            </div>
+        </article>
+
+        <section class="cloud-proof-next-conclusion" aria-labelledby="conclusion-title">
             <div class="v4-shell cloud-proof-shell" data-reveal>
-                <h2 id="sources-title">Technical references</h2>
-                <p>The developer documentation describes the contracts, configuration and application APIs behind these behaviors.</p>
-                <nav aria-label="Technical reference links">
-                    <a href="/docs/guides/messaging/message-tracking">Durable tracking</a>
-                    <a href="/docs/guides/messaging/message-replays">Replay and recovery</a>
-                    <a href="/docs/guides/data-control-and-serialization/protecting-sensitive-data">Protected data</a>
-                    <a href="/docs/guides/modeling-and-persistence/document-index-and-search">State and search</a>
-                    <a href="/docs/guides/messaging/role-based-access-control">Access policy</a>
-                    <a href="/docs/guides/messaging/correlation-data">Causal tracing</a>
-                </nav>
+                <p class="cloud-proof-next__eyebrow">From day zero</p>
+                <h2 id="conclusion-title">Enterprise-grade guarantees.<br><span>Democratized.</span></h2>
+                <p>On an infrastructure cloud, you are responsible for these guarantees in every product. With Fluxzero, they are properties of the cloud.</p>
+                <strong>Build the product. Skip everything else.</strong>
+                <div class="cloud-proof-next__actions">
+                    <a class="v4-button v4-button--primary" href="/get-started"><span>Start building</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
+                    <a class="v4-button v4-button--secondary" href="/docs/guides"><span>Inspect the technical docs</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
+                </div>
             </div>
         </section>
+
     </main>
 
     <MarketingFooter />
