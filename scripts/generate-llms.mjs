@@ -11,6 +11,7 @@ const outputDirectory = join(process.cwd(), 'dist');
 const pages = [
     { path: '/', file: 'index.html' },
     { path: '/how-it-works/', file: 'how-it-works/index.html' },
+    { path: '/product-code/', file: 'product-code/index.html' },
     { path: '/technical-foundation/', file: 'technical-foundation/index.html' },
     { path: '/pricing/', file: 'pricing/index.html' },
     { path: '/about/', file: 'about/index.html' },
@@ -167,6 +168,20 @@ function collectRowCells(row, cells = []) {
         collectRowCells(child, cells);
     }
     return cells;
+}
+
+function collectDefinitionItems(node, list, items = []) {
+    for (const child of node.childNodes ?? []) {
+        if (child !== list && child.tagName === 'dl') continue;
+
+        if (child.tagName === 'dt' || child.tagName === 'dd') {
+            items.push(child);
+            continue;
+        }
+
+        collectDefinitionItems(child, list, items);
+    }
+    return items;
 }
 
 function markdownTableCell(node) {
@@ -327,7 +342,7 @@ function renderNode(node, pageUrl, headingOffset = 1) {
         const entries = [];
         let entry;
 
-        for (const child of node.childNodes ?? []) {
+        for (const child of collectDefinitionItems(node, node)) {
             if (child.tagName === 'dt') {
                 if (entry) entries.push(entry);
                 entry = { term: normalizeInline(textContent(child)), values: [] };

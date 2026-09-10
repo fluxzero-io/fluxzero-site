@@ -1,0 +1,18 @@
+---
+interface Props {
+    title: string;
+    label: string;
+    code: string;
+    class?: string;
+}
+
+const { title, label, code, class: className } = Astro.props;
+---
+
+<figure class:list={['product-code-panel', className]}>
+    <figcaption>
+        <strong>{title}</strong>
+        <small>{label}</small>
+    </figcaption>
+    <pre><code class="language-java" set:html={code}></code></pre>
+</figure>

@@ -1,0 +1,438 @@
+---
+import BrandHead from '../components/BrandHead.astro';
+import MarketingFooter from '../components/marketing/MarketingFooter.astro';
+import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+import ProductCodePanel from '../components/marketing/ProductCodePanel.astro';
+import 'boxicons/css/boxicons.min.css';
+
+const actionCode = `<span class="tok-annotation">@Model</span>
+<span class="tok-keyword">record</span> <span class="tok-type">Ticket</span>(
+    <span class="tok-annotation">@EntityId</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
+    <span class="tok-type">Seat</span> <span class="tok-field">seat</span>,
+    <span class="tok-annotation">@With</span> <span class="tok-type">TicketStatus</span> <span class="tok-field">status</span>,
+    <span class="tok-annotation">@With</span> <span class="tok-type">CustomerId</span> <span class="tok-field">reservedFor</span>) {}
+
+<span class="tok-keyword">record</span> <span class="tok-type">ReserveTicket</span>(
+    <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
+    <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
+    <span class="tok-type">CustomerId</span> <span class="tok-field">customerId</span>) {
+
+    <span class="tok-annotation">@AssertLegal</span>
+    <span class="tok-keyword">void</span> <span class="tok-method">assertAvailable</span>(<span class="tok-type">Ticket</span> ticket) {
+        <span class="tok-keyword">if</span> (ticket.<span class="tok-method">status</span>() != <span class="tok-type">AVAILABLE</span>) {
+            <span class="tok-keyword">throw</span> <span class="tok-type">TicketErrors</span>.alreadyReserved;
+        }
+    }
+
+    <span class="tok-annotation">@Apply</span>
+    <span class="tok-type">Ticket</span> <span class="tok-method">apply</span>(<span class="tok-type">Ticket</span> ticket) {
+        <span class="tok-keyword">return</span> ticket
+            .<span class="tok-call">withStatus</span>(<span class="tok-type">RESERVED</span>)
+            .<span class="tok-call">withReservedFor</span>(customerId);
+    }
+}`;
+
+const modelCode = `<span class="tok-annotation">@Model</span>
+<span class="tok-keyword">record</span> <span class="tok-type">Show</span>(
+    <span class="tok-annotation">@EntityId</span> <span class="tok-type">ShowId</span> <span class="tok-field">showId</span>,
+    <span class="tok-type">ShowDetails</span> <span class="tok-field">details</span>) {}
+
+<span class="tok-annotation">@Model</span>
+<span class="tok-keyword">record</span> <span class="tok-type">Ticket</span>(
+    <span class="tok-annotation">@EntityId</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
+    <span class="tok-annotation">@Parent</span>(<span class="tok-field">pathInParent</span> = <span class="tok-string">"tickets"</span>)
+    <span class="tok-type">ShowId</span> <span class="tok-field">showId</span>,
+    <span class="tok-type">Seat</span> <span class="tok-field">seat</span>,
+    <span class="tok-type">TicketStatus</span> <span class="tok-field">status</span>) {}`;
+
+const atomicCode = `<span class="tok-keyword">record</span> <span class="tok-type">ReserveTicket</span>(
+    <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
+    <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
+    <span class="tok-type">CustomerId</span> <span class="tok-field">customerId</span>) {
+
+    <span class="tok-annotation">@AssertLegal</span>
+    <span class="tok-keyword">void</span> <span class="tok-method">assertAvailable</span>(<span class="tok-type">Ticket</span> ticket) {
+        <span class="tok-keyword">if</span> (ticket.<span class="tok-method">status</span>() != <span class="tok-type">AVAILABLE</span>) {
+            <span class="tok-keyword">throw</span> <span class="tok-type">TicketErrors</span>.alreadyReserved;
+        }
+    }
+
+    <span class="tok-annotation">@Apply</span>
+    <span class="tok-type">Ticket</span> <span class="tok-method">apply</span>(<span class="tok-type">Ticket</span> ticket) {
+        <span class="tok-keyword">return</span> ticket.<span class="tok-call">reserveFor</span>(customerId);
+    }
+
+    <span class="tok-annotation">@Apply</span>
+    <span class="tok-type">Reservation</span> <span class="tok-method">apply</span>() {
+        <span class="tok-keyword">return new</span> <span class="tok-type">Reservation</span>(
+            reservationId, ticketId, customerId, <span class="tok-type">AWAITING_PAYMENT</span>);
+    }
+}`;
+
+const commandCode = `<span class="tok-keyword">record</span> <span class="tok-type">ReserveTicket</span>(
+    <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
+    <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
+    <span class="tok-type">CustomerId</span> <span class="tok-field">customerId</span>) {
+    <span class="tok-comment">// Rules and state changes live here.</span>
+}`;
+
+const queryCode = `<span class="tok-keyword">record</span> <span class="tok-type">FindAvailableTickets</span>(<span class="tok-type">ShowId</span> <span class="tok-field">showId</span>)
+        <span class="tok-keyword">implements</span> <span class="tok-type">Request</span>&lt;<span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt;&gt; {
+    <span class="tok-annotation">@HandleQuery</span>
+    <span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt; <span class="tok-method">handle</span>() {
+        <span class="tok-keyword">return</span> <span class="tok-type">Fluxzero</span>.<span class="tok-call">search</span>(<span class="tok-type">Ticket</span>.class)
+            .<span class="tok-call">whereParent</span>(showId)
+            .<span class="tok-call">match</span>(<span class="tok-type">AVAILABLE</span>, <span class="tok-string">"status"</span>)
+            .<span class="tok-call">fetchAll</span>();
+    }
+}`;
+
+const webCode = `<span class="tok-annotation">@Path</span>(<span class="tok-string">"/api/shows"</span>)
+<span class="tok-keyword">class</span> <span class="tok-type">ShowApi</span> {
+    <span class="tok-annotation">@HandlePost</span>(<span class="tok-string">"/{showId}/reservations"</span>)
+    <span class="tok-type">ReservationId</span> <span class="tok-method">reserve</span>(
+            <span class="tok-type">ShowId</span> showId, <span class="tok-type">TicketId</span> ticketId) {
+        <span class="tok-keyword">var</span> id = <span class="tok-type">Fluxzero</span>.<span class="tok-call">generateId</span>(<span class="tok-type">ReservationId</span>.class);
+        <span class="tok-type">Fluxzero</span>.<span class="tok-call">sendCommandAndWait</span>(
+            <span class="tok-keyword">new</span> <span class="tok-type">ReserveTicket</span>(id, ticketId, <span class="tok-call">currentUserId</span>()));
+        <span class="tok-keyword">return</span> id;
+    }
+}`;
+
+const eventCode = `<span class="tok-annotation">@Component</span>
+<span class="tok-keyword">class</span> <span class="tok-type">ReservationConfirmation</span> {
+    <span class="tok-annotation">@HandleEvent</span>
+    <span class="tok-keyword">void</span> <span class="tok-method">send</span>(
+            <span class="tok-type">ReserveTicket</span> event,
+            <span class="tok-type">Ticket</span> ticket) {
+        confirmationService.<span class="tok-call">send</span>(event.customerId(), ticket.seat());
+    }
+}`;
+
+const searchCode = `<span class="tok-keyword">record</span> <span class="tok-type">FindAvailableTickets</span>(
+    <span class="tok-type">ShowId</span> <span class="tok-field">showId</span>,
+    <span class="tok-type">Section</span> <span class="tok-field">section</span>)
+        <span class="tok-keyword">implements</span> <span class="tok-type">Request</span>&lt;<span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt;&gt; {
+
+    <span class="tok-annotation">@HandleQuery</span>
+    <span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt; <span class="tok-method">handle</span>() {
+        <span class="tok-keyword">return</span> <span class="tok-type">Fluxzero</span>.<span class="tok-call">search</span>(<span class="tok-type">Ticket</span>.class)
+            .<span class="tok-call">whereParent</span>(showId)
+            .<span class="tok-call">match</span>(<span class="tok-type">AVAILABLE</span>, <span class="tok-string">"status"</span>)
+            .<span class="tok-call">match</span>(section, <span class="tok-string">"seat/section"</span>)
+            .<span class="tok-call">sortBy</span>(<span class="tok-string">"seat/row"</span>)
+            .<span class="tok-call">fetch</span>(<span class="tok-literal">50</span>);
+    }
+}`;
+
+const workflowCode = `<span class="tok-annotation">@Stateful</span>
+<span class="tok-keyword">record</span> <span class="tok-type">ReservationProcess</span>(
+    <span class="tok-annotation">@EntityId</span> <span class="tok-annotation">@Association</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
+    <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
+
+    <span class="tok-annotation">@HandleEvent</span>
+    <span class="tok-keyword">static</span> <span class="tok-type">ReservationProcess</span> <span class="tok-method">start</span>(<span class="tok-type">ReserveTicket</span> event) {
+        <span class="tok-type">Fluxzero</span>.<span class="tok-call">scheduleCommand</span>(
+            <span class="tok-keyword">new</span> <span class="tok-type">ExpireReservation</span>(event.reservationId()),
+            <span class="tok-string">"expiry-"</span> + event.reservationId(),
+            <span class="tok-type">Fluxzero</span>.<span class="tok-call">currentTime</span>().plus(<span class="tok-literal">15</span>, <span class="tok-type">MINUTES</span>));
+        <span class="tok-keyword">return new</span> <span class="tok-type">ReservationProcess</span>(
+            event.reservationId(), event.ticketId());
+    }
+
+    <span class="tok-annotation">@HandleEvent</span>
+    <span class="tok-type">ReservationProcess</span> <span class="tok-method">paid</span>(<span class="tok-type">PaymentReceived</span> event) {
+        <span class="tok-type">Fluxzero</span>.<span class="tok-call">cancelSchedule</span>(<span class="tok-string">"expiry-"</span> + reservationId);
+        <span class="tok-type">Fluxzero</span>.<span class="tok-call">sendCommand</span>(
+            <span class="tok-keyword">new</span> <span class="tok-type">ConfirmReservation</span>(reservationId));
+        <span class="tok-keyword">return null</span>;
+    }
+}`;
+
+const securityCode = `<span class="tok-comment">// package-info.java</span>
+<span class="tok-annotation">@RequiresUser</span>
+<span class="tok-keyword">package</span> com.acme.ticketing;
+
+<span class="tok-comment">// CheckoutDetails.java</span>
+<span class="tok-keyword">record</span> <span class="tok-type">CheckoutDetails</span>(
+    <span class="tok-annotation">@NotBlank</span> <span class="tok-type">String</span> <span class="tok-field">name</span>,
+    <span class="tok-annotation">@Email</span> <span class="tok-annotation">@ProtectData</span> <span class="tok-type">String</span> <span class="tok-field">email</span>) {}
+
+<span class="tok-comment">// Event administration</span>
+<span class="tok-annotation">@RequiresAnyRole</span>(<span class="tok-string">"event-manager"</span>)
+<span class="tok-keyword">record</span> <span class="tok-type">CancelShow</span>(<span class="tok-type">ShowId</span> <span class="tok-field">showId</span>) {}`;
+
+const testCode = `<span class="tok-annotation">@Test</span>
+<span class="tok-keyword">void</span> <span class="tok-method">reservesAnAvailableTicket</span>() {
+    testFixture
+        .<span class="tok-call">givenCommands</span>(
+            <span class="tok-keyword">new</span> <span class="tok-type">CreateShow</span>(showId, details),
+            <span class="tok-keyword">new</span> <span class="tok-type">AddTicket</span>(ticketId, showId, seat))
+        .<span class="tok-call">whenCommand</span>(reserveTicket)
+        .<span class="tok-call">expectEvents</span>(reserveTicket);
+}
+
+<span class="tok-annotation">@Test</span>
+<span class="tok-keyword">void</span> <span class="tok-method">rejectsASecondReservation</span>() {
+    testFixture
+        .<span class="tok-call">givenCommands</span>(reserveTicket)
+        .<span class="tok-call">whenCommand</span>(anotherReservation)
+        .<span class="tok-call">expectExceptionalResult</span>(
+            <span class="tok-type">TicketErrors</span>.alreadyReserved);
+}`;
+
+const historyCode = `<span class="tok-annotation">@Component</span>
+<span class="tok-annotation">@Consumer</span>(<span class="tok-field">name</span> = <span class="tok-string">"customer-rewards"</span>, <span class="tok-field">minIndex</span> = <span class="tok-literal">0</span>)
+<span class="tok-keyword">class</span> <span class="tok-type">CustomerRewards</span> {
+    <span class="tok-annotation">@HandleEvent</span>
+    <span class="tok-keyword">void</span> <span class="tok-method">reward</span>(<span class="tok-type">ConfirmReservation</span> event) {
+        <span class="tok-type">Fluxzero</span>.<span class="tok-call">sendCommand</span>(
+            <span class="tok-keyword">new</span> <span class="tok-type">AddRewardPoints</span>(
+                event.customerId(), <span class="tok-literal">100</span>));
+    }
+}`;
+
+const revisionCode = `<span class="tok-annotation">@Revision</span>(<span class="tok-literal">2</span>)
+<span class="tok-annotation">@Model</span>
+<span class="tok-keyword">record</span> <span class="tok-type">Ticket</span>(
+    <span class="tok-annotation">@EntityId</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
+    <span class="tok-type">Seat</span> <span class="tok-field">seat</span>,
+    <span class="tok-type">TicketStatus</span> <span class="tok-field">status</span>) {}
+
+<span class="tok-annotation">@Upcast</span>(
+    <span class="tok-field">type</span> = <span class="tok-string">"com.acme.ticketing.Ticket"</span>,
+    <span class="tok-field">revision</span> = <span class="tok-literal">1</span>)
+<span class="tok-type">JsonNode</span> <span class="tok-method">addStatus</span>(<span class="tok-type">ObjectNode</span> ticket) {
+    ticket.<span class="tok-call">put</span>(<span class="tok-string">"status"</span>, <span class="tok-string">"AVAILABLE"</span>);
+    <span class="tok-keyword">return</span> ticket;
+}`;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <BrandHead
+        title="Product code without the technical scaffolding — Fluxzero"
+        description="See how Fluxzero applications express actions, state, rules, workflows, policy, and tests without rebuilding the technical layers around the product."
+    />
+    <link rel="stylesheet" href="/css/v4.css?v=20260905-1">
+    <link rel="stylesheet" href="/css/technical-foundation.css?v=20260904-5">
+    <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260910-11">
+    <link rel="stylesheet" href="/css/product-code.css?v=20260911-1">
+    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
+</head>
+<body class="v4-page cloud-proof-page cloud-proof-next-page product-code-page">
+    <MarketingHeader active="how-it-works" />
+
+    <main>
+        <header class="cloud-proof-hero cloud-proof-next-hero product-code-hero">
+            <div class="v4-shell cloud-proof-shell product-code-hero__layout">
+                <div class="product-code-hero__copy">
+                    <p class="cloud-proof-hero__back" data-reveal><a href="/how-it-works#behavior-title" data-browser-back><i class="bx bx-left-arrow-alt" aria-hidden="true"></i> Back</a></p>
+                    <p class="cloud-proof-next__eyebrow" data-reveal>Product code</p>
+                    <h1 data-reveal data-reveal-delay="1">Code for the product.<br><span>Not the machinery around it.</span></h1>
+                    <p class="cloud-proof-hero__lead" data-reveal data-reveal-delay="2">Fluxzero removes the technical layers that normally dominate an application. What remains describes actions, state, rules, workflows, and outcomes—the things your customers actually experience.</p>
+                </div>
+                <div class="product-code-hero__visual" data-reveal data-reveal-delay="2" aria-hidden="true" data-llms-exclude>
+                    <span class="product-code-hero__intent">Reserve two adjacent seats</span>
+                    <i class="bx bx-down-arrow-alt"></i>
+                    <div>
+                        <span><em>@Model</em> Ticket</span>
+                        <span><em>@AssertLegal</em> available</span>
+                        <span><em>@Apply</em> reserve</span>
+                        <span><em>@Test</em> no double booking</span>
+                    </div>
+                    <small>Only product decisions remain</small>
+                </div>
+            </div>
+        </header>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="intent" aria-labelledby="intent-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">01 · Intent first</p>
+                    <h2 id="intent-title">Start with what the customer<br><span>is trying to do.</span></h2>
+                    <p>A Fluxzero application begins with an action and the product rules around it. Your agent does not have to invent repositories, services, transactions, or event plumbing before it can express a useful feature.</p>
+                    <p>The action below says everything important about reserving a ticket: what it needs, when it is allowed, and how the product changes.</p>
+                </header>
+                <div class="product-code-proof" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="ReserveTicket.java" label="Action, rule, change" code={actionCode} />
+                    <dl class="product-code-proof__notes">
+                        <div><dt>Intent</dt><dd>Reserve a specific ticket for a customer.</dd></div>
+                        <div><dt>Rule</dt><dd>A reserved ticket cannot be reserved again.</dd></div>
+                        <div><dt>Outcome</dt><dd>The accepted action becomes part of the product history.</dd></div>
+                    </dl>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="domain-state" aria-labelledby="domain-state-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">02 · Domain state</p>
+                    <h2 id="domain-state-title">State has the same shape<br><span>as the product.</span></h2>
+                    <p>Shows contain tickets because that is how the product works—not because a database schema demands it. Typed identities and relationships keep the model explicit while Fluxzero owns persistence, history, and loading.</p>
+                </header>
+                <div class="product-code-proof product-code-proof--model" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="TicketingModel.java" label="Two independent models" code={modelCode} />
+                    <div class="product-code-model" aria-label="A show is related to its tickets">
+                        <div><i class="bx bx-calendar-event" aria-hidden="true"></i><strong>Show</strong><small>Its own lifecycle</small></div>
+                        <span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i><small>tickets</small></span>
+                        <div><i class="bx bx-purchase-tag-alt" aria-hidden="true"></i><strong>Ticket</strong><small>Independently changed</small></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="atomic-actions" aria-labelledby="atomic-actions-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">03 · Correct by construction</p>
+                    <h2 id="atomic-actions-title">One action changes everything it must.<br><span>Or nothing at all.</span></h2>
+                    <p>Reserving a ticket changes the ticket and creates a reservation. Both changes belong to one product decision, so they are expressed together and committed together. Concurrent customers cannot leave the product half-updated.</p>
+                </header>
+                <div class="product-code-proof product-code-proof--atomic" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="ReserveTicket.java" label="One atomic decision" code={atomicCode} />
+                    <ol class="product-code-commit" aria-label="The reservation rule is checked before the ticket and reservation change together">
+                        <li><span>1</span><strong>Check availability</strong></li>
+                        <li><span>2</span><strong>Reserve ticket</strong></li>
+                        <li><span>3</span><strong>Create reservation</strong></li>
+                        <li class="is-commit"><i class="bx bx-check" aria-hidden="true"></i><strong>One commit</strong></li>
+                    </ol>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="interactions" aria-labelledby="interactions-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">04 · One product language</p>
+                    <h2 id="interactions-title">Every way into the product<br><span>speaks the same language.</span></h2>
+                    <p>Commands change the product. Queries answer product questions. Events trigger reactions. HTTP is only a thin entrance to the same actions. You do not need a different architecture for every kind of interaction.</p>
+                </header>
+                <div class="product-code-interactions" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="ReserveTicket.java" label="Command" code={commandCode} />
+                    <ProductCodePanel title="FindAvailableTickets.java" label="Query" code={queryCode} />
+                    <ProductCodePanel title="ShowApi.java" label="Web entrance" code={webCode} />
+                    <ProductCodePanel title="ReservationConfirmation.java" label="Event reaction" code={eventCode} />
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="search" aria-labelledby="search-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">05 · Product questions</p>
+                    <h2 id="search-title">Ask the product.<br><span>Not the database.</span></h2>
+                    <p>Search uses the model’s own names and relationships. The code asks for available tickets in a section of a show; there is no database client, mapping layer, or SQL query to keep in sync with the product.</p>
+                </header>
+                <div class="product-code-proof product-code-proof--query" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="FindAvailableTickets.java" label="Product query" code={searchCode} />
+                    <div class="product-code-query" aria-label="The query selects a show, available status, a section, and seat row order">
+                        <span><small>Within</small><strong>Show</strong></span>
+                        <i class="bx bx-plus" aria-hidden="true"></i>
+                        <span><small>Status</small><strong>Available</strong></span>
+                        <i class="bx bx-plus" aria-hidden="true"></i>
+                        <span><small>Section</small><strong>Balcony</strong></span>
+                        <i class="bx bx-right-arrow-alt" aria-hidden="true"></i>
+                        <span class="is-result"><small>Order by</small><strong>Seat row</strong></span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="workflows" aria-labelledby="workflows-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">06 · Durable workflows</p>
+                    <h2 id="workflows-title">Long-running work still reads<br><span>like a product workflow.</span></h2>
+                    <p>A reservation can wait for payment, time out, and continue after a restart without becoming a tangle of jobs, queues, and workflow tables. The code names the moments that matter and remembers only the state the workflow needs.</p>
+                </header>
+                <div class="product-code-proof product-code-proof--workflow" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="ReservationProcess.java" label="Stateful workflow" code={workflowCode} />
+                    <ol class="product-code-flow" aria-label="Reserve a ticket, wait for payment, then confirm or expire the reservation">
+                        <li><i class="bx bx-purchase-tag-alt" aria-hidden="true"></i><strong>Reserved</strong></li>
+                        <li><i class="bx bx-time-five" aria-hidden="true"></i><strong>Await payment</strong><small>15 minutes</small></li>
+                        <li><i class="bx bx-check-shield" aria-hidden="true"></i><strong>Confirm</strong><small>or expire</small></li>
+                    </ol>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="policy" aria-labelledby="policy-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">07 · Product policy</p>
+                    <h2 id="policy-title">Security is expressed as<br><span>part of the product.</span></h2>
+                    <p>Authentication can cover a whole product domain. Roles protect sensitive actions. Validation describes valid input, while personal data can be kept out of the durable message stream. The policy stays visible beside the behavior it protects.</p>
+                </header>
+                <div class="product-code-proof product-code-proof--policy" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="TicketingPolicy.java" label="Access, validation, data" code={securityCode} />
+                    <dl class="product-code-policy">
+                        <div><dt><i class="bx bx-user-check" aria-hidden="true"></i> Signed in</dt><dd>The ticketing domain requires a user by default.</dd></div>
+                        <div><dt><i class="bx bx-badge-check" aria-hidden="true"></i> Authorized</dt><dd>Only event managers can cancel a show.</dd></div>
+                        <div><dt><i class="bx bx-lock-alt" aria-hidden="true"></i> Protected</dt><dd>The customer email stays outside the durable stream.</dd></div>
+                    </dl>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="tests" aria-labelledby="tests-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">08 · Behavior as proof</p>
+                    <h2 id="tests-title">Tests read like real<br><span>product scenarios.</span></h2>
+                    <p>Set up what already happened, perform one customer action, and assert the outcome. The same fixture waits for asynchronous reactions and supplies the runtime around the test, so there is no infrastructure to mock.</p>
+                </header>
+                <div class="product-code-proof product-code-proof--test" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="ReserveTicketTest.java" label="Given, when, then" code={testCode} />
+                    <div class="product-code-scenarios" role="list" aria-label="Reservation scenarios">
+                        <div role="listitem"><i class="bx bx-check-circle" aria-hidden="true"></i><span><strong>Available ticket</strong><small>Reservation accepted</small></span></div>
+                        <div role="listitem"><i class="bx bx-x-circle" aria-hidden="true"></i><span><strong>Already reserved</strong><small>Second customer rejected</small></span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="evolution" aria-labelledby="evolution-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">09 · Safe evolution</p>
+                    <h2 id="evolution-title">New code can start at the beginning<br><span>of the product’s story.</span></h2>
+                    <p>Add customer rewards after the first million reservations and let the new capability process the complete history. When data shapes change, explicit revisions keep older information readable by the current code.</p>
+                </header>
+                <div class="product-code-history" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="CustomerRewards.java" label="New capability, full history" code={historyCode} />
+                    <div class="product-code-history__line" aria-label="The complete reservation history feeds customer rewards added later">
+                        <span aria-hidden="true">…</span>
+                        <span><small>Reservation</small><strong>#1</strong></span>
+                        <span><small>Reservation</small><strong>#500k</strong></span>
+                        <span><small>Reservation</small><strong>#1m</strong></span>
+                        <i class="bx bx-right-arrow-alt" aria-hidden="true"></i>
+                        <span class="is-new"><small>Added now</small><strong>Rewards</strong></span>
+                    </div>
+                    <ProductCodePanel title="TicketRevision.java" label="Old data, current shape" code={revisionCode} />
+                </div>
+            </div>
+        </article>
+
+        <section class="cloud-proof-next-conclusion product-code-conclusion" aria-labelledby="conclusion-title">
+            <div class="v4-shell cloud-proof-shell" data-reveal>
+                <p class="cloud-proof-next__eyebrow">The result</p>
+                <h2 id="conclusion-title">The product remains.<br><span>The scaffolding disappears.</span></h2>
+                <p>As the product grows from one action to many applications, the code keeps describing the same product concepts. Fluxzero absorbs the persistence, messaging, coordination, and runtime architecture around them.</p>
+                <strong>Give your agent product intent. Get product code back.</strong>
+                <div class="cloud-proof-next__actions">
+                    <a class="v4-button v4-button--primary" href="/get-started"><span>Start building</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
+                    <a class="v4-button v4-button--secondary" href="/docs"><span>Inspect the SDK</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <MarketingFooter />
+    <script src="/js/v4.js?v=20260904-3" defer></script>
+</body>
+</html>

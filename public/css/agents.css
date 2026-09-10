@@ -760,6 +760,36 @@ html::-webkit-scrollbar {
     font-size: 20px;
 }
 
+.agent4-code__explore {
+    display: inline-flex;
+    width: fit-content;
+    min-height: 50px;
+    padding: 0 20px;
+    grid-column: 2;
+    align-items: center;
+    gap: 11px;
+    border: 1px solid rgba(118, 184, 255, 0.25);
+    border-radius: 9px;
+    background: rgba(11, 24, 38, 0.72);
+    color: #c1d8eb;
+    font-size: 14px;
+    font-weight: 700;
+    transition: border-color 180ms ease, background 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.agent4-code__explore:hover,
+.agent4-code__explore:focus-visible {
+    border-color: rgba(108, 179, 241, 0.52);
+    background: rgba(17, 42, 66, 0.78);
+    color: #e6f4ff;
+    transform: translateY(-1px);
+}
+
+.agent4-code__explore .bx {
+    color: #71b9f7;
+    font-size: 20px;
+}
+
 .agent4-code__sample,
 .agent4-code__test {
     overflow: hidden;
@@ -1314,6 +1344,10 @@ html::-webkit-scrollbar {
         padding-top: 0;
     }
 
+    .agent4-code__explore {
+        grid-column: 1;
+    }
+
     .agent4-code__copy p {
         max-width: 700px;
     }
@@ -1524,6 +1558,14 @@ html::-webkit-scrollbar {
 
     .agent4-code__examples {
         grid-template-columns: 1fr;
+    }
+
+    .agent4-code__explore {
+        width: 100%;
+        padding-right: 17px;
+        padding-left: 17px;
+        justify-content: center;
+        text-align: center;
     }
 
     .agent4-code pre,
