@@ -17,7 +17,7 @@ import 'boxicons/css/boxicons.min.css';
     <link rel="stylesheet" href="/css/v4.css?v=20260905-1">
     <link rel="stylesheet" href="/css/agents.css?v=20260904-20">
     <link rel="stylesheet" href="/css/technical-foundation.css?v=20260904-5">
-    <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260910-2">
+    <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260910-11">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
 <body class="v4-page agent4-page cloud-proof-page cloud-proof-next-page">
@@ -37,27 +37,28 @@ import 'boxicons/css/boxicons.min.css';
         <article class="cloud-proof-section cloud-proof-next-section" id="customer-isolation" aria-labelledby="customer-isolation-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">01 · Customer isolation</p>
-                    <h2 id="customer-isolation-title">Your product is sealed off<br> <span>from every other customer.</span></h2>
-                    <p>Fluxzero runs your product in its own cluster: a dedicated environment containing its applications, data, and technical foundation. Other customers have no access to anything inside it, and their software, traffic, or failures cannot cross its boundary.</p>
+                    <p class="cloud-proof-next__number">01 · Foundation by default</p>
+                    <h2 id="customer-isolation-title">Every cluster comes with<br><span>the full Fluxzero foundation.</span></h2>
+                    <p>A cluster is a dedicated environment containing a product’s applications, data, and technical foundation. Every cluster is isolated from every other cluster, and its applications stay off the public internet.</p>
+                    <p>From the first deployment, its foundation provides correctness, security, privacy, recovery, auditability, and controlled scale. These guarantees are built into every cluster—not added later by the product team.</p>
                 </header>
 
-                <figure class="cloud-diagram model-diagram" data-reveal data-reveal-delay="1" aria-label="Applications and the Fluxzero foundation run inside one customer cluster">
+                <figure class="cloud-diagram model-diagram" data-reveal data-reveal-delay="1" aria-label="Applications run inside a dedicated product cluster with the complete Fluxzero foundation">
                     <div class="model-diagram__external"><i class="bx bx-globe" aria-hidden="true"></i><strong>External traffic</strong><span aria-hidden="true"></span></div>
                     <div class="model-diagram__frame">
-                        <span class="model-diagram__cluster-label"><i class="bx bx-shield-quarter" aria-hidden="true"></i>Your isolated cluster</span>
+                        <span class="model-diagram__cluster-label"><i class="bx bx-shield-quarter" aria-hidden="true"></i>Your product cluster</span>
                         <div class="model-diagram__applications">
-                            <div class="model-diagram__application model-diagram__application--three" aria-label="Application A, three running instances">
+                            <div class="model-diagram__application model-diagram__application--three" aria-label="Application A, three running tasks">
                                 <span class="model-diagram__instance model-diagram__instance--back" aria-hidden="true"></span>
                                 <span class="model-diagram__instance model-diagram__instance--middle" aria-hidden="true"></span>
                                 <div class="model-diagram__instance model-diagram__instance--front">
-                                    <span><i class="bx bx-cube-alt" aria-hidden="true"></i><strong>Application A</strong><small>3 instances</small></span>
+                                    <span><i class="bx bx-cube-alt" aria-hidden="true"></i><strong>Application A</strong><small>3 tasks</small></span>
                                 </div>
                             </div>
-                            <div class="model-diagram__application model-diagram__application--two" aria-label="Application B, two running instances">
+                            <div class="model-diagram__application model-diagram__application--two" aria-label="Application B, two running tasks">
                                 <span class="model-diagram__instance model-diagram__instance--back" aria-hidden="true"></span>
                                 <div class="model-diagram__instance model-diagram__instance--front">
-                                    <span><i class="bx bx-cube-alt" aria-hidden="true"></i><strong>Application B</strong><small>2 instances</small></span>
+                                    <span><i class="bx bx-cube-alt" aria-hidden="true"></i><strong>Application B</strong><small>2 tasks</small></span>
                                 </div>
                             </div>
                         </div>
@@ -66,15 +67,16 @@ import 'boxicons/css/boxicons.min.css';
                             <span class="logo-mark" aria-hidden="true"></span>
                             <strong>Fluxzero foundation</strong>
                             <div class="model-diagram__capabilities">
-                                <span>Public edge</span>
-                                <span>Secure delivery</span>
-                                <span>State</span>
+                                <span>Correctness</span>
+                                <span>Security</span>
+                                <span>Privacy</span>
                                 <span>Recovery</span>
-                                <span>Audit trail</span>
+                                <span>Auditability</span>
+                                <span>Scale</span>
                             </div>
                         </div>
                     </div>
-                    <figcaption class="sr-only">The complete product runs inside a cluster boundary dedicated to one customer.</figcaption>
+                    <figcaption class="sr-only">Every cluster isolates one product and includes the complete Fluxzero foundation from its first deployment.</figcaption>
                 </figure>
             </div>
         </article>
@@ -150,7 +152,7 @@ import 'boxicons/css/boxicons.min.css';
                     <p class="cloud-proof-next__number">04 · Privacy and data control</p>
                     <h2 id="privacy-title">Keep the history.<br><span>Remove the personal data.</span></h2>
                     <p>Sensitive values stay separate from the durable history. Trusted code can use them without exposing them in logs, and they can be permanently erased without destroying the surrounding record.</p>
-                    <p>Fluxzero protects PII and makes it erasable while you decide how it is used. Each recipient sees only the data the product allows, making data minimization and erasure practical.</p>
+                    <p>Fluxzero protects <abbr class="cloud-proof-term" title="Personally identifiable information: data that can identify a person directly or indirectly, such as an email address.">PII data</abbr> and makes it erasable while you decide how it is used. Each recipient sees only the data the product allows. These controls make data minimization and erasure practical and support requirements under <abbr class="cloud-proof-term" title="The European Union’s General Data Protection Regulation, governing how organizations collect, use, and protect personal data.">GDPR</abbr> in Europe and California’s <abbr class="cloud-proof-term" title="The California Consumer Privacy Act, amended by the CPRA, including rights to access, delete, and limit the use of personal information.">CCPA</abbr>.</p>
                 </header>
                 <figure class="cloud-diagram privacy-diagram" data-reveal data-reveal-delay="1" aria-label="A protected email value is removed while the non-sensitive order history remains">
                     <div class="privacy-diagram__record privacy-diagram__record--before">
@@ -332,10 +334,10 @@ import 'boxicons/css/boxicons.min.css';
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">10 · ZeroOps cloud</p>
                     <h2 id="zero-ops-title">Launch with production-grade<br> <span>operations already in place.</span></h2>
-                    <p>Deploy to as many clusters as your products require. From their first deployment, every cluster has the operational foundation expected of an enterprise environment. A complete monitoring view is available from the moment a cluster starts.</p>
+                    <p>Deploy to as many clusters as your products require. Fluxzero operates every one from its first deployment, with point-in-time recovery backed by automated backups and a complete monitoring view available as soon as it starts.</p>
                     <p>Create a new cluster or duplicate one from an earlier point in time. Each cluster can be paused without losing its identity or state, while access and secrets remain protected.</p>
                 </header>
-                <figure class="cloud-proof-next__operations" data-reveal data-reveal-delay="1" aria-label="Production and acceptance clusters include operated lifecycle controls and monitoring">
+                <figure class="cloud-proof-next__operations" data-reveal data-reveal-delay="1" aria-label="Production and acceptance clusters include operated lifecycle controls, point-in-time recovery backed by automated backups, and monitoring">
                     <div class="cloud-proof-next__operations-clusters" aria-label="Production and acceptance clusters">
                         <div><i class="bx bx-network-chart" aria-hidden="true"></i><strong>Production</strong><small>Cluster</small></div>
                         <div><i class="bx bx-network-chart" aria-hidden="true"></i><strong>Acceptance</strong><small>Cluster</small></div>
@@ -346,7 +348,7 @@ import 'boxicons/css/boxicons.min.css';
                             <ul>
                                 <li><i class="bx bx-rocket" aria-hidden="true"></i><span><strong>Deploy</strong><small>Start a new cluster</small></span></li>
                                 <li><i class="bx bx-pause-circle" aria-hidden="true"></i><span><strong>Pause and resume</strong><small>Preserve identity and state</small></span></li>
-                                <li><i class="bx bx-history" aria-hidden="true"></i><span><strong>Restore or duplicate</strong><small>Start from a chosen moment</small></span></li>
+                                <li><i class="bx bx-revision" aria-hidden="true"></i><span><strong>Point-in-time recovery</strong><small>Automated backups; restore or duplicate</small></span></li>
                                 <li><i class="bx bx-key" aria-hidden="true"></i><span><strong>Protected access</strong><small>Secrets stay encrypted</small></span></li>
                             </ul>
                         </div>
@@ -360,7 +362,7 @@ import 'boxicons/css/boxicons.min.css';
                             </ul>
                         </div>
                     </div>
-                    <figcaption class="sr-only">Production and acceptance clusters share the same operated lifecycle and complete monitoring view.</figcaption>
+                    <figcaption class="sr-only">Production and acceptance clusters share the same operated lifecycle, point-in-time recovery backed by automated backups, and complete monitoring view.</figcaption>
                 </figure>
             </div>
         </article>

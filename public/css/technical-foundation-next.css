@@ -92,6 +92,16 @@
     line-height: 1.75;
 }
 
+.cloud-proof-term {
+    color: inherit;
+    cursor: help;
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    text-decoration-thickness: 1px;
+    text-decoration-color: rgba(132, 190, 239, 0.72);
+    text-underline-offset: 4px;
+}
+
 .cloud-proof-next-section .cloud-proof-copy > p + p {
     margin-top: 17px;
 }
@@ -204,8 +214,8 @@
 .secure-edge-diagram__connection > span {
     position: absolute;
     top: 65%;
-    right: 8px;
-    left: 8px;
+    right: 0;
+    left: 22px;
     height: 6px;
     background: linear-gradient(90deg, #62b2f6, rgba(84, 166, 238, 0.3));
 }
@@ -342,6 +352,59 @@
 .cloud-proof-next-page .request-diagram__step,
 .cloud-proof-next-page .request-diagram__track {
     grid-row: 1;
+}
+
+@media (min-width: 721px) {
+    .cloud-proof-next-page .request-diagram__track {
+        width: calc(100% + 6px);
+        justify-self: end;
+    }
+
+    .secure-edge-diagram__connection {
+        min-height: 76px;
+        justify-content: flex-start;
+    }
+
+    .secure-edge-diagram__connection > span {
+        top: calc(50% - 3px);
+        bottom: auto;
+        background: linear-gradient(90deg, #62b2f6, rgba(84, 166, 238, 0.65));
+    }
+
+    .secure-edge-diagram__connection strong,
+    .secure-edge-diagram__connection small {
+        background: transparent;
+        transform: translateY(-8px);
+    }
+}
+
+.cloud-proof-next-page .replay-diagram__timeline {
+    top: 92px;
+}
+
+.cloud-proof-next-page .privacy-diagram__action {
+    isolation: isolate;
+}
+
+.cloud-proof-next-page .privacy-diagram__action::before,
+.cloud-proof-next-page .privacy-diagram__action::after {
+    z-index: 0;
+    width: calc(50% + 28px);
+}
+
+.cloud-proof-next-page .privacy-diagram__action > * {
+    position: relative;
+    z-index: 1;
+}
+
+.cloud-proof-next-page .privacy-diagram__action::before {
+    right: 50%;
+    background: linear-gradient(90deg, rgba(93, 173, 243, 0.45), rgba(93, 173, 243, 0.06));
+}
+
+.cloud-proof-next-page .privacy-diagram__action::after {
+    left: 50%;
+    background: linear-gradient(90deg, rgba(93, 173, 243, 0.06), rgba(93, 173, 243, 0.45));
 }
 
 .model-diagram__external span {
@@ -482,10 +545,6 @@
 
 .model-diagram__capabilities {
     grid-template-columns: repeat(2, 1fr);
-}
-
-.model-diagram__capabilities span:last-child {
-    grid-column: 1 / -1;
 }
 
 .ticket-sequence {
@@ -1521,6 +1580,10 @@
         grid-row: 4;
     }
 
+    .cloud-proof-next-page .replay-diagram__timeline {
+        top: 71px;
+    }
+
     .cloud-proof-next__proof,
     .cloud-proof-next__facts {
         grid-template-columns: 1fr;
@@ -1557,6 +1620,7 @@
 
     .model-diagram {
         padding-top: 76px;
+        padding-bottom: 76px;
     }
 
     .secure-edge-diagram {
@@ -1606,7 +1670,7 @@
     }
 
     .secure-edge-diagram__connection > span {
-        top: 0;
+        top: 20px;
         right: auto;
         bottom: 0;
         left: 50%;
@@ -1639,12 +1703,17 @@
     }
 
     .model-diagram__external {
-        top: 18px;
-        right: 30px;
+        top: auto;
+        right: auto;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .model-diagram__external span {
-        height: 70px;
+        top: auto;
+        bottom: calc(100% + 6px);
+        height: 56px;
     }
 
     .model-diagram__application {
@@ -1663,11 +1732,15 @@
         position: relative;
         display: grid;
         width: 100%;
-        height: 62px;
+        height: 86px;
         padding: 0;
         grid-template-columns: 1fr;
         grid-template-rows: 1fr;
         justify-items: center;
+    }
+
+    .model-diagram__frame {
+        grid-template-rows: auto 86px auto;
     }
 
     .model-diagram__connections span,
@@ -1677,8 +1750,8 @@
         right: auto;
         left: auto;
         width: 8px;
-        height: 100%;
-        margin-right: 0;
+        height: 54px;
+        margin: 14px 0 18px;
         grid-column: 1;
         grid-row: 1;
         background: linear-gradient(180deg, rgba(82, 164, 237, 0.28), #59acf5);
