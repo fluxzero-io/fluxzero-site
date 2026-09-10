@@ -39,16 +39,9 @@ const cloudLayers = [
 ];
 
 const javaExample = `<span class="tok-annotation">@Model</span>
-<span class="tok-keyword">record</span> <span class="tok-type">Project</span>(
-    <span class="tok-annotation">@EntityId</span> <span class="tok-type">ProjectId</span> <span class="tok-field">projectId</span>,
-    <span class="tok-type">String</span> <span class="tok-field">name</span>) {}
-
-<span class="tok-annotation">@Model</span>
 <span class="tok-keyword">record</span> <span class="tok-type">Task</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">TaskId</span> <span class="tok-field">taskId</span>,
-    <span class="tok-annotation">@Parent</span>(pathInParent = <span class="tok-string">"tasks"</span>)
-    <span class="tok-type">ProjectId</span> <span class="tok-field">projectId</span>,
-    <span class="tok-type">String</span> <span class="tok-field">title</span>,
+    <span class="tok-type">TaskDetails</span> <span class="tok-field">details</span>,
     <span class="tok-annotation">@With</span> <span class="tok-keyword">boolean</span> <span class="tok-field">completed</span>) {}
 
 <span class="tok-keyword">record</span> <span class="tok-type">CompleteTask</span>(<span class="tok-type">TaskId</span> <span class="tok-field">taskId</span>) {
@@ -68,7 +61,6 @@ const javaExample = `<span class="tok-annotation">@Model</span>
 const testExample = `<span class="tok-annotation">@Test</span>
 <span class="tok-keyword">void</span> <span class="tok-method">completeEmitsEvent</span>() {
     <span class="tok-field">testFixture</span>.<span class="tok-call">givenCommands</span>(
-        <span class="tok-string">"create-project.json"</span>,
         <span class="tok-string">"create-task.json"</span>)
         .<span class="tok-call">whenCommand</span>(
             <span class="tok-string">"complete-task.json"</span>)
@@ -261,7 +253,7 @@ const choiceOptions = [
             </header>
             <div class="agent4-code__examples" data-reveal data-reveal-delay="1">
                 <figure class="agent4-code__sample">
-                    <figcaption class="agent4-code__bar"><strong>ProjectTasks</strong><small>Java</small></figcaption>
+                    <figcaption class="agent4-code__bar"><strong>Task</strong><small>Java</small></figcaption>
                     <pre><code class="language-java" set:html={javaExample}></code></pre>
                 </figure>
                 <figure class="agent4-code__test">
