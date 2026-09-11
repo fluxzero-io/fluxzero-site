@@ -16,7 +16,7 @@ const heroCode = `<span class="tok-keyword">record</span> <span class="tok-type"
         }
     }
 
-    <span class="tok-annotation">@Apply</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
+    <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Ticket</span> <span class="tok-method">reserve</span>(<span class="tok-type">Ticket</span> ticket) {
         <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">RESERVED</span>);
     }
@@ -40,7 +40,7 @@ const actionCode = `<span class="tok-keyword">record</span> <span class="tok-typ
         }
     }
 
-    <span class="tok-annotation">@Apply</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
+    <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Ticket</span> <span class="tok-method">reserve</span>(<span class="tok-type">Ticket</span> ticket) {
         <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">RESERVED</span>);
     }
@@ -150,12 +150,12 @@ const expiryCode = `<span class="tok-keyword">record</span> <span class="tok-typ
         }
     }
 
-    <span class="tok-annotation">@Apply</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
+    <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Reservation</span> <span class="tok-method">expire</span>(<span class="tok-type">Reservation</span> reservation) {
         <span class="tok-keyword">return</span> reservation.<span class="tok-method">withStatus</span>(<span class="tok-type">EXPIRED</span>);
     }
 
-    <span class="tok-annotation">@Apply</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
+    <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Ticket</span> <span class="tok-method">release</span>(<span class="tok-type">Ticket</span> ticket) {
         <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">AVAILABLE</span>);
     }
@@ -232,7 +232,7 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <span class="tok-keyword">return</span> current.<span class="tok-method">isPresent</span>() ? <span class="tok-literal">null</span> : <span class="tok-keyword">this</span>;
     }
 
-    <span class="tok-annotation">@Apply</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
+    <span class="tok-annotation">@Apply</span>
     <span class="tok-type">RewardGrant</span> <span class="tok-method">grant</span>() {
         <span class="tok-keyword">return new</span> <span class="tok-type">RewardGrant</span>(rewardGrantId, customerId, points);
     }
@@ -291,7 +291,7 @@ const historyCode = `<span class="tok-annotation">@Component</span>
                     <dl class="product-code-proof__notes">
                         <div><dt>Pure intent</dt><dd>No caller-supplied customer identity and no infrastructure parameters.</dd></div>
                         <div><dt>Current context</dt><dd>The authenticated customer is injected by Fluxzero.</dd></div>
-                        <div><dt>One decision</dt><dd>The ticket and reservation commit together—or not at all. <code>RETRY</code> reruns the rule on a conflict, so the same ticket cannot be reserved twice.</dd></div>
+                        <div><dt>One decision</dt><dd>The ticket and reservation commit together—or not at all. On a conflict, Fluxzero reruns the rule against the latest state, so the same ticket cannot be reserved twice.</dd></div>
                     </dl>
                 </div>
             </div>
