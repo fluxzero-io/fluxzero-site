@@ -1,7 +1,16 @@
 {
-  "lastUpdated": "2026-09-10T20:20:17.209Z",
-  "latestVersion": "2.0.0-RC8",
+  "lastUpdated": "2026-09-11T09:12:34.035Z",
+  "latestVersion": "1.270.0",
   "releases": [
+    {
+      "version": "1.270.0",
+      "date": "2026-09-11",
+      "body": "#### [1.270.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.269.0...1.270.0) (2026-09-11)\n\n##### Dependency updates\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>bump kotlin.version from 2.4.10 to 2.4.20 <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/51e4cc84ec5a633de230a1284b0a34ad811807e4\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<ul>\n<li><strong>kotlin.version</strong>: 2.4.10 -> 2.4.20</li>\n<li><strong>org.jetbrains.kotlin:kotlin-stdlib-jdk8</strong>: 2.4.10 -> 2.4.20 <a href=\"https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md\">changelog</a></li>\n<li><strong>org.jetbrains.kotlin:kotlin-reflect</strong>: 2.4.10 -> 2.4.20 <a href=\"https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md\">changelog</a></li>\n<li><strong>org.jetbrains.kotlin:kotlin-maven-plugin</strong>: 2.4.10 -> 2.4.20</li>\n<li><strong>org.jetbrains.kotlin:kotlin-test</strong>: 2.4.10 -> 2.4.20 <a href=\"https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md\">changelog</a></li>\n</ul>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.270.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
     {
       "version": "2.0.0-RC8",
       "date": "2026-09-10",
