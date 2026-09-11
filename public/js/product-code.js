@@ -20,11 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-copy-code]').forEach((button) => {
         const panel = button.closest('.product-code-panel');
         const code = panel?.querySelector('pre code');
-        const label = button.querySelector('span');
         const icon = button.querySelector('i');
         const status = panel?.querySelector('[data-copy-code-status]');
         const title = button.dataset.copyTitle || 'Code';
-        if (!code || !label || !icon) return;
+        if (!code || !icon) return;
 
         let resetTimer;
         const reset = () => {
@@ -32,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
             button.setAttribute('aria-label', `Copy code from ${title}`);
             button.setAttribute('title', `Copy code from ${title}`);
             icon.className = 'bx bx-copy';
-            label.textContent = 'Copy';
             if (status) status.textContent = '';
         };
 
@@ -51,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 button.setAttribute('aria-label', `${title} copied`);
                 button.setAttribute('title', `${title} copied`);
                 icon.className = 'bx bx-check';
-                label.textContent = 'Copied';
                 if (status) status.textContent = `${title} copied to clipboard.`;
             } catch {
                 button.classList.remove('is-copied');
@@ -59,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 button.setAttribute('aria-label', `Copying ${title} failed`);
                 button.setAttribute('title', `Copying ${title} failed`);
                 icon.className = 'bx bx-error-circle';
-                label.textContent = 'Try again';
                 if (status) status.textContent = `Could not copy ${title}. Select the code and copy it manually.`;
             }
             resetTimer = window.setTimeout(reset, 2200);
