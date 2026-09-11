@@ -58,7 +58,7 @@ const modelCode = `<span class="tok-annotation">@Model</span>
     <span class="tok-type">String</span> <span class="tok-field">name</span>,
     <span class="tok-type">ShowStatus</span> <span class="tok-field">status</span>) {}
 
-<span class="tok-annotation">@Model</span>(<span class="tok-field">persistence</span> = {<span class="tok-type">EVENT_SOURCED</span>, <span class="tok-type">DOCUMENT</span>})
+<span class="tok-annotation">@Model</span>
 <span class="tok-keyword">record</span> <span class="tok-type">Ticket</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
     <span class="tok-annotation">@Parent</span>(<span class="tok-field">pathInParent</span> = <span class="tok-string">"tickets"</span>)
@@ -69,12 +69,11 @@ const modelCode = `<span class="tok-annotation">@Model</span>
 <span class="tok-annotation">@Model</span>
 <span class="tok-keyword">record</span> <span class="tok-type">Reservation</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
-    <span class="tok-annotation">@Parent</span>(<span class="tok-field">pathInParent</span> = <span class="tok-string">"reservations"</span>,
-            <span class="tok-field">deleteOnParentDeletion</span> = <span class="tok-literal">false</span>)
+    <span class="tok-annotation">@Parent</span>(<span class="tok-field">pathInParent</span> = <span class="tok-string">"reservations"</span>)
     <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
     <span class="tok-type">CustomerId</span> <span class="tok-field">customerId</span>,
     <span class="tok-annotation">@With</span> <span class="tok-type">ReservationStatus</span> <span class="tok-field">status</span>,
-    <span class="tok-annotation">@With</span> <span class="tok-annotation">@Nullable</span> <span class="tok-type">ContactEmail</span> <span class="tok-field">contactEmail</span>) {}
+    <span class="tok-annotation">@With</span> <span class="tok-type">ContactEmail</span> <span class="tok-field">contactEmail</span>) {}
 
 <span class="tok-keyword">record</span> <span class="tok-type">Seat</span>(
     <span class="tok-annotation">@Facet</span> <span class="tok-type">String</span> <span class="tok-field">section</span>,
@@ -323,7 +322,7 @@ const historyCode = `<span class="tok-annotation">@Component</span>
                     <p class="cloud-proof-next__number">02 · State follows behavior</p>
                     <h2 id="domain-state-title">State holders follow the decisions.<br><span>Not the other way around.</span></h2>
                     <p>A show has sellable tickets. A ticket contains one seat; a reservation points to the ticket it holds. The seat is a value inside the ticket, while the reservation has its own lifecycle and history. That gives the model one clear chain instead of three competing sources of truth.</p>
-                    <p>Each independent model is stored and loaded by its typed identity. Tickets add a searchable document because customers browse them; reservations need no extra read model here. Storage follows product use instead of dictating the design.</p>
+                    <p>Each model keeps its own event history and is loaded by its typed identity. The parent links compose them into one graph and provide the current graph components used by the later ticket query. No independent public document collection or materialized whole graph is needed here.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--model" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="TicketingModel.java" label="State holders and relationships" code={modelCode} />
@@ -359,7 +358,7 @@ const historyCode = `<span class="tok-annotation">@Component</span>
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">04 · Product questions</p>
                     <h2 id="search-title">Ask the product.<br><span>Not the database.</span></h2>
-                    <p>The query asks for available tickets in one section of one show, ordered by seat row. The terms come directly from the model. Fluxzero owns the indexed document, relationship lookup, and asynchronous retrieval behind them. <code>@Sortable</code> is an optional index that keeps repeated row sorting fast.</p>
+                    <p>The query asks for available tickets in one section of one show, ordered by seat row. The parent relation makes each ticket available as a relationship-scoped graph component; Fluxzero owns its indexing, relationship lookup, and asynchronous retrieval. <code>@Sortable</code> is optional and keeps repeated row sorting fast.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--query" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="FindAvailableTickets.java" label="Typed asynchronous query" code={searchCode} />
