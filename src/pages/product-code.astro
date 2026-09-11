@@ -227,13 +227,13 @@ const historyCode = `<span class="tok-annotation">@Component</span>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <BrandHead
-        title="What true product code looks like — Fluxzero"
+        title="Product decisions are the code — Fluxzero"
         description="See how Fluxzero lets application code express real product behavior while the platform supplies the technical foundation underneath."
     />
     <link rel="stylesheet" href="/css/v4.css?v=20260905-1">
     <link rel="stylesheet" href="/css/technical-foundation.css?v=20260904-5">
     <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260910-11">
-    <link rel="stylesheet" href="/css/product-code.css?v=20260911-10">
+    <link rel="stylesheet" href="/css/product-code.css?v=20260911-11">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
 <body class="v4-page cloud-proof-page cloud-proof-next-page product-code-page">
@@ -246,8 +246,8 @@ const historyCode = `<span class="tok-annotation">@Component</span>
                 <div class="product-code-hero__copy">
                     <p class="cloud-proof-hero__back" data-reveal><a href="/how-it-works#behavior-title" data-browser-back><i class="bx bx-left-arrow-alt" aria-hidden="true"></i> Back</a></p>
                     <p class="cloud-proof-next__eyebrow" data-reveal>Product code</p>
-                    <h1 data-reveal data-reveal-delay="1">What true<br><span>product code</span> looks like.</h1>
-                    <p class="cloud-proof-hero__lead" data-reveal data-reveal-delay="2">With Fluxzero, application code reads like the product itself. The technical machinery lives in the platform, so builders and coding agents can stay focused on the behavior people use.</p>
+                    <h1 data-reveal data-reveal-delay="1">Product decisions<br><span>are the code.</span></h1>
+                    <p class="cloud-proof-hero__lead" data-reveal data-reveal-delay="2">Fluxzero moves the engineering foundation into the cloud. The application describes the decisions that make the product behave; the platform takes responsibility for executing them correctly.</p>
                 </div>
             </div>
         </header>
@@ -255,17 +255,16 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="intent" aria-labelledby="intent-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">01 · Intent first</p>
-                    <h2 id="intent-title">The first file names<br><span>a customer decision.</span></h2>
-                    <p>The first file names a customer decision rather than a schema or service layer. Its payload contains only the intent needed to perform the action. The current customer already travels with the message and is available directly to the decision.</p>
-                    <p>The rule and every resulting state change are evaluated as one decision. If two people act at once, Fluxzero repeats it against the latest state. If any part fails, nothing changes.</p>
+                    <p class="cloud-proof-next__number">01 · Product decisions</p>
+                    <h2 id="intent-title">Commands describe decisions.<br><span>Rules and changes stay together.</span></h2>
+                    <p>A command names something a user wants the product to do. It carries only the input needed for that decision, while the applicable rules and resulting state changes sit beside it in the same piece of code.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--action" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="ReserveTicket.java" label="Action, rule, two changes" code={actionCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Pure intent</dt><dd>No caller-supplied customer identity and no infrastructure parameters.</dd></div>
-                        <div><dt>Current context</dt><dd>The authenticated customer is injected by Fluxzero.</dd></div>
-                        <div><dt>One decision</dt><dd>Every change succeeds together—or nothing changes. Conflicts are rechecked automatically.</dd></div>
+                        <div><dt>Current models</dt><dd>Fluxzero loads the model state required by the typed IDs.</dd></div>
+                        <div><dt>Current user</dt><dd>Fluxzero supplies the authenticated user from the message context.</dd></div>
+                        <div><dt>Safe execution</dt><dd>Fluxzero applies every change together and rechecks concurrent decisions.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -274,17 +273,16 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="domain-state" aria-labelledby="domain-state-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">02 · State follows behavior</p>
-                    <h2 id="domain-state-title">State holders follow the decisions.<br><span>Not the other way around.</span></h2>
-                    <p>Durable state appears only where the product has an identity and lifecycle to protect. Values that belong to that lifecycle stay inside it, while independent decisions receive their own history. The result is one source of truth for each part of the product.</p>
-                    <p>Each model is loaded by its typed identity. Parent links compose related models into one graph and make those relationships available to later product questions. No separate public document collection or materialized whole graph is needed.</p>
+                    <p class="cloud-proof-next__number">02 · Product state</p>
+                    <h2 id="domain-state-title">Model state by lifecycle.<br><span>Not by storage.</span></h2>
+                    <p>A model is an immutable state holder with its own identity and lifecycle. State that changes independently gets its own model; values without a separate lifecycle remain inside the model that owns them.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--model" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="TicketingModel.java" label="State holders and relationships" code={modelCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Show → Ticket</dt><dd>A ticket is inventory for one show.</dd></div>
-                        <div><dt>Reservation → Ticket</dt><dd>A reservation has its own event-sourced lifecycle and points to the ticket it holds.</dd></div>
-                        <div><dt>Seat</dt><dd>A value object inside the ticket, because it has no separate lifecycle here.</dd></div>
+                        <div><dt>Durable state</dt><dd>Fluxzero stores accepted decisions and reconstructs the current model.</dd></div>
+                        <div><dt>No data layer</dt><dd>Fluxzero loads and saves models by typed identity without repository code.</dd></div>
+                        <div><dt>Relationships</dt><dd>Fluxzero maintains links between models and preserves their history.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -293,16 +291,16 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="tests" aria-labelledby="tests-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">03 · Behavior as proof</p>
-                    <h2 id="tests-title">Prove the product behavior<br><span>before an endpoint exists.</span></h2>
-                    <p>The fixture sends the same messages through the same model pipeline as the application. External JSON records the scenario and expected outcome, so the test proves observable behavior without reaching into internal state or mocking infrastructure.</p>
+                    <p class="cloud-proof-next__number">03 · Behavior tests</p>
+                    <h2 id="tests-title">Test messages and outcomes.<br><span>Not internal state.</span></h2>
+                    <p>A test sends the same messages a real user would send and checks the outcome that follows. The scenario lives in external JSON, so it remains readable while the implementation changes.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--test" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="ReserveTicketTest.java" label="Real user, real model pipeline" code={testCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Contract</dt><dd>JSON fixtures keep complete message examples readable and stable outside the test code.</dd></div>
-                        <div><dt>Accepted</dt><dd>The reservation action itself is the expected event; no duplicate event class is invented.</dd></div>
-                        <div><dt>Rejected</dt><dd>A second customer gets the domain error and no event is committed.</dd></div>
+                        <div><dt>Same pipeline</dt><dd>Fluxzero runs the scenario through the application’s real model pipeline.</dd></div>
+                        <div><dt>Complete context</dt><dd>Fluxzero supplies the user and runtime context declared by the fixture.</dd></div>
+                        <div><dt>Observable proof</dt><dd>Fluxzero verifies the resulting messages or error without exposing internal state.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -311,21 +309,17 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="search" aria-labelledby="search-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">04 · Product questions</p>
-                    <h2 id="search-title">Ask the product.<br><span>Not the database.</span></h2>
-                    <p>A query expresses one typed product question and returns only the relevant models in the requested order. Fluxzero resolves it against the model graph and keeps repeated retrieval efficient. <code>@Sortable</code> is an optional performance hint for frequently sorted values.</p>
+                    <p class="cloud-proof-next__number">04 · Product queries</p>
+                    <h2 id="search-title">Queries return product models.<br><span>No database access layer.</span></h2>
+                    <p>A query names the answer the product needs and returns typed models. Its handler expresses selection and order in product terms without opening a database connection or mapping storage records.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--query" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="FindAvailableTickets.java" label="Typed product question" code={searchCode} />
-                    <div class="product-code-query" aria-label="Available tickets are selected within a show and section, then ordered by row">
-                        <span><small>Within</small><strong>Show</strong></span>
-                        <i class="bx bx-plus" aria-hidden="true"></i>
-                        <span><small>Status</small><strong>Available</strong></span>
-                        <i class="bx bx-plus" aria-hidden="true"></i>
-                        <span><small>Section</small><strong>Balcony</strong></span>
-                        <i class="bx bx-right-arrow-alt" aria-hidden="true"></i>
-                        <span class="is-result"><small>Order by</small><strong>Seat row</strong></span>
-                    </div>
+                    <dl class="product-code-proof__notes">
+                        <div><dt>Current state</dt><dd>Fluxzero maintains a searchable view of accepted model changes.</dd></div>
+                        <div><dt>Model graph</dt><dd>Fluxzero resolves parent relationships without joins in application code.</dd></div>
+                        <div><dt>Query execution</dt><dd>Fluxzero applies selection and ordering; <code>@Sortable</code> is an optional speed hint.</dd></div>
+                    </dl>
                 </div>
             </div>
         </article>
@@ -333,13 +327,20 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="workflows" aria-labelledby="workflows-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">05 · Time without plumbing</p>
-                    <h2 id="workflows-title">Time can pass without changing<br><span>the programming model.</span></h2>
-                    <p>A product decision can start a durable deadline, and a later decision can cancel it. If the deadline passes, an ordinary command rechecks the current situation before anything changes. Even when another action arrives at the same moment, the outcome remains one consistent decision.</p>
+                    <p class="cloud-proof-next__number">05 · Scheduled decisions</p>
+                    <h2 id="workflows-title">Schedule the next decision.<br><span>No job system required.</span></h2>
+                    <p>A product decision can schedule an ordinary command for later. Another decision can cancel it, and a command that becomes due still follows the same rules as every immediate action.</p>
                 </header>
-                <div class="product-code-interactions product-code-interactions--workflow" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="ReservationTimers.java" label="Start and cancel a deadline" code={timerCode} />
-                    <ProductCodePanel title="ExpireReservation.java" label="Close and release together" code={expiryCode} />
+                <div class="product-code-proof product-code-proof--stacked" data-reveal data-reveal-delay="1">
+                    <div class="product-code-proof__code-stack">
+                        <ProductCodePanel title="ReservationTimers.java" label="Start and cancel a deadline" code={timerCode} />
+                        <ProductCodePanel title="ExpireReservation.java" label="Close and release together" code={expiryCode} />
+                    </div>
+                    <dl class="product-code-proof__notes">
+                        <div><dt>Durable deadline</dt><dd>Fluxzero keeps the schedule through restarts and deployments.</dd></div>
+                        <div><dt>Cancellation</dt><dd>Fluxzero finds and cancels the deadline by its stable identifier.</dd></div>
+                        <div><dt>Current decision</dt><dd>Fluxzero loads current state and rechecks conflicts when the command runs.</dd></div>
+                    </dl>
                 </div>
             </div>
         </article>
@@ -347,13 +348,20 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="policy" aria-labelledby="policy-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">06 · Policy in context</p>
-                    <h2 id="policy-title">Identity and sensitive data stay beside<br><span>the behavior they govern.</span></h2>
-                    <p>Authentication can be required for an entire product domain by default. A rule can compare the injected identity with the current owner, so a command cannot impersonate someone else. Protected values remain available to trusted code without becoming part of the durable message payload.</p>
+                    <p class="cloud-proof-next__number">06 · Access and privacy</p>
+                    <h2 id="policy-title">Keep access rules beside the action.<br><span>The user is already in context.</span></h2>
+                    <p>A product domain can require an authenticated user by default. The rule receives that user from context and decides whether the action is allowed, while sensitive values remain ordinary typed data in trusted code.</p>
                 </header>
-                <div class="product-code-interactions product-code-interactions--policy" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="package-info.java" label="Secure by default" code={packagePolicyCode} />
-                    <ProductCodePanel title="UpdateContactEmail.java" label="Ownership and protected data" code={personalDataCode} />
+                <div class="product-code-proof product-code-proof--stacked" data-reveal data-reveal-delay="1">
+                    <div class="product-code-proof__code-stack">
+                        <ProductCodePanel title="package-info.java" label="Secure by default" code={packagePolicyCode} />
+                        <ProductCodePanel title="UpdateContactEmail.java" label="Ownership and protected data" code={personalDataCode} />
+                    </div>
+                    <dl class="product-code-proof__notes">
+                        <div><dt>Authenticated context</dt><dd>Fluxzero carries the current user into the applicable rule.</dd></div>
+                        <div><dt>Default access</dt><dd>Fluxzero enforces the package policy before product behavior runs.</dd></div>
+                        <div><dt>Protected values</dt><dd>Fluxzero separates protected data from durable messages so it can be erased independently.</dd></div>
+                    </dl>
                 </div>
             </div>
         </article>
@@ -361,16 +369,16 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="web" aria-labelledby="web-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">07 · The endpoint comes last</p>
-                    <h2 id="web-title">The API is a thin entrance.<br><span>Not another architecture.</span></h2>
-                    <p>The endpoint turns web input into the same product action the behavior test already proved. It creates a new identity at the boundary and returns it. The current user travels with the command automatically, so the web layer remains a thin entrance.</p>
+                    <p class="cloud-proof-next__number">07 · Web boundary</p>
+                    <h2 id="web-title">Turn web input into a command.<br><span>Keep the endpoint thin.</span></h2>
+                    <p>An endpoint accepts web input, creates any server-owned identity and sends the already-tested command. It returns an ordinary value or lets a product error flow back to the caller.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--web" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="ReservationApi.java" label="HTTP to product action" code={webCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Input</dt><dd>The request only identifies the ticket the customer chose.</dd></div>
-                        <div><dt>Action</dt><dd>The endpoint sends the already-tested product command.</dd></div>
-                        <div><dt>Output</dt><dd>Ordinary return values and failures become web responses.</dd></div>
+                        <div><dt>Web input</dt><dd>Fluxzero maps and validates the request before the handler runs.</dd></div>
+                        <div><dt>User context</dt><dd>Fluxzero carries the authenticated user with the resulting command.</dd></div>
+                        <div><dt>Web response</dt><dd>Fluxzero maps ordinary return values and known errors to HTTP.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -379,16 +387,16 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="evolution" aria-labelledby="evolution-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">08 · The past stays useful</p>
-                    <h2 id="evolution-title">New capabilities can begin with<br><span>the product’s first event.</span></h2>
-                    <p>A capability added later can consume the existing event history from index zero. Each event arrives with the model exactly as it was after that decision. A deterministic result identity and awaited handling make replay safe without changing the original product behavior.</p>
+                    <p class="cloud-proof-next__number">08 · Existing history</p>
+                    <h2 id="evolution-title">Add a handler later.<br><span>Start from the first event.</span></h2>
+                    <p>A new handler can begin at index zero and process decisions that happened before it existed. It receives the model exactly as it was after each event, so the new behavior can use the original product context.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--history" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="CustomerRewards.java" label="New capability, complete history" code={historyCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Then</dt><dd>Every confirmed reservation is already in the event history.</dd></div>
-                        <div><dt>Now</dt><dd>The rewards capability is added without changing ticketing.</dd></div>
-                        <div><dt>From the start</dt><dd><code>minIndex = 0</code> reads the complete story; one grant per reservation makes replay safe.</dd></div>
+                        <div><dt>Complete history</dt><dd>Fluxzero retains the accepted events from the first product decision.</dd></div>
+                        <div><dt>Historical context</dt><dd>Fluxzero supplies the model state that belonged to each event.</dd></div>
+                        <div><dt>Reliable progress</dt><dd>Fluxzero tracks delivery and retries failures without losing the consumer’s place.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -396,10 +404,10 @@ const historyCode = `<span class="tok-annotation">@Component</span>
 
         <section class="cloud-proof-next-conclusion product-code-conclusion" aria-labelledby="conclusion-title">
             <div class="v4-shell cloud-proof-shell" data-reveal>
-                <p class="cloud-proof-next__eyebrow">The result</p>
-                <h2 id="conclusion-title">Write the product.<br><span>Inherit the machinery.</span></h2>
-                <p>Your agent keeps working in the language of product decisions while Fluxzero supplies the technical foundation underneath as the product grows.</p>
-                <strong>Less scaffolding in the prompt. More product in the code.</strong>
+                <p class="cloud-proof-next__eyebrow">The split of responsibility</p>
+                <h2 id="conclusion-title">Product decisions in the code.<br><span>Engineering in the cloud.</span></h2>
+                <p>Builders and coding agents define behavior. Fluxzero keeps that behavior dependable from the first local test through production.</p>
+                <strong>The product stays visible in the code.</strong>
                 <div class="cloud-proof-next__actions">
                     <a class="v4-button v4-button--primary" href="/get-started"><span>Start building</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
                     <a class="v4-button v4-button--secondary" href="/docs"><span>Inspect the SDK</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>

@@ -110,6 +110,16 @@
     grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.95fr);
 }
 
+.product-code-proof--stacked {
+    align-items: start;
+}
+
+.product-code-proof__code-stack {
+    display: grid;
+    min-width: 0;
+    gap: 18px;
+}
+
 .product-code-proof::before,
 .product-code-interactions::before,
 .product-code-history::before {
