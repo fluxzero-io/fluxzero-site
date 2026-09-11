@@ -23,10 +23,9 @@ const heroCode = `<span class="tok-keyword">record</span> <span class="tok-type"
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Reservation</span> <span class="tok-method">createReservation</span>(<span class="tok-type">User</span> user) {
-        <span class="tok-keyword">return new</span> <span class="tok-type">Reservation</span>(
+        <span class="tok-keyword">return</span> <span class="tok-type">Reservation</span>.<span class="tok-call">awaitingPayment</span>(
             reservationId, ticketId,
-            <span class="tok-type">CustomerId</span>.<span class="tok-call">from</span>(user),
-            <span class="tok-type">AWAITING_PAYMENT</span>, <span class="tok-literal">null</span>);
+            <span class="tok-type">CustomerId</span>.<span class="tok-call">from</span>(user));
     }
 }`;
 
@@ -48,9 +47,8 @@ const actionCode = `<span class="tok-keyword">record</span> <span class="tok-typ
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Reservation</span> <span class="tok-method">createReservation</span>(<span class="tok-type">User</span> user) {
-        <span class="tok-keyword">return new</span> <span class="tok-type">Reservation</span>(
-            reservationId, ticketId, <span class="tok-type">CustomerId</span>.<span class="tok-call">from</span>(user),
-            <span class="tok-type">AWAITING_PAYMENT</span>, <span class="tok-literal">null</span>);
+        <span class="tok-keyword">return</span> <span class="tok-type">Reservation</span>.<span class="tok-call">awaitingPayment</span>(
+            reservationId, ticketId, <span class="tok-type">CustomerId</span>.<span class="tok-call">from</span>(user));
     }
 }`;
 
