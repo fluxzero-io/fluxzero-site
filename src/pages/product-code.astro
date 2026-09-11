@@ -11,16 +11,14 @@ const heroCode = `<span class="tok-keyword">record</span> <span class="tok-type"
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertAvailable</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">if</span> (ticket.<span class="tok-method">status</span>() != <span class="tok-type">AVAILABLE</span>
-                || ticket.<span class="tok-method">reservationId</span>() != <span class="tok-literal">null</span>) {
+        <span class="tok-keyword">if</span> (ticket.<span class="tok-method">status</span>() != <span class="tok-type">AVAILABLE</span>) {
             <span class="tok-keyword">throw</span> <span class="tok-type">TicketErrors</span>.notAvailable;
         }
     }
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Ticket</span> <span class="tok-method">reserve</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">RESERVED</span>)
-            .<span class="tok-method">withReservationId</span>(reservationId);
+        <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">RESERVED</span>);
     }
 
     <span class="tok-annotation">@Apply</span>
@@ -38,16 +36,14 @@ const actionCode = `<span class="tok-keyword">record</span> <span class="tok-typ
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertAvailable</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">if</span> (ticket.<span class="tok-method">status</span>() != <span class="tok-type">AVAILABLE</span>
-                || ticket.<span class="tok-method">reservationId</span>() != <span class="tok-literal">null</span>) {
+        <span class="tok-keyword">if</span> (ticket.<span class="tok-method">status</span>() != <span class="tok-type">AVAILABLE</span>) {
             <span class="tok-keyword">throw</span> <span class="tok-type">TicketErrors</span>.notAvailable;
         }
     }
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Ticket</span> <span class="tok-method">reserve</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">RESERVED</span>)
-            .<span class="tok-method">withReservationId</span>(reservationId);
+        <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">RESERVED</span>);
     }
 
     <span class="tok-annotation">@Apply</span>
@@ -70,8 +66,7 @@ const modelCode = `<span class="tok-annotation">@Model</span>
     <span class="tok-annotation">@Parent</span>(<span class="tok-field">pathInParent</span> = <span class="tok-string">"tickets"</span>)
     <span class="tok-type">ShowId</span> <span class="tok-field">showId</span>,
     <span class="tok-type">Seat</span> <span class="tok-field">seat</span>,
-    <span class="tok-annotation">@With</span> <span class="tok-annotation">@Facet</span> <span class="tok-type">TicketStatus</span> <span class="tok-field">status</span>,
-    <span class="tok-annotation">@With</span> <span class="tok-annotation">@Nullable</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>) {}
+    <span class="tok-annotation">@With</span> <span class="tok-annotation">@Facet</span> <span class="tok-type">TicketStatus</span> <span class="tok-field">status</span>) {}
 
 <span class="tok-annotation">@Model</span>(<span class="tok-field">persistence</span> = {<span class="tok-type">EVENT_SOURCED</span>, <span class="tok-type">DOCUMENT</span>})
 <span class="tok-keyword">record</span> <span class="tok-type">Reservation</span>(
@@ -172,8 +167,7 @@ const expiryCode = `<span class="tok-keyword">record</span> <span class="tok-typ
     <span class="tok-keyword">void</span> <span class="tok-method">assertAwaitingPayment</span>(
             <span class="tok-type">Reservation</span> reservation, <span class="tok-type">Ticket</span> ticket) {
         <span class="tok-keyword">if</span> (reservation.<span class="tok-method">status</span>() != <span class="tok-type">AWAITING_PAYMENT</span>
-                || !reservation.<span class="tok-method">ticketId</span>().<span class="tok-call">equals</span>(ticketId)
-                || !reservationId.<span class="tok-call">equals</span>(ticket.<span class="tok-method">reservationId</span>())) {
+                || !reservation.<span class="tok-method">ticketId</span>().<span class="tok-call">equals</span>(ticketId)) {
             <span class="tok-keyword">throw new</span> <span class="tok-type">IllegalStateException</span>(
                 <span class="tok-string">"Reservation is no longer awaiting payment"</span>);
         }
@@ -188,9 +182,7 @@ const expiryCode = `<span class="tok-keyword">record</span> <span class="tok-typ
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Ticket</span> <span class="tok-method">release</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">return new</span> <span class="tok-type">Ticket</span>(ticket.<span class="tok-method">ticketId</span>(),
-            ticket.<span class="tok-method">showId</span>(), ticket.<span class="tok-method">seat</span>(),
-            <span class="tok-type">AVAILABLE</span>, <span class="tok-literal">null</span>);
+        <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">AVAILABLE</span>);
     }
 }`;
 
@@ -298,7 +290,7 @@ const historyCode = `<span class="tok-annotation">@Consumer</span>(<span class="
                     <dl class="product-code-proof__notes">
                         <div><dt>Pure intent</dt><dd>No caller-supplied customer identity and no infrastructure parameters.</dd></div>
                         <div><dt>Current context</dt><dd>The authenticated customer is injected by Fluxzero.</dd></div>
-                        <div><dt>One decision</dt><dd>The ticket and reservation change together—or not at all.</dd></div>
+                        <div><dt>One decision</dt><dd>The ticket and reservation commit together—or not at all. Fluxzero resolves concurrent claims against the latest ticket state, so the same ticket cannot be reserved twice.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -309,14 +301,14 @@ const historyCode = `<span class="tok-annotation">@Consumer</span>(<span class="
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">02 · State follows behavior</p>
                     <h2 id="domain-state-title">State holders follow the decisions.<br><span>Not the other way around.</span></h2>
-                    <p>A show has sellable tickets. A ticket contains one seat and may have a reservation. The seat is a value inside the ticket; the reservation has its own lifecycle and history. That gives the model one clear chain instead of three competing sources of truth.</p>
+                    <p>A show has sellable tickets. A ticket contains one seat; a reservation points to the ticket it holds. The seat is a value inside the ticket, while the reservation has its own lifecycle and history. That gives the model one clear chain instead of three competing sources of truth.</p>
                     <p>Each independent model is stored and loaded by its typed identity. Relationships remain explicit without forcing an entire object tree into memory.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--model" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="TicketingModel.java" label="State holders and relationships" code={modelCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>Show → Ticket</dt><dd>A ticket is inventory for one show.</dd></div>
-                        <div><dt>Ticket → Reservation</dt><dd>A reservation lives independently but remains linked to its ticket.</dd></div>
+                        <div><dt>Reservation → Ticket</dt><dd>A reservation has its own lifecycle and points to the ticket it holds.</dd></div>
                         <div><dt>Seat</dt><dd>A value object inside the ticket, because it has no separate lifecycle here.</dd></div>
                     </dl>
                 </div>
