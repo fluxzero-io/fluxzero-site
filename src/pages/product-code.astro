@@ -6,26 +6,25 @@ import ProductCodePanel from '../components/marketing/ProductCodePanel.astro';
 import 'boxicons/css/boxicons.min.css';
 
 const heroCode = `<span class="tok-keyword">record</span> <span class="tok-type">ReserveTicket</span>(
-    <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
-    <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
+    <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
+    <span class="tok-annotation">@NotNull</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertAvailable</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">if</span> (ticket.<span class="tok-method">status</span>() != <span class="tok-type">AVAILABLE</span>) {
-            <span class="tok-keyword">throw new</span> <span class="tok-type">IllegalStateException</span>();
+        <span class="tok-keyword">if</span> (ticket.<span class="tok-method">status</span>() != <span class="tok-type">AVAILABLE</span>
+                || ticket.<span class="tok-method">reservationId</span>() != <span class="tok-literal">null</span>) {
+            <span class="tok-keyword">throw</span> <span class="tok-type">TicketErrors</span>.notAvailable;
         }
     }
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Ticket</span> <span class="tok-method">reserve</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">return new</span> <span class="tok-type">Ticket</span>(
-            ticket.<span class="tok-method">ticketId</span>(), ticket.<span class="tok-method">showId</span>(),
-            ticket.<span class="tok-method">seat</span>(), <span class="tok-type">RESERVED</span>,
-            reservationId);
+        <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">RESERVED</span>)
+            .<span class="tok-method">withReservationId</span>(reservationId);
     }
 
     <span class="tok-annotation">@Apply</span>
-    <span class="tok-type">Reservation</span> <span class="tok-method">create</span>(<span class="tok-type">User</span> user) {
+    <span class="tok-type">Reservation</span> <span class="tok-method">createReservation</span>(<span class="tok-type">User</span> user) {
         <span class="tok-keyword">return new</span> <span class="tok-type">Reservation</span>(
             reservationId, ticketId,
             <span class="tok-type">CustomerId</span>.<span class="tok-call">from</span>(user),
@@ -34,26 +33,25 @@ const heroCode = `<span class="tok-keyword">record</span> <span class="tok-type"
 }`;
 
 const actionCode = `<span class="tok-keyword">record</span> <span class="tok-type">ReserveTicket</span>(
-    <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
-    <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
+    <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
+    <span class="tok-annotation">@NotNull</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertAvailable</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">if</span> (ticket.<span class="tok-method">status</span>() != <span class="tok-type">AVAILABLE</span>) {
-            <span class="tok-keyword">throw new</span> <span class="tok-type">IllegalStateException</span>(
-                <span class="tok-string">"Ticket is already reserved"</span>);
+        <span class="tok-keyword">if</span> (ticket.<span class="tok-method">status</span>() != <span class="tok-type">AVAILABLE</span>
+                || ticket.<span class="tok-method">reservationId</span>() != <span class="tok-literal">null</span>) {
+            <span class="tok-keyword">throw</span> <span class="tok-type">TicketErrors</span>.notAvailable;
         }
     }
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Ticket</span> <span class="tok-method">reserve</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">return new</span> <span class="tok-type">Ticket</span>(
-            ticket.<span class="tok-method">ticketId</span>(), ticket.<span class="tok-method">showId</span>(),
-            ticket.<span class="tok-method">seat</span>(), <span class="tok-type">RESERVED</span>, reservationId);
+        <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">RESERVED</span>)
+            .<span class="tok-method">withReservationId</span>(reservationId);
     }
 
     <span class="tok-annotation">@Apply</span>
-    <span class="tok-type">Reservation</span> <span class="tok-method">create</span>(<span class="tok-type">User</span> user) {
+    <span class="tok-type">Reservation</span> <span class="tok-method">createReservation</span>(<span class="tok-type">User</span> user) {
         <span class="tok-keyword">return new</span> <span class="tok-type">Reservation</span>(
             reservationId, ticketId, <span class="tok-type">CustomerId</span>.<span class="tok-call">from</span>(user),
             <span class="tok-type">AWAITING_PAYMENT</span>, <span class="tok-literal">null</span>);
@@ -72,8 +70,8 @@ const modelCode = `<span class="tok-annotation">@Model</span>
     <span class="tok-annotation">@Parent</span>(<span class="tok-field">pathInParent</span> = <span class="tok-string">"tickets"</span>)
     <span class="tok-type">ShowId</span> <span class="tok-field">showId</span>,
     <span class="tok-type">Seat</span> <span class="tok-field">seat</span>,
-    <span class="tok-annotation">@Facet</span> <span class="tok-type">TicketStatus</span> <span class="tok-field">status</span>,
-    <span class="tok-annotation">@Nullable</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>) {}
+    <span class="tok-annotation">@With</span> <span class="tok-annotation">@Facet</span> <span class="tok-type">TicketStatus</span> <span class="tok-field">status</span>,
+    <span class="tok-annotation">@With</span> <span class="tok-annotation">@Nullable</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>) {}
 
 <span class="tok-annotation">@Model</span>(<span class="tok-field">persistence</span> = {<span class="tok-type">EVENT_SOURCED</span>, <span class="tok-type">DOCUMENT</span>})
 <span class="tok-keyword">record</span> <span class="tok-type">Reservation</span>(
@@ -130,7 +128,7 @@ const testCode = `<span class="tok-annotation">@Test</span>
             <span class="tok-keyword">new</span> <span class="tok-type">ReserveTicket</span>(reservationId, ticketId))
         .<span class="tok-call">whenCommandByUser</span>(customer77,
             <span class="tok-keyword">new</span> <span class="tok-type">ReserveTicket</span>(otherReservationId, ticketId))
-        .<span class="tok-call">expectExceptionalResult</span>(<span class="tok-type">IllegalStateException</span>.class);
+        .<span class="tok-call">expectExceptionalResult</span>(<span class="tok-type">TicketErrors</span>.notAvailable);
 }`;
 
 const searchCode = `<span class="tok-keyword">record</span> <span class="tok-type">FindAvailableTickets</span>(
