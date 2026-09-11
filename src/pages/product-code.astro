@@ -7,7 +7,7 @@ import 'boxicons/css/boxicons.min.css';
 
 const heroCode = `<span class="tok-keyword">record</span> <span class="tok-type">ReserveTicket</span>(
     <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
-    <span class="tok-annotation">@RoutingKey</span> <span class="tok-annotation">@NotNull</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
+    <span class="tok-annotation">@NotNull</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertAvailable</span>(<span class="tok-type">Ticket</span> ticket) {
@@ -31,7 +31,7 @@ const heroCode = `<span class="tok-keyword">record</span> <span class="tok-type"
 
 const actionCode = `<span class="tok-keyword">record</span> <span class="tok-type">ReserveTicket</span>(
     <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
-    <span class="tok-annotation">@RoutingKey</span> <span class="tok-annotation">@NotNull</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
+    <span class="tok-annotation">@NotNull</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertAvailable</span>(<span class="tok-type">Ticket</span> ticket) {
@@ -78,51 +78,28 @@ const modelCode = `<span class="tok-annotation">@Model</span>
 <span class="tok-keyword">record</span> <span class="tok-type">Seat</span>(
     <span class="tok-annotation">@Facet</span> <span class="tok-type">String</span> <span class="tok-field">section</span>,
     <span class="tok-annotation">@Sortable</span> <span class="tok-keyword">int</span> <span class="tok-field">row</span>,
-    <span class="tok-keyword">int</span> <span class="tok-field">number</span>) {}
-
-<span class="tok-keyword">record</span> <span class="tok-type">CustomerId</span>(<span class="tok-type">String</span> <span class="tok-field">value</span>) {
-    <span class="tok-keyword">static</span> <span class="tok-type">CustomerId</span> <span class="tok-method">from</span>(<span class="tok-type">User</span> user) {
-        <span class="tok-keyword">return new</span> <span class="tok-type">CustomerId</span>(user.<span class="tok-method">getName</span>());
-    }
-}`;
+    <span class="tok-keyword">int</span> <span class="tok-field">number</span>) {}`;
 
 const testCode = `<span class="tok-annotation">@Test</span>
-<span class="tok-keyword">void</span> <span class="tok-method">reservesForTheAuthenticatedCustomer</span>() {
-    <span class="tok-keyword">var</span> action = <span class="tok-keyword">new</span> <span class="tok-type">ReserveTicket</span>(reservationId, ticketId);
-
+<span class="tok-keyword">void</span> <span class="tok-method">reservesAnAvailableTicket</span>() {
     fixture
-        .<span class="tok-call">givenCommands</span>(
-            <span class="tok-keyword">new</span> <span class="tok-type">ScheduleShow</span>(showId, <span class="tok-string">"Summer night"</span>),
-            <span class="tok-keyword">new</span> <span class="tok-type">ReleaseTicket</span>(ticketId, showId,
-                <span class="tok-keyword">new</span> <span class="tok-type">Seat</span>(<span class="tok-string">"BALCONY"</span>, <span class="tok-literal">3</span>, <span class="tok-literal">12</span>)))
-        .<span class="tok-call">whenCommandByUser</span>(customer42, action)
-        .<span class="tok-call">expectEvents</span>(action)
-        .<span class="tok-call">expectThat</span>(fluxzero -&gt; {
-            <span class="tok-keyword">var</span> ticket = <span class="tok-type">Fluxzero</span>.<span class="tok-type">&lt;Ticket&gt;</span><span class="tok-call">loadModel</span>(ticketId)
-                .<span class="tok-call">orElseThrow</span>();
-            <span class="tok-keyword">var</span> reservation = <span class="tok-type">Fluxzero</span>.<span class="tok-type">&lt;Reservation&gt;</span><span class="tok-call">loadModel</span>(reservationId)
-                .<span class="tok-call">orElseThrow</span>();
-
-            <span class="tok-call">assertEquals</span>(<span class="tok-type">RESERVED</span>, ticket.<span class="tok-method">status</span>());
-            <span class="tok-call">assertEquals</span>(<span class="tok-string">"customer-42"</span>,
-                reservation.<span class="tok-method">customerId</span>().<span class="tok-method">value</span>());
-        });
+        .<span class="tok-call">givenCommands</span>(<span class="tok-string">"/ticketing/available-ticket.json"</span>)
+        .<span class="tok-call">whenCommandByUser</span>(<span class="tok-string">"customer-42"</span>,
+            <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
+        .<span class="tok-call">expectOnlyEvents</span>(
+            <span class="tok-string">"/ticketing/reserve-ticket.json"</span>);
 }
 
 <span class="tok-annotation">@Test</span>
 <span class="tok-keyword">void</span> <span class="tok-method">rejectsASecondReservation</span>() {
     fixture
-        .<span class="tok-call">givenCommands</span>(
-            <span class="tok-keyword">new</span> <span class="tok-type">ScheduleShow</span>(showId, <span class="tok-string">"Summer night"</span>),
-            <span class="tok-keyword">new</span> <span class="tok-type">ReleaseTicket</span>(ticketId, showId,
-                <span class="tok-keyword">new</span> <span class="tok-type">Seat</span>(<span class="tok-string">"BALCONY"</span>, <span class="tok-literal">3</span>, <span class="tok-literal">12</span>)))
-        .<span class="tok-call">givenCommandsByUser</span>(customer42,
-            <span class="tok-keyword">new</span> <span class="tok-type">ReserveTicket</span>(reservationId, ticketId))
-        .<span class="tok-call">whenCommandByUser</span>(customer77,
-            <span class="tok-keyword">new</span> <span class="tok-type">ReserveTicket</span>(otherReservationId, ticketId))
+        .<span class="tok-call">givenCommands</span>(<span class="tok-string">"/ticketing/available-ticket.json"</span>)
+        .<span class="tok-call">givenCommandsByUser</span>(<span class="tok-string">"customer-42"</span>,
+            <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
+        .<span class="tok-call">whenCommandByUser</span>(<span class="tok-string">"customer-77"</span>,
+            <span class="tok-string">"/ticketing/reserve-same-ticket.json"</span>)
         .<span class="tok-call">expectExceptionalResult</span>(<span class="tok-type">TicketErrors</span>.notAvailable)
-        .<span class="tok-call">expectThat</span>(fluxzero -&gt;
-            <span class="tok-call">assertTrue</span>(<span class="tok-type">Fluxzero</span>.<span class="tok-call">loadModel</span>(otherReservationId).<span class="tok-call">isEmpty</span>()));
+        .<span class="tok-call">expectNoEvents</span>();
 }`;
 
 const searchCode = `<span class="tok-keyword">record</span> <span class="tok-type">FindAvailableTickets</span>(
@@ -131,13 +108,13 @@ const searchCode = `<span class="tok-keyword">record</span> <span class="tok-typ
         <span class="tok-keyword">implements</span> <span class="tok-type">Request</span>&lt;<span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt;&gt; {
 
     <span class="tok-annotation">@HandleQuery</span>
-    <span class="tok-type">CompletableFuture</span>&lt;<span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt;&gt; <span class="tok-method">handle</span>() {
+    <span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt; <span class="tok-method">handle</span>() {
         <span class="tok-keyword">return</span> <span class="tok-type">Fluxzero</span>.<span class="tok-call">search</span>(<span class="tok-type">Ticket</span>.class)
             .<span class="tok-call">whereParent</span>(showId)
             .<span class="tok-call">match</span>(<span class="tok-type">AVAILABLE</span>, <span class="tok-string">"status"</span>)
             .<span class="tok-call">match</span>(section, <span class="tok-string">"seat/section"</span>)
             .<span class="tok-call">sortBy</span>(<span class="tok-string">"seat/row"</span>)
-            .<span class="tok-call">fetchAsync</span>(<span class="tok-literal">50</span>);
+            .<span class="tok-call">fetch</span>(<span class="tok-literal">50</span>);
     }
 }`;
 
@@ -161,7 +138,7 @@ const timerCode = `<span class="tok-annotation">@Component</span>
 
 const expiryCode = `<span class="tok-keyword">record</span> <span class="tok-type">ExpireReservation</span>(
     <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
-    <span class="tok-annotation">@RoutingKey</span> <span class="tok-annotation">@NotNull</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
+    <span class="tok-annotation">@NotNull</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertAwaitingPayment</span>(
@@ -191,7 +168,7 @@ const packagePolicyCode = `<span class="tok-comment">// package-info.java</span>
 <span class="tok-keyword">import</span> io.fluxzero.sdk.tracking.handling.authentication.RequiresUser;`;
 
 const personalDataCode = `<span class="tok-keyword">record</span> <span class="tok-type">UpdateContactEmail</span>(
-    <span class="tok-annotation">@RoutingKey</span> <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
+    <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
     <span class="tok-annotation">@NotNull</span> <span class="tok-annotation">@Valid</span> <span class="tok-annotation">@ProtectData</span>
     <span class="tok-type">ContactEmail</span> <span class="tok-field">contactEmail</span>) {
 
@@ -246,14 +223,18 @@ const historyCode = `<span class="tok-annotation">@Component</span>
 }
 
 <span class="tok-keyword">record</span> <span class="tok-type">GrantReservationReward</span>(
-    <span class="tok-annotation">@RoutingKey</span> <span class="tok-annotation">@NotNull</span> <span class="tok-type">RewardGrantId</span> <span class="tok-field">rewardGrantId</span>,
+    <span class="tok-annotation">@NotNull</span> <span class="tok-type">RewardGrantId</span> <span class="tok-field">rewardGrantId</span>,
     <span class="tok-annotation">@NotNull</span> <span class="tok-type">CustomerId</span> <span class="tok-field">customerId</span>,
     <span class="tok-annotation">@Positive</span> <span class="tok-keyword">int</span> <span class="tok-field">points</span>) {
 
+    <span class="tok-annotation">@InterceptApply</span>
+    <span class="tok-type">Object</span> <span class="tok-method">ignoreIfAlreadyGranted</span>(<span class="tok-type">Graph</span>&lt;<span class="tok-type">RewardGrant</span>&gt; current) {
+        <span class="tok-keyword">return</span> current.<span class="tok-method">isPresent</span>() ? <span class="tok-literal">null</span> : <span class="tok-keyword">this</span>;
+    }
+
     <span class="tok-annotation">@Apply</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
-    <span class="tok-type">RewardGrant</span> <span class="tok-method">grant</span>(<span class="tok-type">Entity</span>&lt;<span class="tok-type">RewardGrant</span>&gt; current) {
-        <span class="tok-keyword">return</span> current.<span class="tok-method">orElse</span>(
-            <span class="tok-keyword">new</span> <span class="tok-type">RewardGrant</span>(rewardGrantId, customerId, points));
+    <span class="tok-type">RewardGrant</span> <span class="tok-method">grant</span>() {
+        <span class="tok-keyword">return new</span> <span class="tok-type">RewardGrant</span>(rewardGrantId, customerId, points);
     }
 }
 
@@ -340,14 +321,14 @@ const historyCode = `<span class="tok-annotation">@Component</span>
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">03 · Behavior as proof</p>
                     <h2 id="tests-title">Prove the product behavior<br><span>before an endpoint exists.</span></h2>
-                    <p>The fixture runs the same command and model pipeline as the application. Tests state what already happened, who acts next, and what must follow. There are no repositories, queues, clocks, or transaction managers to mock.</p>
+                    <p>The fixture runs the same command and model pipeline as the application. Tests describe the message contract in external JSON: what already happened, who acts next, and which event or error must follow. They prove observable behavior without reading internal state or mocking repositories, queues, clocks, or transaction managers.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--test" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="ReserveTicketTest.java" label="Real user, real model pipeline" code={testCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Accepted</dt><dd>The ticket is reserved and the reservation belongs to customer 42.</dd></div>
-                        <div><dt>Rejected</dt><dd>A second customer cannot claim the same ticket.</dd></div>
-                        <div><dt>Observable</dt><dd>The accepted command is the event; no duplicate event class is invented.</dd></div>
+                        <div><dt>Contract</dt><dd>JSON fixtures keep complete message examples readable and stable outside the test code.</dd></div>
+                        <div><dt>Accepted</dt><dd>The reservation action itself is the expected event; no duplicate event class is invented.</dd></div>
+                        <div><dt>Rejected</dt><dd>A second customer gets the domain error and no event is committed.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -358,10 +339,10 @@ const historyCode = `<span class="tok-annotation">@Component</span>
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">04 · Product questions</p>
                     <h2 id="search-title">Ask the product.<br><span>Not the database.</span></h2>
-                    <p>The query asks for available tickets in one section of one show, ordered by seat row. The parent relation makes each ticket available as a relationship-scoped graph component; Fluxzero owns its indexing, relationship lookup, and asynchronous retrieval. <code>@Sortable</code> is optional and keeps repeated row sorting fast.</p>
+                    <p>The product asks one typed question: which tickets are available in this section of this show, ordered by seat row? Fluxzero owns the relationship lookup, indexing, filtering, sorting, and bounded retrieval behind it. <code>@Sortable</code> is optional and makes repeated row sorting faster.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--query" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="FindAvailableTickets.java" label="Typed asynchronous query" code={searchCode} />
+                    <ProductCodePanel title="FindAvailableTickets.java" label="Typed product question" code={searchCode} />
                     <div class="product-code-query" aria-label="Available tickets are selected within a show and section, then ordered by row">
                         <span><small>Within</small><strong>Show</strong></span>
                         <i class="bx bx-plus" aria-hidden="true"></i>
