@@ -12,7 +12,22 @@ const { title, label, code, class: className } = Astro.props;
 <figure class:list={['product-code-panel', className]}>
     <figcaption>
         <strong>{title}</strong>
-        <small>{label}</small>
+        <span class="product-code-panel__tools">
+            <small>{label}</small>
+            <button
+                type="button"
+                class="product-code-panel__copy"
+                data-copy-code
+                data-copy-title={title}
+                data-llms-exclude
+                aria-label={`Copy code from ${title}`}
+                title={`Copy code from ${title}`}
+            >
+                <i class="bx bx-copy" aria-hidden="true"></i>
+                <span>Copy</span>
+            </button>
+            <span class="product-code-panel__copy-status" data-copy-code-status role="status" aria-live="polite"></span>
+        </span>
     </figcaption>
     <pre><code class="language-java" set:html={code}></code></pre>
 </figure>

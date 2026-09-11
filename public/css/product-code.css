@@ -163,21 +163,84 @@
 }
 
 .product-code-panel figcaption strong {
+    min-width: 0;
     overflow: hidden;
     font-weight: 500;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
+.product-code-panel__tools {
+    display: flex;
+    min-width: 0;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: 8px;
+}
+
 .product-code-panel figcaption small {
     padding: 4px 9px;
-    flex: 0 0 auto;
+    min-width: 0;
+    flex: 0 1 auto;
+    overflow: hidden;
     border: 1px solid rgba(125, 155, 185, 0.3);
     border-radius: 5px;
     color: #91a8c2;
     font-size: 10px;
     letter-spacing: 0.04em;
+    text-overflow: ellipsis;
     text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.product-code-panel__copy {
+    min-height: 30px;
+    padding: 5px 9px;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid rgba(125, 155, 185, 0.34);
+    border-radius: 6px;
+    background: rgba(9, 23, 39, 0.7);
+    color: #a9bdd2;
+    font: inherit;
+    font-size: 11px;
+    line-height: 1;
+    cursor: pointer;
+    transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.product-code-panel__copy:hover {
+    border-color: rgba(103, 184, 255, 0.64);
+    background: rgba(28, 77, 117, 0.45);
+    color: #dceeff;
+}
+
+.product-code-panel__copy:focus-visible {
+    outline: 2px solid #66b9ff;
+    outline-offset: 2px;
+}
+
+.product-code-panel__copy.is-copied {
+    border-color: rgba(93, 210, 166, 0.5);
+    color: #7be0bc;
+}
+
+.product-code-panel__copy.is-error {
+    border-color: rgba(229, 122, 137, 0.55);
+    color: #ed9aa6;
+}
+
+.product-code-panel__copy-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 .product-code-panel pre {
@@ -788,11 +851,26 @@
         padding: 0 13px;
     }
 
-    .product-code-panel figcaption small {
-        max-width: 46%;
+    .product-code-panel__tools {
+        max-width: 58%;
+        gap: 6px;
+    }
+
+    .product-code-panel__copy {
+        width: 30px;
+        padding: 0;
+        justify-content: center;
+    }
+
+    .product-code-panel__copy > span {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
         overflow: hidden;
-        text-overflow: ellipsis;
+        clip: rect(0, 0, 0, 0);
         white-space: nowrap;
+        border: 0;
     }
 
     .product-code-panel pre,
