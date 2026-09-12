@@ -24,8 +24,7 @@ const actionCode = `<span class="tok-keyword">record</span> <span class="tok-typ
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Reservation</span> <span class="tok-method">createReservation</span>(<span class="tok-type">User</span> <span class="tok-parameter">user</span>) {
         <span class="tok-keyword">return</span> <span class="tok-type">Reservation</span>.<span class="tok-call">awaitingPayment</span>(
-            <span class="tok-field">reservationId</span>, <span class="tok-field">ticketId</span>,
-            <span class="tok-parameter">user</span>.<span class="tok-call">id</span>());
+            <span class="tok-field">reservationId</span>, <span class="tok-field">ticketId</span>, <span class="tok-parameter">user</span>.<span class="tok-call">id</span>());
     }
 }`;
 
