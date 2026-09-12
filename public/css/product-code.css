@@ -15,9 +15,8 @@
     overflow: hidden;
     isolation: isolate;
     background:
-        radial-gradient(circle at 84% 38%, rgba(242, 201, 130, 0.09), transparent 20%),
-        radial-gradient(ellipse 70% 78% at 77% 48%, rgba(59, 128, 194, 0.1), transparent 68%),
-        linear-gradient(180deg, #07111c 0%, #03070b 74%, #030507 100%);
+        radial-gradient(ellipse at 100% 25%, rgba(145, 108, 63, 0.055), transparent 48%),
+        linear-gradient(180deg, #090e14 0%, #05080c 66%, #030507 100%);
 }
 
 .product-code-hero .product-code-hero__layout {
@@ -57,27 +56,43 @@
 }
 
 .product-code-hero__sun {
-    content: '';
     position: absolute;
-    top: 175px;
-    right: clamp(54px, 10vw, 170px);
+    top: 34px;
+    right: clamp(-250px, -14vw, -140px);
     z-index: 1;
-    width: 176px;
-    height: 176px;
-    background: url('/assets/fluxzero/technical-foundation-sun.png') center / contain no-repeat;
+    width: clamp(560px, 50vw, 720px);
+    aspect-ratio: 1;
+    pointer-events: none;
+    -webkit-mask-image: linear-gradient(145deg, #000 12%, rgba(0, 0, 0, 0.85) 38%, transparent 73%);
+    mask-image: linear-gradient(145deg, #000 12%, rgba(0, 0, 0, 0.85) 38%, transparent 73%);
 }
 
+.product-code-hero__sun::before,
 .product-code-hero__sun::after {
     content: '';
     position: absolute;
-    top: 50%;
-    right: 42%;
-    width: min(62vw, 820px);
-    height: 124px;
-    background: linear-gradient(90deg, transparent, rgba(107, 175, 233, 0.035) 58%, rgba(255, 225, 159, 0.12));
-    clip-path: polygon(0 47%, 100% 0, 100% 100%, 0 53%);
-    filter: blur(18px);
-    transform: translateY(-50%);
+    inset: 0;
+    border-radius: 50%;
+}
+
+.product-code-hero__sun::before {
+    background: radial-gradient(closest-side,
+        transparent 64%,
+        rgba(243, 194, 119, 0.045) 74%,
+        rgba(220, 157, 75, 0.09) 81%,
+        rgba(180, 117, 56, 0.035) 88%,
+        transparent 100%);
+    filter: blur(16px);
+}
+
+.product-code-hero__sun::after {
+    inset: 10%;
+    border: 1px solid rgba(239, 207, 154, 0.32);
+    box-shadow:
+        0 0 9px rgba(243, 203, 135, 0.08),
+        inset 0 0 15px rgba(234, 184, 114, 0.04);
+    -webkit-mask-image: linear-gradient(130deg, transparent 8%, #000 34%, transparent 65%);
+    mask-image: linear-gradient(130deg, transparent 8%, #000 34%, transparent 65%);
 }
 
 .product-code-section .cloud-proof-copy {
@@ -959,11 +974,10 @@
     }
 
     .product-code-hero__sun {
-        top: 130px;
-        right: 28px;
-        width: 140px;
-        height: 140px;
-        opacity: 0.9;
+        top: 58px;
+        right: -230px;
+        width: 570px;
+        opacity: 0.7;
     }
 
     .product-code-proof {
@@ -1018,11 +1032,10 @@
     }
 
     .product-code-hero__sun {
-        top: 56px;
-        right: 14px;
-        width: 102px;
-        height: 102px;
-        opacity: 0.76;
+        top: -66px;
+        right: -205px;
+        width: 400px;
+        opacity: 0.55;
     }
 
     .product-code-proof,
