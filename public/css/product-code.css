@@ -15,7 +15,7 @@
     overflow: hidden;
     isolation: isolate;
     background:
-        radial-gradient(ellipse at 100% 25%, rgba(145, 108, 63, 0.055), transparent 48%),
+        radial-gradient(ellipse at 100% 25%, rgba(145, 108, 63, 0.075), transparent 48%),
         linear-gradient(180deg, #090e14 0%, #05080c 66%, #030507 100%);
 }
 
@@ -74,19 +74,19 @@
 .product-code-hero__sun::before {
     background: radial-gradient(closest-side,
         transparent 64%,
-        rgba(243, 194, 119, 0.045) 74%,
-        rgba(220, 157, 75, 0.09) 81%,
-        rgba(180, 117, 56, 0.035) 88%,
+        rgba(243, 194, 119, 0.075) 74%,
+        rgba(220, 157, 75, 0.145) 81%,
+        rgba(180, 117, 56, 0.055) 88%,
         transparent 100%);
     filter: blur(16px);
 }
 
 .product-code-hero__sun::after {
     inset: 10%;
-    border: 1px solid rgba(239, 207, 154, 0.32);
+    border: 1px solid rgba(239, 207, 154, 0.46);
     box-shadow:
-        0 0 9px rgba(243, 203, 135, 0.08),
-        inset 0 0 15px rgba(234, 184, 114, 0.04);
+        0 0 9px rgba(243, 203, 135, 0.14),
+        inset 0 0 15px rgba(234, 184, 114, 0.07);
     -webkit-mask-image: linear-gradient(130deg, transparent 8%, #000 34%, transparent 65%);
     mask-image: linear-gradient(130deg, transparent 8%, #000 34%, transparent 65%);
 }
