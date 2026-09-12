@@ -165,15 +165,10 @@ const historyCode = `<span class="tok-annotation">@Component</span>
     <span class="tok-keyword">void</span> <span class="tok-method">reward</span>(
             <span class="tok-type">ConfirmReservation</span> event,
             <span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-type">Fluxzero</span>.<span class="tok-call">index</span>(<span class="tok-keyword">new</span> <span class="tok-type">RewardGrant</span>(
+        <span class="tok-type">Fluxzero</span>.<span class="tok-call">assertAndApply</span>(<span class="tok-keyword">new</span> <span class="tok-type">GrantReward</span>(
             event.<span class="tok-call">reservationId</span>(), reservation.<span class="tok-call">customerId</span>(), <span class="tok-number">100</span>));
     }
-}
-
-<span class="tok-keyword">record</span> <span class="tok-type">RewardGrant</span>(
-    <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
-    <span class="tok-type">String</span> <span class="tok-field">customerId</span>,
-    <span class="tok-keyword">int</span> <span class="tok-field">points</span>) {}`;
+}`;
 
 const paymentProcessCode = `<span class="tok-annotation">@Stateful</span>
 <span class="tok-keyword">record</span> <span class="tok-type">PaymentProcess</span>(
@@ -481,7 +476,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>Fluxzero preserves your product’s history. Use it to add features retroactively, with the information as it was at the time. The same code processes earlier activity and continues with new activity.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--history" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="CustomerRewards.java" label="Event handler and complete history" code={historyCode} />
+                    <ProductCodePanel title="CustomerRewards.java" label="Retroactive event handler" code={historyCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>History supplied</dt><dd>Fluxzero feeds recorded activity to the new feature from the point you choose.</dd></div>
                         <div><dt>Earlier state reconstructed</dt><dd>Fluxzero supplies the data as it was then, without your code having to rebuild it.</dd></div>
