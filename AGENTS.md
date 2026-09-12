@@ -25,7 +25,7 @@ This is an Astro site using pnpm as the package manager:
 
 ## Product Context
 
-**Fluxzero** is a production-ready foundation for AI-generated and prompt-built software.
+**Fluxzero** is the European cloud for AI-built apps.
 
 Its core promise on the marketing site:
 
@@ -39,7 +39,7 @@ Avoid leading with Java, Kotlin, SDK names, event sourcing, annotations, or inte
 ### Primary Audiences
 
 - Prompt-first builders who want to build products with AI agents.
-- Founders, operators, and product teams who want production-ready software without assembling the entire backend foundation themselves.
+- Founders, operators, and product teams who want reliable software without assembling the entire backend foundation themselves.
 - Technical decision makers who want confidence that the generated product has solid architecture underneath.
 - Developers and AI agents are a secondary audience for `/docs`, not the default audience for the homepage or pricing page.
 

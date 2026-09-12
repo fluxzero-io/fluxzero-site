@@ -11,12 +11,6 @@
             description: 'A minimal Fluxzero setup for Kotlin projects.',
             language: 'kotlin',
             defaultBuildTool: 'gradle'
-        },
-        gamerental: {
-            name: 'GameStore Demo',
-            description: 'A complete demo application for game rentals.',
-            language: 'java',
-            defaultBuildTool: 'maven'
         }
     };
 
