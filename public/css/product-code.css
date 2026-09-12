@@ -298,7 +298,7 @@
     overflow: auto;
     color: var(--code-text);
     font-family: var(--font-mono);
-    font-size: 12.5px;
+    font-size: 13.5px;
     line-height: 1.62;
     tab-size: 4;
     white-space: pre;
@@ -306,6 +306,10 @@
 
 .product-code-panel code {
     font: inherit;
+}
+
+.product-code-page .tok-parameter {
+    color: var(--code-text);
 }
 
 .product-code-page .tok-annotation {
@@ -727,7 +731,7 @@
 
 .product-code-interactions .product-code-panel pre {
     min-height: 170px;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .product-code-interactions--policy {
@@ -962,7 +966,7 @@
 
 .product-code-history .product-code-panel pre {
     min-height: 340px;
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .product-code-conclusion strong {
@@ -1099,7 +1103,7 @@
     .product-code-history .product-code-panel pre {
         min-height: 0;
         padding: 18px 16px 21px;
-        font-size: 10.5px;
+        font-size: 11.5px;
         line-height: 1.58;
     }
 
@@ -1183,6 +1187,6 @@
     .product-code-interactions .product-code-panel pre,
     .product-code-history .product-code-panel pre {
         padding-right: 54px;
-        font-size: 9.75px;
+        font-size: 10.75px;
     }
 }
