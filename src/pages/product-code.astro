@@ -284,13 +284,13 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <figure class="product-code-relation-map">
                         <div class="product-code-relation-map__grid">
                             <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--show" title="Show.java" label="Root model" code={showModelCode} />
-                            <div class="product-code-relation-map__level product-code-relation-map__level--show">
+                            <div class="product-code-relation-map__level product-code-relation-map__level--show" aria-hidden="true">
                                 <span class="product-code-relation-map__link product-code-relation-map__link--show-ticket" aria-hidden="true"></span>
                                 <strong class="product-code-relation-map__root">Show</strong>
                             </div>
 
                             <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--tickets" title="Ticket.java" label="Child of Show" code={ticketModelCode} />
-                            <div class="product-code-relation-map__level product-code-relation-map__level--tickets">
+                            <div class="product-code-relation-map__level product-code-relation-map__level--tickets" aria-hidden="true">
                                 <span class="product-code-relation-map__link product-code-relation-map__link--ticket-up" aria-hidden="true"></span>
                                 <span class="product-code-relation-map__link product-code-relation-map__link--ticket-down" aria-hidden="true"></span>
                                 <ul class="product-code-relation-map__tickets" aria-label="Tickets connected to the show">
@@ -302,7 +302,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                             </div>
 
                             <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--reservations" title="Reservation.java" label="Child of Ticket" code={reservationModelCode} />
-                            <div class="product-code-relation-map__level product-code-relation-map__level--reservations">
+                            <div class="product-code-relation-map__level product-code-relation-map__level--reservations" aria-hidden="true">
                                 <span class="product-code-relation-map__link product-code-relation-map__link--reservation-up" aria-hidden="true"></span>
                                 <ul class="product-code-relation-map__reservations" aria-label="Reservations connected to tickets">
                                     <li aria-hidden="true"></li>

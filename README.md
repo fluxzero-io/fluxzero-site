@@ -56,6 +56,7 @@ Run commands from the repository root.
 | `pnpm sync:docs` | Refresh the generated docs from `fluxzero-sdk-java` |
 | `pnpm astro sync` | Refresh Astro content, generated types, and the release cache |
 | `pnpm test:changelog` | Run the changelog import regression tests |
+| `pnpm test:llms` | Verify Markdown export, code formatting, and semantic content |
 | `pnpm astro ...` | Run another Astro CLI command |
 
 The production build also generates `dist/llms.txt` and `dist/llms-full.txt` from the rendered core marketing pages. These files are build artifacts; the website HTML remains their source of truth.
@@ -80,6 +81,7 @@ Run the same checks used by the deployment workflow before publishing a change:
 
 ```bash
 pnpm test:changelog
+pnpm test:llms
 pnpm build
 ```
 

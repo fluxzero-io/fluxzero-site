@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
 
 const siteUrl = 'https://fluxzero.io';
@@ -245,15 +246,15 @@ function accessibleName(node) {
     return image ? normalizeInline(getAttribute(image, 'alt')) : '';
 }
 
-function renderChildrenInline(node, pageUrl, headingOffset) {
+function renderChildrenInline(node, pageUrl, headingOffset, codeBlocks) {
     return normalizeInline(
         joinRenderedParts(
-            (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset)),
+            (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks)),
         ),
     );
 }
 
-function renderNode(node, pageUrl, headingOffset = 1) {
+function renderNode(node, pageUrl, headingOffset, codeBlocks) {
     if (node.nodeName === '#text') return node.value ?? '';
     if (shouldSkip(node)) return '';
 
@@ -276,7 +277,7 @@ function renderNode(node, pageUrl, headingOffset = 1) {
         const renderedLabel = hasTextLabel
             ? normalizeInline(
                 joinRenderedParts(
-                    (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset)),
+                    (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks)),
                 ),
             )
             : '';
@@ -288,14 +289,14 @@ function renderNode(node, pageUrl, headingOffset = 1) {
     if (tagName === 'strong' || tagName === 'b') {
         const value = normalizeInline(
             joinRenderedParts(
-                (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset)),
+                (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks)),
             ),
         );
         return value ? `**${value}**` : '';
     }
 
     if (tagName === 'small') {
-        const value = renderChildrenInline(node, pageUrl, headingOffset);
+        const value = renderChildrenInline(node, pageUrl, headingOffset, codeBlocks);
         return value ? ` ${value}` : '';
     }
 
@@ -305,17 +306,23 @@ function renderNode(node, pageUrl, headingOffset = 1) {
     }
 
     if (tagName === 'pre') {
-        const value = rawTextContent(node).trim();
+        const value = rawTextContent(node);
+        if (!value.trim()) return '';
         const code = findElement(node, (child) => child.tagName === 'code');
         const language = (getAttribute(code ?? {}, 'class') ?? '')
             .split(/\s+/)
             .find((className) => className.startsWith('language-'))
             ?.slice('language-'.length);
-        return value ? `\n\n\`\`\`${language ?? ''}\n${value}\n\`\`\`\n\n` : '';
+        const fence = '`'.repeat(Math.max(3, ...Array.from(value.matchAll(/`+/g), ([run]) => run.length + 1)));
+        const block = `${fence}${language ?? ''}\n${value}${value.endsWith('\n') ? '' : '\n'}${fence}`;
+        // Keep code outside all prose normalization, including ancestor elements.
+        // HTML parsing replaces null characters, so these markers cannot collide with page text.
+        const marker = `\0${codeBlocks.push(block) - 1}\0`;
+        return `\n\n${marker}\n\n`;
     }
 
     if (tagName === 'sup') {
-        const value = renderChildrenInline(node, pageUrl, headingOffset);
+        const value = renderChildrenInline(node, pageUrl, headingOffset, codeBlocks);
         if (!value) return '';
         return value.includes('](') ? ` ${value}` : ` [${value}]`;
     }
@@ -347,7 +354,7 @@ function renderNode(node, pageUrl, headingOffset = 1) {
                 if (entry) entries.push(entry);
                 entry = { term: normalizeInline(textContent(child)), values: [] };
             } else if (child.tagName === 'dd') {
-                const value = renderChildrenInline(child, pageUrl, headingOffset);
+                const value = renderChildrenInline(child, pageUrl, headingOffset, codeBlocks);
                 if (!entry) entry = { term: '', values: [] };
                 if (value) entry.values.push(value);
             }
@@ -363,7 +370,7 @@ function renderNode(node, pageUrl, headingOffset = 1) {
     }
 
     const children = joinRenderedParts(
-        (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset)),
+        (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks)),
     );
     const value = normalizeInline(children);
 
@@ -402,48 +409,58 @@ function documentMetadata(document, path) {
     };
 }
 
+export function renderPageContent(document, pageUrl) {
+    const main =
+        findElement(document, (node) => node.tagName === 'main') ??
+        findElement(document, (node) => node.tagName === 'body');
+    if (!main) throw new Error(`No <main> or <body> element found in ${pageUrl}`);
+
+    const codeBlocks = [];
+    return cleanMarkdown(renderNode(main, pageUrl, 1, codeBlocks))
+        .replace(/\0(\d+)\0/g, (_, index) => codeBlocks[Number(index)]);
+}
+
 async function readPage(page) {
     const html = await readFile(join(outputDirectory, page.file), 'utf8');
     const document = parse(html);
     const metadata = documentMetadata(document, page.path);
-    const main =
-        findElement(document, (node) => node.tagName === 'main') ??
-        findElement(document, (node) => node.tagName === 'body');
-
-    if (!main) {
-        throw new Error(`No <main> or <body> element found in ${page.file}`);
-    }
 
     return {
         ...metadata,
-        content: cleanMarkdown(renderNode(main, metadata.url)),
+        content: renderPageContent(document, metadata.url),
     };
 }
 
-const builtPages = await Promise.all(pages.map(readPage));
-const homepage = builtPages[0];
+async function generateFiles() {
+    const builtPages = await Promise.all(pages.map(readPage));
+    const homepage = builtPages[0];
 
-const index = cleanMarkdown(`
-# Fluxzero
+    const index = cleanMarkdown(`
+    # Fluxzero
 
-> ${homepage.description}
+    > ${homepage.description}
 
-## Core pages
+    ## Core pages
 
-${builtPages
-    .map((page) => `- [${page.title}](${page.url}): ${page.description}`)
-    .join('\n')}
-`);
+    ${builtPages
+        .map((page) => `- [${page.title}](${page.url}): ${page.description}`)
+        .join('\n')}
+    `);
 
-const full = builtPages
-    .map((page) => `# ${page.title}\n\nSource: ${page.url}\n\n${page.content}`)
-    .join('\n\n---\n\n');
-const selfContained = `${index}\n\n---\n\n${full}`;
+    const full = builtPages
+        .map((page) => `# ${page.title}\n\nSource: ${page.url}\n\n${page.content}`)
+        .join('\n\n---\n\n');
+    const selfContained = `${index}\n\n---\n\n${full}`;
 
-await mkdir(outputDirectory, { recursive: true });
-await Promise.all([
-    writeFile(join(outputDirectory, 'llms.txt'), `${selfContained}\n`, 'utf8'),
-    writeFile(join(outputDirectory, 'llms-full.txt'), `${full}\n`, 'utf8'),
-]);
+    await mkdir(outputDirectory, { recursive: true });
+    await Promise.all([
+        writeFile(join(outputDirectory, 'llms.txt'), `${selfContained}\n`, 'utf8'),
+        writeFile(join(outputDirectory, 'llms-full.txt'), `${full}\n`, 'utf8'),
+    ]);
 
-console.log(`Generated llms.txt and llms-full.txt from ${builtPages.length} pages.`);
+    console.log(`Generated llms.txt and llms-full.txt from ${builtPages.length} pages.`);
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+    await generateFiles();
+}

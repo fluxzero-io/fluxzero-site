@@ -82,6 +82,10 @@ jobs:
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm test:changelog
 
+      - name: Test marketing text export
+        if: steps.sdk-docs.outputs.changed == 'true'
+        run: pnpm test:llms
+
       - name: Build
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm build
