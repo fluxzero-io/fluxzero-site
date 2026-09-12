@@ -7,7 +7,7 @@
     <artifactId>product-code-examples</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
-        <fluxzero.version>2.0.0-RC9</fluxzero.version>
+        <fluxzero.version>2.0.0-RC10</fluxzero.version>
         <maven.compiler.release>25</maven.compiler.release>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

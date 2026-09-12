@@ -52,23 +52,14 @@ const reservationModelCode = `<span class="tok-annotation">@Model</span>
     <span class="tok-annotation">@With</span> <span class="tok-annotation">@ProtectData</span> <span class="tok-type">String</span> <span class="tok-field">contactEmail</span>) {}`;
 
 const testCode = `<span class="tok-annotation">@Test</span>
-<span class="tok-keyword">void</span> <span class="tok-method">reservesAnAvailableTicket</span>() {
+<span class="tok-keyword">void</span> <span class="tok-method">cancelsWhenPaymentIsTooLate</span>() {
     <span class="tok-field">fixture</span>
-        .<span class="tok-call">whenCommandByUser</span>(<span class="tok-string">"customer-42"</span>,
-            <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
-        .<span class="tok-call">expectEvents</span>(
-            <span class="tok-string">"/ticketing/reserve-ticket.json"</span>);
-}
-
-<span class="tok-annotation">@Test</span>
-<span class="tok-keyword">void</span> <span class="tok-method">rejectsASecondReservation</span>() {
-    <span class="tok-field">fixture</span>
-        .<span class="tok-call">givenCommandsByUser</span>(<span class="tok-string">"customer-42"</span>,
-            <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
-        .<span class="tok-call">whenCommandByUser</span>(<span class="tok-string">"customer-77"</span>,
-            <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
-        .<span class="tok-call">expectExceptionalResult</span>(<span class="tok-type">TicketErrors</span>.<span class="tok-field">notAvailable</span>)
-        .<span class="tok-call">expectNoEvents</span>();
+        .<span class="tok-call">whenPostByUser</span>(<span class="tok-string">"customer-42"</span>,
+            <span class="tok-string">"/api/reservations"</span>, <span class="tok-string">"/ticketing/reserve.json"</span>)
+        .<span class="tok-call">expectEvents</span>(<span class="tok-type">ReserveTicket</span>.<span class="tok-keyword">class</span>)
+        .<span class="tok-call">andThen</span>()
+        .<span class="tok-call">whenTimeElapses</span>(<span class="tok-type">Duration</span>.<span class="tok-call">ofMinutes</span>(<span class="tok-number">15</span>))
+        .<span class="tok-call">expectEvents</span>(<span class="tok-type">ExpireReservation</span>.<span class="tok-keyword">class</span>);
 }`;
 
 const searchCode = `<span class="tok-keyword">record</span> <span class="tok-type">FindAvailableTickets</span>(
@@ -261,7 +252,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <ProductCodePanel title="ReserveTicket.java" label="One rule, two changes" code={actionCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>State loads automatically</dt><dd>Fluxzero provides the product state and which customer is making the change.</dd></div>
-                        <div><dt>Everything changes together</dt><dd>If something changes while the rule runs, Fluxzero runs it again before saving.</dd></div>
+                        <div><dt>Everything changes together</dt><dd>If something changes while the rule runs, it runs again before the changes are saved.</dd></div>
                         <div><dt>Many people, one safe result</dt><dd>Each decision is kept correct even when many customers act at once.</dd></div>
                     </dl>
                 </div>
@@ -313,8 +304,8 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                         </div>
                     </figure>
                     <dl class="product-code-proof__notes">
-                        <div><dt>Keep track of everything</dt><dd>Fluxzero keeps track of every part of the product and how it relates to the rest.</dd></div>
-                        <div><dt>Stored automatically</dt><dd>Fluxzero loads and saves the information without storage work in the application.</dd></div>
+                        <div><dt>Keep track of everything</dt><dd>Each part of the product is tracked along with its relationships.</dd></div>
+                        <div><dt>Stored automatically</dt><dd>Your code needs no storage logic. The information is loaded and saved automatically.</dd></div>
                         <div><dt>History preserved</dt><dd>Fluxzero keeps every previous state of the product available.</dd></div>
                     </dl>
                 </div>
@@ -329,11 +320,11 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>Your agent tests that features keep working as you build. That includes the edge cases. Fluxzero runs the same product code and rules in tests as in production, so you can ship with confidence.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--test" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="ReserveTicketTest.java" label="Behavior test with JSON" code={testCode} />
+                    <ProductCodePanel title="ReserveTicketTest.java" label="Web request to automatic cancellation" code={testCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Production behavior</dt><dd>Fluxzero runs the scenario through the same rules as the real application.</dd></div>
-                        <div><dt>Real circumstances</dt><dd>Fluxzero supplies the person and moment described by the test.</dd></div>
-                        <div><dt>Visible outcome</dt><dd>Fluxzero confirms success or the expected rejection. No infrastructure or mocks needed.</dd></div>
+                        <div><dt>Production behavior</dt><dd>The scenario runs through the same rules as the real application.</dd></div>
+                        <div><dt>Real circumstances</dt><dd>The person and moment described by the test are supplied automatically.</dd></div>
+                        <div><dt>Visible outcome</dt><dd>Success and expected rejections are checked without infrastructure or mocks.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -349,9 +340,9 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <div class="product-code-proof product-code-proof--query" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="FindAvailableTickets.java" label="Query and search" code={searchCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Search maintained automatically</dt><dd>Fluxzero updates the searchable data as your product changes.</dd></div>
+                        <div><dt>Search maintained automatically</dt><dd>Searchable data stays up to date as your product changes.</dd></div>
                         <div><dt>Relationships already known</dt><dd>Fluxzero follows the connections in your product data to find what belongs together.</dd></div>
-                        <div><dt>Work done in the cloud</dt><dd>Fluxzero filters and sorts the data. Your code receives the results it asked for.</dd></div>
+                        <div><dt>Work done in the cloud</dt><dd>Filtering and sorting happen in the cloud. Your code receives the results it asked for.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -370,9 +361,9 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                         <ProductCodePanel title="ExpireReservation.java" label="Remove hold and release ticket" code={expiryCode} />
                     </div>
                     <dl class="product-code-proof__notes">
-                        <div><dt>Scheduled work preserved</dt><dd>Fluxzero retains the action through application restarts and deployments.</dd></div>
+                        <div><dt>Scheduled work preserved</dt><dd>Scheduled actions survive application restarts and deployments.</dd></div>
                         <div><dt>Current rules checked</dt><dd>Fluxzero loads the latest data and checks whether the scheduled change is still allowed.</dd></div>
-                        <div><dt>Cancellation handled</dt><dd>Your code names the follow-up to cancel. Fluxzero removes it from the schedule.</dd></div>
+                        <div><dt>Cancellation handled</dt><dd>Your code names the follow-up to cancel. It is removed from the schedule.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -388,7 +379,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <div class="product-code-proof product-code-proof--workflow" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="PaymentProcess.java" label="Wait for a payment response" code={paymentProcessCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Progress preserved</dt><dd>Fluxzero remembers where each workflow left off, including after a restart.</dd></div>
+                        <div><dt>Progress preserved</dt><dd>Each workflow’s progress is preserved, including after a restart.</dd></div>
                         <div><dt>Responses connected</dt><dd>The reference on an incoming response connects it to the right waiting process.</dd></div>
                         <div><dt>Ready to continue</dt><dd>Fluxzero loads that process and runs the next step with its saved state.</dd></div>
                     </dl>
@@ -406,8 +397,8 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <div class="product-code-proof product-code-proof--policy" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="UpdateContactEmail.java" label="Ownership and protected data" code={personalDataCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Identity supplied</dt><dd>Fluxzero gives your rule the authenticated customer making the change.</dd></div>
-                        <div><dt>Access checked first</dt><dd>With sign-in required, Fluxzero rejects unauthenticated requests before the feature runs.</dd></div>
+                        <div><dt>Identity supplied</dt><dd>Your rule receives the authenticated customer making the change.</dd></div>
+                        <div><dt>Access checked first</dt><dd>When sign-in is required, unauthenticated requests are rejected before the feature runs.</dd></div>
                         <div><dt>Private data stays erasable</dt><dd>Fluxzero stores protected values separately, so they can be erased while the surrounding history remains.</dd></div>
                     </dl>
                 </div>
@@ -426,7 +417,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <dl class="product-code-proof__notes">
                         <div><dt>Input checked</dt><dd>Fluxzero checks the submitted data against your requirements before running the feature.</dd></div>
                         <div><dt>Identity carried through</dt><dd>The feature receives the customer making the request without extra code to pass that identity along.</dd></div>
-                        <div><dt>Response handled</dt><dd>Fluxzero sends the result back to the interface and turns errors into the appropriate web response.</dd></div>
+                        <div><dt>Response handled</dt><dd>The result is sent back to the interface, with errors turned into the appropriate web response.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -478,9 +469,9 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <div class="product-code-proof product-code-proof--history" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="CustomerRewards.java" label="Retroactive event handler" code={historyCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>History supplied</dt><dd>Fluxzero feeds recorded activity to the new feature from the point you choose.</dd></div>
+                        <div><dt>History supplied</dt><dd>Your new feature receives recorded activity from the point you choose.</dd></div>
                         <div><dt>Earlier state reconstructed</dt><dd>Fluxzero supplies the data as it was then, without your code having to rebuild it.</dd></div>
-                        <div><dt>Progress remembered</dt><dd>Fluxzero tracks how far the feature has processed and resumes after interruptions.</dd></div>
+                        <div><dt>Progress remembered</dt><dd>Progress is tracked, and processing resumes after interruptions.</dd></div>
                     </dl>
                 </div>
             </div>

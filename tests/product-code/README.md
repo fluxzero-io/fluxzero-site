@@ -7,7 +7,7 @@ pnpm test:product-code
 ```
 
 Requires Node.js 22+, Java 25+ and Maven 3.9+. Maven downloads the pinned
-Fluxzero SDK `2.0.0-RC9` from the public Fluxzero package repository.
+Fluxzero SDK `2.0.0-RC10` from the public Fluxzero package repository.
 No local SDK checkout, credentials, running server, or private repository is needed.
 
 ## What is tested
@@ -21,9 +21,11 @@ reports live under the ignored `target/` directory.
 The template supplies domain declarations omitted from the examples, plus
 behavior tests for queries, unnamed query parameters, payment workflows,
 scheduling and cancellation, protected contact details, retroactive rewards,
-and fraud review. The two displayed tests also run using the included JSON
-request fixture. Tests use the SDK's real `TestFixture`, model persistence and
-message handling, without mocked Fluxzero APIs.
+and fraud review. The displayed test starts with an authenticated web request,
+checks the reservation event, and advances time with `andThen()` to check its
+automatic expiry. A supporting check also verifies that the reservation is
+removed and the ticket becomes available again. Tests use the SDK's real
+`TestFixture`, model persistence and message handling, without mocked Fluxzero APIs.
 
 The only structural changes to displayed code are nesting top-level classes
 inside the test class and supplying the `Reservation.awaitingPayment` factory
@@ -40,7 +42,7 @@ report the individual JUnit scenario in `target/surefire-reports/`.
 The SDK version is pinned in `pom.xml`. To try another published version:
 
 ```sh
-pnpm test:product-code -Dfluxzero.version=2.0.0-RC9
+pnpm test:product-code -Dfluxzero.version=2.0.0-RC10
 ```
 
 Update the pin only after the examples pass against that release. These tests

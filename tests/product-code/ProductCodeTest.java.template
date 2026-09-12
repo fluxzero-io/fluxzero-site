@@ -26,7 +26,7 @@ import static qualification.ProductCodeTest.ReservationStatus.*;
 import static qualification.ProductCodeTest.TicketStatus.*;
 
 public class ProductCodeTest {
-    final TestFixture fixture = fixture();
+    final TestFixture fixture = fixture(new ReservationApi(), new ReservationTimers());
 
     // @snippet actionCode
     // @snippet showModelCode
@@ -121,6 +121,31 @@ public class ProductCodeTest {
     }
 
     @Test
+    void rejectsASecondReservation() {
+        fixture()
+                .givenCommandsByUser("customer-42", "/ticketing/reserve-ticket.json")
+                .whenCommandByUser("customer-77", "/ticketing/reserve-ticket.json")
+                .expectExceptionalResult(TicketErrors.notAvailable)
+                .expectNoEvents();
+    }
+
+    @Test
+    void expiredWebReservationReleasesTheTicket() {
+        var requested = fixture(new ReservationApi(), new ReservationTimers())
+                .whenPostByUser("customer-42", "/api/reservations", "/ticketing/reserve.json")
+                .expectSuccessfulResult()
+                .expectEvents(ReserveTicket.class)
+                .expectThat(fc -> assertEquals(RESERVED, Fluxzero.loadModel(ticket).get().status()))
+                .expectNoErrors();
+        ReservationId created = requested.getResult(ReservationId.class);
+        requested.andThen().whenTimeElapses(Duration.ofMinutes(15))
+                .expectThat(fc -> {
+                    assertNull(Fluxzero.loadModel(created).get());
+                    assertEquals(AVAILABLE, Fluxzero.loadModel(ticket).get().status());
+                }).expectEvents(new ExpireReservation(created)).expectNoErrors();
+    }
+
+    @Test
     void queriesReturnTypedTickets() {
         fixture(FindAvailableTickets.class)
                 .whenApplying(fc -> new TicketApi().available(show, "balcony"))
@@ -158,7 +183,7 @@ public class ProductCodeTest {
     void schedulesCanBeCancelled() {
         fixture(new ReservationTimers()).givenCommandsByUser(new ExampleUser(customer), new ReserveTicket(reservation, ticket))
                 .whenTimeElapses(Duration.ofMinutes(15))
-                .expectCommands(new ExpireReservation(reservation)).expectNoErrors();
+                .expectEvents(new ExpireReservation(reservation)).expectNoErrors();
         fixture(new ReservationTimers()).givenCommandsByUser(new ExampleUser(customer), new ReserveTicket(reservation, ticket), new ConfirmReservation(reservation))
                 .whenTimeElapses(Duration.ofMinutes(15)).expectNoCommands().expectNoErrors();
     }
