@@ -1,0 +1,5 @@
+{
+  "@class": "qualification.ProductCodeTest$ReserveTicket",
+  "reservationId": "reservation-3",
+  "ticketId": "ticket-1"
+}

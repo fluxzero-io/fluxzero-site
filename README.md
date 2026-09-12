@@ -59,9 +59,12 @@ Run commands from the repository root.
 | `pnpm astro sync` | Refresh Astro content, generated types, and the release cache |
 | `pnpm test:changelog` | Run the changelog import regression tests |
 | `pnpm test:llms` | Verify Markdown export, code formatting, and semantic content |
+| `pnpm test:product-code` | Compile the page examples and test their behavior with the published SDK (Java 25 and Maven required) |
 | `pnpm astro ...` | Run another Astro CLI command |
 
 The production build also generates `dist/llms.txt` and `dist/llms-full.txt` from the rendered core marketing pages. These files are build artifacts; the website HTML remains their source of truth.
+
+The [product-code tests](tests/product-code/README.md) extract all Java examples directly from `/product-code` and exercise their behavior with the real SDK `TestFixture`. They run locally and in CI without an SDK checkout or a running Fluxzero server.
 
 ## Project structure
 
@@ -84,6 +87,7 @@ Run the same checks used by the deployment workflow before publishing a change:
 ```bash
 pnpm test:changelog
 pnpm test:llms
+pnpm test:product-code
 pnpm build
 ```
 

@@ -86,6 +86,19 @@ jobs:
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm test:llms
 
+      - name: Setup Java for product examples
+        if: steps.sdk-docs.outputs.changed == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+          cache-dependency-path: tests/product-code/pom.xml
+
+      - name: Test product code examples
+        if: steps.sdk-docs.outputs.changed == 'true'
+        run: pnpm test:product-code
+
       - name: Build
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm build

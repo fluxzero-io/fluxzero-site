@@ -1,0 +1,214 @@
+package qualification;
+
+import io.fluxzero.sdk.Fluxzero;
+import io.fluxzero.sdk.configuration.DefaultFluxzero;
+import io.fluxzero.sdk.modeling.*;
+import io.fluxzero.sdk.persisting.eventsourcing.*;
+import io.fluxzero.sdk.publishing.dataprotection.ProtectData;
+import io.fluxzero.sdk.tracking.Consumer;
+import io.fluxzero.sdk.tracking.handling.*;
+import io.fluxzero.sdk.tracking.handling.authentication.*;
+import io.fluxzero.sdk.scheduling.ScheduleId;
+import io.fluxzero.sdk.web.*;
+import io.fluxzero.sdk.test.TestFixture;
+import org.springframework.stereotype.Component;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
+import lombok.With;
+import org.junit.jupiter.api.Test;
+import jakarta.annotation.Nullable;
+import java.time.Duration;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import static org.junit.jupiter.api.Assertions.*;
+import static qualification.ProductCodeTest.ReservationStatus.*;
+import static qualification.ProductCodeTest.TicketStatus.*;
+
+public class ProductCodeTest {
+    final TestFixture fixture = fixture();
+
+    // @snippet actionCode
+    // @snippet showModelCode
+    // @snippet ticketModelCode
+    // @snippet reservationModelCode
+    // @snippet testCode
+    // @snippet searchCode
+    // @snippet timerCode
+    // @snippet expiryCode
+    // @snippet personalDataCode
+    // @snippet webCode
+    // @snippet historyCode
+    // @snippet paymentProcessCode
+    // @snippet queryCallerCode
+    // @snippet consumerCode
+
+    // Domain messages, IDs and business logic whose declarations the page omits.
+    enum TicketStatus { AVAILABLE, RESERVED }
+    enum ShowStatus { OPEN }
+    enum ReservationStatus { AWAITING_PAYMENT, CONFIRMED }
+    record TicketDetails(String section, int row) {}
+    static class ShowId extends Id<Show> { ShowId(String id) { super(id); } }
+    static class TicketId extends Id<Ticket> { TicketId(String id) { super(id); } }
+    static class ReservationId extends Id<Reservation> { ReservationId(String id) { super(id); } }
+    static class TicketErrors {
+        static final IllegalStateException notAvailable = new IllegalStateException("Not available");
+    }
+    static class ReservationErrors {
+        static final IllegalStateException notAwaitingPayment = new IllegalStateException("Not awaiting payment");
+        static final IllegalStateException notOwner = new IllegalStateException("Not owner");
+    }
+    record CreateShow(ShowId showId) {
+        @Apply Show apply() { return new Show(showId, "Show", ShowStatus.OPEN); }
+    }
+    record CreateTicket(TicketId ticketId, ShowId showId, TicketDetails details) {
+        @Apply Ticket apply() { return new Ticket(ticketId, showId, details, AVAILABLE); }
+    }
+    record CreateReservation(ReservationId reservationId, TicketId ticketId, String customerId) {
+        @Apply Reservation apply() { return Reservation.awaitingPayment(reservationId, ticketId, customerId); }
+    }
+    record ConfirmReservation(ReservationId reservationId) {
+        @InterceptApply Object ignoreIfConfirmed(Reservation current) {
+            return current.status() == CONFIRMED ? null : this;
+        }
+        @AssertLegal void check(Reservation current) {
+            if (current.status() != AWAITING_PAYMENT) throw ReservationErrors.notAwaitingPayment;
+        }
+        @Apply Reservation apply(Reservation current) { return current.withStatus(CONFIRMED); }
+    }
+    record PaymentStarted(ReservationId reservationId, String pspReference) {}
+    record PaymentSucceeded(String pspReference) {}
+    record ReservationRequest(@NotNull TicketId ticketId) {}
+    record ExampleUser(String id) implements User {
+        public String getName() { return id; }
+        public boolean hasRole(String role) { return false; }
+    }
+    record FraudAssessment(boolean requiresReview) {}
+    record CheckForFraud(ReservationId reservationId) {
+        @HandleQuery FraudAssessment handle() {
+            return new FraudAssessment(reservationId.equals(reservation));
+        }
+    }
+    record ReviewReservation(ReservationId reservationId, FraudAssessment assessment) {}
+    @Model
+    record RewardBalance(@EntityId String customerId, Map<ReservationId, Integer> grants) {
+        int points() { return grants.values().stream().mapToInt(Integer::intValue).sum(); }
+    }
+    record GrantReward(ReservationId reservationId, String customerId, int points) {
+        @Apply RewardBalance apply(@Nullable RewardBalance current) {
+            var grants = current == null ? new HashMap<ReservationId, Integer>() : new HashMap<>(current.grants());
+            grants.putIfAbsent(reservationId, points);
+            return new RewardBalance(customerId, Map.copyOf(grants));
+        }
+    }
+
+    static final ShowId show = new ShowId("show-1");
+    static final TicketId ticket = new TicketId("ticket-1");
+    static final ReservationId reservation = new ReservationId("reservation-1");
+    static final ReservationId other = new ReservationId("reservation-2");
+    static final String customer = "customer-1";
+
+    static TestFixture fixture(Object... handlers) {
+        return TestFixture.create(DefaultFluxzero.builder()
+                .configureGraphProjectionCompletion(GraphProjectionCompletion.AWAIT)
+                .registerUserProvider(new AbstractUserProvider(ExampleUser.class) {
+                    public User getUserById(Object id) { return new ExampleUser(id.toString()); }
+                    public User getSystemUser() { return null; }
+                }), handlers)
+                .givenCommands(new CreateShow(show), new CreateTicket(ticket, show, new TicketDetails("balcony", 1)),
+                        new CreateReservation(reservation, ticket, customer),
+                        new CreateReservation(other, ticket, customer));
+    }
+
+    @Test
+    void queriesReturnTypedTickets() {
+        fixture(FindAvailableTickets.class)
+                .whenApplying(fc -> new TicketApi().available(show, "balcony"))
+                .expectResult(List.of(new Ticket(ticket, show, new TicketDetails("balcony", 1), AVAILABLE)))
+                .expectNoErrors();
+    }
+
+    @Test
+    void queryParametersUseJavaNames() {
+        fixture(new TicketApi(), FindAvailableTickets.class)
+                .whenWebRequest(WebRequest.get("/api/tickets?showId=show-1&section=balcony").build())
+                .expectQueries(new FindAvailableTickets(show, "balcony"))
+                .expectSuccessfulResult().expectNoErrors();
+    }
+
+    @Test
+    void statefulPaymentsResumeTheMatchingProcess() {
+        var waiting = fixture(PaymentProcess.class).givenEvents(
+                new PaymentStarted(reservation, "psp-1"), new PaymentStarted(other, "psp-2"));
+        waiting.whenApplying(fc -> Fluxzero.search(PaymentProcess.class).fetchAll())
+                .expectResult(items -> items.size() == 2).expectNoErrors();
+        waiting.whenEvent(new PaymentSucceeded("unknown")).expectNoCommands().expectNoErrors();
+        var completed = waiting.whenEvent(new PaymentSucceeded("psp-1"))
+                .expectOnlyCommands(new ConfirmReservation(reservation))
+                .expectEvents(new ConfirmReservation(reservation)).expectNoErrors()
+                .expectThat(fc -> {
+                    assertEquals(CONFIRMED, Fluxzero.loadModel(reservation).get().status());
+                    assertEquals(AWAITING_PAYMENT, Fluxzero.loadModel(other).get().status());
+                    assertEquals(List.of(new PaymentProcess(other, "psp-2")), Fluxzero.search(PaymentProcess.class).fetchAll());
+                }).andThen();
+        completed.whenEvent(new PaymentSucceeded("psp-1")).expectNoCommands().expectNoErrors();
+    }
+
+    @Test
+    void schedulesCanBeCancelled() {
+        fixture(new ReservationTimers()).givenCommandsByUser(new ExampleUser(customer), new ReserveTicket(reservation, ticket))
+                .whenTimeElapses(Duration.ofMinutes(15))
+                .expectCommands(new ExpireReservation(reservation)).expectNoErrors();
+        fixture(new ReservationTimers()).givenCommandsByUser(new ExampleUser(customer), new ReserveTicket(reservation, ticket), new ConfirmReservation(reservation))
+                .whenTimeElapses(Duration.ofMinutes(15)).expectNoCommands().expectNoErrors();
+    }
+
+    @Test
+    void contactEmailIsValidatedAndProtected() {
+        var owner = new ExampleUser(customer);
+        fixture().whenCommandByUser(owner, new UpdateContactEmail(reservation, "customer@example.com"))
+                .expectSuccessfulResult().expectNoErrors()
+                .expectThat(fc -> assertEquals("customer@example.com", Fluxzero.loadModel(reservation).get().contactEmail()));
+        fixture().whenCommandByUser(new ExampleUser("other-user"), new UpdateContactEmail(reservation, "customer@example.com"))
+                .expectExceptionalResult(ReservationErrors.notOwner).expectNoEvents();
+        fixture().whenCommandByUser(owner, new UpdateContactEmail(reservation, "not-an-email"))
+                .expectExceptionalResult(Exception.class).expectNoEvents();
+        fixture().whenCommand(new UpdateContactEmail(reservation, "customer@example.com"))
+                .expectExceptionalResult(UnauthenticatedException.class).expectNoEvents();
+    }
+
+    @Test
+    void historicalRewardsChangeProductState() {
+        var rewards = fixture(new CustomerRewards()).whenCommand(new ConfirmReservation(reservation))
+                .expectEvents(new GrantReward(reservation, customer, 100))
+                .expectNoErrors().andThen();
+        rewards.whenApplying(fc -> Fluxzero.loadModel(customer, RewardBalance.class).get().points())
+                .expectResult(100).expectNoErrors();
+        rewards.whenApplying(fc -> {
+                    new CustomerRewards().reward(new ConfirmReservation(reservation), Fluxzero.loadModel(reservation).get());
+                    return null;
+                })
+                .expectThat(fc -> assertEquals(100, Fluxzero.loadModel(customer, RewardBalance.class).get().points()))
+                .expectNoErrors();
+        rewards.whenCommand(new ConfirmReservation(other))
+                .expectEvents(new GrantReward(other, customer, 100))
+                .expectThat(fc -> assertEquals(200, Fluxzero.loadModel(customer, RewardBalance.class).get().points()))
+                .expectNoErrors();
+    }
+
+    @Test
+    void fraudQueriesOnlyRequestNecessaryReviews() {
+        fixture(new FraudDetection(), CheckForFraud.class)
+                .whenCommand(new ConfirmReservation(reservation))
+                .expectQueries(new CheckForFraud(reservation))
+                .expectCommands(new ReviewReservation(reservation, new FraudAssessment(true)))
+                .expectThat(fc -> assertTrue(Fluxzero.search(FraudAssessment.class).fetchAll().isEmpty()))
+                .expectNoErrors();
+        fixture(new FraudDetection(), CheckForFraud.class)
+                .whenCommand(new ConfirmReservation(other))
+                .expectQueries(new CheckForFraud(other))
+                .expectNoCommands()
+                .expectThat(fc -> assertTrue(Fluxzero.search(FraudAssessment.class).fetchAll().isEmpty()))
+                .expectNoErrors();
+    }
+}
