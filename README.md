@@ -1,6 +1,10 @@
-# Fluxzero website
+<a href="https://fluxzero.io"><img src="https://raw.githubusercontent.com/fluxzero-io/.github/main/assets/brand/2026-09/repository-header.svg" alt="Fluxzero — The European cloud for AI-built apps" width="1280"></a>
 
-This repository contains the public [Fluxzero website](https://fluxzero.io) and its technical documentation in one Astro application.
+# Fluxzero Website
+
+The public website for [Fluxzero](https://fluxzero.io), the European cloud for AI-built apps. It introduces the all-in-one cloud to product builders and connects developers and coding agents to the technical documentation.
+
+[Get started](https://fluxzero.io/get-started) · [How it works](https://fluxzero.io/how-it-works) · [Docs](https://fluxzero.io/docs)
 
 - The marketing site explains Fluxzero to people building products with AI.
 - The documentation under `/docs` is the technical layer for developers and coding agents.
