@@ -35,11 +35,7 @@
 }
 
 .product-code-hero__context {
-    max-width: 780px;
     margin-top: 24px;
-    color: #99aec1;
-    font-size: 17px;
-    line-height: 1.65;
 }
 
 .product-code-hero h1 {

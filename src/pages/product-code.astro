@@ -28,14 +28,13 @@ const actionCode = `<span class="tok-keyword">record</span> <span class="tok-typ
     }
 }`;
 
-const showModelCode = `<span class="tok-annotation">@Model</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
+const showModelCode = `<span class="tok-annotation">@Model</span>
 <span class="tok-keyword">record</span> <span class="tok-type">Show</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">ShowId</span> <span class="tok-field">showId</span>,
     <span class="tok-type">String</span> <span class="tok-field">name</span>,
     <span class="tok-type">ShowStatus</span> <span class="tok-field">status</span>) {}`;
 
-const ticketModelCode = `<span class="tok-annotation">@Model</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>,
-    <span class="tok-field">persistence</span> = {<span class="tok-type">EVENT_SOURCED</span>, <span class="tok-type">DOCUMENT</span>})
+const ticketModelCode = `<span class="tok-annotation">@Model</span>
 <span class="tok-keyword">record</span> <span class="tok-type">Ticket</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
     <span class="tok-annotation">@Parent</span>(<span class="tok-field">pathInParent</span> = <span class="tok-string">"tickets"</span>)
@@ -43,7 +42,7 @@ const ticketModelCode = `<span class="tok-annotation">@Model</span>(<span class=
     <span class="tok-type">TicketDetails</span> <span class="tok-field">details</span>,
     <span class="tok-annotation">@With</span> <span class="tok-type">TicketStatus</span> <span class="tok-field">status</span>) {}`;
 
-const reservationModelCode = `<span class="tok-annotation">@Model</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
+const reservationModelCode = `<span class="tok-annotation">@Model</span>
 <span class="tok-keyword">record</span> <span class="tok-type">Reservation</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
     <span class="tok-annotation">@Parent</span>(<span class="tok-field">pathInParent</span> = <span class="tok-string">"reservations"</span>)
@@ -202,7 +201,7 @@ const historyCode = `<span class="tok-annotation">@Component</span>
     }
 }
 
-<span class="tok-annotation">@Model</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
+<span class="tok-annotation">@Model</span>
 <span class="tok-keyword">record</span> <span class="tok-type">RewardGrant</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">RewardGrantId</span> <span class="tok-field">rewardGrantId</span>,
     <span class="tok-type">CustomerId</span> <span class="tok-field">customerId</span>,
@@ -296,7 +295,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
     <link rel="stylesheet" href="/css/v4.css?v=20260905-1">
     <link rel="stylesheet" href="/css/technical-foundation.css?v=20260904-5">
     <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260910-11">
-    <link rel="stylesheet" href="/css/product-code.css?v=20260912-30">
+    <link rel="stylesheet" href="/css/product-code.css?v=20260912-31">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
 <body class="v4-page cloud-proof-page cloud-proof-next-page product-code-page">
@@ -311,7 +310,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p class="cloud-proof-next__eyebrow" data-reveal>Product code</p>
                     <h1 data-reveal data-reveal-delay="1">Product decisions<br><span>are the code.</span></h1>
                     <p class="cloud-proof-hero__lead" data-reveal data-reveal-delay="2">When the cloud handles the engineering underneath, a feature can be just its business rules and follow-up actions. These examples show what that leaves your agent to write.</p>
-                    <p class="product-code-hero__context" data-reveal data-reveal-delay="3">You build in natural language. Fluxzero chose Java for the code underneath: a proven backend language that agents speak fluently. Your code remains easy to extend as your product grows.</p>
+                    <p class="cloud-proof-hero__lead product-code-hero__context" data-reveal data-reveal-delay="3">You build in natural language. Fluxzero chose Java for the code underneath: a proven backend language that agents speak fluently. Your code remains easy to extend as your product grows.</p>
                 </div>
             </div>
         </header>
