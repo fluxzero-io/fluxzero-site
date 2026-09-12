@@ -313,10 +313,14 @@
     font-weight: 650;
 }
 
-.product-code-page .tok-keyword,
-.product-code-page .tok-literal {
+.product-code-page .tok-keyword {
     color: var(--code-orange);
     font-weight: 700;
+}
+
+.product-code-page .tok-literal {
+    color: var(--code-orange);
+    font-weight: 650;
 }
 
 .product-code-page .tok-type,
@@ -325,7 +329,8 @@
     font-weight: 650;
 }
 
-.product-code-page .tok-method {
+.product-code-page .tok-method,
+.product-code-page .tok-number {
     color: var(--code-blue);
     font-weight: 650;
 }

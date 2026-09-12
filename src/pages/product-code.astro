@@ -11,20 +11,20 @@ const actionCode = `<span class="tok-keyword">record</span> <span class="tok-typ
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertAvailable</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">if</span> (ticket.<span class="tok-method">status</span>() != <span class="tok-type">AVAILABLE</span>) {
-            <span class="tok-keyword">throw</span> <span class="tok-type">TicketErrors</span>.notAvailable;
+        <span class="tok-keyword">if</span> (ticket.<span class="tok-call">status</span>() != <span class="tok-field">AVAILABLE</span>) {
+            <span class="tok-keyword">throw</span> <span class="tok-type">TicketErrors</span>.<span class="tok-field">notAvailable</span>;
         }
     }
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Ticket</span> <span class="tok-method">reserve</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">RESERVED</span>);
+        <span class="tok-keyword">return</span> ticket.<span class="tok-call">withStatus</span>(<span class="tok-field">RESERVED</span>);
     }
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Reservation</span> <span class="tok-method">createReservation</span>(<span class="tok-type">User</span> user) {
         <span class="tok-keyword">return</span> <span class="tok-type">Reservation</span>.<span class="tok-call">awaitingPayment</span>(
-            reservationId, ticketId, <span class="tok-type">CustomerId</span>.<span class="tok-call">from</span>(user));
+            <span class="tok-field">reservationId</span>, <span class="tok-field">ticketId</span>, <span class="tok-type">CustomerId</span>.<span class="tok-call">from</span>(user));
     }
 }`;
 
@@ -53,7 +53,7 @@ const reservationModelCode = `<span class="tok-annotation">@Model</span>
 
 const testCode = `<span class="tok-annotation">@Test</span>
 <span class="tok-keyword">void</span> <span class="tok-method">reservesAnAvailableTicket</span>() {
-    fixture
+    <span class="tok-field">fixture</span>
         .<span class="tok-call">whenCommandByUser</span>(<span class="tok-string">"customer-42"</span>,
             <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
         .<span class="tok-call">expectEvents</span>(
@@ -62,12 +62,12 @@ const testCode = `<span class="tok-annotation">@Test</span>
 
 <span class="tok-annotation">@Test</span>
 <span class="tok-keyword">void</span> <span class="tok-method">rejectsASecondReservation</span>() {
-    fixture
+    <span class="tok-field">fixture</span>
         .<span class="tok-call">givenCommandsByUser</span>(<span class="tok-string">"customer-42"</span>,
             <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
         .<span class="tok-call">whenCommandByUser</span>(<span class="tok-string">"customer-77"</span>,
             <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
-        .<span class="tok-call">expectExceptionalResult</span>(<span class="tok-type">TicketErrors</span>.notAvailable)
+        .<span class="tok-call">expectExceptionalResult</span>(<span class="tok-type">TicketErrors</span>.<span class="tok-field">notAvailable</span>)
         .<span class="tok-call">expectNoEvents</span>();
 }`;
 
@@ -78,12 +78,12 @@ const searchCode = `<span class="tok-keyword">record</span> <span class="tok-typ
 
     <span class="tok-annotation">@HandleQuery</span>
     <span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt; <span class="tok-method">handle</span>() {
-        <span class="tok-keyword">return</span> <span class="tok-type">Fluxzero</span>.<span class="tok-call">search</span>(<span class="tok-type">Ticket</span>.class)
-            .<span class="tok-call">whereParent</span>(showId)
-            .<span class="tok-call">match</span>(<span class="tok-type">AVAILABLE</span>, <span class="tok-string">"status"</span>)
-            .<span class="tok-call">match</span>(section, <span class="tok-string">"details/section"</span>)
+        <span class="tok-keyword">return</span> <span class="tok-type">Fluxzero</span>.<span class="tok-call">search</span>(<span class="tok-type">Ticket</span>.<span class="tok-keyword">class</span>)
+            .<span class="tok-call">whereParent</span>(<span class="tok-field">showId</span>)
+            .<span class="tok-call">match</span>(<span class="tok-field">AVAILABLE</span>, <span class="tok-string">"status"</span>)
+            .<span class="tok-call">match</span>(<span class="tok-field">section</span>, <span class="tok-string">"details/section"</span>)
             .<span class="tok-call">sortBy</span>(<span class="tok-string">"details/row"</span>)
-            .<span class="tok-call">fetch</span>(<span class="tok-literal">50</span>);
+            .<span class="tok-call">fetch</span>(<span class="tok-number">50</span>);
     }
 }`;
 
@@ -92,15 +92,15 @@ const timerCode = `<span class="tok-annotation">@Component</span>
     <span class="tok-annotation">@HandleEvent</span>
     <span class="tok-keyword">void</span> <span class="tok-method">start</span>(<span class="tok-type">ReserveTicket</span> event) {
         <span class="tok-type">Fluxzero</span>.<span class="tok-call">scheduleCommand</span>(
-            <span class="tok-keyword">new</span> <span class="tok-type">ExpireReservation</span>(event.<span class="tok-method">reservationId</span>()),
-            <span class="tok-string">"expire-"</span> + event.<span class="tok-method">reservationId</span>(),
-            <span class="tok-type">Duration</span>.<span class="tok-call">ofMinutes</span>(<span class="tok-literal">15</span>));
+            <span class="tok-keyword">new</span> <span class="tok-type">ExpireReservation</span>(event.<span class="tok-call">reservationId</span>()),
+            <span class="tok-string">"expire-"</span> + event.<span class="tok-call">reservationId</span>(),
+            <span class="tok-type">Duration</span>.<span class="tok-call">ofMinutes</span>(<span class="tok-number">15</span>));
     }
 
     <span class="tok-annotation">@HandleEvent</span>
     <span class="tok-keyword">void</span> <span class="tok-method">stop</span>(<span class="tok-type">ConfirmReservation</span> event) {
         <span class="tok-type">Fluxzero</span>.<span class="tok-call">cancelSchedule</span>(
-            <span class="tok-string">"expire-"</span> + event.<span class="tok-method">reservationId</span>());
+            <span class="tok-string">"expire-"</span> + event.<span class="tok-call">reservationId</span>());
     }
 }`;
 
@@ -108,8 +108,8 @@ const expiryCode = `<span class="tok-keyword">record</span> <span class="tok-typ
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertAwaitingPayment</span>(<span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-keyword">if</span> (reservation.<span class="tok-method">status</span>() != <span class="tok-type">AWAITING_PAYMENT</span>) {
-            <span class="tok-keyword">throw</span> <span class="tok-type">ReservationErrors</span>.notAwaitingPayment;
+        <span class="tok-keyword">if</span> (reservation.<span class="tok-call">status</span>() != <span class="tok-field">AWAITING_PAYMENT</span>) {
+            <span class="tok-keyword">throw</span> <span class="tok-type">ReservationErrors</span>.<span class="tok-field">notAwaitingPayment</span>;
         }
     }
 
@@ -120,7 +120,7 @@ const expiryCode = `<span class="tok-keyword">record</span> <span class="tok-typ
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Ticket</span> <span class="tok-method">release</span>(<span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">return</span> ticket.<span class="tok-method">withStatus</span>(<span class="tok-type">AVAILABLE</span>);
+        <span class="tok-keyword">return</span> ticket.<span class="tok-call">withStatus</span>(<span class="tok-field">AVAILABLE</span>);
     }
 }`;
 
@@ -128,7 +128,7 @@ const packagePolicyCode = `<span class="tok-comment">// package-info.java</span>
 <span class="tok-annotation">@RequiresUser</span>
 <span class="tok-keyword">package</span> com.acme.ticketing;
 
-<span class="tok-keyword">import</span> io.fluxzero.sdk.tracking.handling.authentication.RequiresUser;`;
+<span class="tok-keyword">import</span> io.fluxzero.sdk.tracking.handling.authentication.<span class="tok-type">RequiresUser</span>;`;
 
 const personalDataCode = `<span class="tok-keyword">record</span> <span class="tok-type">UpdateContactEmail</span>(
     <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
@@ -137,15 +137,15 @@ const personalDataCode = `<span class="tok-keyword">record</span> <span class="t
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertOwner</span>(<span class="tok-type">Reservation</span> reservation, <span class="tok-type">User</span> user) {
-        <span class="tok-keyword">if</span> (!reservation.<span class="tok-method">customerId</span>()
+        <span class="tok-keyword">if</span> (!reservation.<span class="tok-call">customerId</span>()
                 .<span class="tok-call">equals</span>(<span class="tok-type">CustomerId</span>.<span class="tok-call">from</span>(user))) {
-            <span class="tok-keyword">throw</span> <span class="tok-type">ReservationErrors</span>.notOwner;
+            <span class="tok-keyword">throw</span> <span class="tok-type">ReservationErrors</span>.<span class="tok-field">notOwner</span>;
         }
     }
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Reservation</span> <span class="tok-method">update</span>(<span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-keyword">return</span> reservation.<span class="tok-method">withContactEmail</span>(contactEmail);
+        <span class="tok-keyword">return</span> reservation.<span class="tok-call">withContactEmail</span>(<span class="tok-field">contactEmail</span>);
     }
 }
 
@@ -162,17 +162,17 @@ const webCode = `<span class="tok-keyword">record</span> <span class="tok-type">
     <span class="tok-annotation">@HandlePost</span>
     <span class="tok-type">ReservationId</span> <span class="tok-method">reserve</span>(<span class="tok-annotation">@Valid</span> <span class="tok-type">ReservationRequest</span> request) {
         <span class="tok-keyword">var</span> reservationId = <span class="tok-type">Fluxzero</span>.<span class="tok-call">generateId</span>(
-            <span class="tok-type">ReservationId</span>.class);
+            <span class="tok-type">ReservationId</span>.<span class="tok-keyword">class</span>);
 
         <span class="tok-type">Fluxzero</span>.<span class="tok-call">sendCommandAndWait</span>(
             <span class="tok-keyword">new</span> <span class="tok-type">ReserveTicket</span>(
-                reservationId, request.<span class="tok-method">ticketId</span>()));
+                reservationId, request.<span class="tok-call">ticketId</span>()));
         <span class="tok-keyword">return</span> reservationId;
     }
 }`;
 
 const historyCode = `<span class="tok-annotation">@Component</span>
-<span class="tok-annotation">@Consumer</span>(<span class="tok-field">name</span> = <span class="tok-string">"customer-rewards-v1"</span>, <span class="tok-field">minIndex</span> = <span class="tok-literal">0</span>)
+<span class="tok-annotation">@Consumer</span>(<span class="tok-field">name</span> = <span class="tok-string">"customer-rewards-v1"</span>, <span class="tok-field">minIndex</span> = <span class="tok-number">0</span>)
 <span class="tok-keyword">final class</span> <span class="tok-type">CustomerRewards</span> {
     <span class="tok-annotation">@HandleEvent</span>
     <span class="tok-keyword">void</span> <span class="tok-method">reward</span>(
@@ -180,8 +180,8 @@ const historyCode = `<span class="tok-annotation">@Component</span>
             <span class="tok-type">Reservation</span> reservation) {
         <span class="tok-type">Fluxzero</span>.<span class="tok-call">sendCommandAndWait</span>(
             <span class="tok-keyword">new</span> <span class="tok-type">GrantReservationReward</span>(
-                <span class="tok-type">RewardGrantId</span>.<span class="tok-call">forReservation</span>(event.<span class="tok-method">reservationId</span>()),
-                reservation.<span class="tok-method">customerId</span>(), <span class="tok-literal">100</span>));
+                <span class="tok-type">RewardGrantId</span>.<span class="tok-call">forReservation</span>(event.<span class="tok-call">reservationId</span>()),
+                reservation.<span class="tok-call">customerId</span>(), <span class="tok-number">100</span>));
     }
 }
 
@@ -192,12 +192,12 @@ const historyCode = `<span class="tok-annotation">@Component</span>
 
     <span class="tok-annotation">@InterceptApply</span>
     <span class="tok-type">Object</span> <span class="tok-method">ignoreIfAlreadyGranted</span>(<span class="tok-type">Graph</span>&lt;<span class="tok-type">RewardGrant</span>&gt; current) {
-        <span class="tok-keyword">return</span> current.<span class="tok-method">isPresent</span>() ? <span class="tok-literal">null</span> : <span class="tok-keyword">this</span>;
+        <span class="tok-keyword">return</span> current.<span class="tok-call">isPresent</span>() ? <span class="tok-literal">null</span> : <span class="tok-keyword">this</span>;
     }
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">RewardGrant</span> <span class="tok-method">grant</span>() {
-        <span class="tok-keyword">return new</span> <span class="tok-type">RewardGrant</span>(rewardGrantId, customerId, points);
+        <span class="tok-keyword">return new</span> <span class="tok-type">RewardGrant</span>(<span class="tok-field">rewardGrantId</span>, <span class="tok-field">customerId</span>, <span class="tok-field">points</span>);
     }
 }
 
@@ -208,48 +208,48 @@ const historyCode = `<span class="tok-annotation">@Component</span>
     <span class="tok-keyword">int</span> <span class="tok-field">points</span>) {}`;
 
 const paymentProcessCode = `<span class="tok-annotation">@Stateful</span>
-<span class="tok-annotation">@Consumer</span>(name = <span class="tok-string">"reservation-payments"</span>)
+<span class="tok-annotation">@Consumer</span>(<span class="tok-field">name</span> = <span class="tok-string">"reservation-payments"</span>)
 <span class="tok-keyword">record</span> <span class="tok-type">PaymentProcess</span>(
-    <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> reservationId,
-    <span class="tok-annotation">@Association</span> <span class="tok-type">String</span> pspReference) {
+    <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
+    <span class="tok-annotation">@Association</span> <span class="tok-type">String</span> <span class="tok-field">pspReference</span>) {
 
     <span class="tok-annotation">@HandleEvent</span>
     <span class="tok-keyword">static</span> <span class="tok-type">PaymentProcess</span> <span class="tok-method">start</span>(<span class="tok-type">PaymentStarted</span> event) {
         <span class="tok-keyword">return</span> <span class="tok-keyword">new</span> <span class="tok-type">PaymentProcess</span>(
-            event.<span class="tok-method">reservationId</span>(), event.<span class="tok-method">pspReference</span>());
+            event.<span class="tok-call">reservationId</span>(), event.<span class="tok-call">pspReference</span>());
     }
 
     <span class="tok-annotation">@HandleEvent</span>
     <span class="tok-type">PaymentProcess</span> <span class="tok-method">complete</span>(<span class="tok-type">PaymentSucceeded</span> event) {
-        <span class="tok-type">Fluxzero</span>.<span class="tok-method">sendCommandAndWait</span>(
-            <span class="tok-keyword">new</span> <span class="tok-type">ConfirmReservation</span>(reservationId));
+        <span class="tok-type">Fluxzero</span>.<span class="tok-call">sendCommandAndWait</span>(
+            <span class="tok-keyword">new</span> <span class="tok-type">ConfirmReservation</span>(<span class="tok-field">reservationId</span>));
         <span class="tok-keyword">return</span> <span class="tok-literal">null</span>;
     }
 }
 
 <span class="tok-keyword">record</span> <span class="tok-type">PaymentStarted</span>(
-    <span class="tok-type">ReservationId</span> reservationId, <span class="tok-type">String</span> pspReference) {}
+    <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>, <span class="tok-type">String</span> <span class="tok-field">pspReference</span>) {}
 
-<span class="tok-keyword">record</span> <span class="tok-type">PaymentSucceeded</span>(<span class="tok-type">String</span> pspReference) {}`;
+<span class="tok-keyword">record</span> <span class="tok-type">PaymentSucceeded</span>(<span class="tok-type">String</span> <span class="tok-field">pspReference</span>) {}`;
 
 const confirmationCode = `<span class="tok-keyword">record</span> <span class="tok-type">ConfirmReservation</span>(
-    <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> reservationId) {
+    <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>) {
 
     <span class="tok-annotation">@InterceptApply</span>
     <span class="tok-type">Object</span> <span class="tok-method">ignoreIfConfirmed</span>(<span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-keyword">return</span> reservation.<span class="tok-method">status</span>() == <span class="tok-type">CONFIRMED</span> ? <span class="tok-literal">null</span> : this;
+        <span class="tok-keyword">return</span> reservation.<span class="tok-call">status</span>() == <span class="tok-field">CONFIRMED</span> ? <span class="tok-literal">null</span> : <span class="tok-keyword">this</span>;
     }
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertAwaitingPayment</span>(<span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-keyword">if</span> (reservation.<span class="tok-method">status</span>() != <span class="tok-type">AWAITING_PAYMENT</span>) {
-            throw <span class="tok-type">ReservationErrors</span>.notAwaitingPayment;
+        <span class="tok-keyword">if</span> (reservation.<span class="tok-call">status</span>() != <span class="tok-field">AWAITING_PAYMENT</span>) {
+            <span class="tok-keyword">throw</span> <span class="tok-type">ReservationErrors</span>.<span class="tok-field">notAwaitingPayment</span>;
         }
     }
 
     <span class="tok-annotation">@Apply</span>
     <span class="tok-type">Reservation</span> <span class="tok-method">confirm</span>(<span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-keyword">return</span> reservation.<span class="tok-method">withStatus</span>(<span class="tok-type">CONFIRMED</span>);
+        <span class="tok-keyword">return</span> reservation.<span class="tok-call">withStatus</span>(<span class="tok-field">CONFIRMED</span>);
     }
 }`;
 
@@ -260,27 +260,27 @@ const queryCallerCode = `<span class="tok-annotation">@Component</span>
     <span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt; <span class="tok-method">available</span>(
             <span class="tok-annotation">@QueryParam</span>(<span class="tok-string">"showId"</span>) <span class="tok-type">ShowId</span> showId,
             <span class="tok-annotation">@QueryParam</span>(<span class="tok-string">"section"</span>) <span class="tok-type">String</span> section) {
-        <span class="tok-keyword">return</span> <span class="tok-type">Fluxzero</span>.<span class="tok-method">queryAndWait</span>(
+        <span class="tok-keyword">return</span> <span class="tok-type">Fluxzero</span>.<span class="tok-call">queryAndWait</span>(
             <span class="tok-keyword">new</span> <span class="tok-type">FindAvailableTickets</span>(showId, section));
     }
 }`;
 
 const consumerCode = `<span class="tok-annotation">@Component</span>
-<span class="tok-annotation">@Consumer</span>(name = <span class="tok-string">"reservation-receipts"</span>, threads = <span class="tok-literal">4</span>)
+<span class="tok-annotation">@Consumer</span>(<span class="tok-field">name</span> = <span class="tok-string">"reservation-receipts"</span>, <span class="tok-field">threads</span> = <span class="tok-number">4</span>)
 <span class="tok-keyword">final</span> <span class="tok-keyword">class</span> <span class="tok-type">ReservationReceipts</span> {
     <span class="tok-annotation">@HandleEvent</span>
     <span class="tok-keyword">void</span> <span class="tok-method">create</span>(<span class="tok-type">ConfirmReservation</span> event, <span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-type">Fluxzero</span>.<span class="tok-method">index</span>(<span class="tok-keyword">new</span> <span class="tok-type">ReservationReceipt</span>(
-            event.<span class="tok-method">reservationId</span>(),
-            reservation.<span class="tok-method">customerId</span>(),
-            reservation.<span class="tok-method">ticketId</span>())).<span class="tok-method">join</span>();
+        <span class="tok-type">Fluxzero</span>.<span class="tok-call">index</span>(<span class="tok-keyword">new</span> <span class="tok-type">ReservationReceipt</span>(
+            event.<span class="tok-call">reservationId</span>(),
+            reservation.<span class="tok-call">customerId</span>(),
+            reservation.<span class="tok-call">ticketId</span>())).<span class="tok-call">join</span>();
     }
 }
 
 <span class="tok-keyword">record</span> <span class="tok-type">ReservationReceipt</span>(
-    <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> reservationId,
-    <span class="tok-type">CustomerId</span> customerId,
-    <span class="tok-type">TicketId</span> ticketId) {}`;
+    <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
+    <span class="tok-type">CustomerId</span> <span class="tok-field">customerId</span>,
+    <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {}`;
 ---
 
 <!DOCTYPE html>
@@ -295,7 +295,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
     <link rel="stylesheet" href="/css/v4.css?v=20260905-1">
     <link rel="stylesheet" href="/css/technical-foundation.css?v=20260904-5">
     <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260910-11">
-    <link rel="stylesheet" href="/css/product-code.css?v=20260912-31">
+    <link rel="stylesheet" href="/css/product-code.css?v=20260912-32">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
 <body class="v4-page cloud-proof-page cloud-proof-next-page product-code-page">
