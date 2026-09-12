@@ -2,7 +2,7 @@
 
 # Fluxzero Website
 
-The public website for [Fluxzero](https://fluxzero.io), the European cloud for AI-built apps. It introduces the all-in-one cloud to product builders and connects developers and coding agents to the technical documentation.
+Source code for the [Fluxzero website](https://fluxzero.io) and [documentation](https://fluxzero.io/docs).
 
 [Get started](https://fluxzero.io/get-started) · [How it works](https://fluxzero.io/how-it-works) · [Docs](https://fluxzero.io/docs)
 
