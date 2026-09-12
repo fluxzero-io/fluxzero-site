@@ -2,6 +2,7 @@
 import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+import ExplainedTerm from '../components/marketing/ExplainedTerm.astro';
 import 'boxicons/css/boxicons.min.css';
 ---
 
@@ -11,13 +12,13 @@ import 'boxicons/css/boxicons.min.css';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <BrandHead
-        title="How Fluxzero keeps products running — Fluxzero"
+        title="How Fluxzero keeps your product running — Fluxzero"
         description="See how Fluxzero gives every product the correctness, security, privacy, recovery, auditability, and scale enterprises require from day zero."
     />
     <link rel="stylesheet" href="/css/v4.css?v=20260905-1">
     <link rel="stylesheet" href="/css/agents.css?v=20260904-20">
     <link rel="stylesheet" href="/css/technical-foundation.css?v=20260904-5">
-    <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260910-11">
+    <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260913-1">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
 <body class="v4-page agent4-page cloud-proof-page cloud-proof-next-page">
@@ -29,7 +30,7 @@ import 'boxicons/css/boxicons.min.css';
             <div class="v4-shell cloud-proof-shell">
                 <p class="cloud-proof-hero__back" data-reveal><a href="/how-it-works#layers-title" data-browser-back><i class="bx bx-left-arrow-alt" aria-hidden="true"></i> Back</a></p>
                 <p class="cloud-proof-next__eyebrow" data-reveal>Technical foundation</p>
-                <h1 data-reveal data-reveal-delay="1">How Fluxzero keeps<br><span>products running.</span></h1>
+                <h1 data-reveal data-reveal-delay="1">How Fluxzero keeps<br><span>your product running.</span></h1>
                 <p class="cloud-proof-hero__lead" data-reveal data-reveal-delay="2">Enterprises expect critical systems to keep their promises under pressure. That standard matters long before a product reaches enterprise size. With Fluxzero, it is built into every product from day zero.</p>
             </div>
         </header>
@@ -152,7 +153,7 @@ import 'boxicons/css/boxicons.min.css';
                     <p class="cloud-proof-next__number">04 · Privacy and data control</p>
                     <h2 id="privacy-title">Keep the history.<br><span>Remove the personal data.</span></h2>
                     <p>Sensitive values stay separate from the durable history. Trusted code can use them without exposing them in logs, and they can be permanently erased without destroying the surrounding record.</p>
-                    <p>Fluxzero protects <abbr class="cloud-proof-term" title="Personally identifiable information: data that can identify a person directly or indirectly, such as an email address.">PII data</abbr> and makes it erasable while you decide how it is used. Each recipient sees only the data the product allows. These controls make data minimization and erasure practical and support requirements under <abbr class="cloud-proof-term" title="The European Union’s General Data Protection Regulation, governing how organizations collect, use, and protect personal data.">GDPR</abbr> in Europe and California’s <abbr class="cloud-proof-term" title="The California Consumer Privacy Act, amended by the CPRA, including rights to access, delete, and limit the use of personal information.">CCPA</abbr>.</p>
+                    <p>Fluxzero protects <ExplainedTerm id="pii-definition" label="PII data" definition="Personally identifiable information: data that can identify a person directly or indirectly, such as an email address." /> and makes it erasable while you decide how it is used. Each recipient sees only the data the product allows. These controls make data minimization and erasure practical and support requirements under <ExplainedTerm id="gdpr-definition" label="GDPR" definition="The European Union’s General Data Protection Regulation, governing how organizations collect, use, and protect personal data." /> in Europe and California’s <ExplainedTerm id="ccpa-definition" label="CCPA" definition="The California Consumer Privacy Act, amended by the CPRA, including rights to access, delete, and limit the use of personal information." />.</p>
                 </header>
                 <figure class="cloud-diagram privacy-diagram" data-reveal data-reveal-delay="1" aria-label="A protected email value is removed while the non-sensitive order history remains">
                     <div class="privacy-diagram__record privacy-diagram__record--before">
@@ -160,7 +161,7 @@ import 'boxicons/css/boxicons.min.css';
                         <span>size&nbsp; M</span>
                         <span class="is-protected"><i class="bx bx-lock-alt" aria-hidden="true"></i> email</span>
                     </div>
-                    <div class="privacy-diagram__action"><i class="bx bx-trash" aria-hidden="true"></i><span>Erase</span></div>
+                    <div class="privacy-diagram__action"><i class="bx bx-trash" aria-hidden="true"></i><span>Delete personal data</span></div>
                     <div class="privacy-diagram__record privacy-diagram__record--after">
                         <strong>Order 42</strong>
                         <span>size&nbsp; M</span>
@@ -212,7 +213,7 @@ import 'boxicons/css/boxicons.min.css';
                     <p class="cloud-proof-next__number">06 · Auditability</p>
                     <h2 id="audit-trail-title">If it is not in the audit trail,<br><span>it did not happen.</span></h2>
                     <p>Fluxzero records every request and response, together with every internal message and interaction that followed. Their connection is preserved from the first cause to the final outcome.</p>
-                    <p>The dashboard makes that history searchable from beginning to end. It shows what happened, where progress stopped, and which part of the product was affected. The complete operational view is available without setup.</p>
+                    <p>The dashboard makes that history searchable from beginning to end. It shows what happened, where progress stopped, and which part of the product was affected. This complete operational view is available without setup.</p>
                     <p class="cloud-proof-next__statement">Current state tells you what is true. The audit trail tells you why—and everything that happened along the way.</p>
                 </header>
                 <figure class="cloud-proof-next__audit-diagram" data-reveal data-reveal-delay="1" aria-label="An example ticket reservation audit trail is available in the Fluxzero dashboard">

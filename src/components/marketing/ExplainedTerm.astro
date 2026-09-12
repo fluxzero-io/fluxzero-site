@@ -1,0 +1,109 @@
+---
+interface Props {
+    id: string;
+    label: string;
+    definition: string;
+}
+
+const { id, label, definition } = Astro.props;
+---
+
+<style>
+    .explained-term__trigger {
+        padding: 0;
+        border: 0;
+        border-radius: 2px;
+        background: none;
+        color: #b9dfff;
+        font: inherit;
+        cursor: pointer;
+        text-decoration: underline dotted rgba(132, 190, 239, 0.85) 2px;
+        text-decoration-skip-ink: none;
+        text-underline-offset: 4px;
+        white-space: nowrap;
+    }
+
+    .explained-term__trigger:hover,
+    .explained-term__trigger[aria-expanded="true"] {
+        color: #edf7ff;
+        text-decoration-color: currentColor;
+    }
+
+    .explained-term__trigger:focus-visible {
+        outline: 2px solid #8dcbff;
+        outline-offset: 5px;
+    }
+
+    .explained-term__definition {
+        position: fixed;
+        inset: auto;
+        width: min(320px, calc(100vw - 32px));
+        margin: 0;
+        padding: 14px 17px;
+        border: 1px solid #416583;
+        border-radius: 10px;
+        background: #102131;
+        box-shadow: 0 12px 36px #0006;
+        color: #d5e3ef;
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 1.55;
+        text-align: left;
+        text-wrap: pretty;
+    }
+</style>
+
+<script>
+    document.querySelectorAll<HTMLElement>('.explained-term').forEach((term) => {
+        const trigger = term.querySelector<HTMLButtonElement>('button')!;
+        const definition = term.querySelector<HTMLElement>('[popover]')!;
+        const isOpen = () => definition.matches(':popover-open');
+        let hideTimer: ReturnType<typeof setTimeout>;
+
+        const position = () => {
+            if (!isOpen()) return;
+            const bounds = trigger.getBoundingClientRect();
+            const width = definition.offsetWidth;
+            const height = definition.offsetHeight;
+            const left = Math.max(16, Math.min(bounds.left, document.documentElement.clientWidth - width - 16));
+            const top = bounds.bottom + 10 + height <= window.innerHeight - 16
+                ? bounds.bottom + 10
+                : Math.max(16, bounds.top - height - 10);
+            definition.style.left = `${left}px`;
+            definition.style.top = `${top}px`;
+        };
+
+        const show = () => {
+            clearTimeout(hideTimer);
+            if (!isOpen()) definition.showPopover();
+            trigger.setAttribute('aria-expanded', 'true');
+            position();
+        };
+
+        const hide = () => {
+            if (isOpen()) definition.hidePopover();
+            trigger.setAttribute('aria-expanded', 'false');
+        };
+
+        trigger.addEventListener('click', show);
+        trigger.addEventListener('focus', show);
+        term.addEventListener('pointerenter', (event) => {
+            if (event.pointerType === 'mouse') show();
+        });
+        term.addEventListener('pointerleave', () => {
+            hideTimer = setTimeout(() => {
+                if (document.activeElement !== trigger && !term.matches(':hover')) hide();
+            }, 150);
+        });
+        term.addEventListener('focusout', (event) => {
+            if (!term.contains(event.relatedTarget as Node | null)) hide();
+        });
+        definition.addEventListener('toggle', () => {
+            trigger.setAttribute('aria-expanded', String(isOpen()));
+        });
+        window.addEventListener('resize', position);
+        window.addEventListener('scroll', position, { capture: true, passive: true });
+    });
+</script>
+
+<span class="explained-term"><button type="button" class="explained-term__trigger" aria-describedby={id} aria-controls={id} aria-expanded="false">{label}</button><span id={id} class="explained-term__definition" popover="auto" role="tooltip"><span class="sr-only">(</span>{definition}<span class="sr-only">)</span></span></span>

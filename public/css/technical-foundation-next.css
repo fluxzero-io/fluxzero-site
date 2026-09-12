@@ -92,16 +92,6 @@
     line-height: 1.75;
 }
 
-.cloud-proof-term {
-    color: inherit;
-    cursor: help;
-    text-decoration-line: underline;
-    text-decoration-style: dotted;
-    text-decoration-thickness: 1px;
-    text-decoration-color: rgba(132, 190, 239, 0.72);
-    text-underline-offset: 4px;
-}
-
 .cloud-proof-next-section .cloud-proof-copy > p + p {
     margin-top: 17px;
 }
@@ -384,6 +374,7 @@
 
 .cloud-proof-next-page .privacy-diagram__action {
     isolation: isolate;
+    text-align: center;
 }
 
 .cloud-proof-next-page .privacy-diagram__action::before,
