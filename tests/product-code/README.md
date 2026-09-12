@@ -21,9 +21,9 @@ reports live under the ignored `target/` directory.
 The template supplies domain declarations omitted from the examples, plus
 behavior tests for queries, unnamed query parameters, payment workflows,
 scheduling and cancellation, protected contact details, retroactive rewards,
-and fraud review. The displayed tests cover a completed payment that confirms a
-reservation and cancels its expiry, plus an authenticated web request whose
-reservation expires when payment is late. Both advance time with `andThen()`.
+and fraud review. The displayed tests first show an authenticated web request
+whose reservation expires when payment is late, then a completed payment that
+confirms a reservation and cancels its expiry. Both advance time with `andThen()`.
 A supporting check also verifies that an expired reservation is removed and the
 ticket becomes available again. Tests use the SDK's real
 `TestFixture`, model persistence and message handling, without mocked Fluxzero APIs.
