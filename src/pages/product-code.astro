@@ -52,7 +52,19 @@ const reservationModelCode = `<span class="tok-annotation">@Model</span>
     <span class="tok-annotation">@With</span> <span class="tok-annotation">@ProtectData</span> <span class="tok-type">String</span> <span class="tok-field">contactEmail</span>) {}`;
 
 const testCode = `<span class="tok-annotation">@Test</span>
-<span class="tok-keyword">void</span> <span class="tok-method">cancelsWhenPaymentIsTooLate</span>() {
+<span class="tok-keyword">void</span> <span class="tok-method">reservationIsConfirmedWhenPaymentIsOnTime</span>() {
+    <span class="tok-field">fixture</span>
+        .<span class="tok-call">givenCommandsByUser</span>(<span class="tok-string">"customer-42"</span>,
+            <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
+        .<span class="tok-call">whenEvent</span>(<span class="tok-string">"/ticketing/payment-succeeded.json"</span>)
+        .<span class="tok-call">expectEvents</span>(<span class="tok-string">"/ticketing/confirm-reservation.json"</span>)
+        .<span class="tok-call">andThen</span>()
+        .<span class="tok-call">whenTimeElapses</span>(<span class="tok-type">Duration</span>.<span class="tok-call">ofMinutes</span>(<span class="tok-number">15</span>))
+        .<span class="tok-call">expectNoEvents</span>();
+}
+
+<span class="tok-annotation">@Test</span>
+<span class="tok-keyword">void</span> <span class="tok-method">reservationIsLostWhenPaymentIsLate</span>() {
     <span class="tok-field">fixture</span>
         .<span class="tok-call">whenPostByUser</span>(<span class="tok-string">"customer-42"</span>,
             <span class="tok-string">"/api/reservations"</span>, <span class="tok-string">"/ticketing/reserve.json"</span>)
@@ -167,9 +179,11 @@ const paymentProcessCode = `<span class="tok-annotation">@Stateful</span>
     <span class="tok-annotation">@Association</span> <span class="tok-type">String</span> <span class="tok-field">pspReference</span>) {
 
     <span class="tok-annotation">@HandleEvent</span>
-    <span class="tok-keyword">static</span> <span class="tok-type">PaymentProcess</span> <span class="tok-method">start</span>(<span class="tok-type">PaymentStarted</span> event) {
+    <span class="tok-keyword">static</span> <span class="tok-type">PaymentProcess</span> <span class="tok-method">start</span>(<span class="tok-type">ReserveTicket</span> event) {
+        <span class="tok-type">String</span> pspReference = <span class="tok-type">Fluxzero</span>.<span class="tok-call">sendCommandAndWait</span>(
+            <span class="tok-keyword">new</span> <span class="tok-type">StartPayment</span>(event.<span class="tok-call">reservationId</span>()));
         <span class="tok-keyword">return</span> <span class="tok-keyword">new</span> <span class="tok-type">PaymentProcess</span>(
-            event.<span class="tok-call">reservationId</span>(), event.<span class="tok-call">pspReference</span>());
+            event.<span class="tok-call">reservationId</span>(), pspReference);
     }
 
     <span class="tok-annotation">@HandleEvent</span>
@@ -221,7 +235,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
     <link rel="stylesheet" href="/css/v4.css?v=20260905-1">
     <link rel="stylesheet" href="/css/technical-foundation.css?v=20260904-5">
     <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260910-11">
-    <link rel="stylesheet" href="/css/product-code.css?v=20260912-36">
+    <link rel="stylesheet" href="/css/product-code.css?v=20260912-37">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
 <body class="v4-page cloud-proof-page cloud-proof-next-page product-code-page">
@@ -317,13 +331,13 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">03 · Testing behavior</p>
                     <h2 id="tests-title">Know it works.<br><span>Before customers use it.</span></h2>
-                    <p>Your agent tests that features keep working as you build. That includes the edge cases. Fluxzero runs the same product code and rules in tests as in production, so you can ship with confidence.</p>
+                    <p>Even if you’ve never written code, you can check that your agent built what you asked for. Fluxzero provides the foundation. End-to-end tests verify your product’s behavior, including edge cases, before customers use it. The same tests check that features keep working after each change.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--test" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="ReserveTicketTest.java" label="Web request to automatic cancellation" code={testCode} />
+                    <ProductCodePanel title="ReserveTicketTest.java" label="Behavior tested end-to-end" code={testCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>Production behavior</dt><dd>The scenario runs through the same rules as the real application.</dd></div>
-                        <div><dt>Real circumstances</dt><dd>The person and moment described by the test are supplied automatically.</dd></div>
+                        <div><dt>Check before you ship</dt><dd>Your agent writes the code. Passing behavior tests show that it meets your requirements.</dd></div>
                         <div><dt>Visible outcome</dt><dd>Success and expected rejections are checked without infrastructure or mocks.</dd></div>
                     </dl>
                 </div>

@@ -26,7 +26,8 @@ import static qualification.ProductCodeTest.ReservationStatus.*;
 import static qualification.ProductCodeTest.TicketStatus.*;
 
 public class ProductCodeTest {
-    final TestFixture fixture = fixture(new ReservationApi(), new ReservationTimers());
+    final TestFixture fixture = fixture(new ReservationApi(), new ReservationTimers(), PaymentProcess.class,
+            new TestPaymentProvider());
 
     // @snippet actionCode
     // @snippet showModelCode
@@ -76,8 +77,13 @@ public class ProductCodeTest {
         }
         @Apply Reservation apply(Reservation current) { return current.withStatus(CONFIRMED); }
     }
-    record PaymentStarted(ReservationId reservationId, String pspReference) {}
+    record StartPayment(ReservationId reservationId) {}
     record PaymentSucceeded(String pspReference) {}
+    // Only the external provider is simulated; PaymentProcess and all product rules run unchanged.
+    static class TestPaymentProvider {
+        @HandleCommand
+        String start(StartPayment request) { return "payment-" + request.reservationId(); }
+    }
     record ReservationRequest(@NotNull TicketId ticketId) {}
     record ExampleUser(String id) implements User {
         public String getName() { return id; }
@@ -163,20 +169,26 @@ public class ProductCodeTest {
 
     @Test
     void statefulPaymentsResumeTheMatchingProcess() {
-        var waiting = fixture(PaymentProcess.class).givenEvents(
-                new PaymentStarted(reservation, "psp-1"), new PaymentStarted(other, "psp-2"));
+        var secondTicket = new TicketId("ticket-2");
+        var started = fixture(PaymentProcess.class, new TestPaymentProvider())
+                .givenCommands(new CreateTicket(secondTicket, show, new TicketDetails("balcony", 2)))
+                .whenCommandByUser(customer, new ReserveTicket(reservation, ticket))
+                .expectOnlyCommands(new StartPayment(reservation))
+                .expectEvents(new ReserveTicket(reservation, ticket)).expectNoErrors();
+        var waiting = started.andThen()
+                .givenCommandsByUser(customer, new ReserveTicket(other, secondTicket));
         waiting.whenApplying(fc -> Fluxzero.search(PaymentProcess.class).fetchAll())
                 .expectResult(items -> items.size() == 2).expectNoErrors();
         waiting.whenEvent(new PaymentSucceeded("unknown")).expectNoCommands().expectNoErrors();
-        var completed = waiting.whenEvent(new PaymentSucceeded("psp-1"))
+        var completed = waiting.whenEvent(new PaymentSucceeded("payment-reservation-1"))
                 .expectOnlyCommands(new ConfirmReservation(reservation))
                 .expectEvents(new ConfirmReservation(reservation)).expectNoErrors()
                 .expectThat(fc -> {
                     assertEquals(CONFIRMED, Fluxzero.loadModel(reservation).get().status());
                     assertEquals(AWAITING_PAYMENT, Fluxzero.loadModel(other).get().status());
-                    assertEquals(List.of(new PaymentProcess(other, "psp-2")), Fluxzero.search(PaymentProcess.class).fetchAll());
+                    assertEquals(List.of(new PaymentProcess(other, "payment-reservation-2")), Fluxzero.search(PaymentProcess.class).fetchAll());
                 }).andThen();
-        completed.whenEvent(new PaymentSucceeded("psp-1")).expectNoCommands().expectNoErrors();
+        completed.whenEvent(new PaymentSucceeded("payment-reservation-1")).expectNoCommands().expectNoErrors();
     }
 
     @Test

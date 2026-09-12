@@ -2,6 +2,7 @@
     --code-panel: #1e1f22;
     --code-border: rgba(133, 178, 220, 0.22);
     --code-blue: #6aa6ef;
+    --code-number: #2aacb8;
     --code-green: #79a978;
     --code-gold: #b2ae6a;
     --code-orange: #c59172;
@@ -340,9 +341,13 @@
     font-weight: 650;
 }
 
-.product-code-page .tok-method,
-.product-code-page .tok-number {
+.product-code-page .tok-method {
     color: var(--code-blue);
+    font-weight: 650;
+}
+
+.product-code-page .tok-number {
+    color: var(--code-number);
     font-weight: 650;
 }
 

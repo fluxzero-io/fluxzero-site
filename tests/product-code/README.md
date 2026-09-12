@@ -21,11 +21,19 @@ reports live under the ignored `target/` directory.
 The template supplies domain declarations omitted from the examples, plus
 behavior tests for queries, unnamed query parameters, payment workflows,
 scheduling and cancellation, protected contact details, retroactive rewards,
-and fraud review. The displayed test starts with an authenticated web request,
-checks the reservation event, and advances time with `andThen()` to check its
-automatic expiry. A supporting check also verifies that the reservation is
-removed and the ticket becomes available again. Tests use the SDK's real
+and fraud review. The displayed tests cover a completed payment that confirms a
+reservation and cancels its expiry, plus an authenticated web request whose
+reservation expires when payment is late. Both advance time with `andThen()`.
+A supporting check also verifies that an expired reservation is removed and the
+ticket becomes available again. Tests use the SDK's real
 `TestFixture`, model persistence and message handling, without mocked Fluxzero APIs.
+
+The reservation event starts `PaymentProcess`, which sends `StartPayment` and
+stores the provider's reference. `TestPaymentProvider` stands in for that external
+payment provider and returns a distinct reference per reservation; it does not
+complete payments. The payment-result JSON supplies the later provider callback.
+The workflow checks cover the outgoing payment request, reference matching and
+duplicate callbacks. No payment-start event or process state is inserted by a test.
 
 The only structural changes to displayed code are nesting top-level classes
 inside the test class and supplying the `Reservation.awaitingPayment` factory
