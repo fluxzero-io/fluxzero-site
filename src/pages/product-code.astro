@@ -49,7 +49,7 @@ const reservationModelCode = `<span class="tok-annotation">@Model</span>
     <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
     <span class="tok-type">String</span> <span class="tok-field">customerId</span>,
     <span class="tok-annotation">@With</span> <span class="tok-type">ReservationStatus</span> <span class="tok-field">status</span>,
-    <span class="tok-annotation">@With</span> <span class="tok-type">ContactEmail</span> <span class="tok-field">contactEmail</span>) {}`;
+    <span class="tok-annotation">@With</span> <span class="tok-annotation">@ProtectData</span> <span class="tok-type">String</span> <span class="tok-field">contactEmail</span>) {}`;
 
 const testCode = `<span class="tok-annotation">@Test</span>
 <span class="tok-keyword">void</span> <span class="tok-method">reservesAnAvailableTicket</span>() {
@@ -73,8 +73,7 @@ const testCode = `<span class="tok-annotation">@Test</span>
 
 const searchCode = `<span class="tok-keyword">record</span> <span class="tok-type">FindAvailableTickets</span>(
     <span class="tok-annotation">@NotNull</span> <span class="tok-type">ShowId</span> <span class="tok-field">showId</span>,
-    <span class="tok-annotation">@NotBlank</span> <span class="tok-type">String</span> <span class="tok-field">section</span>)
-        <span class="tok-keyword">implements</span> <span class="tok-type">Request</span>&lt;<span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt;&gt; {
+    <span class="tok-annotation">@NotBlank</span> <span class="tok-type">String</span> <span class="tok-field">section</span>) {
 
     <span class="tok-annotation">@HandleQuery</span>
     <span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt; <span class="tok-method">handle</span>() {
@@ -88,19 +87,19 @@ const searchCode = `<span class="tok-keyword">record</span> <span class="tok-typ
 }`;
 
 const timerCode = `<span class="tok-annotation">@Component</span>
-<span class="tok-keyword">final class</span> <span class="tok-type">ReservationTimers</span> {
+<span class="tok-keyword">class</span> <span class="tok-type">ReservationTimers</span> {
     <span class="tok-annotation">@HandleEvent</span>
     <span class="tok-keyword">void</span> <span class="tok-method">start</span>(<span class="tok-type">ReserveTicket</span> event) {
         <span class="tok-type">Fluxzero</span>.<span class="tok-call">scheduleCommand</span>(
             <span class="tok-keyword">new</span> <span class="tok-type">ExpireReservation</span>(event.<span class="tok-call">reservationId</span>()),
-            <span class="tok-string">"expire-"</span> + event.<span class="tok-call">reservationId</span>(),
+            <span class="tok-type">ScheduleId</span>.<span class="tok-call">of</span>(<span class="tok-string">"expire"</span>, event.<span class="tok-call">reservationId</span>()),
             <span class="tok-type">Duration</span>.<span class="tok-call">ofMinutes</span>(<span class="tok-number">15</span>));
     }
 
     <span class="tok-annotation">@HandleEvent</span>
     <span class="tok-keyword">void</span> <span class="tok-method">stop</span>(<span class="tok-type">ConfirmReservation</span> event) {
         <span class="tok-type">Fluxzero</span>.<span class="tok-call">cancelSchedule</span>(
-            <span class="tok-string">"expire-"</span> + event.<span class="tok-call">reservationId</span>());
+            <span class="tok-type">ScheduleId</span>.<span class="tok-call">of</span>(<span class="tok-string">"expire"</span>, event.<span class="tok-call">reservationId</span>()));
     }
 }`;
 
@@ -124,16 +123,11 @@ const expiryCode = `<span class="tok-keyword">record</span> <span class="tok-typ
     }
 }`;
 
-const packagePolicyCode = `<span class="tok-comment">// package-info.java</span>
-<span class="tok-annotation">@RequiresUser</span>
-<span class="tok-keyword">package</span> com.acme.ticketing;
-
-<span class="tok-keyword">import</span> io.fluxzero.sdk.tracking.handling.authentication.<span class="tok-type">RequiresUser</span>;`;
-
-const personalDataCode = `<span class="tok-keyword">record</span> <span class="tok-type">UpdateContactEmail</span>(
+const personalDataCode = `<span class="tok-annotation">@RequiresUser</span>
+<span class="tok-keyword">record</span> <span class="tok-type">UpdateContactEmail</span>(
     <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
-    <span class="tok-annotation">@NotNull</span> <span class="tok-annotation">@Valid</span> <span class="tok-annotation">@ProtectData</span>
-    <span class="tok-type">ContactEmail</span> <span class="tok-field">contactEmail</span>) {
+    <span class="tok-annotation">@NotBlank</span> <span class="tok-annotation">@Email</span> <span class="tok-annotation">@ProtectData</span>
+    <span class="tok-type">String</span> <span class="tok-field">contactEmail</span>) {
 
     <span class="tok-annotation">@AssertLegal</span>
     <span class="tok-keyword">void</span> <span class="tok-method">assertOwner</span>(<span class="tok-type">Reservation</span> reservation, <span class="tok-type">User</span> <span class="tok-parameter">user</span>) {
@@ -147,18 +141,11 @@ const personalDataCode = `<span class="tok-keyword">record</span> <span class="t
     <span class="tok-type">Reservation</span> <span class="tok-method">update</span>(<span class="tok-type">Reservation</span> reservation) {
         <span class="tok-keyword">return</span> reservation.<span class="tok-call">withContactEmail</span>(<span class="tok-field">contactEmail</span>);
     }
-}
+}`;
 
-<span class="tok-annotation">@ProtectData</span>
-<span class="tok-keyword">record</span> <span class="tok-type">ContactEmail</span>(
-    <span class="tok-annotation">@NotBlank</span> <span class="tok-annotation">@Email</span> <span class="tok-type">String</span> <span class="tok-field">value</span>) {}`;
-
-const webCode = `<span class="tok-keyword">record</span> <span class="tok-type">ReservationRequest</span>(
-    <span class="tok-annotation">@NotNull</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {}
-
-<span class="tok-annotation">@Component</span>
+const webCode = `<span class="tok-annotation">@Component</span>
 <span class="tok-annotation">@Path</span>(<span class="tok-string">"/api/reservations"</span>)
-<span class="tok-keyword">final class</span> <span class="tok-type">ReservationApi</span> {
+<span class="tok-keyword">class</span> <span class="tok-type">ReservationApi</span> {
     <span class="tok-annotation">@HandlePost</span>
     <span class="tok-type">ReservationId</span> <span class="tok-method">reserve</span>(<span class="tok-annotation">@Valid</span> <span class="tok-type">ReservationRequest</span> request) {
         <span class="tok-keyword">var</span> reservationId = <span class="tok-type">Fluxzero</span>.<span class="tok-call">generateId</span>(
@@ -172,43 +159,23 @@ const webCode = `<span class="tok-keyword">record</span> <span class="tok-type">
 }`;
 
 const historyCode = `<span class="tok-annotation">@Component</span>
-<span class="tok-annotation">@Consumer</span>(<span class="tok-field">name</span> = <span class="tok-string">"customer-rewards-v1"</span>, <span class="tok-field">minIndex</span> = <span class="tok-number">0</span>)
-<span class="tok-keyword">final class</span> <span class="tok-type">CustomerRewards</span> {
+<span class="tok-annotation">@Consumer</span>(<span class="tok-field">name</span> = <span class="tok-string">"customer-rewards"</span>, <span class="tok-field">minIndex</span> = <span class="tok-number">0</span>)
+<span class="tok-keyword">class</span> <span class="tok-type">CustomerRewards</span> {
     <span class="tok-annotation">@HandleEvent</span>
     <span class="tok-keyword">void</span> <span class="tok-method">reward</span>(
             <span class="tok-type">ConfirmReservation</span> event,
             <span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-type">Fluxzero</span>.<span class="tok-call">sendCommandAndWait</span>(
-            <span class="tok-keyword">new</span> <span class="tok-type">GrantReservationReward</span>(
-                <span class="tok-type">RewardGrantId</span>.<span class="tok-call">forReservation</span>(event.<span class="tok-call">reservationId</span>()),
-                reservation.<span class="tok-call">customerId</span>(), <span class="tok-number">100</span>));
+        <span class="tok-type">Fluxzero</span>.<span class="tok-call">index</span>(<span class="tok-keyword">new</span> <span class="tok-type">RewardGrant</span>(
+            event.<span class="tok-call">reservationId</span>(), reservation.<span class="tok-call">customerId</span>(), <span class="tok-number">100</span>));
     }
 }
 
-<span class="tok-keyword">record</span> <span class="tok-type">GrantReservationReward</span>(
-    <span class="tok-annotation">@NotNull</span> <span class="tok-type">RewardGrantId</span> <span class="tok-field">rewardGrantId</span>,
-    <span class="tok-annotation">@NotNull</span> <span class="tok-type">String</span> <span class="tok-field">customerId</span>,
-    <span class="tok-annotation">@Positive</span> <span class="tok-keyword">int</span> <span class="tok-field">points</span>) {
-
-    <span class="tok-annotation">@InterceptApply</span>
-    <span class="tok-type">Object</span> <span class="tok-method">ignoreIfAlreadyGranted</span>(<span class="tok-type">Graph</span>&lt;<span class="tok-type">RewardGrant</span>&gt; current) {
-        <span class="tok-keyword">return</span> current.<span class="tok-call">isPresent</span>() ? <span class="tok-literal">null</span> : <span class="tok-keyword">this</span>;
-    }
-
-    <span class="tok-annotation">@Apply</span>
-    <span class="tok-type">RewardGrant</span> <span class="tok-method">grant</span>() {
-        <span class="tok-keyword">return new</span> <span class="tok-type">RewardGrant</span>(<span class="tok-field">rewardGrantId</span>, <span class="tok-field">customerId</span>, <span class="tok-field">points</span>);
-    }
-}
-
-<span class="tok-annotation">@Model</span>
 <span class="tok-keyword">record</span> <span class="tok-type">RewardGrant</span>(
-    <span class="tok-annotation">@EntityId</span> <span class="tok-type">RewardGrantId</span> <span class="tok-field">rewardGrantId</span>,
+    <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
     <span class="tok-type">String</span> <span class="tok-field">customerId</span>,
     <span class="tok-keyword">int</span> <span class="tok-field">points</span>) {}`;
 
 const paymentProcessCode = `<span class="tok-annotation">@Stateful</span>
-<span class="tok-annotation">@Consumer</span>(<span class="tok-field">name</span> = <span class="tok-string">"reservation-payments"</span>)
 <span class="tok-keyword">record</span> <span class="tok-type">PaymentProcess</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
     <span class="tok-annotation">@Association</span> <span class="tok-type">String</span> <span class="tok-field">pspReference</span>) {
@@ -225,37 +192,11 @@ const paymentProcessCode = `<span class="tok-annotation">@Stateful</span>
             <span class="tok-keyword">new</span> <span class="tok-type">ConfirmReservation</span>(<span class="tok-field">reservationId</span>));
         <span class="tok-keyword">return</span> <span class="tok-literal">null</span>;
     }
-}
-
-<span class="tok-keyword">record</span> <span class="tok-type">PaymentStarted</span>(
-    <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>, <span class="tok-type">String</span> <span class="tok-field">pspReference</span>) {}
-
-<span class="tok-keyword">record</span> <span class="tok-type">PaymentSucceeded</span>(<span class="tok-type">String</span> <span class="tok-field">pspReference</span>) {}`;
-
-const confirmationCode = `<span class="tok-keyword">record</span> <span class="tok-type">ConfirmReservation</span>(
-    <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>) {
-
-    <span class="tok-annotation">@InterceptApply</span>
-    <span class="tok-type">Object</span> <span class="tok-method">ignoreIfConfirmed</span>(<span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-keyword">return</span> reservation.<span class="tok-call">status</span>() == <span class="tok-field">CONFIRMED</span> ? <span class="tok-literal">null</span> : <span class="tok-keyword">this</span>;
-    }
-
-    <span class="tok-annotation">@AssertLegal</span>
-    <span class="tok-keyword">void</span> <span class="tok-method">assertAwaitingPayment</span>(<span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-keyword">if</span> (reservation.<span class="tok-call">status</span>() != <span class="tok-field">AWAITING_PAYMENT</span>) {
-            <span class="tok-keyword">throw</span> <span class="tok-type">ReservationErrors</span>.<span class="tok-field">notAwaitingPayment</span>;
-        }
-    }
-
-    <span class="tok-annotation">@Apply</span>
-    <span class="tok-type">Reservation</span> <span class="tok-method">confirm</span>(<span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-keyword">return</span> reservation.<span class="tok-call">withStatus</span>(<span class="tok-field">CONFIRMED</span>);
-    }
 }`;
 
 const queryCallerCode = `<span class="tok-annotation">@Component</span>
 <span class="tok-annotation">@Path</span>(<span class="tok-string">"/api/tickets"</span>)
-<span class="tok-keyword">final</span> <span class="tok-keyword">class</span> <span class="tok-type">TicketApi</span> {
+<span class="tok-keyword">class</span> <span class="tok-type">TicketApi</span> {
     <span class="tok-annotation">@HandleGet</span>
     <span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt; <span class="tok-method">available</span>(
             <span class="tok-annotation">@QueryParam</span>(<span class="tok-string">"showId"</span>) <span class="tok-type">ShowId</span> showId,
@@ -266,21 +207,21 @@ const queryCallerCode = `<span class="tok-annotation">@Component</span>
 }`;
 
 const consumerCode = `<span class="tok-annotation">@Component</span>
-<span class="tok-annotation">@Consumer</span>(<span class="tok-field">name</span> = <span class="tok-string">"reservation-receipts"</span>, <span class="tok-field">threads</span> = <span class="tok-number">4</span>)
-<span class="tok-keyword">final</span> <span class="tok-keyword">class</span> <span class="tok-type">ReservationReceipts</span> {
+<span class="tok-annotation">@Consumer</span>(<span class="tok-field">name</span> = <span class="tok-string">"fraud-detection"</span>, <span class="tok-field">threads</span> = <span class="tok-number">4</span>)
+<span class="tok-keyword">class</span> <span class="tok-type">FraudDetection</span> {
     <span class="tok-annotation">@HandleEvent</span>
-    <span class="tok-keyword">void</span> <span class="tok-method">create</span>(<span class="tok-type">ConfirmReservation</span> event, <span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-type">Fluxzero</span>.<span class="tok-call">index</span>(<span class="tok-keyword">new</span> <span class="tok-type">ReservationReceipt</span>(
-            event.<span class="tok-call">reservationId</span>(),
-            reservation.<span class="tok-call">customerId</span>(),
-            reservation.<span class="tok-call">ticketId</span>())).<span class="tok-call">join</span>();
-    }
-}
+    <span class="tok-keyword">void</span> <span class="tok-method">check</span>(<span class="tok-type">ConfirmReservation</span> event, <span class="tok-type">Reservation</span> reservation) {
+        <span class="tok-type">CustomerActivity</span> activity = <span class="tok-type">Fluxzero</span>.<span class="tok-call">queryAndWait</span>(
+            <span class="tok-keyword">new</span> <span class="tok-type">GetCustomerActivity</span>(reservation.<span class="tok-call">customerId</span>()));
+        <span class="tok-keyword">var</span> assessment = <span class="tok-type">FraudAssessment</span>.<span class="tok-call">analyze</span>(reservation, activity);
+        <span class="tok-type">Fluxzero</span>.<span class="tok-call">index</span>(assessment);
 
-<span class="tok-keyword">record</span> <span class="tok-type">ReservationReceipt</span>(
-    <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
-    <span class="tok-type">String</span> <span class="tok-field">customerId</span>,
-    <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {}`;
+        <span class="tok-keyword">if</span> (assessment.<span class="tok-call">requiresReview</span>()) {
+            <span class="tok-type">Fluxzero</span>.<span class="tok-call">sendAndForgetCommand</span>(
+                <span class="tok-keyword">new</span> <span class="tok-type">ReviewReservation</span>(event.<span class="tok-call">reservationId</span>()));
+        }
+    }
+}`;
 ---
 
 <!DOCTYPE html>
@@ -323,7 +264,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>You decide how a feature should work. Fluxzero keeps its rules intact when many customers act at once. The same logic continues to work as usage grows, without engineering work for your agent.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--action" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="ReserveTicket.java" label="Command, rule, two changes" code={actionCode} />
+                    <ProductCodePanel title="ReserveTicket.java" label="One rule, two changes" code={actionCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>State loads automatically</dt><dd>Fluxzero provides the product state and which customer is making the change.</dd></div>
                         <div><dt>Everything changes together</dt><dd>If something changes while the rule runs, Fluxzero runs it again before saving.</dd></div>
@@ -337,7 +278,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">02 · Keeping track</p>
-                    <h2 id="domain-state-title">Your code describes the product.<br><span>Fluxzero keeps its history.</span></h2>
+                    <h2 id="domain-state-title">Your product changes.<br><span>Its history stays.</span></h2>
                     <p>Define the parts of your product and how they fit together. Fluxzero keeps the information up to date and preserves its history. Your app can use that history directly in its features.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--model" data-reveal data-reveal-delay="1">
@@ -398,7 +339,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <dl class="product-code-proof__notes">
                         <div><dt>Production behavior</dt><dd>Fluxzero runs the scenario through the same rules as the real application.</dd></div>
                         <div><dt>Real circumstances</dt><dd>Fluxzero supplies the person and moment described by the test.</dd></div>
-                        <div><dt>Visible outcome</dt><dd>Fluxzero confirms success or the expected rejection without inspecting internals.</dd></div>
+                        <div><dt>Visible outcome</dt><dd>Fluxzero confirms success or the expected rejection. No infrastructure or mocks needed.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -408,7 +349,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">04 · Finding information</p>
-                    <h2 id="search-title">Your product data.<br><span>Search built in.</span></h2>
+                    <h2 id="search-title">Your data comes<br><span>ready to search.</span></h2>
                     <p>Query your data from anywhere in your code. Use a dedicated query class to define what to fetch and who may access it. Fluxzero keeps your data and its relationships searchable as the product changes, without a separate search system to build or maintain.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--query" data-reveal data-reveal-delay="1">
@@ -450,9 +391,13 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="durable-workflows-title">Workflows pick up<br><span>where they left off.</span></h2>
                     <p>Some workflows need to wait for an external service before continuing. Define what happens when the response arrives. Fluxzero preserves progress and connects each response to the right process, even after a restart.</p>
                 </header>
-                <div class="product-code-interactions" data-reveal data-reveal-delay="1">
+                <div class="product-code-proof product-code-proof--workflow" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="PaymentProcess.java" label="Wait for a payment response" code={paymentProcessCode} />
-                    <ProductCodePanel title="ConfirmReservation.java" label="Safe to repeat" code={confirmationCode} />
+                    <dl class="product-code-proof__notes">
+                        <div><dt>Progress preserved</dt><dd>Fluxzero remembers where each workflow left off, including after a restart.</dd></div>
+                        <div><dt>Responses connected</dt><dd>The reference on an incoming response connects it to the right waiting process.</dd></div>
+                        <div><dt>Ready to continue</dt><dd>Fluxzero loads that process and runs the next step with its saved state.</dd></div>
+                    </dl>
                 </div>
             </div>
         </article>
@@ -464,11 +409,8 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="policy-title">You decide who may do what.<br><span>Fluxzero enforces it.</span></h2>
                     <p>Define the access rules that fit your product. Fluxzero enforces them before allowing a change. Information marked as private stays protected and can be erased without losing the surrounding history.</p>
                 </header>
-                <div class="product-code-proof product-code-proof--stacked" data-reveal data-reveal-delay="1">
-                    <div class="product-code-proof__code-stack">
-                        <ProductCodePanel title="package-info.java" label="Secure by default" code={packagePolicyCode} />
-                        <ProductCodePanel title="UpdateContactEmail.java" label="Ownership and protected data" code={personalDataCode} />
-                    </div>
+                <div class="product-code-proof product-code-proof--policy" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="UpdateContactEmail.java" label="Ownership and protected data" code={personalDataCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>Identity supplied</dt><dd>Fluxzero gives your rule the authenticated customer making the change.</dd></div>
                         <div><dt>Access checked first</dt><dd>With sign-in required, Fluxzero rejects unauthenticated requests before the feature runs.</dd></div>
@@ -503,8 +445,13 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="location-transparency-title">The same code.<br><span>Wherever the work runs.</span></h2>
                     <p>Send a request without choosing which application will handle it. Fluxzero delivers it and returns the result. Whether the handler runs in your own app or another one, the calling code stays the same.</p>
                 </header>
-                <div class="product-code-proof product-code-proof--code" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="TicketApi.java" label="Call the query from 04" code={queryCallerCode} />
+                <div class="product-code-proof product-code-proof--location" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="TicketApi.java" label="Requests without routing code" code={queryCallerCode} />
+                    <dl class="product-code-proof__notes">
+                        <div><dt>Web handlers anywhere</dt><dd>The web handler can run in any connected application. The public endpoint stays the same.</dd></div>
+                        <div><dt>Queries across applications</dt><dd>The query handler can run alongside it or in another app. The call stays the same.</dd></div>
+                        <div><dt>One request, more uses</dt><dd>Other apps can observe the same web request for analytics while the endpoint handler returns the response.</dd></div>
+                    </dl>
                 </div>
             </div>
         </article>
@@ -517,7 +464,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>Not every part of your application is equally busy. With separate consumers, parts run and scale independently. Fluxzero keeps their progress separate and distributes the work, so capacity can grow where it is needed.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--code" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="ReservationReceipts.java" label="A consumer with its own capacity" code={consumerCode} />
+                    <ProductCodePanel title="FraudDetection.java" label="Fraud checks with their own capacity" code={consumerCode} />
                 </div>
             </div>
         </article>
