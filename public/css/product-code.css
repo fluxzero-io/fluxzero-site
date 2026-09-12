@@ -31,6 +31,18 @@
     max-width: 880px;
 }
 
+.product-code-hero .cloud-proof-hero__lead {
+    max-width: 880px;
+}
+
+.product-code-hero__context {
+    max-width: 780px;
+    margin-top: 24px;
+    color: #99aec1;
+    font-size: 17px;
+    line-height: 1.65;
+}
+
 .product-code-hero h1 {
     max-width: 860px;
     font-size: clamp(58px, 6vw, 80px);
@@ -110,11 +122,31 @@
     grid-template-columns: minmax(0, 1.35fr) minmax(360px, 0.95fr);
 }
 
+.product-code-proof--model {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+}
+
+.product-code-proof--code {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.product-code-proof--code > .product-code-panel {
+    width: 100%;
+    max-width: 880px;
+}
+
 .product-code-proof--stacked {
     align-items: start;
 }
 
 .product-code-proof__code-stack {
+    display: grid;
+    min-width: 0;
+    gap: 18px;
+}
+
+.product-code-proof__aside {
     display: grid;
     min-width: 0;
     gap: 18px;
@@ -330,6 +362,230 @@
     color: #8297aa;
     font-size: 12px;
     line-height: 1.55;
+}
+
+.product-code-proof--model > .product-code-proof__notes {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.product-code-relation-map {
+    --relation-line: #355f80;
+    --relation-row-gap: 14px;
+    position: relative;
+    margin: 0;
+}
+
+.product-code-relation-map__grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(310px, 0.92fr) minmax(0, 1.28fr);
+    align-items: stretch;
+    gap: var(--relation-row-gap) 28px;
+}
+
+.product-code-relation-map__code {
+    grid-column: 2;
+    align-self: stretch;
+}
+
+.product-code-relation-map__code--show,
+.product-code-relation-map__level--show {
+    grid-row: 1;
+}
+
+.product-code-relation-map__code--tickets,
+.product-code-relation-map__level--tickets {
+    grid-row: 2;
+}
+
+.product-code-relation-map__code--reservations,
+.product-code-relation-map__level--reservations {
+    grid-row: 3;
+}
+
+.product-code-relation-map__level {
+    grid-column: 1;
+    position: relative;
+    display: grid;
+    min-width: 0;
+    min-height: 138px;
+    padding: 22px 8px;
+    place-items: center;
+    isolation: isolate;
+}
+
+.product-code-relation-map__root {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    width: 110px;
+    height: 54px;
+    place-items: center;
+    border: 1px solid rgba(105, 186, 255, 0.58);
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(18, 56, 88, 0.96), rgba(9, 31, 50, 0.96));
+    box-shadow: inset 0 0 30px rgba(59, 151, 232, 0.12), 0 0 28px rgba(40, 120, 193, 0.1);
+    color: #dcecf8;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.product-code-relation-map__link {
+    position: absolute;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.product-code-relation-map__link--show-ticket {
+    top: calc(50% + 27px);
+    bottom: calc(-1 * var(--relation-row-gap));
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: var(--relation-line);
+}
+
+.product-code-relation-map__link--ticket-up {
+    top: 0;
+    bottom: calc(50% + 48px);
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: var(--relation-line);
+}
+
+.product-code-relation-map__link--ticket-down,
+.product-code-relation-map__link--reservation-up {
+    right: 8px;
+    left: 8px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.product-code-relation-map__link--ticket-down::before,
+.product-code-relation-map__link--ticket-down::after,
+.product-code-relation-map__link--reservation-up::before,
+.product-code-relation-map__link--reservation-up::after {
+    content: '';
+    grid-row: 1;
+    grid-column: 2;
+    justify-self: center;
+    width: 2px;
+    background: var(--relation-line);
+}
+
+.product-code-relation-map__link--ticket-down::after,
+.product-code-relation-map__link--reservation-up::after {
+    grid-column: 4;
+}
+
+.product-code-relation-map__link--ticket-down {
+    top: calc(50% + 48px);
+    bottom: calc(-1 * var(--relation-row-gap));
+}
+
+.product-code-relation-map__link--reservation-up {
+    top: 0;
+    bottom: calc(50% + 24.5px);
+}
+
+.product-code-relation-map__tickets,
+.product-code-relation-map__reservations {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    list-style: none;
+}
+
+.product-code-relation-map__tickets {
+    padding-top: 44px;
+}
+
+.product-code-relation-map__tickets::before {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    top: 0;
+    right: 12.5%;
+    left: 12.5%;
+    height: 2px;
+    background: var(--relation-line);
+}
+
+.product-code-relation-map__tickets li,
+.product-code-relation-map__reservations li {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    min-width: 0;
+    place-items: center;
+}
+
+.product-code-relation-map__tickets li::before {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    top: -44px;
+    bottom: 100%;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: var(--relation-line);
+}
+
+.product-code-relation-map__tickets li > span,
+.product-code-relation-map__reservations li > span {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: calc(100% - 9px);
+    min-width: 0;
+    height: 52px;
+    place-items: center;
+    border: 1px solid rgba(108, 177, 237, 0.22);
+    border-radius: 10px;
+    background: rgba(9, 24, 38, 0.94);
+    color: #9eb4c7;
+    font-size: 10px;
+}
+
+.product-code-relation-map__tickets .is-reserved > span {
+    border-color: rgba(105, 186, 255, 0.5);
+    color: #d3e7f6;
+    box-shadow: inset 0 0 20px rgba(59, 151, 232, 0.1);
+}
+
+.product-code-relation-map__reservations li > span {
+    height: 49px;
+    border-color: rgba(83, 190, 150, 0.34);
+    border-radius: 9px;
+    background: rgba(12, 47, 39, 0.76);
+    color: #9bd4be;
+    font-size: 9px;
+    line-height: 1.1;
+}
+
+.product-code-relation-map__reservations small {
+    color: #6ea98f;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.product-code-relation-map__reservations .is-pending {
+    border-color: rgba(218, 174, 97, 0.3);
+    background: rgba(49, 38, 17, 0.72);
+    color: #d3bc91;
+}
+
+.product-code-relation-map__reservations .is-pending small {
+    color: #aa9164;
 }
 
 .product-code-model {
@@ -778,6 +1034,40 @@
 
     .product-code-proof {
         gap: 20px;
+    }
+
+    .product-code-relation-map {
+        --relation-row-gap: 12px;
+    }
+
+    .product-code-relation-map__grid {
+        grid-template-columns: 1fr;
+        gap: var(--relation-row-gap);
+    }
+
+    .product-code-relation-map__code,
+    .product-code-relation-map__level {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .product-code-relation-map__level {
+        order: 1;
+    }
+
+    .product-code-relation-map__code {
+        order: 2;
+    }
+
+    .product-code-relation-map__level {
+        min-height: 128px;
+        width: min(406px, 100%);
+        justify-self: center;
+        padding: 22px 8px;
+    }
+
+    .product-code-proof--model > .product-code-proof__notes {
+        grid-template-columns: 1fr;
     }
 
     .product-code-interactions,

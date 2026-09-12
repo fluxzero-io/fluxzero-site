@@ -28,52 +28,46 @@ const actionCode = `<span class="tok-keyword">record</span> <span class="tok-typ
     }
 }`;
 
-const modelCode = `<span class="tok-annotation">@Model</span>
+const showModelCode = `<span class="tok-annotation">@Model</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
 <span class="tok-keyword">record</span> <span class="tok-type">Show</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">ShowId</span> <span class="tok-field">showId</span>,
     <span class="tok-type">String</span> <span class="tok-field">name</span>,
-    <span class="tok-type">ShowStatus</span> <span class="tok-field">status</span>) {}
+    <span class="tok-type">ShowStatus</span> <span class="tok-field">status</span>) {}`;
 
-<span class="tok-annotation">@Model</span>
+const ticketModelCode = `<span class="tok-annotation">@Model</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>,
+    <span class="tok-field">persistence</span> = {<span class="tok-type">EVENT_SOURCED</span>, <span class="tok-type">DOCUMENT</span>})
 <span class="tok-keyword">record</span> <span class="tok-type">Ticket</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
     <span class="tok-annotation">@Parent</span>(<span class="tok-field">pathInParent</span> = <span class="tok-string">"tickets"</span>)
     <span class="tok-type">ShowId</span> <span class="tok-field">showId</span>,
-    <span class="tok-type">Seat</span> <span class="tok-field">seat</span>,
-    <span class="tok-annotation">@With</span> <span class="tok-annotation">@Facet</span> <span class="tok-type">TicketStatus</span> <span class="tok-field">status</span>) {}
+    <span class="tok-type">TicketDetails</span> <span class="tok-field">details</span>,
+    <span class="tok-annotation">@With</span> <span class="tok-type">TicketStatus</span> <span class="tok-field">status</span>) {}`;
 
-<span class="tok-annotation">@Model</span>
+const reservationModelCode = `<span class="tok-annotation">@Model</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
 <span class="tok-keyword">record</span> <span class="tok-type">Reservation</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
     <span class="tok-annotation">@Parent</span>(<span class="tok-field">pathInParent</span> = <span class="tok-string">"reservations"</span>)
     <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
     <span class="tok-type">CustomerId</span> <span class="tok-field">customerId</span>,
     <span class="tok-annotation">@With</span> <span class="tok-type">ReservationStatus</span> <span class="tok-field">status</span>,
-    <span class="tok-annotation">@With</span> <span class="tok-type">ContactEmail</span> <span class="tok-field">contactEmail</span>) {}
-
-<span class="tok-keyword">record</span> <span class="tok-type">Seat</span>(
-    <span class="tok-annotation">@Facet</span> <span class="tok-type">String</span> <span class="tok-field">section</span>,
-    <span class="tok-annotation">@Sortable</span> <span class="tok-keyword">int</span> <span class="tok-field">row</span>,
-    <span class="tok-keyword">int</span> <span class="tok-field">number</span>) {}`;
+    <span class="tok-annotation">@With</span> <span class="tok-type">ContactEmail</span> <span class="tok-field">contactEmail</span>) {}`;
 
 const testCode = `<span class="tok-annotation">@Test</span>
 <span class="tok-keyword">void</span> <span class="tok-method">reservesAnAvailableTicket</span>() {
     fixture
-        .<span class="tok-call">givenCommands</span>(<span class="tok-string">"/ticketing/available-ticket.json"</span>)
         .<span class="tok-call">whenCommandByUser</span>(<span class="tok-string">"customer-42"</span>,
             <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
-        .<span class="tok-call">expectOnlyEvents</span>(
+        .<span class="tok-call">expectEvents</span>(
             <span class="tok-string">"/ticketing/reserve-ticket.json"</span>);
 }
 
 <span class="tok-annotation">@Test</span>
 <span class="tok-keyword">void</span> <span class="tok-method">rejectsASecondReservation</span>() {
     fixture
-        .<span class="tok-call">givenCommands</span>(<span class="tok-string">"/ticketing/available-ticket.json"</span>)
         .<span class="tok-call">givenCommandsByUser</span>(<span class="tok-string">"customer-42"</span>,
             <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
         .<span class="tok-call">whenCommandByUser</span>(<span class="tok-string">"customer-77"</span>,
-            <span class="tok-string">"/ticketing/reserve-same-ticket.json"</span>)
+            <span class="tok-string">"/ticketing/reserve-ticket.json"</span>)
         .<span class="tok-call">expectExceptionalResult</span>(<span class="tok-type">TicketErrors</span>.notAvailable)
         .<span class="tok-call">expectNoEvents</span>();
 }`;
@@ -88,8 +82,8 @@ const searchCode = `<span class="tok-keyword">record</span> <span class="tok-typ
         <span class="tok-keyword">return</span> <span class="tok-type">Fluxzero</span>.<span class="tok-call">search</span>(<span class="tok-type">Ticket</span>.class)
             .<span class="tok-call">whereParent</span>(showId)
             .<span class="tok-call">match</span>(<span class="tok-type">AVAILABLE</span>, <span class="tok-string">"status"</span>)
-            .<span class="tok-call">match</span>(section, <span class="tok-string">"seat/section"</span>)
-            .<span class="tok-call">sortBy</span>(<span class="tok-string">"seat/row"</span>)
+            .<span class="tok-call">match</span>(section, <span class="tok-string">"details/section"</span>)
+            .<span class="tok-call">sortBy</span>(<span class="tok-string">"details/row"</span>)
             .<span class="tok-call">fetch</span>(<span class="tok-literal">50</span>);
     }
 }`;
@@ -99,8 +93,7 @@ const timerCode = `<span class="tok-annotation">@Component</span>
     <span class="tok-annotation">@HandleEvent</span>
     <span class="tok-keyword">void</span> <span class="tok-method">start</span>(<span class="tok-type">ReserveTicket</span> event) {
         <span class="tok-type">Fluxzero</span>.<span class="tok-call">scheduleCommand</span>(
-            <span class="tok-keyword">new</span> <span class="tok-type">ExpireReservation</span>(
-                event.<span class="tok-method">reservationId</span>(), event.<span class="tok-method">ticketId</span>()),
+            <span class="tok-keyword">new</span> <span class="tok-type">ExpireReservation</span>(event.<span class="tok-method">reservationId</span>()),
             <span class="tok-string">"expire-"</span> + event.<span class="tok-method">reservationId</span>(),
             <span class="tok-type">Duration</span>.<span class="tok-call">ofMinutes</span>(<span class="tok-literal">15</span>));
     }
@@ -112,23 +105,18 @@ const timerCode = `<span class="tok-annotation">@Component</span>
     }
 }`;
 
-const expiryCode = `<span class="tok-keyword">record</span> <span class="tok-type">ExpireReservation</span>(
-    <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>,
-    <span class="tok-annotation">@NotNull</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>) {
+const expiryCode = `<span class="tok-keyword">record</span> <span class="tok-type">ExpireReservation</span>(<span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> <span class="tok-field">reservationId</span>) {
 
     <span class="tok-annotation">@AssertLegal</span>
-    <span class="tok-keyword">void</span> <span class="tok-method">assertAwaitingPayment</span>(
-            <span class="tok-type">Reservation</span> reservation, <span class="tok-type">Ticket</span> ticket) {
-        <span class="tok-keyword">if</span> (reservation.<span class="tok-method">status</span>() != <span class="tok-type">AWAITING_PAYMENT</span>
-                || ticket.<span class="tok-method">status</span>() != <span class="tok-type">RESERVED</span>
-                || !reservation.<span class="tok-method">ticketId</span>().<span class="tok-call">equals</span>(ticketId)) {
+    <span class="tok-keyword">void</span> <span class="tok-method">assertAwaitingPayment</span>(<span class="tok-type">Reservation</span> reservation) {
+        <span class="tok-keyword">if</span> (reservation.<span class="tok-method">status</span>() != <span class="tok-type">AWAITING_PAYMENT</span>) {
             <span class="tok-keyword">throw</span> <span class="tok-type">ReservationErrors</span>.notAwaitingPayment;
         }
     }
 
     <span class="tok-annotation">@Apply</span>
-    <span class="tok-type">Reservation</span> <span class="tok-method">expire</span>(<span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-keyword">return</span> reservation.<span class="tok-method">withStatus</span>(<span class="tok-type">EXPIRED</span>);
+    <span class="tok-type">Reservation</span> <span class="tok-method">remove</span>(<span class="tok-type">Reservation</span> reservation) {
+        <span class="tok-keyword">return</span> <span class="tok-literal">null</span>;
     }
 
     <span class="tok-annotation">@Apply</span>
@@ -214,11 +202,86 @@ const historyCode = `<span class="tok-annotation">@Component</span>
     }
 }
 
-<span class="tok-annotation">@Model</span>
+<span class="tok-annotation">@Model</span>(<span class="tok-field">conflictPolicy</span> = <span class="tok-type">RETRY</span>)
 <span class="tok-keyword">record</span> <span class="tok-type">RewardGrant</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">RewardGrantId</span> <span class="tok-field">rewardGrantId</span>,
     <span class="tok-type">CustomerId</span> <span class="tok-field">customerId</span>,
     <span class="tok-keyword">int</span> <span class="tok-field">points</span>) {}`;
+
+const paymentProcessCode = `<span class="tok-annotation">@Stateful</span>
+<span class="tok-annotation">@Consumer</span>(name = <span class="tok-string">"reservation-payments"</span>)
+<span class="tok-keyword">record</span> <span class="tok-type">PaymentProcess</span>(
+    <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> reservationId,
+    <span class="tok-annotation">@Association</span> <span class="tok-type">String</span> pspReference) {
+
+    <span class="tok-annotation">@HandleEvent</span>
+    <span class="tok-keyword">static</span> <span class="tok-type">PaymentProcess</span> <span class="tok-method">start</span>(<span class="tok-type">PaymentStarted</span> event) {
+        <span class="tok-keyword">return</span> <span class="tok-keyword">new</span> <span class="tok-type">PaymentProcess</span>(
+            event.<span class="tok-method">reservationId</span>(), event.<span class="tok-method">pspReference</span>());
+    }
+
+    <span class="tok-annotation">@HandleEvent</span>
+    <span class="tok-type">PaymentProcess</span> <span class="tok-method">complete</span>(<span class="tok-type">PaymentSucceeded</span> event) {
+        <span class="tok-type">Fluxzero</span>.<span class="tok-method">sendCommandAndWait</span>(
+            <span class="tok-keyword">new</span> <span class="tok-type">ConfirmReservation</span>(reservationId));
+        <span class="tok-keyword">return</span> <span class="tok-literal">null</span>;
+    }
+}
+
+<span class="tok-keyword">record</span> <span class="tok-type">PaymentStarted</span>(
+    <span class="tok-type">ReservationId</span> reservationId, <span class="tok-type">String</span> pspReference) {}
+
+<span class="tok-keyword">record</span> <span class="tok-type">PaymentSucceeded</span>(<span class="tok-type">String</span> pspReference) {}`;
+
+const confirmationCode = `<span class="tok-keyword">record</span> <span class="tok-type">ConfirmReservation</span>(
+    <span class="tok-annotation">@NotNull</span> <span class="tok-type">ReservationId</span> reservationId) {
+
+    <span class="tok-annotation">@InterceptApply</span>
+    <span class="tok-type">Object</span> <span class="tok-method">ignoreIfConfirmed</span>(<span class="tok-type">Reservation</span> reservation) {
+        <span class="tok-keyword">return</span> reservation.<span class="tok-method">status</span>() == <span class="tok-type">CONFIRMED</span> ? <span class="tok-literal">null</span> : this;
+    }
+
+    <span class="tok-annotation">@AssertLegal</span>
+    <span class="tok-keyword">void</span> <span class="tok-method">assertAwaitingPayment</span>(<span class="tok-type">Reservation</span> reservation) {
+        <span class="tok-keyword">if</span> (reservation.<span class="tok-method">status</span>() != <span class="tok-type">AWAITING_PAYMENT</span>) {
+            throw <span class="tok-type">ReservationErrors</span>.notAwaitingPayment;
+        }
+    }
+
+    <span class="tok-annotation">@Apply</span>
+    <span class="tok-type">Reservation</span> <span class="tok-method">confirm</span>(<span class="tok-type">Reservation</span> reservation) {
+        <span class="tok-keyword">return</span> reservation.<span class="tok-method">withStatus</span>(<span class="tok-type">CONFIRMED</span>);
+    }
+}`;
+
+const queryCallerCode = `<span class="tok-annotation">@Component</span>
+<span class="tok-annotation">@Path</span>(<span class="tok-string">"/api/tickets"</span>)
+<span class="tok-keyword">final</span> <span class="tok-keyword">class</span> <span class="tok-type">TicketApi</span> {
+    <span class="tok-annotation">@HandleGet</span>
+    <span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt; <span class="tok-method">available</span>(
+            <span class="tok-annotation">@QueryParam</span>(<span class="tok-string">"showId"</span>) <span class="tok-type">ShowId</span> showId,
+            <span class="tok-annotation">@QueryParam</span>(<span class="tok-string">"section"</span>) <span class="tok-type">String</span> section) {
+        <span class="tok-keyword">return</span> <span class="tok-type">Fluxzero</span>.<span class="tok-method">queryAndWait</span>(
+            <span class="tok-keyword">new</span> <span class="tok-type">FindAvailableTickets</span>(showId, section));
+    }
+}`;
+
+const consumerCode = `<span class="tok-annotation">@Component</span>
+<span class="tok-annotation">@Consumer</span>(name = <span class="tok-string">"reservation-receipts"</span>, threads = <span class="tok-literal">4</span>)
+<span class="tok-keyword">final</span> <span class="tok-keyword">class</span> <span class="tok-type">ReservationReceipts</span> {
+    <span class="tok-annotation">@HandleEvent</span>
+    <span class="tok-keyword">void</span> <span class="tok-method">create</span>(<span class="tok-type">ConfirmReservation</span> event, <span class="tok-type">Reservation</span> reservation) {
+        <span class="tok-type">Fluxzero</span>.<span class="tok-method">index</span>(<span class="tok-keyword">new</span> <span class="tok-type">ReservationReceipt</span>(
+            event.<span class="tok-method">reservationId</span>(),
+            reservation.<span class="tok-method">customerId</span>(),
+            reservation.<span class="tok-method">ticketId</span>())).<span class="tok-method">join</span>();
+    }
+}
+
+<span class="tok-keyword">record</span> <span class="tok-type">ReservationReceipt</span>(
+    <span class="tok-annotation">@EntityId</span> <span class="tok-type">ReservationId</span> reservationId,
+    <span class="tok-type">CustomerId</span> customerId,
+    <span class="tok-type">TicketId</span> ticketId) {}`;
 ---
 
 <!DOCTYPE html>
@@ -228,12 +291,12 @@ const historyCode = `<span class="tok-annotation">@Component</span>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <BrandHead
         title="Product decisions are the code — Fluxzero"
-        description="See how Fluxzero lets application code express real product behavior while the platform supplies the technical foundation underneath."
+        description="See how everyday product features become simple code when Fluxzero handles the engineering underneath."
     />
     <link rel="stylesheet" href="/css/v4.css?v=20260905-1">
     <link rel="stylesheet" href="/css/technical-foundation.css?v=20260904-5">
     <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260910-11">
-    <link rel="stylesheet" href="/css/product-code.css?v=20260911-11">
+    <link rel="stylesheet" href="/css/product-code.css?v=20260912-29">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
 <body class="v4-page cloud-proof-page cloud-proof-next-page product-code-page">
@@ -247,7 +310,8 @@ const historyCode = `<span class="tok-annotation">@Component</span>
                     <p class="cloud-proof-hero__back" data-reveal><a href="/how-it-works#behavior-title" data-browser-back><i class="bx bx-left-arrow-alt" aria-hidden="true"></i> Back</a></p>
                     <p class="cloud-proof-next__eyebrow" data-reveal>Product code</p>
                     <h1 data-reveal data-reveal-delay="1">Product decisions<br><span>are the code.</span></h1>
-                    <p class="cloud-proof-hero__lead" data-reveal data-reveal-delay="2">Fluxzero moves the engineering foundation into the cloud. The application describes the decisions that make the product behave; the platform takes responsibility for executing them correctly.</p>
+                    <p class="cloud-proof-hero__lead" data-reveal data-reveal-delay="2">When the cloud handles the engineering underneath, a feature can be just its business rules and follow-up actions. These examples show what that leaves your agent to write.</p>
+                    <p class="product-code-hero__context" data-reveal data-reveal-delay="3">You build in natural language. Fluxzero chose Java for the code underneath: a proven backend language that agents speak fluently. Your code remains easy to extend as your product grows.</p>
                 </div>
             </div>
         </header>
@@ -255,16 +319,16 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="intent" aria-labelledby="intent-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">01 · Product decisions</p>
-                    <h2 id="intent-title">Each decision stands on its own.<br><span>Rules and changes stay together.</span></h2>
-                    <p>The code names something a person wants the product to do and contains only the information that decision needs. The applicable rules and every resulting change sit beside it in one place.</p>
+                    <p class="cloud-proof-next__number">01 · Making changes</p>
+                    <h2 id="intent-title">Only product logic.<br><span>Working at any scale.</span></h2>
+                    <p>You decide how a feature should work. Fluxzero keeps its rules intact when many customers act at once. The same logic continues to work as usage grows, without engineering work for your agent.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--action" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="ReserveTicket.java" label="Command, rule, two changes" code={actionCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Right information</dt><dd>Fluxzero brings the current product information into the decision.</dd></div>
-                        <div><dt>Current customer</dt><dd>Fluxzero supplies the identity of the person making the request.</dd></div>
-                        <div><dt>One safe outcome</dt><dd>Fluxzero either makes every change or makes none, and rechecks simultaneous decisions.</dd></div>
+                        <div><dt>State loads automatically</dt><dd>Fluxzero provides the product state and which customer is making the change.</dd></div>
+                        <div><dt>Everything changes together</dt><dd>If something changes while the rule runs, Fluxzero runs it again before saving.</dd></div>
+                        <div><dt>Many people, one safe result</dt><dd>Each decision is kept correct even when many customers act at once.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -273,16 +337,51 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="domain-state" aria-labelledby="domain-state-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">02 · One source of truth</p>
-                    <h2 id="domain-state-title">Each part of the product<br><span>has one reliable history.</span></h2>
-                    <p>Information that belongs together stays together. Anything that can change on its own keeps its own history, so product decisions never have to reconcile several versions of the truth.</p>
+                    <p class="cloud-proof-next__number">02 · Keeping track</p>
+                    <h2 id="domain-state-title">Your code describes the product.<br><span>Fluxzero keeps its history.</span></h2>
+                    <p>Define the parts of your product and how they fit together. Fluxzero keeps the information up to date and preserves its history. Your app can use that history directly in its features.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--model" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="TicketingModel.java" label="Models and relationships" code={modelCode} />
+                    <figure class="product-code-relation-map">
+                        <div class="product-code-relation-map__grid">
+                            <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--show" title="Show.java" label="Root model" code={showModelCode} />
+                            <div class="product-code-relation-map__level product-code-relation-map__level--show">
+                                <span class="product-code-relation-map__link product-code-relation-map__link--show-ticket" aria-hidden="true"></span>
+                                <strong class="product-code-relation-map__root">Show</strong>
+                            </div>
+
+                            <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--tickets" title="Ticket.java" label="Child of Show" code={ticketModelCode} />
+                            <div class="product-code-relation-map__level product-code-relation-map__level--tickets">
+                                <span class="product-code-relation-map__link product-code-relation-map__link--ticket-up" aria-hidden="true"></span>
+                                <span class="product-code-relation-map__link product-code-relation-map__link--ticket-down" aria-hidden="true"></span>
+                                <ul class="product-code-relation-map__tickets" aria-label="Tickets connected to the show">
+                                    <li><span>Ticket</span></li>
+                                    <li class="is-reserved"><span>Ticket</span></li>
+                                    <li><span>Ticket</span></li>
+                                    <li class="is-reserved"><span>Ticket</span></li>
+                                </ul>
+                            </div>
+
+                            <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--reservations" title="Reservation.java" label="Child of Ticket" code={reservationModelCode} />
+                            <div class="product-code-relation-map__level product-code-relation-map__level--reservations">
+                                <span class="product-code-relation-map__link product-code-relation-map__link--reservation-up" aria-hidden="true"></span>
+                                <ul class="product-code-relation-map__reservations" aria-label="Reservations connected to tickets">
+                                    <li aria-hidden="true"></li>
+                                    <li>
+                                        <span>Reservation<small>Paid</small></span>
+                                    </li>
+                                    <li aria-hidden="true"></li>
+                                    <li>
+                                        <span class="is-pending">Reservation<small>Pending</small></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </figure>
                     <dl class="product-code-proof__notes">
-                        <div><dt>Always current</dt><dd>Fluxzero reconstructs the current truth from every accepted decision.</dd></div>
+                        <div><dt>Keep track of everything</dt><dd>Fluxzero keeps track of every part of the product and how it relates to the rest.</dd></div>
                         <div><dt>Stored automatically</dt><dd>Fluxzero loads and saves the information without storage work in the application.</dd></div>
-                        <div><dt>Connections preserved</dt><dd>Fluxzero keeps related information connected as the product changes.</dd></div>
+                        <div><dt>History preserved</dt><dd>Fluxzero keeps every previous state of the product available.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -291,9 +390,9 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="tests" aria-labelledby="tests-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">03 · Proven behavior</p>
-                    <h2 id="tests-title">Tests describe what people do.<br><span>And what must happen next.</span></h2>
-                    <p>A test describes a real product scenario and checks the result a person can observe. The examples remain readable even when the implementation underneath them changes.</p>
+                    <p class="cloud-proof-next__number">03 · Testing behavior</p>
+                    <h2 id="tests-title">Know it works.<br><span>Before customers use it.</span></h2>
+                    <p>Your agent tests that features keep working as you build. That includes the edge cases. Fluxzero runs the same product code and rules in tests as in production, so you can ship with confidence.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--test" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="ReserveTicketTest.java" label="Behavior test with JSON" code={testCode} />
@@ -309,16 +408,16 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="search" aria-labelledby="search-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">04 · Product questions</p>
-                    <h2 id="search-title">Ask for the answer you need.<br><span>Fluxzero finds it.</span></h2>
-                    <p>The code describes which product information belongs in the answer and how it should be ordered. It never needs to know where or how that information is stored.</p>
+                    <p class="cloud-proof-next__number">04 · Finding information</p>
+                    <h2 id="search-title">Your product data.<br><span>Search built in.</span></h2>
+                    <p>Query your data from anywhere in your code. Use a dedicated query class to define what to fetch and who may access it. Fluxzero keeps your data and its relationships searchable as the product changes, without a separate search system to build or maintain.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--query" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="FindAvailableTickets.java" label="Query and search" code={searchCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Current answers</dt><dd>Fluxzero keeps searchable information current as decisions are accepted.</dd></div>
-                        <div><dt>Related information</dt><dd>Fluxzero follows the product’s relationships to find what belongs together.</dd></div>
-                        <div><dt>Fast retrieval</dt><dd>Fluxzero selects and orders the answer in the cloud.</dd></div>
+                        <div><dt>Search maintained automatically</dt><dd>Fluxzero updates the searchable data as your product changes.</dd></div>
+                        <div><dt>Relationships already known</dt><dd>Fluxzero follows the connections in your product data to find what belongs together.</dd></div>
+                        <div><dt>Work done in the cloud</dt><dd>Fluxzero filters and sorts the data. Your code receives the results it asked for.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -327,20 +426,34 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="workflows" aria-labelledby="workflows-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">05 · Time</p>
-                    <h2 id="workflows-title">Decide what should happen later.<br><span>Fluxzero makes sure it does.</span></h2>
-                    <p>A decision can arrange a follow-up for later. Another decision can cancel it, and when the moment arrives, the product’s current rules still determine the outcome.</p>
+                    <p class="cloud-proof-next__number">05 · Set a schedule</p>
+                    <h2 id="workflows-title">Your product follows up.<br><span>Even after a restart.</span></h2>
+                    <p>Scheduling is part of almost every application. Fluxzero makes it easy to schedule and test what should happen later. Scheduled work survives restarts and deployments, with your rules checked when it runs.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--stacked" data-reveal data-reveal-delay="1">
                     <div class="product-code-proof__code-stack">
                         <ProductCodePanel title="ReservationTimers.java" label="Start and cancel a deadline" code={timerCode} />
-                        <ProductCodePanel title="ExpireReservation.java" label="Close and release together" code={expiryCode} />
+                        <ProductCodePanel title="ExpireReservation.java" label="Remove hold and release ticket" code={expiryCode} />
                     </div>
                     <dl class="product-code-proof__notes">
-                        <div><dt>Remembered deadline</dt><dd>Fluxzero keeps the follow-up safe through restarts and deployments.</dd></div>
-                        <div><dt>Exact cancellation</dt><dd>Fluxzero cancels the intended follow-up when it is no longer needed.</dd></div>
-                        <div><dt>Current situation</dt><dd>Fluxzero rechecks the latest product information before changing anything.</dd></div>
+                        <div><dt>Scheduled work preserved</dt><dd>Fluxzero retains the action through application restarts and deployments.</dd></div>
+                        <div><dt>Current rules checked</dt><dd>Fluxzero loads the latest data and checks whether the scheduled change is still allowed.</dd></div>
+                        <div><dt>Cancellation handled</dt><dd>Your code names the follow-up to cancel. Fluxzero removes it from the schedule.</dd></div>
                     </dl>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="durable-workflows" aria-labelledby="durable-workflows-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">06 · Run a workflow</p>
+                    <h2 id="durable-workflows-title">Workflows pick up<br><span>where they left off.</span></h2>
+                    <p>Some workflows need to wait for an external service before continuing. Define what happens when the response arrives. Fluxzero preserves progress and connects each response to the right process, even after a restart.</p>
+                </header>
+                <div class="product-code-interactions" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="PaymentProcess.java" label="Wait for a payment response" code={paymentProcessCode} />
+                    <ProductCodePanel title="ConfirmReservation.java" label="Safe to repeat" code={confirmationCode} />
                 </div>
             </div>
         </article>
@@ -348,9 +461,9 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="policy" aria-labelledby="policy-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">06 · Access and privacy</p>
-                    <h2 id="policy-title">The product decides who may act.<br><span>Sensitive data stays protected.</span></h2>
-                    <p>The code states who may make a decision and which private information it may use. The current customer is already known, so callers do not need to pass identity or protected data around themselves.</p>
+                    <p class="cloud-proof-next__number">07 · Access and privacy</p>
+                    <h2 id="policy-title">You decide who may do what.<br><span>Fluxzero enforces it.</span></h2>
+                    <p>Define the access rules that fit your product. Fluxzero enforces them before allowing a change. Information marked as private stays protected and can be erased without losing the surrounding history.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--stacked" data-reveal data-reveal-delay="1">
                     <div class="product-code-proof__code-stack">
@@ -358,9 +471,9 @@ const historyCode = `<span class="tok-annotation">@Component</span>
                         <ProductCodePanel title="UpdateContactEmail.java" label="Ownership and protected data" code={personalDataCode} />
                     </div>
                     <dl class="product-code-proof__notes">
-                        <div><dt>Known customer</dt><dd>Fluxzero attaches the authenticated identity to every decision.</dd></div>
-                        <div><dt>Protected by default</dt><dd>Fluxzero denies unauthenticated access before product behavior runs.</dd></div>
-                        <div><dt>Erasable values</dt><dd>Fluxzero stores private values separately so they can be removed without losing history.</dd></div>
+                        <div><dt>Identity supplied</dt><dd>Fluxzero gives your rule the authenticated customer making the change.</dd></div>
+                        <div><dt>Access checked first</dt><dd>With sign-in required, Fluxzero rejects unauthenticated requests before the feature runs.</dd></div>
+                        <div><dt>Private data stays erasable</dt><dd>Fluxzero stores protected values separately, so they can be erased while the surrounding history remains.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -369,17 +482,43 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="web" aria-labelledby="web-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">07 · From interface to product</p>
-                    <h2 id="web-title">An incoming request<br><span>becomes a product decision.</span></h2>
-                    <p>The interface passes a person’s input to behavior that is already defined and tested. It returns the ordinary answer or explains why the request could not be accepted.</p>
+                    <p class="cloud-proof-next__number">08 · Reach in through the web</p>
+                    <h2 id="web-title">Public web endpoints.<br><span>Private applications.</span></h2>
+                    <p>Your web endpoints live in Fluxzero. Your application has no public endpoint of its own and securely pulls requests when it can handle them. This keeps it out of reach of direct network attacks. Excess traffic waits in Fluxzero instead of flooding the application.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--web" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="ReservationApi.java" label="Web request to command" code={webCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>Valid input</dt><dd>Fluxzero checks the incoming information before the decision runs.</dd></div>
-                        <div><dt>Same customer</dt><dd>Fluxzero carries the authenticated identity into the product.</dd></div>
-                        <div><dt>Clear response</dt><dd>Fluxzero turns the outcome into a standard response for the caller.</dd></div>
+                        <div><dt>Input checked</dt><dd>Fluxzero checks the submitted data against your requirements before running the feature.</dd></div>
+                        <div><dt>Identity carried through</dt><dd>The feature receives the customer making the request without extra code to pass that identity along.</dd></div>
+                        <div><dt>Response handled</dt><dd>Fluxzero sends the result back to the interface and turns errors into the appropriate web response.</dd></div>
                     </dl>
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="location-transparency" aria-labelledby="location-transparency-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">09 · Connect your features</p>
+                    <h2 id="location-transparency-title">The same code.<br><span>Wherever the work runs.</span></h2>
+                    <p>Send a request without choosing which application will handle it. Fluxzero delivers it and returns the result. Whether the handler runs in your own app or another one, the calling code stays the same.</p>
+                </header>
+                <div class="product-code-proof product-code-proof--code" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="TicketApi.java" label="Call the query from 04" code={queryCallerCode} />
+                </div>
+            </div>
+        </article>
+
+        <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="independent-consumers" aria-labelledby="independent-consumers-title">
+            <div class="v4-shell cloud-proof-shell">
+                <header class="cloud-proof-copy" data-reveal>
+                    <p class="cloud-proof-next__number">10 · Scale independently</p>
+                    <h2 id="independent-consumers-title">Each part can scale<br><span>independently.</span></h2>
+                    <p>Not every part of your application is equally busy. With separate consumers, parts run and scale independently. Fluxzero keeps their progress separate and distributes the work, so capacity can grow where it is needed.</p>
+                </header>
+                <div class="product-code-proof product-code-proof--code" data-reveal data-reveal-delay="1">
+                    <ProductCodePanel title="ReservationReceipts.java" label="A consumer with its own capacity" code={consumerCode} />
                 </div>
             </div>
         </article>
@@ -387,16 +526,16 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <article class="cloud-proof-section cloud-proof-next-section product-code-section" id="evolution" aria-labelledby="evolution-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy" data-reveal>
-                    <p class="cloud-proof-next__number">08 · New behavior</p>
-                    <h2 id="evolution-title">Add something new later.<br><span>Let it work from day one.</span></h2>
-                    <p>New behavior can use every relevant decision the product has already recorded. It sees the information as it was at that moment, so it can produce the same result as if it had always been there.</p>
+                    <p class="cloud-proof-next__number">11 · Using the past</p>
+                    <h2 id="evolution-title">New features can be built<br><span>from historical data.</span></h2>
+                    <p>Fluxzero preserves your product’s history. Use it to add features retroactively, with the information as it was at the time. The same code processes earlier activity and continues with new activity.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--history" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="CustomerRewards.java" label="Event handler and complete history" code={historyCode} />
                     <dl class="product-code-proof__notes">
-                        <div><dt>The whole past</dt><dd>Fluxzero retains the accepted decisions from the beginning.</dd></div>
-                        <div><dt>The right moment</dt><dd>Fluxzero recreates the relevant product situation for each decision.</dd></div>
-                        <div><dt>Safe progress</dt><dd>Fluxzero resumes after a failure without losing its place.</dd></div>
+                        <div><dt>History supplied</dt><dd>Fluxzero feeds recorded activity to the new feature from the point you choose.</dd></div>
+                        <div><dt>Earlier state reconstructed</dt><dd>Fluxzero supplies the data as it was then, without your code having to rebuild it.</dd></div>
+                        <div><dt>Progress remembered</dt><dd>Fluxzero tracks how far the feature has processed and resumes after interruptions.</dd></div>
                     </dl>
                 </div>
             </div>
@@ -405,9 +544,8 @@ const historyCode = `<span class="tok-annotation">@Component</span>
         <section class="cloud-proof-next-conclusion product-code-conclusion" aria-labelledby="conclusion-title">
             <div class="v4-shell cloud-proof-shell" data-reveal>
                 <p class="cloud-proof-next__eyebrow">The result</p>
-                <h2 id="conclusion-title">Code that explains the product.<br><span>A cloud that makes it dependable.</span></h2>
-                <p>Builders and coding agents focus on what people can do and what should happen. Fluxzero takes care of everything required to keep those decisions working in production.</p>
-                <strong>The product stays visible in the code.</strong>
+                <h2 id="conclusion-title">Your product is<br><span>the entire application.</span></h2>
+                <p>Your agent writes what the product should do. Fluxzero takes responsibility for making it run. What remains is an application entirely devoted to the product, from the first feature to a fully distributed system.</p>
                 <div class="cloud-proof-next__actions">
                     <a class="v4-button v4-button--primary" href="/get-started"><span>Start building</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
                     <a class="v4-button v4-button--secondary" href="/docs"><span>Inspect the SDK</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
