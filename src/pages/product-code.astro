@@ -199,8 +199,8 @@ const queryCallerCode = `<span class="tok-annotation">@Component</span>
 <span class="tok-keyword">class</span> <span class="tok-type">TicketApi</span> {
     <span class="tok-annotation">@HandleGet</span>
     <span class="tok-type">List</span>&lt;<span class="tok-type">Ticket</span>&gt; <span class="tok-method">available</span>(
-            <span class="tok-annotation">@QueryParam</span>(<span class="tok-string">"showId"</span>) <span class="tok-type">ShowId</span> showId,
-            <span class="tok-annotation">@QueryParam</span>(<span class="tok-string">"section"</span>) <span class="tok-type">String</span> section) {
+            <span class="tok-annotation">@QueryParam</span> <span class="tok-type">ShowId</span> showId,
+            <span class="tok-annotation">@QueryParam</span> <span class="tok-type">String</span> section) {
         <span class="tok-keyword">return</span> <span class="tok-type">Fluxzero</span>.<span class="tok-call">queryAndWait</span>(
             <span class="tok-keyword">new</span> <span class="tok-type">FindAvailableTickets</span>(showId, section));
     }
@@ -210,15 +210,14 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
 <span class="tok-annotation">@Consumer</span>(<span class="tok-field">name</span> = <span class="tok-string">"fraud-detection"</span>, <span class="tok-field">threads</span> = <span class="tok-number">4</span>)
 <span class="tok-keyword">class</span> <span class="tok-type">FraudDetection</span> {
     <span class="tok-annotation">@HandleEvent</span>
-    <span class="tok-keyword">void</span> <span class="tok-method">check</span>(<span class="tok-type">ConfirmReservation</span> event, <span class="tok-type">Reservation</span> reservation) {
-        <span class="tok-type">CustomerActivity</span> activity = <span class="tok-type">Fluxzero</span>.<span class="tok-call">queryAndWait</span>(
-            <span class="tok-keyword">new</span> <span class="tok-type">GetCustomerActivity</span>(reservation.<span class="tok-call">customerId</span>()));
-        <span class="tok-keyword">var</span> assessment = <span class="tok-type">FraudAssessment</span>.<span class="tok-call">analyze</span>(reservation, activity);
-        <span class="tok-type">Fluxzero</span>.<span class="tok-call">index</span>(assessment);
+    <span class="tok-keyword">void</span> <span class="tok-method">check</span>(<span class="tok-type">ConfirmReservation</span> event) {
+        <span class="tok-type">FraudAssessment</span> assessment = <span class="tok-type">Fluxzero</span>.<span class="tok-call">queryAndWait</span>(
+            <span class="tok-keyword">new</span> <span class="tok-type">CheckForFraud</span>(event.<span class="tok-call">reservationId</span>()));
 
         <span class="tok-keyword">if</span> (assessment.<span class="tok-call">requiresReview</span>()) {
             <span class="tok-type">Fluxzero</span>.<span class="tok-call">sendAndForgetCommand</span>(
-                <span class="tok-keyword">new</span> <span class="tok-type">ReviewReservation</span>(event.<span class="tok-call">reservationId</span>()));
+                <span class="tok-keyword">new</span> <span class="tok-type">ReviewReservation</span>(
+                    event.<span class="tok-call">reservationId</span>(), assessment));
         }
     }
 }`;
@@ -236,7 +235,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
     <link rel="stylesheet" href="/css/v4.css?v=20260905-1">
     <link rel="stylesheet" href="/css/technical-foundation.css?v=20260904-5">
     <link rel="stylesheet" href="/css/technical-foundation-next.css?v=20260910-11">
-    <link rel="stylesheet" href="/css/product-code.css?v=20260912-34">
+    <link rel="stylesheet" href="/css/product-code.css?v=20260912-35">
     <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
 </head>
 <body class="v4-page cloud-proof-page cloud-proof-next-page product-code-page">
@@ -463,8 +462,13 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="independent-consumers-title">Each part can scale<br><span>independently.</span></h2>
                     <p>Not every part of your application is equally busy. With separate consumers, parts run and scale independently. Fluxzero keeps their progress separate and distributes the work, so capacity can grow where it is needed.</p>
                 </header>
-                <div class="product-code-proof product-code-proof--code" data-reveal data-reveal-delay="1">
+                <div class="product-code-proof" data-reveal data-reveal-delay="1">
                     <ProductCodePanel title="FraudDetection.java" label="Fraud checks with their own capacity" code={consumerCode} />
+                    <dl class="product-code-proof__notes">
+                        <div><dt>Capacity where it counts</dt><dd>Give demanding work its own consumer. Add threads or app instances as demand grows.</dd></div>
+                        <div><dt>Independent progress</dt><dd>Each consumer keeps its own place. Slower work does not hold up other consumers.</dd></div>
+                        <div><dt>Work shared automatically</dt><dd>Fluxzero distributes the work across instances of the same consumer.</dd></div>
+                    </dl>
                 </div>
             </div>
         </article>

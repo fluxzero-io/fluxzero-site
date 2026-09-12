@@ -7,6 +7,12 @@ interface Props {
 }
 
 const { title, label, code, class: className } = Astro.props;
+// Keep real newlines for copying and text export; soft wraps are visual only.
+const lines = code.split('\n').map((line) => {
+    const indent = line.match(/^ */)?.[0].length ?? 0;
+    const spacing = `<span class="product-code-panel__indent">${line.slice(0, indent)}</span>`;
+    return `<span class="product-code-panel__line" style="--indent: ${indent}ch">${spacing}${line.slice(indent)}</span>`;
+}).join('\n');
 ---
 
 <figure class:list={['product-code-panel', className]}>
@@ -27,6 +33,6 @@ const { title, label, code, class: className } = Astro.props;
             <i class="bx bx-copy" aria-hidden="true"></i>
         </button>
         <span class="product-code-panel__copy-status" data-copy-code-status role="status" aria-live="polite"></span>
-        <pre><code class="language-java" set:html={code}></code></pre>
+        <pre><code class="language-java" set:html={lines}></code></pre>
     </div>
 </figure>

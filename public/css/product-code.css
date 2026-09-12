@@ -301,11 +301,18 @@
     font-size: 13.5px;
     line-height: 1.62;
     tab-size: 4;
-    white-space: pre;
+    white-space: normal;
 }
 
 .product-code-panel code {
+    display: block;
     font: inherit;
+}
+
+.product-code-panel__line {
+    display: block;
+    min-height: 1lh;
+    white-space: pre;
 }
 
 .product-code-page .tok-parameter {
@@ -1098,6 +1105,35 @@
         border-radius: 14px;
     }
 
+    .product-code-panel figcaption {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        padding: 12px 16px;
+        gap: 7px 10px;
+    }
+
+    .product-code-panel figcaption strong {
+        overflow: visible;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .product-code-panel figcaption small,
+    .product-code-panel__copy {
+        display: none;
+    }
+
+    .product-code-panel__line {
+        padding-left: calc(var(--indent) * 0.5 + 2ch);
+        text-indent: -2ch;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .product-code-panel__indent {
+        display: none;
+    }
+
     .product-code-panel pre,
     .product-code-interactions .product-code-panel pre,
     .product-code-history .product-code-panel pre {
@@ -1167,26 +1203,9 @@
 }
 
 @media (max-width: 420px) {
-    .product-code-panel figcaption {
-        padding: 0 13px;
-    }
-
-    .product-code-panel figcaption small {
-        max-width: 46%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .product-code-panel__copy {
-        top: 10px;
-        right: 10px;
-    }
-
     .product-code-panel pre,
     .product-code-interactions .product-code-panel pre,
     .product-code-history .product-code-panel pre {
-        padding-right: 54px;
         font-size: 10.75px;
     }
 }
