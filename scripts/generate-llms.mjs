@@ -3,22 +3,13 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
 
-const siteUrl = 'https://fluxzero.io';
+import { siteUrl, marketingPages, documentationPages, htmlFile } from './core-pages.mjs';
 const outputDirectory = join(process.cwd(), 'dist');
 
 // These are the public marketing pages that explain and support the product.
 // Page copy, titles, and descriptions are read from the built HTML so the text
 // alternatives stay in sync with the website automatically.
-const pages = [
-    { path: '/', file: 'index.html' },
-    { path: '/how-it-works/', file: 'how-it-works/index.html' },
-    { path: '/product-code/', file: 'product-code/index.html' },
-    { path: '/technical-foundation/', file: 'technical-foundation/index.html' },
-    { path: '/pricing/', file: 'pricing/index.html' },
-    { path: '/about/', file: 'about/index.html' },
-    { path: '/get-started/', file: 'get-started/index.html' },
-    { path: '/contact/', file: 'contact/index.html' },
-];
+const pages = marketingPages.map(path => ({ path, file: htmlFile(path) }));
 
 const skippedTags = new Set([
     'script',
@@ -434,17 +425,26 @@ async function readPage(page) {
 async function generateFiles() {
     const builtPages = await Promise.all(pages.map(readPage));
     const homepage = builtPages[0];
+    const docs = await Promise.all(documentationPages.map(path => readPage({ path, file: htmlFile(path) })));
 
     const index = cleanMarkdown(`
     # Fluxzero
 
     > ${homepage.description}
 
+    ## Recommended reading order
+
+    Start with the homepage and How it works. Product code shows what an agent writes; Technical foundation explains what the cloud handles. Read Pricing next, then the documentation for implementation details.
+
     ## Core pages
 
     ${builtPages
         .map((page) => `- [${page.title}](${page.url}): ${page.description}`)
         .join('\n')}
+
+    ## Technical documentation
+
+    ${docs.map(page => `- [${page.title}](${page.url}): ${page.description}`).join('\n')}
     `);
 
     const full = builtPages
@@ -455,7 +455,7 @@ async function generateFiles() {
     await mkdir(outputDirectory, { recursive: true });
     await Promise.all([
         writeFile(join(outputDirectory, 'llms.txt'), `${selfContained}\n`, 'utf8'),
-        writeFile(join(outputDirectory, 'llms-full.txt'), `${full}\n`, 'utf8'),
+        writeFile(join(outputDirectory, 'llms-full.txt'), `${selfContained}\n`, 'utf8'),
     ]);
 
     console.log(`Generated llms.txt and llms-full.txt from ${builtPages.length} pages.`);

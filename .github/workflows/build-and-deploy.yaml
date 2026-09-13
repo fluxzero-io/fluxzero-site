@@ -24,6 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+        with:
+          fetch-depth: 0
+
       - name: Checkout SDK docs
         uses: actions/checkout@v4
         with:
@@ -86,6 +89,10 @@ jobs:
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm test:llms
 
+      - name: Test discoverability checks
+        if: steps.sdk-docs.outputs.changed == 'true'
+        run: pnpm test:discovery
+
       - name: Setup Java for product examples
         if: steps.sdk-docs.outputs.changed == 'true'
         uses: actions/setup-java@v4
@@ -126,3 +133,7 @@ jobs:
           GITHUB_APP_CLIENT_SECRET: ${{ secrets.CF_GITHUB_APP_CLIENT_SECRET }}
           COOKIE_SECRET: ${{ secrets.CF_COOKIE_SECRET }}
           GITHUB_TOKEN: ${{ secrets.CF_GITHUB_TOKEN }}
+
+      - name: Notify IndexNow after production deployment
+        if: steps.sdk-docs.outputs.changed == 'true' && github.ref == 'refs/heads/main'
+        run: node scripts/submit-indexnow.mjs

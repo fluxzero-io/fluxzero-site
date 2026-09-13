@@ -58,6 +58,8 @@ Run commands from the repository root.
 | `pnpm sync:docs` | Refresh the generated docs from `fluxzero-sdk-java` |
 | `pnpm astro sync` | Refresh Astro content, generated types, and the release cache |
 | `pnpm test:changelog` | Run the changelog import regression tests |
+| `pnpm test:discovery` | Test the discoverability release checks and source modification dates |
+| `pnpm check:discovery` | Check the existing build without rebuilding |
 | `pnpm test:llms` | Verify Markdown export, code formatting, and semantic content |
 | `pnpm test:product-code` | Compile the page examples and test their behavior with the published SDK (Java 25 and Maven required) |
 | `pnpm astro ...` | Run another Astro CLI command |
@@ -87,6 +89,7 @@ Run the same checks used by the deployment workflow before publishing a change:
 ```bash
 pnpm test:changelog
 pnpm test:llms
+pnpm test:discovery
 pnpm test:product-code
 pnpm build
 ```
@@ -105,6 +108,36 @@ Deployment is automated by [`.github/workflows/build-and-deploy.yaml`](.github/w
 - An SDK repository dispatch rebuilds the website when the public MDX documentation changed.
 
 The workflow checks out the SDK docs, installs dependencies with the frozen lockfile, tests the changelog import, builds the site, and deploys it with Wrangler. Deployment credentials are managed as GitHub Actions secrets: `CLOUDFLARE_API_TOKEN`, `CF_GITHUB_APP_CLIENT_ID`, `CF_GITHUB_APP_CLIENT_SECRET`, `CF_COOKIE_SECRET`, and `CF_GITHUB_TOKEN`. Do not replace this process with manually managed local production secrets.
+
+## Search and agent discovery
+
+`scripts/core-pages.mjs` defines the required marketing and documentation routes.
+The full `llms.txt` stays self-contained; `llms-full.txt` is an identical compatibility
+copy, including the reading guide and links. Both are generated from rendered HTML.
+
+Every build verifies that required pages exist, are in the sitemap and LLM index,
+have a self-canonical URL and an incoming internal link, and have no `noindex` meta
+tag. Retired routes must not occur in HTML, internal links, sitemap or text exports.
+Removing a route lets the deployed site return 404; do not block it in robots.txt,
+so crawlers can observe its removal. External search results take time to disappear.
+
+Sitemap `lastmod` values come from the last Git commit touching the page source,
+including the SDK source for documentation. CI checks out full history. Unknown
+dates are omitted instead of substituting the build date. Shared footer or style
+changes do not pretend every page's primary content changed.
+
+After production deployment, IndexNow receives the core and retired URLs. The
+script first checks the deployed ownership key, release content and retired-page
+status. A failed notification fails that workflow step without rolling back a
+successful deployment. Retry the notification with `node scripts/submit-indexnow.mjs`
+from the matching build. The public ownership file is not an account credential.
+Acceptance means the URLs were received, not that they have been indexed.
+
+Google discovers the sitemap through `robots.txt`. Submit
+`https://fluxzero.io/sitemap-index.xml` once in the verified Search Console property,
+then use URL Inspection and the Pages report to check indexing after substantive
+releases. Do not use the retired Google sitemap-ping endpoint. Search Console
+submission requires an authorized property; it is not simulated by the build.
 
 ## Changelog
 
