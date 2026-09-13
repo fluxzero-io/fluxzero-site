@@ -64,7 +64,7 @@ Run commands from the repository root.
 | `pnpm test:product-code` | Compile the page examples and test their behavior with the published SDK (Java 25 and Maven required) |
 | `pnpm astro ...` | Run another Astro CLI command |
 
-The production build also generates `dist/llms.txt` and `dist/llms-full.txt` from the rendered core marketing pages. These files are build artifacts; the website HTML remains their source of truth.
+The production build also generates `dist/llms.txt` and per-page Markdown from the rendered core marketing pages. These files are build artifacts; the website HTML remains their source of truth. `/llms-full.txt` permanently redirects to `/llms.txt`.
 
 The [product-code tests](tests/product-code/README.md) extract all Java examples directly from `/product-code` and exercise their behavior with the real SDK `TestFixture`. They run locally and in CI without an SDK checkout or a running Fluxzero server.
 
@@ -118,9 +118,10 @@ instruction, and a reading index followed by the six substantive marketing pages
 discoverable routes.
 Get started contributes its instruction to the opening and is not repeated as a
 full page; Contact is linked without transcribing its form. Both retain their
-standalone Markdown pages. `llms-full.txt` retains all eight full marketing pages,
-including Get started and Contact, without the opening. All copy is generated
-from rendered HTML.
+standalone Markdown pages. `/llms-full.txt` is a compatibility URL that returns
+HTTP 301 to `/llms.txt`; there is no second text export. The index and HTML refer
+directly to `/llms.txt`, never back to the alias. All copy is generated from
+rendered HTML.
 
 Each core page also has a generated `index.md` version (for example,
 `/product-code/index.md`), linked from the index and marketing HTML via
@@ -198,7 +199,7 @@ Before committing:
 
 1. Run the focused tests for the change.
 2. Run `pnpm build`.
-3. Inspect any generated changelog-cache change and the relevant passage in `dist/llms-full.txt` when marketing content changed.
+3. Inspect any generated changelog-cache change and the relevant passage in `dist/llms.txt` when marketing content changed.
 
 ## License
 

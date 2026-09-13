@@ -8,8 +8,9 @@ import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 const site='https://fluxzero.io';
 function fixture() {
-    const full = `# Home\n\nSource: ${site}/\n\nOverview.\n\n---\n\n# Proof\n\nSource: ${site}/proof/\n\nDetails.\n`;
-    return {pages:new Map([['/',inspectPage(`<link rel="canonical" href="${site}/"><a href="/proof">Proof</a>`,'/')],['/proof/',inspectPage(`<link rel="canonical" href="${site}/proof/"><a href="/">Home</a>`,'/proof/')]]),sitemap:new Set(['/','/proof/']),llms:`[Home](${site}/) [Proof](${site}/proof/)\n\n${full}`,full,robots:`Sitemap: ${site}/sitemap-index.xml`};
+    const home = `# Home\n\nSource: ${site}/\n\nOverview.\n`;
+    const proof = `# Proof\n\nSource: ${site}/proof/\n\nDetails.\n`;
+    return {pages:new Map([['/',inspectPage(`<link rel="canonical" href="${site}/"><a href="/proof">Proof</a>`,'/')],['/proof/',inspectPage(`<link rel="canonical" href="${site}/proof/"><a href="/">Home</a>`,'/proof/')]]),sitemap:new Set(['/','/proof/']),llms:`[Home](${site}/) [Proof](${site}/proof/)\n\n${home}\n---\n\n${proof}`,markdown:new Map([['/',home],['/proof/',proof]]),robots:`Sitemap: ${site}/sitemap-index.xml`};
 }
 const check = f => validateDiscovery(f,['/','/proof/']);
 test('accepts linked canonical pages and complete exports',()=>assert.deepEqual(check(fixture()),[]));
@@ -17,20 +18,18 @@ for(const [label,mutate] of [
     ['missing HTML', f=>f.pages.delete('/proof/')],
     ['absent from sitemap',f=>f.sitemap.delete('/proof/')],
     ['absent from llms.txt',f=>{f.llms='';}],
-    ['absent from llms-full.txt',f=>{f.full=f.full.replace(`Source: ${site}/\n`, `Source: ${site}/missing/\n`);}],
+    ['missing page Markdown',f=>{f.markdown.delete('/');}],
+    ['incomplete content in llms.txt',f=>{f.llms=f.llms.replace('Overview.', 'Truncated.');}],
+    ['links to its own alias',f=>{f.llms+='[Full content]('+site+'/llms-full.txt)';}],
     ['incorrect canonical',f=>{f.pages.get('/proof/').canonical=[site+'/wrong/'];}],
     ['noindex',f=>{f.pages.set('/proof/',inspectPage(`<link rel="canonical" href="${site}/proof/"><meta name="googlebot" content="none">`,'/proof/'));}],
     ['no incoming internal link',f=>{f.pages.get('/').links=[];}],
     ['retired page',f=>f.sitemap.add('/makeitreal/')],
-    ['exports differ',f=>{f.full='truncated';}],
 ]) test(`rejects ${label}`,()=>{const f=fixture();mutate(f);assert.ok(check(f).some(s=>s.includes(label)));});
-test('accepts Markdown index links and full-only setup and contact sections', () => {
+test('accepts Markdown index links', () => {
     const f = fixture();
     f.llms = f.llms.replace(`](${site}/)`, `](${site}/index.md)`).replace(`](${site}/proof/)`, `](${site}/proof/index.md)`);
-    f.full += `\n---\n\n# Get started\n\nSource: ${site}/get-started/\n\nSetup.\n\n---\n\n# Contact\n\nSource: ${site}/contact/\n\nForm.\n`;
     assert.deepEqual(check(f), []);
-    f.full = f.full.replace('Overview.', 'Different overview.');
-    assert.ok(check(f).includes('Full text exports differ'));
 });
 test('ignores external and nofollow links',()=>assert.deepEqual(inspectPage('<a href="https://other.example/proof/">x</a><a rel="nofollow" href="/proof/">x</a>','/').links,[]));
 test('lastmod stays at source change even after unrelated commits',async()=>{

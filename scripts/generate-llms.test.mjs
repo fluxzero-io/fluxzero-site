@@ -81,14 +81,14 @@ test('compact index includes the visible hero and exact building instruction out
     assert.ok(!result.split('## Optional')[1].includes(start.url));
 });
 
-test('llms includes the instruction once while the full export retains setup and contact content', async () => {
-    const { renderShortIndex, renderTextExports } = await import('./generate-llms.mjs');
+test('llms includes the instruction once while page Markdown retains setup and contact content', async () => {
+    const { renderShortIndex, renderLlms, renderMarkdownPage } = await import('./generate-llms.mjs');
     const home = { title: 'Home', hero: 'Hero', description: 'Description', summary: 'Summary', url: 'https://fluxzero.io/', content: '## Home\n\nProduct overview.' };
     const start = { title: 'Start building with Fluxzero', description: 'Setup', url: 'https://fluxzero.io/get-started/', instruction: 'Build my app with Fluxzero. Start at plugins.fluxzero.io' };
     start.content = `## Start building with Fluxzero\n\n${start.instruction}\n\nSupported agents.`;
     const contact = { title: 'Contact', description: 'Contact details', url: 'https://fluxzero.io/contact/', content: '## Contact\n\nFull name\n\nEmail address\n\nSend' };
     const pages = [home, start, contact];
-    const { llms, full } = renderTextExports(pages, []);
+    const llms = renderLlms(pages, []);
 
     assert.equal(llms.split(start.instruction).length - 1, 1);
     assert.equal(llms.split(start.url + 'index.md').length - 1, 1);
@@ -98,7 +98,7 @@ test('llms includes the instruction once while the full export retains setup and
     assert.ok(!llms.includes('Full name'));
     assert.ok(!llms.includes('Source: ' + start.url));
     assert.ok(!llms.includes('Source: ' + contact.url));
+    assert.ok(!llms.includes('/llms-full.txt'));
     assert.ok(llms.includes(home.content));
-    for (const page of pages) assert.ok(full.includes(`Source: ${page.url}\n\n${page.content}`));
-    assert.equal(full.split(start.instruction).length - 1, 1);
+    for (const page of pages) assert.ok(renderMarkdownPage(page).includes(`Source: ${page.url}\n\n${page.content}`));
 });

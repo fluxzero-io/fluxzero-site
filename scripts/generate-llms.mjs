@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
@@ -452,15 +452,15 @@ export function renderShortIndex(builtPages, docs) {
     const start = builtPages.find(page => page.instruction);
     const optional = builtPages.filter(page => !primary.includes(page) && page !== start);
     const building = start ? `## [Start building](${start.url}index.md)\n\n${start.instruction}\n\n` : '';
-    return `# Fluxzero\n\n> ${homepage.hero ? homepage.hero + '\n>\n> ' : ''}${homepage.description}\n\n${homepage.summary}\n\n${building}## Read in this order\n\n${primary.map(link).join('\n')}\n\n## Technical documentation\n\n${docs.map(link).join('\n')}\n\n## Complete content\n\n- [Full website text](${siteUrl}/llms-full.txt)\n\n## Optional\n\n${optional.map(link).join('\n')}\n`;
+    return `# Fluxzero\n\n> ${homepage.hero ? homepage.hero + '\n>\n> ' : ''}${homepage.description}\n\n${homepage.summary}\n\n${building}## Read in this order\n\n${primary.map(link).join('\n')}\n\n## Technical documentation\n\n${docs.map(link).join('\n')}\n\n## Optional\n\n${optional.map(link).join('\n')}\n`;
 }
 
-export function renderTextExports(builtPages, docs) {
-    const combine = selected => selected
+export function renderLlms(builtPages, docs) {
+    const content = builtPages
+        .filter(page => inlineMarketingPages.includes(new URL(page.url).pathname))
         .map(page => `# ${page.title}\n\nSource: ${page.url}\n\n${page.content}`)
         .join('\n\n---\n\n') + '\n';
-    const content = combine(builtPages.filter(page => inlineMarketingPages.includes(new URL(page.url).pathname)));
-    return { llms: `${renderShortIndex(builtPages, docs).trimEnd()}\n\n---\n\n${content}`, full: combine(builtPages) };
+    return `${renderShortIndex(builtPages, docs).trimEnd()}\n\n---\n\n${content}`;
 }
 
 async function generateFiles() {
@@ -479,12 +479,13 @@ async function generateFiles() {
         return;
     }
 
-    const { llms, full } = renderTextExports(builtPages, docs);
+    const llms = renderLlms(builtPages, docs);
 
     await mkdir(outputDirectory, { recursive: true });
+    // A stale static asset would take precedence over the compatibility redirect.
+    await rm(join(outputDirectory, 'llms-full.txt'), { force: true });
     await Promise.all([
         writeFile(join(outputDirectory, 'llms.txt'), llms, 'utf8'),
-        writeFile(join(outputDirectory, 'llms-full.txt'), full, 'utf8'),
         ...[...builtPages, ...docs].map(async page => {
             const target = join(outputDirectory, new URL(page.url).pathname, 'index.md');
             await mkdir(dirname(target), { recursive: true });
@@ -492,7 +493,7 @@ async function generateFiles() {
         }),
     ]);
 
-    console.log(`Generated llms.txt with ${inlineMarketingPages.length} inline pages, llms-full.txt with ${builtPages.length} pages, and ${builtPages.length + docs.length} Markdown pages.`);
+    console.log(`Generated llms.txt with ${inlineMarketingPages.length} inline pages and ${builtPages.length + docs.length} Markdown pages.`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

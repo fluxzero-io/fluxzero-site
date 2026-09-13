@@ -68,7 +68,7 @@ When editing marketing pages:
 
 ### Machine-readable marketing content
 
-The production build generates a self-contained `dist/llms.txt` with an introduction, one building instruction, an index, and six full marketing pages. In this file, Get started supplies the opening instruction and Contact is linked only. `dist/llms-full.txt` retains all eight marketing pages, including Get started and Contact. Both also retain standalone Markdown pages. These files help crawlers and ad-hoc AI agents understand the same product story as human visitors.
+The production build generates a self-contained `dist/llms.txt` with an introduction, one building instruction, an index, and six full marketing pages. In this file, Get started supplies the opening instruction and Contact is linked only. Both retain standalone Markdown pages. `/llms-full.txt` permanently redirects to `/llms.txt`; do not generate a second file or link back to the alias from the canonical export. These files help crawlers and ad-hoc AI agents understand the same product story as human visitors.
 
 - Treat the rendered marketing HTML as the single source of truth. Never hand-edit generated files in `dist/` and do not maintain a separate copy of page content for AI agents.
 - Structure content semantically so relationships survive linear or Markdown rendering. Use headings for hierarchy, lists for repeated items, `dl`/`dt`/`dd` for terms, metrics, or key-value groups, and native tables or complete ARIA table roles for comparisons.
@@ -78,7 +78,7 @@ The production build generates a self-contained `dist/llms.txt` with an introduc
 - Responsive variants must not cause duplicated machine-readable content. Keep at least one semantically complete variant, and prefer making the primary desktop HTML complete instead of extracting a separate mobile-only representation.
 - When a public page contains an authentication wall, ensure the generated text contains the useful post-auth content rather than only the login prompt. Use the generic `data-llms-exclude` and `data-llms-include` visibility controls only when normal HTML visibility would otherwise select the wrong content state.
 - When adding or removing a core public marketing page, review the discovery and inline page lists in `scripts/core-pages.mjs` so the generated index and content remain intentional.
-- After changing marketing copy or structure, run the production build and inspect the affected passage in `dist/llms-full.txt`. Verify that headings, labels, values, table cells, links, and post-auth content remain correctly associated and that repeated responsive content appears only once.
+- After changing marketing copy or structure, run the production build and inspect the affected passage in `dist/llms.txt`. Verify that headings, labels, values, table cells, links, and post-auth content remain correctly associated and that repeated responsive content appears only once.
 
 ### Generated site data
 
