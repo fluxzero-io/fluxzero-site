@@ -60,7 +60,6 @@
 .monitoring-example__frame[data-view="trace"]{height:650px}
 .monitoring-example iframe:focus-visible{outline:2px solid #83c8ff;outline-offset:-3px}
 
-.monitoring-example iframe.page-scrolling{pointer-events:none;}
 .monitoring-notes{gap:12px;}
 .monitoring-notes>div{padding:17px 18px;border:1px solid rgba(116,178,232,.17);border-radius:13px;background:rgba(7,16,26,.82);}
 .monitoring-notes dt{color:#dceaf6;font-size:12px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;}

@@ -18,11 +18,13 @@ const titles={trace:'Traces',audit:'Audit trail',logs:'Logs',issues:'Issues',doc
    if(frame.dataset.source)frame.src=frame.dataset.source;
    observer.unobserve(frame);
  }),{rootMargin:'120px'});
- let releaseScroll:ReturnType<typeof setTimeout>;
- window.addEventListener('scroll',()=>{
-   document.querySelectorAll('[data-monitoring-frame]').forEach(frame=>frame.classList.add('page-scrolling'));
-   clearTimeout(releaseScroll);
-   releaseScroll=setTimeout(()=>document.querySelectorAll('[data-monitoring-frame]').forEach(frame=>frame.classList.remove('page-scrolling')),180);
- },{passive:true});
+ window.addEventListener('message',event=>{
+   if(event.origin!==location.origin || event.data?.type!=='monitoring-scroll')return;
+   const frames=[...document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]')];
+   if(!frames.some(frame=>frame.contentWindow===event.source))return;
+   const delta=Number(event.data.deltaY);
+   if(!Number.isFinite(delta))return;
+   window.scrollBy({top:delta*(event.data.deltaMode===1?16:event.data.deltaMode===2?innerHeight:1),behavior:'instant'});
+ });
  document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]').forEach(frame=>observer.observe(frame));
 </script>
