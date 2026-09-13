@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { prefersMarkdown, negotiateMarkdown } from '../src/server/markdown-negotiation.mjs';
+import { legacyMonitoringPaths, redirectLegacyMonitoring } from '../src/server/legacy-redirects.mjs';
 import { corePages } from './core-pages.mjs';
 
 for (const [accept, expected] of [
@@ -44,8 +45,18 @@ test('APIs, unrelated paths and writes fall through without fetching assets',asy
         assert.equal(await negotiateMarkdown(new Request('https://fluxzero.io'+path,{method,headers:{Accept:'text/markdown'}}),assets),undefined);
     }
 });
-test('worker-first configuration covers exactly the negotiated page aliases',async()=>{
+test('worker-first configuration covers negotiated page aliases and temporary redirects',async()=>{
     const config=JSON.parse(await readFile('wrangler.jsonc','utf8'));
     const expected=corePages.flatMap(path=>path==='/'?[path,path+'index.html']:[path.slice(0,-1),path,path+'index.html']);
-    assert.deepEqual(config.assets.run_worker_first,expected);
+    assert.deepEqual([...config.assets.run_worker_first].sort(),[...expected,...legacyMonitoringPaths].sort());
+});
+
+test('legacy monitoring URLs redirect temporarily and preserve query context',()=>{
+    for(const path of legacyMonitoringPaths) for(const method of ['GET','HEAD']) {
+        const response=redirectLegacyMonitoring(new Request('https://fluxzero.io'+path+'?campaign=shared',{method}));
+        assert.equal(response.status,302);
+        assert.equal(response.headers.get('Location'),'https://fluxzero.io/product-insight/'+(path.endsWith('.md')?'index.md':'')+'?campaign=shared');
+    }
+    assert.equal(redirectLegacyMonitoring(new Request('https://fluxzero.io/monitoring-demo/index.html')),undefined);
+    assert.equal(redirectLegacyMonitoring(new Request('https://fluxzero.io/product-insight/')),undefined);
 });
