@@ -418,6 +418,8 @@ async function readPage(page) {
 
     return {
         ...metadata,
+        hero: normalizeInline(plainTextContent(findElement(document, node => node.tagName === 'h1') ?? {})),
+        instruction: rawTextContent(findElement(document, node => getAttribute(node, 'data-llms-instruction') !== undefined) ?? {}).trim(),
         summary: extractSummary(document),
         content: renderPageContent(document, metadata.url),
     };
@@ -447,8 +449,10 @@ export function renderShortIndex(builtPages, docs) {
     const link = page => `- [${page.title}](${page.url}index.md): ${page.description}`;
     const primaryPaths = ['/', '/how-it-works/', '/technical-foundation/', '/product-code/', '/pricing/'];
     const primary = primaryPaths.map(path => builtPages.find(page => new URL(page.url).pathname === path)).filter(Boolean);
-    const optional = builtPages.filter(page => !primary.includes(page));
-    return `# Fluxzero\n\n> ${homepage.description}\n\n${homepage.summary}\n\n## Read in this order\n\n${primary.map(link).join('\n')}\n\n## Technical documentation\n\n${docs.map(link).join('\n')}\n\n## Complete content\n\n- [Full website text](${siteUrl}/llms-full.txt)\n\n## Optional\n\n${optional.map(link).join('\n')}\n`;
+    const start = builtPages.find(page => page.instruction);
+    const optional = builtPages.filter(page => !primary.includes(page) && page !== start);
+    const building = start ? `## Start building\n\n${start.instruction}\n\n[${start.title}](${start.url}index.md)\n\n` : '';
+    return `# Fluxzero\n\n> ${homepage.hero ? homepage.hero + '\n>\n> ' : ''}${homepage.description}\n\n${homepage.summary}\n\n## Read in this order\n\n${primary.map(link).join('\n')}\n\n${building}## Technical documentation\n\n${docs.map(link).join('\n')}\n\n## Complete content\n\n- [Full website text](${siteUrl}/llms-full.txt)\n\n## Optional\n\n${optional.map(link).join('\n')}\n`;
 }
 
 async function generateFiles() {

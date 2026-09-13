@@ -68,3 +68,15 @@ test('compact proposal uses selected HTML copy and metadata deterministically', 
     assert.ok(result.includes('[Home](https://fluxzero.io/index.md): Existing description.'));
     assert.ok(!result.includes('Other copy.'));
 });
+
+
+test('compact index includes the visible hero and exact building instruction outside Optional', async () => {
+    const { renderShortIndex } = await import('./generate-llms.mjs');
+    const home={title:'Home',hero:'The European cloud for AI-built apps',description:'Description',summary:'Summary',url:'https://fluxzero.io/'};
+    const start={title:'Start building',instruction:'Build my app with Fluxzero. Start at plugins.fluxzero.io',description:'Get started',url:'https://fluxzero.io/get-started/'};
+    const result=renderShortIndex([home,start],[]);
+    assert.ok(result.includes('> '+home.hero));
+    assert.ok(result.includes(start.instruction));
+    assert.ok(result.indexOf(start.instruction)<result.indexOf('## Optional'));
+    assert.ok(!result.split('## Optional')[1].includes(start.url));
+});

@@ -10,7 +10,38 @@
 	],
 	"assets": {
 		"binding": "ASSETS",
-		"directory": "./dist"
+		"directory": "./dist",
+		"run_worker_first": [
+			"/",
+			"/index.html",
+			"/how-it-works",
+			"/how-it-works/",
+			"/how-it-works/index.html",
+			"/product-code",
+			"/product-code/",
+			"/product-code/index.html",
+			"/technical-foundation",
+			"/technical-foundation/",
+			"/technical-foundation/index.html",
+			"/pricing",
+			"/pricing/",
+			"/pricing/index.html",
+			"/about",
+			"/about/",
+			"/about/index.html",
+			"/get-started",
+			"/get-started/",
+			"/get-started/index.html",
+			"/contact",
+			"/contact/",
+			"/contact/index.html",
+			"/docs/getting-started/introduction",
+			"/docs/getting-started/introduction/",
+			"/docs/getting-started/introduction/index.html",
+			"/docs/getting-started/core-concepts",
+			"/docs/getting-started/core-concepts/",
+			"/docs/getting-started/core-concepts/index.html"
+		]
 	},
 	"observability": {
 		"enabled": true
@@ -32,10 +63,10 @@
 					"pattern": "fluxzero.io",
 					"custom_domain": true
 				},
-                {
-                  "pattern": "www.fluxzero.io",
-                  "custom_domain": true
-                }
+				{
+					"pattern": "www.fluxzero.io",
+					"custom_domain": true
+				}
 			]
 		}
 	}

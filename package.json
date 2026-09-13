@@ -17,7 +17,7 @@
     "test:changelog": "node --import tsx --test src/loaders/*releases.test.ts",
     "test:llms": "node --test scripts/generate-llms.test.mjs",
     "test:product-code": "node tests/product-code/generate.mjs && mvn -B -f tests/product-code/pom.xml test",
-    "test:discovery": "node --test scripts/check-discovery.test.mjs",
+    "test:discovery": "node --test scripts/check-discovery.test.mjs scripts/markdown-negotiation.test.mjs",
     "check:discovery": "node scripts/check-discovery.mjs"
   },
   "config": {
@@ -64,6 +64,6 @@
     "sass-embedded": "^1.92.0",
     "tailwindcss": "^4.0.0",
     "tsx": "^4.20.3",
-    "wrangler": "^4.19.1"
+    "wrangler": "4.40.3"
   }
 }

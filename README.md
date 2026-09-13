@@ -119,8 +119,22 @@ the index. Both are generated from rendered HTML.
 Each core page also has a generated `index.md` version (for example,
 `/product-code/index.md`), linked from the index and marketing HTML via
 `rel="alternate" type="text/markdown"`. These are production build assets, served
-with a Markdown content type; the HTML URL does not negotiate on `Accept` yet.
-Use `pnpm preview` to inspect these generated assets locally.
+with a Markdown content type. The same core HTML URLs also support explicit
+`Accept: text/markdown` preferences for GET and HEAD, including quality weights.
+HTML is the default for browsers, wildcards and equal explicit preferences.
+Both representations include `Vary: Accept`; Markdown also identifies its static
+URL through `Content-Location`. Conditional asset requests retain their semantics.
+
+The custom Astro Worker entry point handles these core routes before static
+assets. `assets.run_worker_first` lists only the supported core-page aliases;
+other assets and API routes keep their existing routing. Local Wrangler is pinned
+to the same version as deployment because selective routing needs that support.
+Use `pnpm preview` on the production build to verify negotiation (Astro's dev
+server does not execute the production Worker entry point):
+
+```bash
+curl -H 'Accept: text/markdown' http://localhost:8787/product-code/
+```
 
 To review a compact index without changing the published files:
 
@@ -128,8 +142,9 @@ To review a compact index without changing the published files:
 node scripts/generate-llms.mjs --short-proposal /tmp/llms-short-proposal.txt
 ```
 
-The proposal uses existing page metadata and HTML paragraphs marked
-`data-llms-summary`. Selection and ordering are explicit; the text itself has one
+The proposal uses the visible homepage H1, existing page metadata, HTML paragraphs
+marked `data-llms-summary`, and the exact Get started prompt marked
+`data-llms-instruction`. Selection and ordering are explicit; the text itself has one
 source of truth. No model runs during generation. Proposals must remain outside
 `dist/` and are never deployed by this command.
 

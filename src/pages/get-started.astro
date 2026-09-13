@@ -24,7 +24,7 @@ const compatibleAgents = [
         description="Connect Fluxzero to your coding agent and start building your product."
     />
     <link rel="stylesheet" href="/css/home.css?v=20260903-11">
-    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260903-1">
+    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260913-2">
     <link rel="stylesheet" href="/css/start-building-v4.css?v=20260904-10">
 </head>
 <body class="start-body onboarding-body" data-preview-enabled={isDevelopmentPreview ? 'true' : 'false'}>
@@ -56,7 +56,7 @@ const compatibleAgents = [
         </header>
 
         <article class="agent-instruction-card" data-prompt-card>
-            <pre class="agent-instruction-card__prompt"><code data-agent-prompt>{agentPrompt}</code></pre>
+            <pre class="agent-instruction-card__prompt" data-llms-instruction><code data-agent-prompt>{agentPrompt}</code></pre>
             <button class="onboarding-copy" type="button" data-copy-prompt aria-label="Copy instruction" title="Copy instruction">
                 <svg class="onboarding-copy__copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></svg>
                 <svg class="onboarding-copy__check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>

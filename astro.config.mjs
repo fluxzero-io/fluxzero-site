@@ -119,6 +119,7 @@ export default defineConfig({
     ],
 
     adapter: cloudflare({
+        workerEntryPoint: { path: './src/worker.mjs' },
         imageService: 'compile',
         platformProxy: {
             enabled: true,
