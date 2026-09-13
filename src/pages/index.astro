@@ -1,4 +1,9 @@
 ---
+import '../../public/css/home.css';
+import '../../public/css/v4-home.css';
+import '../../public/css/marketing-shell.css';
+import displayFont from '../../public/fonts/google-sans-flex/GoogleSansFlex-Black-latin.woff2?url';
+import bodyFont from '../../public/fonts/inter/Inter-Regular-latin.woff2?url';
 import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
@@ -189,16 +194,14 @@ const homepageFaqSchema = {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <BrandHead title="Fluxzero — The European cloud for AI-built apps" description="The all-in-one cloud with frontend, backend, data, security, and observability working as one." />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@1,200;1,300;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/home.css?v=20260907-1">
-    <link rel="stylesheet" href="/css/v4-home.css?v=20260905-1">
-    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260913-3">
+    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin>
     <script type="application/ld+json" set:html={JSON.stringify(homepageFaqSchema)}></script>
 </head>
 <body class="v4-home">
 <MarketingHeader />
+
+<main>
 
 <!-- 1 · HERO -->
 <section class="hero" aria-labelledby="hero-title">
@@ -245,7 +248,7 @@ const homepageFaqSchema = {
     <div class="facts-g section-grid">
         <div class="fc">
             <div class="fc-head">
-                <h4>Ship without an engineering team</h4>
+                <h3>Ship without an engineering team</h3>
             </div>
             <p>Build and launch serious products without assembling a backend or platform team.</p>
             <div class="fc-visual pg-demo-visual" aria-hidden="true">
@@ -267,7 +270,7 @@ const homepageFaqSchema = {
 
         <div class="fc">
             <div class="fc-head">
-                <h4>Build with peace of mind</h4>
+                <h3>Build with peace of mind</h3>
             </div>
             <p>Security, reliability, and recovery are built in from day one, not left for you or your agent to get right.</p>
             <div class="fc-visual pg-guard-visual" aria-hidden="true">
@@ -296,7 +299,7 @@ const homepageFaqSchema = {
 
         <div class="fc">
             <div class="fc-head">
-                <h4>Scale without replatforming</h4>
+                <h3>Scale without replatforming</h3>
             </div>
             <p>The same application model works locally and at full scale, so growth does not force a new architecture.</p>
             <div class="fc-visual pg-business-visual" aria-hidden="true">
@@ -402,34 +405,34 @@ const homepageFaqSchema = {
 
     <div class="ai-points section-grid">
         <div class="ai-pt">
-            <h4>
+            <h3>
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M5 7.5h14M5 12h10M5 16.5h7" stroke-width="1.7" stroke-linecap="round"/>
                     <path d="m16 16.5 2 2 4-5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 Spend fewer tokens
-            </h4>
+            </h3>
             <p>Spend your prompt budget on product behavior, features, and user experience.</p>
         </div>
         <div class="ai-pt">
-            <h4>
+            <h3>
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M12 3.7 18.2 6v5.2c0 4.1-2.5 7.6-6.2 9.1-3.7-1.5-6.2-5-6.2-9.1V6L12 3.7Z" stroke-width="1.7" stroke-linejoin="round"/>
                     <path d="m9.2 12.1 1.9 1.9 3.9-4.3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 Less risk
-            </h4>
+            </h3>
             <p>Infrastructure is no longer your AI agent’s responsibility.</p>
         </div>
         <div class="ai-pt">
-            <h4>
+            <h3>
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="m8 9-3 3 3 3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="m16 9 3 3-3 3" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="m10.5 16.5 3-9" stroke-width="1.7" stroke-linecap="round"/>
                 </svg>
                 100% product context
-            </h4>
+            </h3>
             <p>The tech stack no longer consumes your agent&rsquo;s context, so every prompt can stay focused on the product.</p>
         </div>
     </div>
@@ -516,6 +519,8 @@ const homepageFaqSchema = {
         <a href="/contact#contactForm" class="btn-s">Talk to us</a>
     </div>
 </section>
+
+</main>
 
 <MarketingFooter />
 

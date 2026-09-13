@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Google Sans Flex';
-    src: url('../fonts/google-sans-flex/GoogleSansFlex-Black.ttf') format('truetype');
+    src: url('../fonts/google-sans-flex/GoogleSansFlex-Black.woff2') format('woff2');
     font-weight: 900;
     font-style: normal;
     font-display: swap;
@@ -8,10 +8,28 @@
 
 @font-face {
     font-family: 'Inter';
-    src: url('../fonts/inter/Inter-Regular.ttf') format('truetype');
+    src: url('../fonts/inter/Inter-Regular.woff2') format('woff2');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
+}
+
+@font-face {
+    font-family: 'Google Sans Flex';
+    src: url('../fonts/google-sans-flex/GoogleSansFlex-Black-latin.woff2') format('woff2');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2100-22FF,U+25A0-27FF,U+FEFF,U+FFFD;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('../fonts/inter/Inter-Regular-latin.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+    unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2100-22FF,U+25A0-27FF,U+FEFF,U+FFFD;
 }
 
 :root {
@@ -1899,7 +1917,7 @@ section:not(.hero):not(.cta-end) {
         0 26px 66px rgba(0, 0, 0, 0.28);
 }
 
-.ai-pt h4 {
+.ai-pt :is(h3, h4) {
     position: relative;
     z-index: 1;
     display: flex;
@@ -1913,7 +1931,7 @@ section:not(.hero):not(.cta-end) {
     letter-spacing: -0.02em;
 }
 
-.ai-pt h4 svg {
+.ai-pt :is(h3, h4) svg {
     display: block;
     width: 22px;
     height: 22px;
@@ -2084,16 +2102,16 @@ section:not(.hero):not(.cta-end) {
     transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
-.fc h4 { font-size: var(--fs-card-title); font-weight: 900; margin-bottom: 10px; letter-spacing: -0.01em; }
+.fc :is(h3, h4) { font-size: var(--fs-card-title); font-weight: 900; margin-bottom: 10px; letter-spacing: -0.01em; }
 .fc p { font-size: var(--fs-card-body); color: var(--text-secondary); line-height: var(--lh-card); }
 
-.facts:not(.facts-carded) .fc h4,
+.facts:not(.facts-carded) .fc :is(h3, h4),
 .facts:not(.facts-carded) .fc p {
     position: relative;
     z-index: 1;
 }
 
-.facts:not(.facts-carded) .fc h4 {
+.facts:not(.facts-carded) .fc :is(h3, h4) {
     margin-bottom: 14px;
 }
 
@@ -2174,7 +2192,7 @@ section:not(.hero):not(.cta-end) {
         0 14px 30px rgba(0, 0, 0, 0.24);
 }
 
-.facts-carded .fc h4 {
+.facts-carded .fc :is(h3, h4) {
     position: relative;
     z-index: 1;
     font-size: 18px;
@@ -2200,7 +2218,7 @@ section:not(.hero):not(.cta-end) {
     margin-bottom: 14px;
 }
 
-.facts-carded .fc-head h4 {
+.facts-carded .fc-head :is(h3, h4) {
     margin-bottom: 0;
 }
 
@@ -2491,17 +2509,17 @@ section:not(.hero):not(.cta-end) {
     margin-bottom: 14px;
 }
 
-#production-gap-content .fc-head h4 {
+#production-gap-content .fc-head :is(h3, h4) {
     margin-bottom: 0;
 }
 
 @media (min-width: 861px) {
-    #production-gap-content .fc-head h4 {
+    #production-gap-content .fc-head :is(h3, h4) {
         min-height: 2.24em;
     }
 }
 
-#production-gap-content .fc h4 {
+#production-gap-content .fc :is(h3, h4) {
     position: relative;
     z-index: 1;
     font-size: clamp(21px, 2vw, 24px);
@@ -5312,7 +5330,7 @@ section:not(.hero):not(.cta-end) {
     color: #D9F5FF;
 }
 
-h4 {
+h4, :where(.v4-home .fc, .v4-home .ai-pt) h3 {
     font-family: var(--font-display);
     font-size: var(--fs-card-title);
     font-weight: 900;
