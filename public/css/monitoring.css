@@ -59,3 +59,14 @@
 .monitoring-example__frame[data-view="documents"]{height:640px}
 .monitoring-example__frame[data-view="trace"]{height:650px}
 .monitoring-example iframe:focus-visible{outline:2px solid #83c8ff;outline-offset:-3px}
+
+.monitoring-example iframe.page-scrolling{pointer-events:none;}
+.monitoring-notes{gap:12px;}
+.monitoring-notes>div{padding:17px 18px;border:1px solid rgba(116,178,232,.17);border-radius:13px;background:rgba(7,16,26,.82);}
+.monitoring-notes dt{color:#dceaf6;font-size:12px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;}
+.monitoring-notes dd{margin:7px 0 0;color:#8297aa;font-size:12px;line-height:1.55;}
+.monitoring-sun{position:absolute;pointer-events:none;right:7%;top:14%;width:310px;height:310px;border-radius:50%;background:radial-gradient(circle at 50% 50%,#111f2f 0 26%,#91c9eb40 27%,#b8dfff70 28%,#619bcf18 34%,transparent 63%);box-shadow:inset -18px 10px 30px #acdfff08;opacity:.7;filter:blur(.5px);}
+.monitoring-sun::after{content:"";position:absolute;inset:12%;border-radius:50%;background:conic-gradient(from 225deg,transparent 60%,#b8deff30 75%,transparent 90%);filter:blur(16px);}
+@media(max-width:600px){.monitoring-sun{width:150px;height:150px;right:-25px;top:65px;opacity:.5;}}
+
+.monitoring-example__frame[data-view="insights"]{height:630px}

@@ -1,15 +1,15 @@
 ---
-interface Props {view:'trace'|'audit'|'logs'|'issues'|'documents'|'insights';caption:string;}
-const {view,caption}=Astro.props;
+interface Props {view:'trace'|'audit'|'logs'|'issues'|'documents'|'insights';}
+const {view}=Astro.props;
 const titles={trace:'Traces',audit:'Audit trail',logs:'Logs',issues:'Issues',documents:'Documents',insights:'Insights'};
 ---
 <figure class="monitoring-example">
   <div class="monitoring-example__frame" data-view={view}>
     <iframe title={`${titles[view]} — interactive ticketing demo`} data-monitoring-frame
-      data-source={`/monitoring-demo/index.html?view=${view}`} sandbox="allow-scripts allow-same-origin" allow="clipboard-write" referrerpolicy="no-referrer"></iframe>
+      data-source={`/monitoring-demo/index.html?view=${view}${view==='issues'?'&statuses=OPEN':''}`} sandbox="allow-scripts allow-same-origin" allow="clipboard-write" referrerpolicy="no-referrer"></iframe>
     <noscript><p>Enable JavaScript to explore this interactive example.</p></noscript>
   </div>
-  <figcaption><span class="monitoring-example__label">{titles[view]}</span><span>{caption}</span><small>Interactive example · resets on refresh</small></figcaption>
+
 </figure>
 <script>
  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
@@ -18,5 +18,11 @@ const titles={trace:'Traces',audit:'Audit trail',logs:'Logs',issues:'Issues',doc
    if(frame.dataset.source)frame.src=frame.dataset.source;
    observer.unobserve(frame);
  }),{rootMargin:'120px'});
+ let releaseScroll:ReturnType<typeof setTimeout>;
+ window.addEventListener('scroll',()=>{
+   document.querySelectorAll('[data-monitoring-frame]').forEach(frame=>frame.classList.add('page-scrolling'));
+   clearTimeout(releaseScroll);
+   releaseScroll=setTimeout(()=>document.querySelectorAll('[data-monitoring-frame]').forEach(frame=>frame.classList.remove('page-scrolling')),180);
+ },{passive:true});
  document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]').forEach(frame=>observer.observe(frame));
 </script>

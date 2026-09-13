@@ -13,27 +13,21 @@ import 'boxicons/css/boxicons.min.css';
 const sections = [
     {id:'audit-trail',view:'audit',label:'01 · Audit trail',first:'Every action',second:'leaves a trail.',
         copy:'Find the messages behind a reservation, a payment, or a change in your product. Inspect what was sent, when it happened, and the data it carried.',
-        caption:'Explore reservation and payment messages. Hover over the histogram, narrow the time range, or search for reservation-1042.',
         notes:[['Product language','Look for reservations and payments, not just technical log lines.'],['Original payloads','Inspect the information that passed through your product.'],['Search and filter','Narrow the history by message type, time, and relevant fields.']]},
     {id:'traces',view:'trace',label:'02 · Traces',first:'Follow the action.',second:'See what it set in motion.',
         copy:'A customer action can pass through several parts of your product. Follow its trace to see the messages, the work they triggered, and where time was spent.',
-        caption:'A reservation request triggers ReserveTicket, starts payment, and reaches the reservation timer.',
         notes:[['One request','Follow the work triggered by a customer action.'],['Across applications','See the handlers and messages involved in the flow.'],['Timing included','Distinguish processing time from time spent waiting.']]},
     {id:'issues',view:'issues',label:'03 · Issues',first:'Find the failure.',second:'Keep the context.',
         copy:'Repeated errors belong together. See which issues are occurring, how often they happen, and which application and version are affected. Open an occurrence to investigate further.',
-        caption:'Investigate three open issues. Resolve one, or select several and resolve them together.',
         notes:[['Grouped occurrences','Recognize a recurring problem without reading every error separately.'],['Application and version','See where the issue is happening.'],['Track its status','Resolve or mute an issue from the same view.']]},
     {id:'logs',view:'logs',label:'04 · Application logs',first:'Every application.',second:'One place for logs.',
         copy:'Console logs from all your applications come together automatically. Search the output, select an application, or filter by severity. There is no separate logging service to configure.',
-        caption:'Console output from Ticketing, Payments, and Fraud detection appears in the same view.',
         notes:[['Collected automatically','Your applications write to the console. The output is already available in the dashboard.'],['Search them together','Look across applications from one place.'],['Focus when needed','Filter by application, log level, and time.']]},
     {id:'documents',view:'documents',label:'05 · Documents',first:'See the data',second:'behind the product.',
         copy:'Explore the documents your product stores and makes searchable. Find a reservation, inspect its fields, and see the information your application is working with.',
-        caption:'Choose a collection, search its documents, and open a reservation, ticket, or show to inspect its fields.',
         notes:[['Browse collections','Find the product data you want to inspect.'],['Inspect the fields','Open a document to see its contents.'],['Search directly','Find relevant records without building a separate administration screen.']]},
     {id:'insights',view:'insights',label:'06 · Insights',first:'See where',second:'the work goes.',
         copy:'Explore how work is distributed across applications, consumers, and handlers. Compare activity and processing time, then focus on the parts reporting errors or falling behind.',
-        caption:'Ticketing, Payments, and Fraud detection share one performance map. Payments reports six errors.',
         notes:[['A connected overview','Move from an application to the work happening inside it.'],['Performance in context','Compare call counts, total time, average time, and the slowest calls.'],['Focus on problems','Bring errors and consumers that are disconnected or behind into view.']]},
 ] as const;
 ---
@@ -49,7 +43,7 @@ const sections = [
     <MarketingHeader active="how-it-works" />
     <main>
         <header class="cloud-proof-hero cloud-proof-next-hero monitoring-hero">
-            <span class="cloud-proof-hero__sun" aria-hidden="true"></span>
+            <span class="monitoring-sun" aria-hidden="true"></span>
             <div class="v4-shell cloud-proof-shell">
                 <p class="cloud-proof-hero__back"><a href="/how-it-works#layers-title" data-browser-back><i class="bx bx-left-arrow-alt" aria-hidden="true"></i> Back</a></p>
                 <p class="cloud-proof-next__eyebrow">Monitoring</p>
@@ -68,7 +62,7 @@ const sections = [
                         <h2 id={`${section.id}-title`}>{section.first}<br /><span>{section.second}</span></h2>
                         <p>{section.copy}</p>
                     </header>
-                    <DashboardExample view={section.view} caption={section.caption} />
+                    <DashboardExample view={section.view} />
                     <dl class="monitoring-notes">
                         {section.notes.map(([title,copy]) => <div><dt>{title}</dt><dd>{copy}</dd></div>)}
                     </dl>
@@ -80,17 +74,23 @@ const sections = [
                 <header class="cloud-proof-copy">
                     <p class="cloud-proof-next__number">07 · Working with your agent</p>
                     <h2 id="agent-evidence-title">Give your agent<br /><span>the evidence.</span></h2>
-                    <p>Message payloads, metadata, and error details give your agent something concrete to investigate. Copy structured records from the dashboard and bring the relevant context into the conversation.</p>
+                    <p>Give your agent the whole trace that led to an error: the request, the messages it triggered, and the failure. Combine that with the state of your product at the time, so it can investigate what happened and test a fix.</p>
                 </header>
                 <div class="monitoring-agent-example">
                     <div>
-                        <span class="monitoring-agent-example__label">From the audit trail</span>
-                        <h3>The actual message.<br />Ready to inspect.</h3>
-                        <p>The same reservation identifiers and payload your product handled. Your agent can use that evidence to investigate behavior and write a focused regression test.</p>
+                        <span class="monitoring-agent-example__label">From failure to understanding</span>
+                        <h3>The whole story.<br />Not just the error.</h3>
+                        <p>Follow the chain of events, travel back to earlier product state, and compare what changed. Your agent gets the context to reproduce the problem and write a regression test.</p>
                     </div>
                     <figure>
-                        <figcaption>ReserveTicket <span>Payload · example data</span></figcaption>
-                        <pre><code>{JSON.stringify({reservationId:'reservation-1042',ticketId:'ticket-A12'},null,2)}</code></pre>
+                        <figcaption>Reservation trace <span>Context for your agent</span></figcaption>
+                        <pre><code>{`POST /api/reservations
+  → ReserveTicket
+    → StartPayment
+      → PaymentProviderTimeout
+
+Reservation: reservation-1042
+State at failure: awaiting payment`}</code></pre>
                     </figure>
                 </div>
             </div>
