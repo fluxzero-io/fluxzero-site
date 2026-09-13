@@ -447,7 +447,7 @@ export function renderMarkdownPage(page) {
 export function renderShortIndex(builtPages, docs) {
     const homepage = builtPages[0];
     const link = page => `- [${page.title}](${page.url}index.md): ${page.description}`;
-    const primaryPaths = ['/', '/how-it-works/', '/technical-foundation/', '/product-code/', '/pricing/'];
+    const primaryPaths = ['/', '/how-it-works/', '/technical-foundation/', '/product-code/', '/monitoring/', '/pricing/'];
     const primary = primaryPaths.map(path => builtPages.find(page => new URL(page.url).pathname === path)).filter(Boolean);
     const start = builtPages.find(page => page.instruction);
     const optional = builtPages.filter(page => !primary.includes(page) && page !== start);

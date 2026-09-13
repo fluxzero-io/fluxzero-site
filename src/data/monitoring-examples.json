@@ -1,0 +1,68 @@
+{
+  "trace": {
+    "title": "Traces",
+    "desktop": {
+      "width": 1280,
+      "height": 512
+    },
+    "mobile": {
+      "width": 390,
+      "height": 478
+    }
+  },
+  "audit": {
+    "title": "Audit trail",
+    "desktop": {
+      "width": 1280,
+      "height": 503
+    },
+    "mobile": {
+      "width": 390,
+      "height": 554
+    }
+  },
+  "logs": {
+    "title": "Logs",
+    "desktop": {
+      "width": 1280,
+      "height": 503
+    },
+    "mobile": {
+      "width": 390,
+      "height": 694
+    }
+  },
+  "issues": {
+    "title": "Issues",
+    "desktop": {
+      "width": 1280,
+      "height": 242
+    },
+    "mobile": {
+      "width": 390,
+      "height": 274
+    }
+  },
+  "documents": {
+    "title": "Documents",
+    "desktop": {
+      "width": 1280,
+      "height": 378
+    },
+    "mobile": {
+      "width": 390,
+      "height": 344
+    }
+  },
+  "insights": {
+    "title": "Insights",
+    "desktop": {
+      "width": 1280,
+      "height": 778
+    },
+    "mobile": {
+      "width": 390,
+      "height": 611
+    }
+  }
+}

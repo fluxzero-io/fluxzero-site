@@ -1,0 +1,24 @@
+---
+import examples from '../../data/monitoring-examples.json';
+interface Props { view: keyof typeof examples; caption: string; }
+const {view, caption} = Astro.props;
+const example = examples[view];
+---
+<figure class="monitoring-example">
+    <div class="monitoring-example__frame" style={`--desktop-ratio:${example.desktop.width}/${example.desktop.height};--mobile-ratio:${example.mobile.width}/${example.mobile.height}`}>
+        <iframe title={`${example.title} — ticketing example`} loading="lazy" tabindex="-1" aria-hidden="true"
+            data-monitoring-frame data-desktop={`/monitoring-examples/${view}-desktop.html`}
+            data-mobile={`/monitoring-examples/${view}-mobile.html`} sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
+    </div>
+    <figcaption><span class="monitoring-example__label">{example.title}</span><span>{caption}{view === 'trace' && <span class="monitoring-example__mobile-hint">Swipe across the timeline to follow the flow.</span>}</span><small>Example data</small></figcaption>
+</figure>
+<script>
+    const mobile = matchMedia('(max-width: 600px)');
+    const frames = document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]');
+    const load = () => frames.forEach(frame => {
+        const source = mobile.matches ? frame.dataset.mobile : frame.dataset.desktop;
+        if (source && frame.getAttribute('src') !== source) frame.src = source;
+    });
+    load();
+    mobile.addEventListener('change', load);
+</script>
