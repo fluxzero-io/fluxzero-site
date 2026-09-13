@@ -1,0 +1,93 @@
+---
+import BrandHead from '../components/BrandHead.astro';
+import MarketingFooter from '../components/marketing/MarketingFooter.astro';
+import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+
+export const prerender = true;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <BrandHead title="Page not found — Fluxzero" />
+    <link rel="stylesheet" href="/css/home.css?v=20260429-11">
+    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260913-3">
+</head>
+<body>
+    <MarketingHeader />
+    <main class="not-found" aria-labelledby="not-found-title">
+        <div class="not-found__content">
+            <p class="not-found__code">404</p>
+            <h1 id="not-found-title">That page isn’t here.</h1>
+            <p class="not-found__message">The link may be outdated, or the page may have moved.</p>
+            <div class="not-found__actions">
+                <a class="not-found__home" href="/">Back to home <span aria-hidden="true">&rarr;</span></a>
+                <a class="not-found__contact" href="/contact">Contact us</a>
+            </div>
+        </div>
+    </main>
+    <MarketingFooter />
+</body>
+</html>
+
+<style>
+    .not-found {
+        display: grid;
+        place-items: center;
+        min-height: 72svh;
+        padding: clamp(130px, 20vh, 210px) 24px 90px;
+        text-align: center;
+        background: radial-gradient(ellipse at 50% 0%, rgba(255, 191, 111, 0.09), transparent 60%);
+    }
+
+    .not-found__content { max-width: 760px; }
+
+    .not-found__code {
+        margin: 0 0 22px;
+        font-family: var(--font-display);
+        font-size: clamp(72px, 12vw, 128px);
+        font-weight: 750;
+        line-height: 1;
+        color: #99ccef;
+    }
+
+    .not-found h1 {
+        margin: 0;
+        font-size: clamp(34px, 5vw, 58px);
+        line-height: 1.1;
+        text-wrap: balance;
+    }
+
+    .not-found__message {
+        max-width: 470px;
+        margin: 24px auto 0;
+        color: var(--text-secondary);
+        font-size: 18px;
+        line-height: 1.6;
+        text-wrap: pretty;
+    }
+
+    .not-found__actions {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px 28px;
+        margin-top: 32px;
+    }
+
+    .not-found__home {
+        padding: 14px 25px;
+        border-radius: 999px;
+        background: linear-gradient(100deg, #d9f5ff, #2f7fba);
+        color: #07121e;
+        font-weight: 600;
+    }
+
+    .not-found__contact { padding: 12px 0; color: var(--text-secondary); }
+    .not-found__contact:hover { color: var(--text-primary); }
+    .not-found a:focus-visible { outline: 2px solid #99ccef; outline-offset: 5px; }
+</style>

@@ -54,6 +54,7 @@ export default defineConfig({
     },
     integrations: [
         starlight({
+            disable404Route: true,
             components: {
                 SiteTitle: './src/components/DocsSiteTitle.astro',
                 MarkdownContent: './src/components/MarkdownContentWithFeedback.astro',
