@@ -10,16 +10,16 @@
   "scripts": {
     "dev": "astro sync && pnpm sync:docs && astro dev",
     "start": "pnpm dev",
-    "build": "astro sync && pnpm sync:docs && astro build && node scripts/generate-llms.mjs && node scripts/sitemap-dates.mjs && node scripts/check-discovery.mjs",
+    "build": "astro sync && pnpm sync:docs && astro build && node scripts/inline-marketing-css.mjs && node scripts/generate-llms.mjs && node scripts/sitemap-dates.mjs && node scripts/check-discovery.mjs && node scripts/check-links.mjs",
     "preview": "wrangler dev --env preview",
     "astro": "astro",
     "sync:docs": "node scripts/sync-sdk-docs.mjs",
     "test:changelog": "node --import tsx --test src/loaders/*releases.test.ts",
     "test:llms": "node --test scripts/generate-llms.test.mjs",
     "test:product-code": "node tests/product-code/generate.mjs && mvn -B -f tests/product-code/pom.xml test",
-    "test:discovery": "node --test scripts/check-discovery.test.mjs scripts/markdown-negotiation.test.mjs",
+    "test:discovery": "node --test scripts/check-discovery.test.mjs scripts/markdown-negotiation.test.mjs scripts/check-links.test.mjs",
     "check:discovery": "node scripts/check-discovery.mjs",
-    "test:seo": "node --test src/utils/docs-description.test.mjs"
+    "test:seo": "node --test src/utils/docs-description.test.mjs scripts/inline-marketing-css.test.mjs"
   },
   "config": {
     "javadoc.optional": false,

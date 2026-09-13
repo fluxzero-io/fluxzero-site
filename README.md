@@ -230,3 +230,18 @@ For licensing questions, contact [alen@fluxzero.io](mailto:alen@fluxzero.io).
   <a href="https://fluxzero.io/about">About us</a> &nbsp;·&nbsp;
   <a href="https://fluxzero.io/contact">Contact us</a>
 </p>
+
+### Rendered link validation and marketing CSS
+
+`pnpm build` checks links from all generated HTML with `scripts/check-links.mjs`,
+including inline MDX anchors, same-origin absolute URLs, relative URLs and
+`nofollow` links. Targets must exist as built pages or files. The checker follows
+build-generated redirects, rejects redirect loops and checks destination IDs.
+It does not crawl external domains or execute client-generated links. Keep these
+checks in the build when adding new rendering or deployment steps.
+
+Marketing pages embed their compiled CSS during the build to avoid extra
+render-blocking requests. The source stylesheets remain authoritative; docs keep
+separate stylesheets. This trades shared stylesheet caching between marketing
+pages for faster first visits. `pnpm test:discovery` and `pnpm test:seo` cover the
+link checker and stylesheet transformation.
