@@ -62,6 +62,26 @@ test('IndexNow submits only after the correct release and removal are live',asyn
     assert.ok(payload.urlList.includes(site+'/product-code/'));
     assert.ok(payload.urlList.includes(site+'/makeitreal/'));
     const postCount=calls.filter(c=>c.options?.method==='POST').length;
-    await assert.rejects(submitIndexNow({read,fetch:async(url,options)=>url.endsWith('llms.txt')?new Response('old release'):send(url,options)}),/does not match/);
+    await assert.rejects(submitIndexNow({read,attempts:1,fetch:async(url,options)=>url.endsWith('llms.txt')?new Response('old release'):send(url,options)}),/does not match/);
     assert.equal(calls.filter(c=>c.options?.method==='POST').length,postCount);
+});
+
+
+test('IndexNow waits for deployed assets before notifying', async () => {
+    const {submitIndexNow} = await import('./submit-indexnow.mjs');
+    let checks = 0, pauses = 0, posts = 0;
+    await submitIndexNow({
+        read: async path => path.endsWith('key.txt') ? 'key' : 'release',
+        wait: async () => { pauses++; },
+        fetch: async (url, options) => {
+            if (url.endsWith('indexnow-key.txt')) return new Response(++checks < 3 ? 'old 404' : 'key');
+            if (url.endsWith('llms.txt')) return new Response('release');
+            if (url.includes('makeitreal')) return new Response('', {status:404});
+            assert.equal(options.method, 'POST');
+            posts++;
+            return new Response('', {status:202});
+        }
+    });
+    assert.equal(pauses, 2);
+    assert.equal(posts, 1);
 });
