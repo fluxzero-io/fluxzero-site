@@ -68,7 +68,7 @@ When editing marketing pages:
 
 ### Machine-readable marketing content
 
-The production build generates a self-contained `dist/llms.txt` with an introduction, one building instruction, an index, and six full marketing pages. In this file, Get started supplies the opening instruction and Contact is linked only. Both retain standalone Markdown pages. `/llms-full.txt` permanently redirects to `/llms.txt`; do not generate a second file or link back to the alias from the canonical export. These files help crawlers and ad-hoc AI agents understand the same product story as human visitors.
+The production build generates a self-contained `dist/llms.txt` with an introduction, one building instruction, an index, and six full marketing pages. In this file, Get started supplies the opening instruction and Contact is linked only. Both retain standalone Markdown pages. `/llms-full.txt` temporarily redirects to `/llms.txt`; do not generate a second file or link back to the alias from the canonical export. These files help crawlers and ad-hoc AI agents understand the same product story as human visitors.
 
 - Treat the rendered marketing HTML as the single source of truth. Never hand-edit generated files in `dist/` and do not maintain a separate copy of page content for AI agents.
 - Structure content semantically so relationships survive linear or Markdown rendering. Use headings for hierarchy, lists for repeated items, `dl`/`dt`/`dd` for terms, metrics, or key-value groups, and native tables or complete ARIA table roles for comparisons.

@@ -64,7 +64,7 @@ Run commands from the repository root.
 | `pnpm test:product-code` | Compile the page examples and test their behavior with the published SDK (Java 25 and Maven required) |
 | `pnpm astro ...` | Run another Astro CLI command |
 
-The production build also generates `dist/llms.txt` and per-page Markdown from the rendered core marketing pages. These files are build artifacts; the website HTML remains their source of truth. `/llms-full.txt` permanently redirects to `/llms.txt`.
+The production build also generates `dist/llms.txt` and per-page Markdown from the rendered core marketing pages. These files are build artifacts; the website HTML remains their source of truth. `/llms-full.txt` temporarily redirects to `/llms.txt`.
 
 The [product-code tests](tests/product-code/README.md) extract all Java examples directly from `/product-code` and exercise their behavior with the real SDK `TestFixture`. They run locally and in CI without an SDK checkout or a running Fluxzero server.
 
@@ -119,7 +119,7 @@ discoverable routes.
 Get started contributes its instruction to the opening and is not repeated as a
 full page; Contact is linked without transcribing its form. Both retain their
 standalone Markdown pages. `/llms-full.txt` is a compatibility URL that returns
-HTTP 301 to `/llms.txt`; there is no second text export. The index and HTML refer
+HTTP 302 to `/llms.txt`; there is no second text export. The index and HTML refer
 directly to `/llms.txt`, never back to the alias. All copy is generated from
 rendered HTML.
 

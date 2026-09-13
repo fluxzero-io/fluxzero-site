@@ -36,7 +36,7 @@ export default defineConfig({
     },
     redirects: {
         "/llms-full.txt": {
-            status: 301,
+            status: 302,
             destination: "/llms.txt"
         },
         "/sitemap.xml": {
