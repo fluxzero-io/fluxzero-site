@@ -72,24 +72,32 @@ const sections = [
                 <header class="cloud-proof-copy">
                     <p class="cloud-proof-next__number">07 · Working with your agent</p>
                     <h2 id="agent-evidence-title">A treasure trove<br /><span>for your agent.</span></h2>
-                    <p>A database usually tells your agent what is true now. Logs reveal only what someone thought to record. That leaves your agent reconstructing how the product reached a particular state.</p>
-                    <p>Here, the history connects what happened to what followed. Your agent can investigate the product as it was when something went wrong, with the trace that explains how it got there.</p>
+                    <p>Your agent gets more than an error message. It can follow the original request through your product and inspect the state at the moment things went wrong.</p>
+                    <p>That history is already connected to the issue and the application version involved. Your agent can investigate what changed without first piecing together evidence from separate systems.</p>
                 </header>
                 <div class="monitoring-agent-example">
                     <div>
-                        <span class="monitoring-agent-example__label">From failure to a tested fix</span>
-                        <h3>Enough context<br />to move beyond guesswork.</h3>
-                        <p>Your agent can turn a production failure into a reproducible test. That makes the fix something you can verify. Your tests can catch the same mistake next time.</p>
+                        <span class="monitoring-agent-example__label">Working with the evidence</span>
+                        <h3>From production evidence<br />to a verified fix.</h3>
+                        <p>Your agent can investigate the failure as it happened, instead of guessing from the state your product is in now.</p>
+                        <p>It can turn that evidence into a failing test, then use the test to verify its fix. The same test helps prevent the problem from returning.</p>
                     </div>
-                    <figure>
-                        <figcaption>Reservation trace <span>Context for your agent</span></figcaption>
+                    <figure class="monitoring-context-card">
+                        <figcaption>Payment confirmation fails <span>Example agent context</span></figcaption>
+                        <dl class="monitoring-context-card__facts">
+                            <div><dt>First seen in</dt><dd>Payments v1.8.4</dd></div>
+                            <div><dt>Occurrences</dt><dd>37</dd></div>
+                            <div><dt>One affected reservation</dt><dd>reservation-1042</dd></div>
+                        </dl>
+                        <h4>What happened</h4>
                         <pre><code>{`POST /api/reservations
   → ReserveTicket
     → StartPayment
-      → PaymentProviderTimeout
-
-Reservation: reservation-1042
-State at failure: awaiting payment`}</code></pre>
+      → PaymentProviderTimeout`}</code></pre>
+                        <dl class="monitoring-context-card__facts monitoring-context-card__state">
+                            <div><dt>State at failure</dt><dd>Awaiting payment</dd></div>
+                        </dl>
+                        <p class="monitoring-context-card__payloads">Original request and message payloads available</p>
                     </figure>
                 </div>
             </div>
