@@ -2,10 +2,10 @@
 
 The original TTF files are the source for the lossless WOFF2 files. The Latin
 subsets cover the English marketing copy, Western European accents, punctuation,
-and arrows. `home.css` declares these after the full faces with `unicode-range`,
+and arrows. `src/styles/marketing-fonts.css` declares these after the full faces with `unicode-range`,
 so other characters remain available through the full WOFF2 fonts.
 
-The homepage preloads only the two Latin subsets. Keep preload URLs and the
+Marketing pages preload only the two Latin subsets. Keep preload URLs and the
 `@font-face` sources aligned to avoid duplicate downloads.
 
 To regenerate, install `fonttools[woff]` in an isolated Python environment, then
@@ -30,4 +30,4 @@ for source in Path('public/fonts').glob('*/*.ttf'):
     ])
 ```
 
-Keep the Unicode ranges in `home.css` aligned with this subset definition.
+Keep the Unicode ranges in `src/styles/marketing-fonts.css` aligned with this subset definition.

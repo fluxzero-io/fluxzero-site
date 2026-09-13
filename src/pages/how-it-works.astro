@@ -1,4 +1,9 @@
 ---
+import { Image } from 'astro:assets';
+import heroBackdrop from '../../public/assets/fluxzero/agent-hero-horizon.png';
+import '../../public/css/v4.css';
+import '../../public/css/agents.css';
+import '../../public/css/marketing-shell.css';
 import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
@@ -136,16 +141,13 @@ const choiceOptions = [
         title="Inside Fluxzero — The application cloud"
         description="See how Fluxzero keeps infrastructure out of your application so people and AI agents can focus on building the product."
     />
-    <link rel="stylesheet" href="/css/v4.css?v=20260905-1">
-    <link rel="stylesheet" href="/css/agents.css?v=20260910-1">
-    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260913-3">
 </head>
 <body class="v4-page agent4-page">
     <MarketingHeader active="how-it-works" />
 
 <main>
     <section class="agent4-hero" aria-labelledby="agent4-title">
-        <img class="agent4-hero__backdrop" src="/assets/fluxzero/agent-hero-horizon.png" alt="" aria-hidden="true">
+        <Image class="agent4-hero__backdrop" src={heroBackdrop} widths={[640, 1280, 1920]} sizes="100vw" format="webp" quality={85} alt="" aria-hidden="true" loading="eager" fetchpriority="high" />
         <div class="v4-shell agent4-hero__inner">
             <div class="agent4-hero__copy">
                 <h1 id="agent4-title" data-reveal>AI lets anyone build products.<br><span>Time for the cloud to catch up.</span></h1>

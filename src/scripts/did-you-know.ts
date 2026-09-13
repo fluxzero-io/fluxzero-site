@@ -62,7 +62,7 @@ class DidYouKnowController {
     this.popover.className = 'did-you-know-popup';
     this.popover.innerHTML = `
       <div class="did-you-know-popup-header">
-        <h4>💡 Did you know?</h4>
+        <h2>💡 Did you know?</h2>
         <button class="did-you-know-close" aria-label="Close">×</button>
       </div>
       <div class="did-you-know-popup-content">
@@ -105,7 +105,7 @@ class DidYouKnowController {
         border-bottom: 1px solid var(--sl-color-gray-5, #e2e8f0);
       }
 
-      .did-you-know-popup-header h4 {
+      .did-you-know-popup-header h2 {
         margin: 0;
         font-size: 14px;
         font-weight: 600;
@@ -158,7 +158,7 @@ class DidYouKnowController {
           border-color: #374151;
         }
 
-        .did-you-know-popup-header h4 {
+        .did-you-know-popup-header h2 {
           color: #f9fafb;
         }
 

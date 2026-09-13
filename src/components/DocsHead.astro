@@ -1,0 +1,9 @@
+---
+import Head from '@astrojs/starlight/components/Head.astro';
+import { docsDescription } from '../utils/docs-description.mjs';
+const { head, entry } = Astro.locals.starlightRoute;
+const hasDescription = head.some(item => item.tag === 'meta' && item.attrs?.name === 'description');
+const description = hasDescription ? '' : docsDescription(entry?.body);
+---
+<Head />
+{description && <meta name="description" content={description} />}

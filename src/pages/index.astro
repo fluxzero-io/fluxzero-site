@@ -2,8 +2,6 @@
 import '../../public/css/home.css';
 import '../../public/css/v4-home.css';
 import '../../public/css/marketing-shell.css';
-import displayFont from '../../public/fonts/google-sans-flex/GoogleSansFlex-Black-latin.woff2?url';
-import bodyFont from '../../public/fonts/inter/Inter-Regular-latin.woff2?url';
 import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
@@ -194,8 +192,6 @@ const homepageFaqSchema = {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <BrandHead title="Fluxzero — The European cloud for AI-built apps" description="The all-in-one cloud with frontend, backend, data, security, and observability working as one." />
-    <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin>
     <script type="application/ld+json" set:html={JSON.stringify(homepageFaqSchema)}></script>
 </head>
 <body class="v4-home">

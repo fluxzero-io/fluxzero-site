@@ -35,6 +35,11 @@ export default defineConfig({
         }
     },
     redirects: {
+        "/docs/guides/messaging/071-role-based-access-control/": { status: 301, destination: "/docs/guides/messaging/role-based-access-control/" },
+        "/docs/guides/scheduling": { status: 301, destination: "/docs/guides/messaging/message-scheduling/" },
+        "/docs/guides/testing": { status: 301, destination: "/docs/guides/messaging/testing-your-handlers/" },
+        "/logs/guides/messaging/020-message-handling": { status: 301, destination: "/docs/guides/messaging/message-handling/" },
+
         "/llms-full.txt": {
             status: 302,
             destination: "/llms.txt"
@@ -60,6 +65,7 @@ export default defineConfig({
         starlight({
             disable404Route: true,
             components: {
+                Head: './src/components/DocsHead.astro',
                 SiteTitle: './src/components/DocsSiteTitle.astro',
                 MarkdownContent: './src/components/MarkdownContentWithFeedback.astro',
                 Footer: './src/components/DocsFooter.astro',

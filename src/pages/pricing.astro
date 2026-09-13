@@ -1,4 +1,5 @@
 ---
+import '../../public/css/marketing-shell.css';
 import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
@@ -10,23 +11,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <BrandHead title="Fluxzero Pricing — Build free. Launch, then run." description="Fluxzero pricing for builders: build locally for free, put your app online with Starter, then run with Startup, Scale Up, or Enterprise." />
-    <link rel="stylesheet" href="/css/marketing-shell.css?v=20260913-3">
     <style is:global>
-        @font-face {
-            font-family: 'Google Sans Flex';
-            src: url('/fonts/google-sans-flex/GoogleSansFlex-Black.ttf') format('truetype');
-            font-weight: 900;
-            font-style: normal;
-            font-display: swap;
-        }
-
-        @font-face {
-            font-family: 'Inter';
-            src: url('/fonts/inter/Inter-Regular.ttf') format('truetype');
-            font-weight: 400;
-            font-style: normal;
-            font-display: swap;
-        }
 
         :root {
             --bg: #05070B;
@@ -1149,7 +1134,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             background: rgba(0, 179, 255, 0.08);
         }
 
-        .pricing-v2-card h3 {
+        .pricing-v2-card :is(h2, h3) {
             margin-top: 22px;
             font-size: 32px;
             letter-spacing: -0.045em;
@@ -2456,7 +2441,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         <input class="pricing-v2-toggle-input" type="radio" name="pricing-stage" id="pricing-launch" checked>
         <input class="pricing-v2-toggle-input" type="radio" name="pricing-stage" id="pricing-scale">
 
-        <div class="pricing-v2-toggle" role="tablist" aria-label="Plan type">
+        <div class="pricing-v2-toggle" role="radiogroup" aria-label="Plan type" aria-owns="pricing-launch pricing-scale">
             <label for="pricing-launch">Launch</label>
             <label for="pricing-scale">Run</label>
         </div>
@@ -2466,7 +2451,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 <article class="pricing-v2-card">
                     <div class="pricing-v2-card-top">
                         <span class="pricing-v2-label">Free</span>
-                        <h3>Builder</h3>
+                        <h2>Builder</h2>
                         <div class="pricing-v2-price">
                             <span class="pricing-v2-currency">€</span>
                             <strong>0</strong>
@@ -2485,7 +2470,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 <article class="pricing-v2-card is-featured">
                     <div class="pricing-v2-card-top">
                         <span class="pricing-v2-label">Launch</span>
-                        <h3>Starter</h3>
+                        <h2>Starter</h2>
                         <div class="pricing-v2-price">
                             <span class="pricing-v2-currency">€</span>
                             <strong>49</strong>
@@ -2511,7 +2496,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 <article class="pricing-v2-card is-featured">
                     <div class="pricing-v2-card-top">
                         <span class="pricing-v2-label">Grow</span>
-                        <h3>Startup</h3>
+                        <h2>Startup</h2>
                         <div class="pricing-v2-price">
                             <span class="pricing-v2-currency">€</span>
                             <strong>490</strong>
@@ -2537,7 +2522,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                         <div class="pricing-v2-flip-face pricing-v2-flip-face--front" aria-hidden="false">
                             <div class="pricing-v2-card-top">
                                 <span class="pricing-v2-label">Scale</span>
-                                <h3>Scale Up</h3>
+                                <h2>Scale Up</h2>
                                 <div class="pricing-v2-price">
                                     <span class="pricing-v2-currency">€</span>
                                     <strong>890</strong>
@@ -2616,7 +2601,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                 <article class="pricing-v2-card">
                     <div class="pricing-v2-card-top">
                         <span class="pricing-v2-label">Customize</span>
-                        <h3>Enterprise</h3>
+                        <h2>Enterprise</h2>
                         <div class="pricing-v2-price pricing-v2-price-custom">
                             <strong>Custom</strong>
                             <span class="pricing-v2-term">pricing</span>

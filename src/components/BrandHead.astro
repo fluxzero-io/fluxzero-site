@@ -1,4 +1,7 @@
 ---
+import '../styles/marketing-fonts.css';
+import displayFont from '../../public/fonts/google-sans-flex/GoogleSansFlex-Black-latin.woff2?url';
+import bodyFont from '../../public/fonts/inter/Inter-Regular-latin.woff2?url';
 import { marketingPages, normalizePath } from '../../scripts/core-pages.mjs';
 import { fluxzeroBrand, fluxzeroLogoCssUrl } from '../config/brand.mjs';
 
@@ -22,6 +25,8 @@ const markdownPath = marketingPages.includes(normalizePath(Astro.url.pathname)) 
 const imageUrl = new URL(image, siteUrl).toString();
 ---
 
+<link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin>
+<link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin>
 <title>{title}</title>
 {description && <meta name="description" content={description}>}
 <link rel="canonical" href={pageUrl}>

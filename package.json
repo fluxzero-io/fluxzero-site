@@ -18,7 +18,8 @@
     "test:llms": "node --test scripts/generate-llms.test.mjs",
     "test:product-code": "node tests/product-code/generate.mjs && mvn -B -f tests/product-code/pom.xml test",
     "test:discovery": "node --test scripts/check-discovery.test.mjs scripts/markdown-negotiation.test.mjs",
-    "check:discovery": "node scripts/check-discovery.mjs"
+    "check:discovery": "node scripts/check-discovery.mjs",
+    "test:seo": "node --test src/utils/docs-description.test.mjs"
   },
   "config": {
     "javadoc.optional": false,

@@ -21,7 +21,7 @@
     width: 180px;
     height: 180px;
     border: 0;
-    background: url('/assets/fluxzero/technical-foundation-sun.png') center / contain no-repeat;
+    background: url('/assets/fluxzero/technical-foundation-sun.webp') center / contain no-repeat;
     box-shadow: none;
 }
 
@@ -925,7 +925,7 @@
 
 .cloud-proof-next__dashboard-grid small {
     margin-top: 3px;
-    color: #637b91;
+    color: #8ea8bf;
     font-size: 9px;
 }
 

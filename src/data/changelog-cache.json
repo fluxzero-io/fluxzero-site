@@ -1,7 +1,16 @@
 {
-  "lastUpdated": "2026-09-12T19:21:28.966Z",
-  "latestVersion": "2.0.0-RC9",
+  "lastUpdated": "2026-09-13T12:06:47.811Z",
+  "latestVersion": "2.0.0-rc.11",
   "releases": [
+    {
+      "version": "2.0.0-rc.11",
+      "date": "2026-09-13",
+      "body": "#### Model and Graph query guidance\n\n- Start with plain `@Model`. Extra document persistence and periodic snapshots are now introduced only when an example needs them.\n- A central capability matrix explains identity loads, direct and relationship-scoped search, live and materialized Graphs, result types, and current versus event-bound state.\n- The developer guides, public Javadocs, and Java/Kotlin agent instructions now use the same query contract. The compact README from main is included.\n- LocalClient text matching now respects the capabilities of retrieval-only Model documents, preventing misleading successful queries in local tests. Stored Model values and ordinary document scans are preserved.\n\nRead the [Model and Graph query guide](https://github.com/fluxzero-io/fluxzero-sdk-java/blob/2.0.0-rc.11/docs/developer/guides/Modeling%20%26%20persistence/205-model-query-guide.mdx).\n\n#### Current Graph correctness\n\nExplicit `loadCurrentGraph` reads now establish a fresh storage boundary even with a cached root, so committed\nchild additions, removals and moves are not hidden by delayed cache updates. Each call performs a head-only read;\nvalues remain lazy and can reuse an exactly matching cached revision. Previously returned Graphs keep their pinned\nstate, and ordinary Model and Graph cache paths are unchanged.\n\n#### Version spelling\n\nThis release uses **`2.0.0-rc.11`**, with lowercase `rc` and a dot before the number. Future candidates keep this numeric format for consistent Maven and SemVer ordering. Existing versions and tags are unchanged; update exact dependency pins to the spelling below.\n\n```xml\n<dependency>\n    <groupId>io.fluxzero</groupId>\n    <artifactId>sdk</artifactId>\n    <version>2.0.0-rc.11</version>\n</dependency>\n```\n\n[All changes since RC10](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.0.0-RC10...2.0.0-rc.11)",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.0.0-rc.11",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
     {
       "version": "2.0.0-RC9",
       "date": "2026-09-12",
