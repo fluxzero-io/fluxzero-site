@@ -6,7 +6,7 @@ const titles={trace:'Traces',audit:'Audit trail',logs:'Logs',issues:'Issues',doc
 <figure class="monitoring-example">
   <div class="monitoring-example__frame" data-view={view}>
     <iframe title={`${titles[view]} — interactive ticketing demo`} data-monitoring-frame
-      data-source={`/monitoring-demo/index.html?view=${view}${view==='issues'?'&statuses=OPEN':''}`} sandbox="allow-scripts allow-same-origin" allow="clipboard-write" referrerpolicy="no-referrer"></iframe>
+      data-source={`/monitoring-demo/index.html?view=${view}`} sandbox="allow-scripts allow-same-origin" allow="clipboard-write" referrerpolicy="no-referrer"></iframe>
     <noscript><p>Enable JavaScript to explore this interactive example.</p></noscript>
   </div>
 
