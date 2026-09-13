@@ -49,9 +49,6 @@ const sections = [
                 <p class="cloud-proof-next__eyebrow">Monitoring</p>
                 <h1>See what happened.<br /><span>Understand why.</span></h1>
                 <p class="cloud-proof-hero__lead">Follow customer actions, inspect your product’s data, and find the cause of failures. The evidence is there for you and your agent to work with.</p>
-                <nav class="monitoring-jump-links" aria-label="Monitoring capabilities">
-                    {sections.map(section => <a href={`#${section.id}`}>{section.label.split(' · ')[1]}<span aria-hidden="true">↗</span></a>)}
-                </nav>
             </div>
         </header>
         {sections.map(section => (

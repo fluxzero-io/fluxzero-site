@@ -4,10 +4,6 @@
 .monitoring-page .monitoring-hero .cloud-proof-shell {padding-top:90px;padding-bottom:72px;}
 .monitoring-page .monitoring-hero h1 {max-width:1050px;}
 .monitoring-page .monitoring-hero .cloud-proof-hero__sun {right:7%;top:20%;opacity:.75;}
-.monitoring-jump-links {display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:38px;max-width:900px;}
-.monitoring-jump-links a {display:inline-flex;align-items:center;gap:12px;padding:7px 0;color:#b9cbdc;font-size:14px;text-decoration:none;border-bottom:1px solid var(--monitoring-line);}
-.monitoring-jump-links a:hover {color:#83c8ff;border-bottom-color:#83c8ff;}
-.monitoring-jump-links a span {color:#69b3ed;}
 .monitoring-section {scroll-margin-top:80px;}
 .monitoring-page .monitoring-section:first-of-type {padding-top:64px;}
 .monitoring-page .cloud-proof-copy {margin-bottom:40px;}
@@ -39,8 +35,6 @@
  .monitoring-page .cloud-proof-shell{width:calc(100% - 40px);}
  .monitoring-page .monitoring-hero .cloud-proof-shell{padding-top:58px;padding-bottom:48px;}
  .monitoring-page .monitoring-hero .cloud-proof-hero__sun{top:12%;right:-5%;width:110px;height:110px;opacity:.55;}
- .monitoring-jump-links{gap:6px 20px;margin-top:24px;}
- .monitoring-jump-links a{font-size:13px;}
  .monitoring-page .monitoring-section:first-of-type{padding-top:40px;}
  .monitoring-example__frame{height:760px;}
  .monitoring-example{border-radius:10px;}
