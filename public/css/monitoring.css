@@ -59,7 +59,7 @@
 .monitoring-notes dt{color:#dceaf6;font-size:12px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;}
 .monitoring-notes dd{margin:7px 0 0;color:#8297aa;font-size:12px;line-height:1.55;}
 .monitoring-sun{position:absolute;pointer-events:none;right:7%;top:14%;width:310px;height:310px;border-radius:50%;background:radial-gradient(circle at 50% 50%,#05090f 0 26%,#a9d8f52b 27%,#91c9eb14 28%,#619bcf09 34%,transparent 58%);opacity:.85;}
-.monitoring-sun::before{content:"";position:absolute;left:64%;top:36%;width:5%;height:5%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#fff 0 7%,#e7f7ff 12%,#b9e5ff99 24%,#8fcfff38 42%,transparent 70%);box-shadow:0 0 17px 3px #9edaff38;}
+.monitoring-sun::before{content:"";position:absolute;left:64%;top:36%;width:22%;height:22%;transform:translate(-50%,-50%) rotate(-25deg);border-radius:50%;background:radial-gradient(ellipse 50% 3% at center,#fff 0 8%,#cdeeffbb 22%,#a7dfff44 48%,transparent 100%),radial-gradient(ellipse 3% 35% at center,#fff 0 6%,#cdeeff88 20%,transparent 100%),radial-gradient(circle,#fff 0 3%,#e7f7ff 5%,#b9e5ff99 9%,#8fcfff38 20%,transparent 55%);filter:drop-shadow(0 0 8px #9edaff66);}
 .monitoring-sun::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 18deg,transparent 0deg,#b6e7ff55 15deg,#f0fbffcc 27deg,#b6e7ff55 39deg,transparent 55deg);mask-image:radial-gradient(circle,transparent 26%,#000 26.7%,#000 27.5%,transparent 28.3%);filter:blur(.5px);}
 @media(max-width:600px){.monitoring-sun{width:150px;height:150px;right:-25px;top:65px;opacity:.8;}}
 
