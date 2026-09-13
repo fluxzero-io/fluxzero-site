@@ -77,17 +77,16 @@ const sections = [
                 </header>
                 <div class="monitoring-agent-example">
                     <div>
-                        <span class="monitoring-agent-example__label">Working with the evidence</span>
                         <h3>From production evidence<br />to a verified fix.</h3>
                         <p>Your agent can investigate the failure as it happened, instead of guessing from the state your product is in now.</p>
                         <p>It can turn that evidence into a failing test, then use the test to verify its fix. The same test helps prevent the problem from returning.</p>
                     </div>
                     <figure class="monitoring-context-card">
-                        <figcaption>Payment confirmation fails <span>Example agent context</span></figcaption>
+                        <figcaption>Payment confirmation fails <span>Failure report</span></figcaption>
                         <dl class="monitoring-context-card__facts">
                             <div><dt>First seen in</dt><dd>Payments v1.8.4</dd></div>
                             <div><dt>Occurrences</dt><dd>37</dd></div>
-                            <div><dt>One affected reservation</dt><dd>reservation-1042</dd></div>
+                            <div><dt>Affected model</dt><dd>reservation-1042</dd></div>
                         </dl>
                         <h4>What happened</h4>
                         <pre><code>{`POST /api/reservations
@@ -97,7 +96,6 @@ const sections = [
                         <dl class="monitoring-context-card__facts monitoring-context-card__state">
                             <div><dt>State at failure</dt><dd>Awaiting payment</dd></div>
                         </dl>
-                        <p class="monitoring-context-card__payloads">Original request and message payloads available</p>
                     </figure>
                 </div>
             </div>
