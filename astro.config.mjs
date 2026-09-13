@@ -36,7 +36,6 @@ export default defineConfig({
     },
     redirects: {
         "/monitoring": { status: 302, destination: "/product-insight/" },
-        "/monitoring/": { status: 302, destination: "/product-insight/" },
         "/monitoring/index.html": { status: 302, destination: "/product-insight/" },
         "/monitoring/index.md": { status: 302, destination: "/product-insight/index.md" },
         "/docs/guides/messaging/071-role-based-access-control/": { status: 301, destination: "/docs/guides/messaging/role-based-access-control/" },
