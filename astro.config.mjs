@@ -35,6 +35,10 @@ export default defineConfig({
         }
     },
     redirects: {
+        "/sitemap.xml": {
+            status: 301,
+            destination: "/sitemap-index.xml"
+        },
         "/start-building": {
             status: 308,
             destination: "/get-started"

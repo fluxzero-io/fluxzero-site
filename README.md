@@ -154,6 +154,9 @@ tag. Retired routes must not occur in HTML, internal links, sitemap or text expo
 Removing a route lets the deployed site return 404; do not block it in robots.txt,
 so crawlers can observe its removal. External search results take time to disappear.
 
+`/sitemap.xml` permanently redirects to `/sitemap-index.xml`, the canonical
+index advertised in robots.txt.
+
 Sitemap `lastmod` values come from the last Git commit touching the page source,
 including the SDK source for documentation. CI checks out full history. Unknown
 dates are omitted instead of substituting the build date. Shared footer or style

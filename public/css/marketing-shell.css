@@ -500,13 +500,29 @@ footer::before {
 
     .ft {
         grid-template-columns: minmax(0, 1fr);
-        gap: 28px;
-        text-align: left;
+        gap: 18px;
+        text-align: center;
     }
 
     .ft-r {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 30px 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px 20px;
+    }
+
+    .footer-group,
+    .footer-group ul {
+        display: contents;
+    }
+
+    .footer-group h2 {
+        display: none;
+    }
+
+    .footer-group a {
+        display: inline-block;
+        padding-block: 4px;
     }
 }
 
