@@ -3,7 +3,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
 
-import { siteUrl, marketingPages, documentationPages, htmlFile } from './core-pages.mjs';
+import { siteUrl, marketingPages, inlineMarketingPages, documentationPages, htmlFile } from './core-pages.mjs';
 const outputDirectory = join(process.cwd(), 'dist');
 
 // These are the public marketing pages that explain and support the product.
@@ -443,7 +443,7 @@ export function renderMarkdownPage(page) {
     return `# ${page.title}\n\nSource: ${page.url}\n\n${page.content}\n`;
 }
 
-// A proposal only: no model, rewritten copy, or separate maintained summary.
+// Shared by the published opening and compact proposal, using only existing HTML copy.
 export function renderShortIndex(builtPages, docs) {
     const homepage = builtPages[0];
     const link = page => `- [${page.title}](${page.url}index.md): ${page.description}`;
@@ -451,13 +451,20 @@ export function renderShortIndex(builtPages, docs) {
     const primary = primaryPaths.map(path => builtPages.find(page => new URL(page.url).pathname === path)).filter(Boolean);
     const start = builtPages.find(page => page.instruction);
     const optional = builtPages.filter(page => !primary.includes(page) && page !== start);
-    const building = start ? `## Start building\n\n${start.instruction}\n\n[${start.title}](${start.url}index.md)\n\n` : '';
-    return `# Fluxzero\n\n> ${homepage.hero ? homepage.hero + '\n>\n> ' : ''}${homepage.description}\n\n${homepage.summary}\n\n## Read in this order\n\n${primary.map(link).join('\n')}\n\n${building}## Technical documentation\n\n${docs.map(link).join('\n')}\n\n## Complete content\n\n- [Full website text](${siteUrl}/llms-full.txt)\n\n## Optional\n\n${optional.map(link).join('\n')}\n`;
+    const building = start ? `## [Start building](${start.url}index.md)\n\n${start.instruction}\n\n` : '';
+    return `# Fluxzero\n\n> ${homepage.hero ? homepage.hero + '\n>\n> ' : ''}${homepage.description}\n\n${homepage.summary}\n\n${building}## Read in this order\n\n${primary.map(link).join('\n')}\n\n## Technical documentation\n\n${docs.map(link).join('\n')}\n\n## Complete content\n\n- [Full website text](${siteUrl}/llms-full.txt)\n\n## Optional\n\n${optional.map(link).join('\n')}\n`;
+}
+
+export function renderTextExports(builtPages, docs) {
+    const combine = selected => selected
+        .map(page => `# ${page.title}\n\nSource: ${page.url}\n\n${page.content}`)
+        .join('\n\n---\n\n') + '\n';
+    const content = combine(builtPages.filter(page => inlineMarketingPages.includes(new URL(page.url).pathname)));
+    return { llms: `${renderShortIndex(builtPages, docs).trimEnd()}\n\n---\n\n${content}`, full: combine(builtPages) };
 }
 
 async function generateFiles() {
     const builtPages = await Promise.all(pages.map(readPage));
-    const homepage = builtPages[0];
     const docs = await Promise.all(documentationPages.map(path => readPage({ path, file: htmlFile(path) })));
 
     const proposalIndex = process.argv.indexOf('--short-proposal');
@@ -472,35 +479,12 @@ async function generateFiles() {
         return;
     }
 
-    const index = cleanMarkdown(`
-    # Fluxzero
-
-    > ${homepage.description}
-
-    ## Recommended reading order
-
-    Start with the homepage and How it works. Product code shows what an agent writes; Technical foundation explains what the cloud handles. Read Pricing next, then the documentation for implementation details.
-
-    ## Core pages
-
-    ${builtPages
-        .map((page) => `- [${page.title}](${page.url}): ${page.description} ([Markdown](${page.url}index.md))`)
-        .join('\n')}
-
-    ## Technical documentation
-
-    ${docs.map(page => `- [${page.title}](${page.url}): ${page.description} ([Markdown](${page.url}index.md))`).join('\n')}
-    `);
-
-    const full = builtPages
-        .map((page) => `# ${page.title}\n\nSource: ${page.url}\n\n${page.content}`)
-        .join('\n\n---\n\n');
-    const selfContained = `${index}\n\n---\n\n${full}`;
+    const { llms, full } = renderTextExports(builtPages, docs);
 
     await mkdir(outputDirectory, { recursive: true });
     await Promise.all([
-        writeFile(join(outputDirectory, 'llms.txt'), `${selfContained}\n`, 'utf8'),
-        writeFile(join(outputDirectory, 'llms-full.txt'), `${full}\n`, 'utf8'),
+        writeFile(join(outputDirectory, 'llms.txt'), llms, 'utf8'),
+        writeFile(join(outputDirectory, 'llms-full.txt'), full, 'utf8'),
         ...[...builtPages, ...docs].map(async page => {
             const target = join(outputDirectory, new URL(page.url).pathname, 'index.md');
             await mkdir(dirname(target), { recursive: true });
@@ -508,7 +492,7 @@ async function generateFiles() {
         }),
     ]);
 
-    console.log(`Generated llms.txt and llms-full.txt from ${builtPages.length} pages.`);
+    console.log(`Generated llms.txt with ${inlineMarketingPages.length} inline pages, llms-full.txt with ${builtPages.length} pages, and ${builtPages.length + docs.length} Markdown pages.`);
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

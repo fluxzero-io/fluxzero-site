@@ -112,9 +112,15 @@ The workflow checks out the SDK docs, installs dependencies with the frozen lock
 ## Search and agent discovery
 
 `scripts/core-pages.mjs` defines the required marketing and documentation routes.
-The full `llms.txt` stays self-contained: a reading guide and index followed by
-all marketing page content. `llms-full.txt` contains that same page content without
-the index. Both are generated from rendered HTML.
+The full `llms.txt` stays self-contained: the homepage introduction, one building
+instruction, and a reading index followed by the six substantive marketing pages.
+`inlineMarketingPages` selects those pages independently of the required
+discoverable routes.
+Get started contributes its instruction to the opening and is not repeated as a
+full page; Contact is linked without transcribing its form. Both retain their
+standalone Markdown pages. `llms-full.txt` retains all eight full marketing pages,
+including Get started and Contact, without the opening. All copy is generated
+from rendered HTML.
 
 Each core page also has a generated `index.md` version (for example,
 `/product-code/index.md`), linked from the index and marketing HTML via
@@ -142,7 +148,8 @@ To review a compact index without changing the published files:
 node scripts/generate-llms.mjs --short-proposal /tmp/llms-short-proposal.txt
 ```
 
-The proposal uses the visible homepage H1, existing page metadata, HTML paragraphs
+The published opening and compact proposal use the visible homepage H1, existing
+page metadata, HTML paragraphs
 marked `data-llms-summary`, and the exact Get started prompt marked
 `data-llms-instruction`. Selection and ordering are explicit; the text itself has one
 source of truth. No model runs during generation. Proposals must remain outside

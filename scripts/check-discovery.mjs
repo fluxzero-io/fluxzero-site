@@ -2,7 +2,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
-import { corePages, retiredPages, siteUrl, normalizePath } from './core-pages.mjs';
+import { corePages, marketingPages, inlineMarketingPages, retiredPages, siteUrl, normalizePath } from './core-pages.mjs';
 
 const attr = (node, name) => node.attrs?.find(a => a.name === name)?.value;
 function elements(node, predicate, result = []) {
@@ -28,7 +28,7 @@ export function validateDiscovery({ pages, sitemap, llms, full, robots }, requir
         const page = pages.get(path);
         if (!page) { failures.push(`${path}: missing HTML`); continue; }
         if (!sitemap.has(path)) failures.push(`${path}: absent from sitemap`);
-        if (!llms.includes(`](${siteUrl}${path})`)) failures.push(`${path}: absent from llms.txt index`);
+        if (![`${siteUrl}${path}`, `${siteUrl}${path}index.md`].some(url => llms.includes(`](${url})`))) failures.push(`${path}: absent from llms.txt index`);
         if (page.canonical.length !== 1 || page.canonical[0] !== siteUrl + path) failures.push(`${path}: incorrect canonical`);
         if (page.noindex) failures.push(`${path}: noindex`);
         if (![...pages].some(([from, data]) => from !== path && data.links.includes(path))) failures.push(`${path}: no incoming internal link`);
@@ -36,7 +36,15 @@ export function validateDiscovery({ pages, sitemap, llms, full, robots }, requir
     for (const path of retiredPages) {
         if (pages.has(path) || sitemap.has(path) || llms.includes(path) || full.includes(path) || [...pages.values()].some(p => p.links.includes(path))) failures.push(`${path}: retired page remains discoverable`);
     }
-    if (!full.trim() || !llms.endsWith(full)) failures.push('Full text exports differ');
+    for (const path of marketingPages.filter(path => required.includes(path))) {
+        if (!full.includes(`\nSource: ${siteUrl}${path}\n`)) failures.push(`${path}: absent from llms-full.txt`);
+    }
+    const linkedSources = marketingPages.filter(path => !inlineMarketingPages.includes(path)).map(path => siteUrl + path);
+    const sharedContent = full.trimEnd()
+        .split(/\n\n---\n\n(?=# [^\n]+\n\nSource: )/)
+        .filter(section => !linkedSources.includes(section.match(/^Source: (.+)$/m)?.[1]))
+        .join('\n\n---\n\n');
+    if (!sharedContent.trim() || !llms.trimEnd().endsWith(sharedContent)) failures.push('Full text exports differ');
     if (!robots.includes(`Sitemap: ${siteUrl}/sitemap-index.xml`)) failures.push('robots.txt does not advertise the sitemap');
     return failures;
 }
