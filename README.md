@@ -112,8 +112,26 @@ The workflow checks out the SDK docs, installs dependencies with the frozen lock
 ## Search and agent discovery
 
 `scripts/core-pages.mjs` defines the required marketing and documentation routes.
-The full `llms.txt` stays self-contained; `llms-full.txt` is an identical compatibility
-copy, including the reading guide and links. Both are generated from rendered HTML.
+The full `llms.txt` stays self-contained: a reading guide and index followed by
+all marketing page content. `llms-full.txt` contains that same page content without
+the index. Both are generated from rendered HTML.
+
+Each core page also has a generated `index.md` version (for example,
+`/product-code/index.md`), linked from the index and marketing HTML via
+`rel="alternate" type="text/markdown"`. These are production build assets, served
+with a Markdown content type; the HTML URL does not negotiate on `Accept` yet.
+Use `pnpm preview` to inspect these generated assets locally.
+
+To review a compact index without changing the published files:
+
+```bash
+node scripts/generate-llms.mjs --short-proposal /tmp/llms-short-proposal.txt
+```
+
+The proposal uses existing page metadata and HTML paragraphs marked
+`data-llms-summary`. Selection and ordering are explicit; the text itself has one
+source of truth. No model runs during generation. Proposals must remain outside
+`dist/` and are never deployed by this command.
 
 Every build verifies that required pages exist, are in the sitemap and LLM index,
 have a self-canonical URL and an incoming internal link, and have no `noindex` meta

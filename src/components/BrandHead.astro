@@ -1,4 +1,5 @@
 ---
+import { marketingPages, normalizePath } from '../../scripts/core-pages.mjs';
 import { fluxzeroBrand, fluxzeroLogoCssUrl } from '../config/brand.mjs';
 
 interface Props {
@@ -17,12 +18,14 @@ const {
 } = Astro.props;
 const brandCss = `:root{--fluxzero-logo-url:${fluxzeroLogoCssUrl};}`;
 const pageUrl = new URL(Astro.url.pathname, siteUrl).toString();
+const markdownPath = marketingPages.includes(normalizePath(Astro.url.pathname)) ? `${normalizePath(Astro.url.pathname)}index.md` : undefined;
 const imageUrl = new URL(image, siteUrl).toString();
 ---
 
 <title>{title}</title>
 {description && <meta name="description" content={description}>}
 <link rel="canonical" href={pageUrl}>
+{markdownPath && <link rel="alternate" type="text/markdown" href={markdownPath} title="Markdown version of this page">}
 <link rel="describedby" href="/llms.txt" title="Fluxzero site content for AI agents">
 <link rel="alternate" type="text/plain" href="/llms-full.txt" title="Complete Fluxzero site content for AI agents">
 <meta property="og:type" content="website">

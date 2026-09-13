@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
 
@@ -418,14 +418,55 @@ async function readPage(page) {
 
     return {
         ...metadata,
+        summary: extractSummary(document),
         content: renderPageContent(document, metadata.url),
     };
+}
+
+export function extractSummary(document) {
+    const summaries = [];
+    function visit(node) {
+        if (shouldSkip(node)) return;
+        if (getAttribute(node, 'data-llms-summary') !== undefined) {
+            summaries.push(normalizeInline(plainTextContent(node)));
+            return;
+        }
+        for (const child of node.childNodes ?? []) visit(child);
+    }
+    visit(document);
+    return summaries.filter(Boolean).join('\n\n');
+}
+
+export function renderMarkdownPage(page) {
+    return `# ${page.title}\n\nSource: ${page.url}\n\n${page.content}\n`;
+}
+
+// A proposal only: no model, rewritten copy, or separate maintained summary.
+export function renderShortIndex(builtPages, docs) {
+    const homepage = builtPages[0];
+    const link = page => `- [${page.title}](${page.url}index.md): ${page.description}`;
+    const primaryPaths = ['/', '/how-it-works/', '/technical-foundation/', '/product-code/', '/pricing/'];
+    const primary = primaryPaths.map(path => builtPages.find(page => new URL(page.url).pathname === path)).filter(Boolean);
+    const optional = builtPages.filter(page => !primary.includes(page));
+    return `# Fluxzero\n\n> ${homepage.description}\n\n${homepage.summary}\n\n## Read in this order\n\n${primary.map(link).join('\n')}\n\n## Technical documentation\n\n${docs.map(link).join('\n')}\n\n## Complete content\n\n- [Full website text](${siteUrl}/llms-full.txt)\n\n## Optional\n\n${optional.map(link).join('\n')}\n`;
 }
 
 async function generateFiles() {
     const builtPages = await Promise.all(pages.map(readPage));
     const homepage = builtPages[0];
     const docs = await Promise.all(documentationPages.map(path => readPage({ path, file: htmlFile(path) })));
+
+    const proposalIndex = process.argv.indexOf('--short-proposal');
+    if (proposalIndex !== -1) {
+        const target = process.argv[proposalIndex + 1];
+        if (!target) throw new Error('--short-proposal requires an output path outside dist');
+        const absolute = resolve(target);
+        if (absolute === outputDirectory || absolute.startsWith(outputDirectory + '/')) throw new Error('Keep proposals outside the published build');
+        await mkdir(dirname(absolute), { recursive: true });
+        await writeFile(absolute, renderShortIndex(builtPages, docs));
+        console.log(`Generated proposal: ${absolute}`);
+        return;
+    }
 
     const index = cleanMarkdown(`
     # Fluxzero
@@ -439,12 +480,12 @@ async function generateFiles() {
     ## Core pages
 
     ${builtPages
-        .map((page) => `- [${page.title}](${page.url}): ${page.description}`)
+        .map((page) => `- [${page.title}](${page.url}): ${page.description} ([Markdown](${page.url}index.md))`)
         .join('\n')}
 
     ## Technical documentation
 
-    ${docs.map(page => `- [${page.title}](${page.url}): ${page.description}`).join('\n')}
+    ${docs.map(page => `- [${page.title}](${page.url}): ${page.description} ([Markdown](${page.url}index.md))`).join('\n')}
     `);
 
     const full = builtPages
@@ -455,7 +496,12 @@ async function generateFiles() {
     await mkdir(outputDirectory, { recursive: true });
     await Promise.all([
         writeFile(join(outputDirectory, 'llms.txt'), `${selfContained}\n`, 'utf8'),
-        writeFile(join(outputDirectory, 'llms-full.txt'), `${selfContained}\n`, 'utf8'),
+        writeFile(join(outputDirectory, 'llms-full.txt'), `${full}\n`, 'utf8'),
+        ...[...builtPages, ...docs].map(async page => {
+            const target = join(outputDirectory, new URL(page.url).pathname, 'index.md');
+            await mkdir(dirname(target), { recursive: true });
+            await writeFile(target, renderMarkdownPage(page), 'utf8');
+        }),
     ]);
 
     console.log(`Generated llms.txt and llms-full.txt from ${builtPages.length} pages.`);

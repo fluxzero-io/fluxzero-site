@@ -36,7 +36,7 @@ export function validateDiscovery({ pages, sitemap, llms, full, robots }, requir
     for (const path of retiredPages) {
         if (pages.has(path) || sitemap.has(path) || llms.includes(path) || full.includes(path) || [...pages.values()].some(p => p.links.includes(path))) failures.push(`${path}: retired page remains discoverable`);
     }
-    if (llms !== full) failures.push('Full text exports differ');
+    if (!full.trim() || !llms.endsWith(full)) failures.push('Full text exports differ');
     if (!robots.includes(`Sitemap: ${siteUrl}/sitemap-index.xml`)) failures.push('robots.txt does not advertise the sitemap');
     return failures;
 }
@@ -68,6 +68,10 @@ export async function checkDiscovery(directory = 'dist') {
         for (const [,url] of xml.matchAll(/<loc>(.*?)<\/loc>/g)) sitemap.add(normalizePath(new URL(url).pathname));
     }
     const [llms, full, robots] = await Promise.all(['llms.txt', 'llms-full.txt', 'robots.txt'].map(f => readFile(join(directory, f), 'utf8')));
+    for (const path of corePages) {
+        const markdown = await readFile(join(directory, path, 'index.md'), 'utf8');
+        if (!markdown.includes(`Source: ${siteUrl}${path}`) || markdown.length < 100) throw new Error(`Missing or incomplete page Markdown: ${path}`);
+    }
     const failures = validateDiscovery({pages, sitemap, llms, full, robots});
     if (failures.length) throw new Error(`Discoverability checks failed:\n${failures.join('\n')}`);
     console.log(`Discoverability verified for ${corePages.length} core pages.`);

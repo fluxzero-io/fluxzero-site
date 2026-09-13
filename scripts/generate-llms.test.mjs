@@ -50,3 +50,21 @@ test('preserves table labels and cells next to preformatted content', () => {
     assert.equal(result, '| Plan | Price |\n| --- | --- |\n| Basic | €10 — per month |\n\n'
         + '```\n  keep    spacing\n```');
 });
+
+test('page Markdown preserves the source and exact extracted code', async () => {
+    const { renderMarkdownPage } = await import('./generate-llms.mjs');
+    const content = render('<main><h1>Example</h1><pre><code class="language-java">  foo("a  b");</code></pre></main>');
+    assert.equal(renderMarkdownPage({title:'Example',url:'https://example.com/features/',content}), `# Example\n\nSource: https://example.com/features/\n\n${content}\n`);
+});
+
+test('compact proposal uses selected HTML copy and metadata deterministically', async () => {
+    const { extractSummary, renderShortIndex } = await import('./generate-llms.mjs');
+    const summary = extractSummary(parse('<main><p data-llms-summary>Existing <strong>product</strong> copy.</p><p>Other copy.</p><p data-llms-summary hidden>Hidden.</p></main>'));
+    assert.equal(summary, 'Existing product copy.');
+    const pages=[{title:'Home',description:'Existing description.',summary,url:'https://fluxzero.io/'}];
+    const result=renderShortIndex(pages,[]);
+    assert.equal(result,renderShortIndex(pages,[]));
+    assert.ok(result.includes(summary));
+    assert.ok(result.includes('[Home](https://fluxzero.io/index.md): Existing description.'));
+    assert.ok(!result.includes('Other copy.'));
+});

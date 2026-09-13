@@ -85,6 +85,7 @@ const comparisonOptions = [
 const homepageFaqs = [
     {
         question: 'What is Fluxzero?',
+        llmsSummary: true,
         answer: [
             'Fluxzero is designed for the AI era. It is made for everyone building a product, not just engineers.',
             'Every product gets a reliable backend from day zero, so your agent can focus on the product instead of its tech stack.',
@@ -95,7 +96,7 @@ const homepageFaqs = [
         answer: [
             'Nontechnical builders who want to build with an AI agent, without taking on responsibility for the backend.',
             'Developers who want to focus on product behavior, not on integrating and maintaining infrastructure.',
-            'Agencies and IT partners who want to deliver more projects with less maintenance. The foundation is already built and reusable across projects. Fluxzero maintains the technology underneath.',
+            'Agencies who want to deliver more projects with less maintenance. The foundation is already built and reusable across projects. Fluxzero maintains the technology underneath.',
         ],
     },
     {
@@ -492,7 +493,7 @@ const homepageFaqSchema = {
                         </button>
                     </h3>
                     <div class="faq-a" id={answerId}>
-                        {faq.answer.map((paragraph) => <p>{paragraph}</p>)}
+                        {faq.answer.map((paragraph) => <p data-llms-summary={faq.llmsSummary || undefined}>{paragraph}</p>)}
                         {faq.link && <p><a href={faq.link.href}>{faq.link.label} <span aria-hidden="true">→</span></a></p>}
                     </div>
                 </div>
