@@ -1,24 +1,22 @@
 ---
-import examples from '../../data/monitoring-examples.json';
-interface Props { view: keyof typeof examples; caption: string; }
-const {view, caption} = Astro.props;
-const example = examples[view];
+interface Props {view:'trace'|'audit'|'logs'|'issues'|'documents'|'insights';caption:string;}
+const {view,caption}=Astro.props;
+const titles={trace:'Traces',audit:'Audit trail',logs:'Logs',issues:'Issues',documents:'Documents',insights:'Insights'};
 ---
 <figure class="monitoring-example">
-    <div class="monitoring-example__frame" style={`--desktop-ratio:${example.desktop.width}/${example.desktop.height};--mobile-ratio:${example.mobile.width}/${example.mobile.height}`}>
-        <iframe title={`${example.title} — ticketing example`} loading="lazy" tabindex="-1" aria-hidden="true"
-            data-monitoring-frame data-desktop={`/monitoring-examples/${view}-desktop.html`}
-            data-mobile={`/monitoring-examples/${view}-mobile.html`} sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
-    </div>
-    <figcaption><span class="monitoring-example__label">{example.title}</span><span>{caption}{view === 'trace' && <span class="monitoring-example__mobile-hint">Swipe across the timeline to follow the flow.</span>}</span><small>Example data</small></figcaption>
+  <div class="monitoring-example__frame" data-view={view}>
+    <iframe title={`${titles[view]} — interactive ticketing demo`} data-monitoring-frame
+      data-source={`/monitoring-demo/index.html?view=${view}`} sandbox="allow-scripts allow-same-origin" allow="clipboard-write" referrerpolicy="no-referrer"></iframe>
+    <noscript><p>Enable JavaScript to explore this interactive example.</p></noscript>
+  </div>
+  <figcaption><span class="monitoring-example__label">{titles[view]}</span><span>{caption}</span><small>Interactive example · resets on refresh</small></figcaption>
 </figure>
 <script>
-    const mobile = matchMedia('(max-width: 600px)');
-    const frames = document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]');
-    const load = () => frames.forEach(frame => {
-        const source = mobile.matches ? frame.dataset.mobile : frame.dataset.desktop;
-        if (source && frame.getAttribute('src') !== source) frame.src = source;
-    });
-    load();
-    mobile.addEventListener('change', load);
+ const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+   if(!entry.isIntersecting)return;
+   const frame=entry.target as HTMLIFrameElement;
+   if(frame.dataset.source)frame.src=frame.dataset.source;
+   observer.unobserve(frame);
+ }),{rootMargin:'120px'});
+ document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]').forEach(frame=>observer.observe(frame));
 </script>

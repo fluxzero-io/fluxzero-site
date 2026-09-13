@@ -1,11 +1,15 @@
-# Monitoring examples
+# Interactive monitoring examples
 
-Component source: `fluxzero-auditlog` commit `5806ad8`.
+The monitoring page embeds the real Auditlog components in dark mode, with synthetic ticketing data. The demo has no authentication, production data, or backend access. All mutations live in memory and reload resets them. Each frame is independent.
 
-Generated HTML/SVG from the real Fluxzero Auditlog components with synthetic ticketing data. No production data, credentials, Angular runtime, or external requests are included. The marketing page supplies accessible descriptions; frames are visual illustrations with nonfunctional controls removed.
+Build `frontend`'s `demo` target in `fluxzero-auditlog`, then refresh this repository:
 
-To refresh, use the `frontend/src/demo` instructions in `fluxzero-auditlog`, then run:
+    node scripts/import-monitoring-demo.mjs
 
-    node scripts/import-monitoring-examples.mjs ../fluxzero-auditlog/frontend/dist/monitoring-snapshots
+The normal website build uses the committed `public/monitoring-demo` bundle; it needs no running dashboard or sibling checkout. Do not edit the compiled bundle. The importer adds an offline CSP (`connect-src 'none'`) and adjusts the base path. Source and behavior tests live in Auditlog's `frontend/src/demo`.
 
-The normal website build uses the committed exports and needs no sibling repository or running dashboard. Do not hand-edit the generated HTML. Review desktop and mobile after refreshing. The trace retains a horizontally scrollable timeline on narrow screens; tables use the dashboard's native mobile cards. Mobile Insights focuses on Payments. Documents shows the selected reservation detail. Sticky table masks and headers are disabled in static exports so rows remain visible without the dashboard shell.
+Frames initialize only as they approach the viewport and share the same cacheable JS/CSS files. Unlike the former static snapshots, this version includes the Angular/ECharts runtime so real tooltips, drawers, selection and controls work. Initial payload is roughly 660 KB compressed, reused across the examples.
+
+Audit trail and Logs support search and histogram range selection. Issues supports individual and bulk local status changes. Documents offers Reservation, Ticket and Show, with simple text search and native document details. Trace and Insights retain their real graph interactions. The parent page keeps semantic descriptions and captions for accessibility and Markdown/llms exports. Frames remain keyboard-accessible.
+
+Before updating, check desktop and mobile, a single issue resolution, bulk resolution, fresh reset, collection changes, search with results and no results, and tooltips. Confirm there are no external connections or console errors. Changes to demo behavior belong in the Auditlog source, not a separately maintained website imitation.
