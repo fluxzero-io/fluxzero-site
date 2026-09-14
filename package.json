@@ -17,7 +17,7 @@
     "test:changelog": "node --import tsx --test src/loaders/*releases.test.ts",
     "test:llms": "node --test scripts/generate-llms.test.mjs",
     "test:product-code": "node tests/product-code/generate.mjs && mvn -B -f tests/product-code/pom.xml test",
-    "test:discovery": "node --test scripts/check-discovery.test.mjs scripts/markdown-negotiation.test.mjs scripts/check-links.test.mjs",
+    "test:discovery": "node --test scripts/check-discovery.test.mjs scripts/markdown-negotiation.test.mjs scripts/check-links.test.mjs scripts/remark-docs-links.test.mjs",
     "check:discovery": "node scripts/check-discovery.mjs",
     "test:seo": "node --test src/utils/docs-description.test.mjs scripts/inline-marketing-css.test.mjs"
   },
@@ -52,7 +52,8 @@
     "smooth-scroll": "^16.1.3",
     "starlight-links-validator": "^0.18.0",
     "swiper": "^11.2.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "yaml": "^2.9.1"
   },
   "devDependencies": {
     "@astrojs/starlight-tailwind": "^4.0.1",

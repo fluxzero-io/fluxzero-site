@@ -38,6 +38,8 @@ The site is then available at <http://localhost:4321>.
 
 `pnpm dev` refreshes the Astro content, copies the current SDK documentation into the site, and starts Astro. The SDK-sourced files under `src/content/docs/docs/` are generated and ignored by Git; edit their source in `fluxzero-sdk-java` instead.
 
+Relative Markdown links to `.md` and `.mdx` source files are resolved to the target's frontmatter `slug` when rendered. Query strings and fragments are preserved. Missing targets or slugs fail the build, and the final link check validates the published routes.
+
 A GitHub token is not required for ordinary local development. The changelog loader can read public releases without authentication, although setting `GITHUB_TOKEN` avoids GitHub's lower anonymous rate limit:
 
 ```bash

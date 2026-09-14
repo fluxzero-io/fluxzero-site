@@ -6,10 +6,12 @@ import tailwindcss from '@tailwindcss/vite';
 import starlightLinksValidator from 'starlight-links-validator'
 import cloudflare from '@astrojs/cloudflare';
 import { fluxzeroBrand } from './src/config/brand.mjs';
+import remarkDocsLinks from './scripts/remark-docs-links.mjs';
 
 // https://astro.build/config
 export default defineConfig({
     site: 'https://fluxzero.io',
+    markdown: { remarkPlugins: [remarkDocsLinks] },
     vite: {
         plugins: [tailwindcss()],
         css: {
