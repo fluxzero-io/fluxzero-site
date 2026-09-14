@@ -838,7 +838,7 @@ function renderChangelogPage(releases) {
 `;
   const tocScript = String.raw`
 (() => {
-  const releasePattern = /^([A-Z][a-z]{2} \d{1,2}, \d{4})\s*·\s*(\d+\.\d+\.\d+)$/;
+  const releasePattern = /^([A-Z][a-z]{2} \d{1,2}, \d{4})\s*·\s*(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)$/;
   const tocLabelSelector = ".right-sidebar a[href^='#'] > span, mobile-starlight-toc a[href^='#'] > span";
 
   const formatChangelogToc = () => {
