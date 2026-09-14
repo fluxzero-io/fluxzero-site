@@ -82,6 +82,12 @@ The [product-code tests](tests/product-code/README.md) extract all Java examples
 | `scripts/generate-llms.mjs` | Machine-readable marketing-content generation |
 | `wrangler.jsonc` | Cloudflare Worker environments, bindings, and production domains |
 
+The changelog is generated in pages of 20 releases, newest first. Older pages stay
+out of the main docs sidebar and are reachable through Newer/Older links. Existing
+release fragments forward to the page containing that release when JavaScript is
+enabled, including after new releases shift the page boundaries. Each page imports
+only its own release bodies.
+
 `src/data/changelog-cache.json` is generated site data. A normal sync or build may update it; commit the change only after confirming that it contains expected public release data and no secrets.
 
 ## Build and deployment
