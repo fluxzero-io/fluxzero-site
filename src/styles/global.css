@@ -64,6 +64,21 @@
 
 /* Component layer for reusable patterns */
 @layer components {
+  .sl-markdown-content .sl-badge.heading-badge {
+    margin-inline-start: 0.35rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    border-color: color-mix(in srgb, var(--sl-color-accent) 22%, transparent);
+    background: color-mix(in srgb, var(--sl-color-accent) 9%, var(--sl-color-bg));
+    color: var(--sl-color-accent-high);
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+
   .sl-markdown-content a[href='#schedule-1---nldigital-terms-2025'] {
     color: inherit;
     text-decoration: none;
