@@ -413,38 +413,20 @@ function renderChangelogPage(releases, page, totalPages, anchorPages) {
   }
   .changelog-pagination a:hover { text-decoration: underline; }
   .changelog-pagination > span { color: var(--sl-color-gray-2); }
-  .changelog-hero {
-    display: grid;
-    gap: 0.6rem;
-    margin: 1.25rem 0 2rem;
-    padding: 1.15rem 1.25rem 1.25rem;
-    border: 1px solid var(--sl-color-gray-6);
-    border-radius: 0.5rem;
-    background:
-      linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--sl-color-accent) 7%, transparent),
-        transparent 42%
-      ),
-      var(--sl-color-bg-nav);
+  .changelog-pagination--toc {
+    margin: 0.5rem 0;
+    padding: 0.25rem 0;
+    font-size: var(--sl-text-xs);
   }
-
-  .changelog-hero__intro {
-    display: grid;
-    gap: 0.5rem;
-  }
-
-  .changelog-hero__intro h2 {
+  .changelog-pagination--toc a { color: var(--sl-color-text-accent); }
+  mobile-starlight-toc .changelog-pagination--toc {
     margin: 0;
-    font-size: clamp(1.45rem, 3vw, 2rem);
-    letter-spacing: 0;
+    padding: 0.5rem 1rem;
+    position: sticky;
+    top: 0;
+    background: var(--sl-color-black);
   }
-
-  .changelog-hero__copy {
-    max-width: 52rem;
-    margin: 0;
-    color: var(--sl-color-gray-2);
-  }
+  .changelog-intro { color: var(--sl-color-gray-2); }
 
   .changelog-year {
     margin-top: 1.15rem;
@@ -862,6 +844,15 @@ function renderChangelogPage(releases, page, totalPages, anchorPages) {
   window.addEventListener("hashchange", followReleaseAnchor);
   const formatChangelogToc = () => {
     followReleaseAnchor();
+    const pagination = document.querySelector(".changelog-pagination:not(.changelog-pagination--toc)");
+    if (pagination) {
+      document.querySelectorAll("starlight-toc > nav, mobile-starlight-toc .dropdown").forEach((container) => {
+        if (container.querySelector(".changelog-pagination--toc")) return;
+        const pager = pagination.cloneNode(true);
+        pager.classList.add("changelog-pagination--toc");
+        container.insertBefore(pager, container.querySelector("ul"));
+      });
+    }
     document.querySelectorAll(tocLabelSelector).forEach((label) => {
       if (label.classList.contains("changelog-toc-release-label")) return;
 
@@ -948,12 +939,7 @@ export const changelogTocScript = ${JSON.stringify(tocScript)};
 
 <script is:inline set:html={changelogTocScript}></script>
 
-<section class="changelog-hero">
-  <div class="changelog-hero__intro">
-    <h2>Fluxzero SDK changes</h2>
-    <p class="changelog-hero__copy">Follow SDK changes that may affect application behavior, integrations, build setup, and operational defaults. Use this overview to plan upgrades, scan recent changes by version, and open GitHub when you need deeper implementation context.</p>
-  </div>
-</section>
+<p class="changelog-intro">New features, improvements, and fixes in the Fluxzero SDK.</p>
 
 ${pagination}
 
