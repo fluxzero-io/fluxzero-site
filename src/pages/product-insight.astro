@@ -12,23 +12,20 @@ import DashboardExample from '../components/monitoring/DashboardExample.astro';
 import 'boxicons/css/boxicons.min.css';
 const sections = [
     {id:'audit-trail',view:'audit',label:'01 · Audit trail',first:'Every action',second:'leaves a trail.',
-        copy:'Find exactly what happened in your product, for example, why a reservation was cancelled or a payment never arrived. The original messages show what happened along the way.',
-        notes:[['Product language','Follow the actions your product understands, with their original data attached.'],['Everything in one history','From web traffic to scheduled work and errors, the history is already there to investigate.'],['Search and filter','Narrow the history by message type, time, and relevant fields.']]},
+        copy:'Find exactly what happened in your product, for example, why a reservation was cancelled or a payment never arrived. Your agent can look back at the original actions and data to find the answer.',
+        notes:[['Product language','Your agent sees what your product was doing, with the original data attached.'],['Everything in one history','From web traffic to scheduled work and errors, the history is already there to investigate.'],['Search and filter','Your agent can find the relevant moment without asking you to retrace your steps.']]},
     {id:'traces',view:'trace',label:'02 · Traces',first:'Follow the action.',second:'See exactly what it set in motion.',
-        copy:'One action can trigger work across several applications. Follow its trace to see exactly what happened along the way and where time was spent.',
-        notes:[['The whole chain','Follow a request through the work it triggered.'],['Across applications','See how different parts of your product worked together.'],['Timing included','Distinguish processing time from time spent waiting.']]},
+        copy:'A problem can start somewhere entirely different from where you notice it. Your agent can follow exactly how one action leads to the next, all the way to the outcome.',
+        notes:[['The whole chain','Your agent can follow a problem back to the action that started it.'],['Across applications','The history stays connected as work moves between parts of your product.'],['Timing included','Your agent can see exactly where time was spent, including time spent waiting.']]},
     {id:'issues',view:'issues',label:'03 · Issues',first:'Your product’s issues.',second:'Your agent’s work queue.',
         copy:'Every product comes with a shared work queue for investigating and resolving failures. Your agent gets the evidence behind each issue, so it can work on the cause instead of asking you to explain the symptoms.',
-        notes:[['Recognize recurring problems','See how often a failure happens and when it started.'],['Keep the evidence','Inspect individual occurrences with their error details and application context.'],['Track what needs attention','Resolve or mute issues, individually or in bulk. Keep open problems in view.']]},
-    {id:'logs',view:'logs',label:'04 · Application logs',first:'Every application.',second:'One place for logs.',
-        copy:'Logs from all your applications come together automatically. Search across them from one place, without a separate logging service to configure.',
-        notes:[['Collected automatically','Your applications write their logs. The output is already available in the dashboard.'],['Search them together','Look across applications from one place.'],['Focus when needed','Filter by application, log level, and time.']]},
-    {id:'documents',view:'documents',label:'05 · Documents',first:'See the data',second:'behind your product.',
-        copy:'Explore the documents your product stores and makes searchable. Inspect exactly what is stored, with export available whenever you need the data outside the dashboard.',
-        notes:[['Browse collections','Explore the different kinds of data your product works with.'],['Inspect the details','Open a document to see its fields and values.'],['Search directly','Find the records you need without writing SQL or building a separate administration screen.']]},
-    {id:'insights',view:'insights',label:'06 · Insights',first:'Slowdowns and errors.',second:'Visible at a glance.',
-        copy:'See where your product is slow or failing in one view. Open the affected part to see exactly what is happening there.',
-        notes:[['Spot the bottlenecks','Find slow processing and work that is piling up.'],['Compare the workload','See how often each part runs and how much time it takes.'],['Focus on trouble','Bring errors and parts that have fallen behind into view.']]},
+        notes:[['Recognize recurring problems','Your agent can tell a recurring problem from a one-off failure.'],['Keep the evidence','Each occurrence gives your agent the context to investigate what went wrong.'],['Track what needs attention','You and your agent share a clear view of what still needs fixing.']]},
+    {id:'documents',view:'documents',label:'04 · Documents',first:'See the data',second:'behind your product.',
+        copy:'Your data stays within reach. You or your agent can find exactly what your product has stored and export it whenever you need it elsewhere.',
+        notes:[['Browse collections','Explore the different kinds of data your product works with.'],['Inspect the details','Check the actual data behind something your product shows you.'],['Search directly','Find the records you need without writing SQL or building a separate administration screen.']]},
+    {id:'insights',view:'insights',label:'05 · Insights',first:'Slowdowns and errors.',second:'Visible at a glance.',
+        copy:'Your agent can see which part of your product is slow or failing, without waiting for you to describe the problem. The overview points straight to where it should investigate.',
+        notes:[['Spot the bottlenecks','Your agent can find what is making people wait.'],['Compare the workload','See which parts of your product are busiest.'],['Focus on trouble','Your agent can focus on the parts that need attention.']]},
 ] as const;
 ---
 <!DOCTYPE html>
@@ -70,7 +67,7 @@ const sections = [
         <section class="cloud-proof-section cloud-proof-next-section monitoring-agent" aria-labelledby="agent-evidence-title">
             <div class="v4-shell cloud-proof-shell">
                 <header class="cloud-proof-copy">
-                    <p class="cloud-proof-next__number">07 · Working with AI</p>
+                    <p class="cloud-proof-next__number">06 · Working with AI</p>
                     <h2 id="agent-evidence-title">A treasure trove<br /><span>for your agent.</span></h2>
                     <p>Your agent gets more than an error message. It can follow the original request through your product and inspect the state at the moment things went wrong.</p>
                     <p>That history is already connected to the issue and the application version involved. Your agent can investigate what changed without first piecing together evidence from separate systems.</p>
@@ -104,7 +101,7 @@ const sections = [
             <div class="v4-shell cloud-proof-shell">
                 <p class="cloud-proof-next__eyebrow">Built into every product</p>
                 <h2 id="monitoring-conclusion-title">Less to manage.<br /><span>More to see.</span></h2>
-                <p>Fluxzero gives you a deeper understanding of what happens inside it. You can follow a single interaction through the whole product and understand how it reached its outcome.</p>
+                <p>Fluxzero gives you a deeper understanding of what happens inside your product. You can follow a single interaction through the whole product and understand how it reached its outcome.</p>
                 <p>You get the full story, so improvements start with evidence instead of guesswork.</p>
                 <div class="cloud-proof-next__actions">
                     <a class="v4-button v4-button--primary" href="/get-started">Start building <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>

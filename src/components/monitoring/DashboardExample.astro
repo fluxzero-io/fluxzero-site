@@ -18,16 +18,13 @@ const titles={trace:'Traces',audit:'Audit trail',logs:'Logs',issues:'Issues',doc
    if(frame.dataset.source)frame.src=frame.dataset.source;
    observer.unobserve(frame);
  }),{rootMargin:'120px'});
- const announcePageWheel=()=>document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]').forEach(frame=>frame.contentWindow?.postMessage({type:'monitoring-page-wheel'},location.origin));
- window.addEventListener('wheel',event=>{if(!event.ctrlKey)announcePageWheel();},{passive:true});
  window.addEventListener('message',event=>{
-   if(event.origin!==location.origin || event.data?.type!=='monitoring-scroll')return;
-   const frames=[...document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]')];
-   if(!frames.some(frame=>frame.contentWindow===event.source))return;
-   const delta=Number(event.data.deltaY);
-   if(!Number.isFinite(delta))return;
-   announcePageWheel();
-   window.scrollBy({top:delta*(event.data.deltaMode===1?16:event.data.deltaMode===2?innerHeight:1),behavior:'instant'});
+   if(event.origin!==location.origin || event.data?.type!=='monitoring-height')return;
+   const frame=[...document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]')].find(frame=>frame.contentWindow===event.source);
+   const height=Number(event.data.height);
+   if(frame && Number.isFinite(height) && height>=100 && height<=2400) {
+     (frame.parentElement as HTMLElement).style.height=`${Math.ceil(height)}px`;
+   }
  });
  document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]').forEach(frame=>observer.observe(frame));
 </script>
