@@ -262,7 +262,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="intent-title">Only product logic.<br><span>Working at any scale.</span></h2>
                     <p>You decide how a feature should work. Fluxzero keeps its rules intact when many customers act at once. The same logic continues to work as usage grows, without engineering work for your agent.</p>
                 </header>
+                <section class="product-code-prompt" aria-labelledby="prompt-1">
+                    <h3 id="prompt-1" class="product-code-step"><span aria-hidden="true">01</span> You prompt</h3>
+                    <blockquote><p>Let customers reserve an available ticket. Hold it for them while they pay, and reject the reservation if the ticket is already taken.</p></blockquote>
+                </section>
                 <div class="product-code-proof product-code-proof--action" data-reveal data-reveal-delay="1">
+                    <h3 class="product-code-step product-code-step--agent"><span aria-hidden="true">02</span> Your agent builds</h3>
                     <ProductCodePanel title="ReserveTicket.java" label="One rule, two changes" code={actionCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>State loads automatically</dt><dd>Fluxzero provides the product state and which customer is making the change.</dd></div>
@@ -280,7 +285,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="domain-state-title">Your product changes.<br><span>Its history stays.</span></h2>
                     <p>Define the parts of your product and how they fit together. Fluxzero keeps the information up to date and preserves its history. Your app can use that history directly in its features.</p>
                 </header>
+                <section class="product-code-prompt" aria-labelledby="prompt-2">
+                    <h3 id="prompt-2" class="product-code-step"><span aria-hidden="true">01</span> You prompt</h3>
+                    <blockquote><p>Each show has tickets, and each ticket can have reservations. Keep track of who reserved it, its status, and the customer’s contact email.</p></blockquote>
+                </section>
                 <div class="product-code-proof product-code-proof--model" data-reveal data-reveal-delay="1">
+                    <h3 class="product-code-step product-code-step--agent"><span aria-hidden="true">02</span> Your agent builds</h3>
                     <figure class="product-code-relation-map">
                         <div class="product-code-relation-map__grid">
                             <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--show" title="Show.java" label="Root model" code={showModelCode} />
@@ -333,7 +343,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="tests-title">Know it works.<br><span>Before customers use it.</span></h2>
                     <p>Even if you’ve never written code, you can check that your agent built what you asked for. Fluxzero provides the foundation. End-to-end tests verify your product’s behavior before customers use it. The same tests check that features keep working after each change.</p>
                 </header>
+                <section class="product-code-prompt" aria-labelledby="prompt-3">
+                    <h3 id="prompt-3" class="product-code-step"><span aria-hidden="true">01</span> You prompt</h3>
+                    <blockquote><p>Check that an unpaid reservation expires after 15 minutes. Also check that paying in time confirms the reservation and keeps the ticket reserved.</p></blockquote>
+                </section>
                 <div class="product-code-proof product-code-proof--test" data-reveal data-reveal-delay="1">
+                    <h3 class="product-code-step product-code-step--agent"><span aria-hidden="true">02</span> Your agent builds</h3>
                     <ProductCodePanel title="ReserveTicketTest.java" label="Behavior tested end-to-end" code={testCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>Production behavior</dt><dd>The scenario runs through the same rules as the real application.</dd></div>
@@ -351,7 +366,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="search-title">Your data comes<br><span>ready to search.</span></h2>
                     <p>Query your data from anywhere in your code. Use a dedicated query class to define what to fetch and who may access it. Fluxzero keeps your data and its relationships searchable as the product changes, without a separate search system to build or maintain.</p>
                 </header>
+                <section class="product-code-prompt" aria-labelledby="prompt-4">
+                    <h3 id="prompt-4" class="product-code-step"><span aria-hidden="true">01</span> You prompt</h3>
+                    <blockquote><p>Find up to 50 available tickets for a show in the section I choose, ordered by row.</p></blockquote>
+                </section>
                 <div class="product-code-proof product-code-proof--query" data-reveal data-reveal-delay="1">
+                    <h3 class="product-code-step product-code-step--agent"><span aria-hidden="true">02</span> Your agent builds</h3>
                     <ProductCodePanel title="FindAvailableTickets.java" label="Query and search" code={searchCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>Search maintained automatically</dt><dd>Searchable data stays up to date as your product changes.</dd></div>
@@ -369,7 +389,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="workflows-title">Your product follows up.<br><span>Even after a restart.</span></h2>
                     <p>Scheduling is part of almost every application. Fluxzero makes it easy to schedule and test what should happen later. Scheduled work survives restarts and deployments, with your rules checked when it runs.</p>
                 </header>
+                <section class="product-code-prompt" aria-labelledby="prompt-5">
+                    <h3 id="prompt-5" class="product-code-step"><span aria-hidden="true">01</span> You prompt</h3>
+                    <blockquote><p>Give customers 15 minutes to pay. If they haven’t paid, cancel the reservation and make the ticket available again. Stop the countdown when payment is confirmed.</p></blockquote>
+                </section>
                 <div class="product-code-proof product-code-proof--stacked" data-reveal data-reveal-delay="1">
+                    <h3 class="product-code-step product-code-step--agent"><span aria-hidden="true">02</span> Your agent builds</h3>
                     <div class="product-code-proof__code-stack">
                         <ProductCodePanel title="ReservationTimers.java" label="Start and cancel a deadline" code={timerCode} />
                         <ProductCodePanel title="ExpireReservation.java" label="Remove hold and release ticket" code={expiryCode} />
@@ -390,7 +415,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="durable-workflows-title">Workflows pick up<br><span>where they left off.</span></h2>
                     <p>Some workflows need to wait for an external service before continuing. Define what happens when the response arrives. Fluxzero preserves progress and connects each response to the right process, even after a restart.</p>
                 </header>
+                <section class="product-code-prompt" aria-labelledby="prompt-6">
+                    <h3 id="prompt-6" class="product-code-step"><span aria-hidden="true">01</span> You prompt</h3>
+                    <blockquote><p>Start payment when a ticket is reserved. When the payment provider confirms success, confirm the matching reservation.</p></blockquote>
+                </section>
                 <div class="product-code-proof product-code-proof--workflow" data-reveal data-reveal-delay="1">
+                    <h3 class="product-code-step product-code-step--agent"><span aria-hidden="true">02</span> Your agent builds</h3>
                     <ProductCodePanel title="PaymentProcess.java" label="Wait for a payment response" code={paymentProcessCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>Progress preserved</dt><dd>Each workflow’s progress is preserved, including after a restart.</dd></div>
@@ -408,7 +438,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="policy-title">You decide who may do what.<br><span>Fluxzero enforces it.</span></h2>
                     <p>Define the access rules that fit your product. Fluxzero enforces them before allowing a change. Information marked as private stays protected and can be erased without losing the surrounding history.</p>
                 </header>
+                <section class="product-code-prompt" aria-labelledby="prompt-7">
+                    <h3 id="prompt-7" class="product-code-step"><span aria-hidden="true">01</span> You prompt</h3>
+                    <blockquote><p>Customers must sign in to change the contact email on their own reservation. Check that it’s a valid email address and keep it private.</p></blockquote>
+                </section>
                 <div class="product-code-proof product-code-proof--policy" data-reveal data-reveal-delay="1">
+                    <h3 class="product-code-step product-code-step--agent"><span aria-hidden="true">02</span> Your agent builds</h3>
                     <ProductCodePanel title="UpdateContactEmail.java" label="Ownership and protected data" code={personalDataCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>Identity supplied</dt><dd>Your rule receives the authenticated customer making the change.</dd></div>
@@ -426,7 +461,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="web-title">Public web endpoints.<br><span>Private applications.</span></h2>
                     <p>Your web endpoints live in Fluxzero. Your application has no public endpoint of its own and securely pulls requests when it can handle them. This keeps it out of reach of direct network attacks. Excess traffic waits in Fluxzero instead of flooding the application.</p>
                 </header>
+                <section class="product-code-prompt" aria-labelledby="prompt-8">
+                    <h3 id="prompt-8" class="product-code-step"><span aria-hidden="true">01</span> You prompt</h3>
+                    <blockquote><p>Let the website submit a ticket reservation and get back its reservation reference.</p></blockquote>
+                </section>
                 <div class="product-code-proof product-code-proof--web" data-reveal data-reveal-delay="1">
+                    <h3 class="product-code-step product-code-step--agent"><span aria-hidden="true">02</span> Your agent builds</h3>
                     <ProductCodePanel title="ReservationApi.java" label="Web request to command" code={webCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>Input checked</dt><dd>Fluxzero checks the submitted data against your requirements before running the feature.</dd></div>
@@ -444,7 +484,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="location-transparency-title">The same code.<br><span>Wherever the work runs.</span></h2>
                     <p>Send a request without choosing which application will handle it. Fluxzero delivers it and returns the result. Whether the handler runs in your own app or another one, the calling code stays the same.</p>
                 </header>
+                <section class="product-code-prompt" aria-labelledby="prompt-9">
+                    <h3 id="prompt-9" class="product-code-step"><span aria-hidden="true">01</span> You prompt</h3>
+                    <blockquote><p>Let the website ask for available tickets by show and section, using the ticket search we already built.</p></blockquote>
+                </section>
                 <div class="product-code-proof product-code-proof--location" data-reveal data-reveal-delay="1">
+                    <h3 class="product-code-step product-code-step--agent"><span aria-hidden="true">02</span> Your agent builds</h3>
                     <ProductCodePanel title="TicketApi.java" label="Requests without routing code" code={queryCallerCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>Web handlers anywhere</dt><dd>The web handler can run in any connected application. The public endpoint stays the same.</dd></div>
@@ -462,7 +507,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="independent-consumers-title">Each part can scale<br><span>independently.</span></h2>
                     <p>Not every part of your application is equally busy. With separate consumers, parts run and scale independently. Fluxzero keeps their progress separate and distributes the work, so capacity can grow where it is needed.</p>
                 </header>
+                <section class="product-code-prompt" aria-labelledby="prompt-10">
+                    <h3 id="prompt-10" class="product-code-step"><span aria-hidden="true">01</span> You prompt</h3>
+                    <blockquote><p>Check confirmed reservations for fraud. Send suspicious ones for review, and let fraud checks run independently of the rest of the product.</p></blockquote>
+                </section>
                 <div class="product-code-proof" data-reveal data-reveal-delay="1">
+                    <h3 class="product-code-step product-code-step--agent"><span aria-hidden="true">02</span> Your agent builds</h3>
                     <ProductCodePanel title="FraudDetection.java" label="Fraud checks with their own capacity" code={consumerCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>Capacity where it counts</dt><dd>Give demanding work its own consumer. Add threads or app instances as demand grows.</dd></div>
@@ -480,7 +530,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <h2 id="evolution-title">New features can be built<br><span>from historical data.</span></h2>
                     <p>Fluxzero preserves your product’s history. Use it to add features retroactively, with the information as it was at the time. The same code processes earlier activity and continues with new activity.</p>
                 </header>
+                <section class="product-code-prompt" aria-labelledby="prompt-11">
+                    <h3 id="prompt-11" class="product-code-step"><span aria-hidden="true">01</span> You prompt</h3>
+                    <blockquote><p>Give customers 100 reward points for each confirmed reservation. Include earlier reservations as well as new ones.</p></blockquote>
+                </section>
                 <div class="product-code-proof product-code-proof--history" data-reveal data-reveal-delay="1">
+                    <h3 class="product-code-step product-code-step--agent"><span aria-hidden="true">02</span> Your agent builds</h3>
                     <ProductCodePanel title="CustomerRewards.java" label="Retroactive event handler" code={historyCode} />
                     <dl class="product-code-proof__notes">
                         <div><dt>History supplied</dt><dd>Your new feature receives recorded activity from the point you choose.</dd></div>
