@@ -3,10 +3,11 @@ interface Props {
     title: string;
     label: string;
     code: string;
+    prompt?: string;
     class?: string;
 }
 
-const { title, label, code, class: className } = Astro.props;
+const { title, label, code, prompt, class: className } = Astro.props;
 // Keep real newlines for copying and text export; soft wraps are visual only.
 const lines = code.split('\n').map((line) => {
     const indent = line.match(/^ */)?.[0].length ?? 0;
@@ -17,8 +18,16 @@ const lines = code.split('\n').map((line) => {
 
 <figure class:list={['product-code-panel', className]}>
     <figcaption>
-        <strong>{title}</strong>
-        <small>{label}</small>
+        {prompt && (
+            <div class="product-code-panel__prompt">
+                <p class="product-code-panel__prompt-label"><strong>You write</strong></p>
+                <blockquote><p>{prompt}</p></blockquote>
+            </div>
+        )}
+        <div class="product-code-panel__caption">
+            <strong>What your agent writes</strong>
+            <small>{label}</small>
+        </div>
     </figcaption>
     <div class="product-code-panel__body">
         <button
