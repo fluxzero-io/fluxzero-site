@@ -331,13 +331,13 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">03 · Testing behavior</p>
                     <h2 id="tests-title">Know it works.<br><span>Before customers use it.</span></h2>
-                    <p>Even if you’ve never written code, you can check that your agent built what you asked for. Fluxzero provides the foundation. End-to-end tests verify your product’s behavior before customers use it. The same tests check that features keep working after each change.</p>
+                    <p>Tests are part of every feature your agent builds. You describe the behavior; your agent writes the code and tests together. Fluxzero lets those tests run complete flows, including time passing, so they keep checking the feature as your product changes.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--test" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="ReserveTicketTest.java" label="Behavior tested end-to-end" code={testCode} prompt="Can you test the booking flow before we launch?" />
+                    <ProductCodePanel title="ReserveTicketTest.java" label="Behavior tested end-to-end" code={testCode} prompt="A booking is only confirmed once the customer has paid." />
                     <dl class="product-code-proof__notes">
                         <div><dt>Production behavior</dt><dd>The scenario runs through the same rules as the real application.</dd></div>
-                        <div><dt>Check before you ship</dt><dd>Your agent writes the code. Passing behavior tests show that it meets your requirements.</dd></div>
+                        <div><dt>Included with the feature</dt><dd>Your agent adds the tests as it builds. You don’t need to ask for them separately.</dd></div>
                         <div><dt>Visible outcome</dt><dd>Success and expected rejections are checked without infrastructure or mocks.</dd></div>
                     </dl>
                 </div>
@@ -406,10 +406,10 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">07 · Access and privacy</p>
                     <h2 id="policy-title">You decide who may do what.<br><span>Fluxzero enforces it.</span></h2>
-                    <p>Define the access rules that fit your product. Fluxzero enforces them before allowing a change. Information marked as private stays protected and can be erased without losing the surrounding history.</p>
+                    <p>Keep personal details private and removable when needed. Fluxzero stores protected values separately, so they can be erased without losing the surrounding history. Your access rules control who can view or change them.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--policy" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="UpdateContactEmail.java" label="Ownership and protected data" code={personalDataCode} prompt="Customers should only be able to change their own details." />
+                    <ProductCodePanel title="UpdateContactEmail.java" label="Ownership and protected data" code={personalDataCode} prompt="We need to be able to erase customers' personal details." />
                     <dl class="product-code-proof__notes">
                         <div><dt>Identity supplied</dt><dd>Your rule receives the authenticated customer making the change.</dd></div>
                         <div><dt>Access checked first</dt><dd>When sign-in is required, unauthenticated requests are rejected before the feature runs.</dd></div>
