@@ -263,7 +263,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>You decide how a feature should work. Fluxzero keeps its rules intact when many customers act at once. The same logic continues to work as usage grows, without engineering work for your agent.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--action" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="ReserveTicket.java" label="One rule, two changes" code={actionCode} prompt="Let's build a ticketing system for concerts. Many customers will need to be able to use the system simultaneously." />
+                    <ProductCodePanel title="ReserveTicket.java" label="One rule, two changes" code={actionCode} prompt="Let's build a ticketing system for concerts. Make sure the same ticket can't be booked twice, even when lots of customers book at once." />
                     <dl class="product-code-proof__notes">
                         <div><dt>State loads automatically</dt><dd>Fluxzero provides the product state and which customer is making the change.</dd></div>
                         <div><dt>Everything changes together</dt><dd>If something changes while the rule runs, it runs again before the changes are saved.</dd></div>
