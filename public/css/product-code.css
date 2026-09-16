@@ -202,7 +202,6 @@
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    border-bottom: 1px solid rgba(127, 153, 180, 0.22);
     color: #d6e2ef;
     font-size: 13px;
 }
