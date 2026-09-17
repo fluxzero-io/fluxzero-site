@@ -1,0 +1,152 @@
+---
+import '../../public/css/v4.css';
+import '../../public/css/marketing-shell.css';
+import '../../public/css/partners.css';
+import BrandHead from '../components/BrandHead.astro';
+import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+import MarketingFooter from '../components/marketing/MarketingFooter.astro';
+
+const projects = [
+    { name: 'Customer portal', type: 'Client A', variant: 'portal' },
+    { name: 'Booking platform', type: 'Client B', variant: 'booking' },
+    { name: 'Operations app', type: 'Client C', variant: 'operations' },
+];
+const guarantees = [
+    { title: 'Correctness', copy: 'Business rules hold, even when many users act at once.' },
+    { title: 'Security', copy: 'Isolated environments and access rules built into the foundation.' },
+    { title: 'Privacy', copy: 'Control who sees personal data and remove it when needed.' },
+    { title: 'Recovery', copy: 'Durable state and recoverable work when execution is interrupted.' },
+    { title: 'Auditability', copy: 'A traceable history of what happened and why.' },
+    { title: 'Scale', copy: 'Room to grow without rebuilding the product’s foundation.' },
+];
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Keep this standalone page out of search results while it is being reviewed. -->
+    <meta name="robots" content="noindex">
+    <BrandHead title="For agencies & builders — Fluxzero" description="More client projects. No infrastructure to manage. Build every product on the same proven European cloud foundation." />
+</head>
+<body class="v4-page partners-page">
+    <a class="partners-skip" href="#main">Skip to content</a>
+    <MarketingHeader />
+    <main id="main">
+        <header class="partners-hero">
+            <div class="partners-shell">
+                <p class="partners-eyebrow">For agencies & builders</p>
+                <h1>More client projects.<br><span>No infrastructure<br class="partners-mobile-break"> to manage.</span></h1>
+                <p class="partners-lead">Fluxzero gives you a proven foundation for every product you build. Start with your client’s next idea, without setting up a new backend foundation for every project.</p>
+                <div class="partners-actions">
+                    <a class="v4-button v4-button--primary" href="/contact#contactForm">Build with us <span aria-hidden="true">→</span></a>
+                    <a class="partners-text-link" href="/get-started">Try it on your next project <span aria-hidden="true">↗</span></a>
+                </div>
+
+                <figure class="partners-foundation">
+                    <ul class="partners-projects" aria-label="Example client projects">
+                        {projects.map(project => (
+                            <li class={`partners-project partners-project--${project.variant}`}>
+                                <div class="partners-project-top"><span>{project.type}</span><span class="partners-project-dot" aria-hidden="true"></span></div>
+                                <strong>{project.name}</strong>
+                                <div class="partners-project-preview" aria-hidden="true">
+                                    <span></span><span></span><span></span><span></span><span></span><span></span>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                    <div class="partners-connections" aria-hidden="true"><span></span><span></span><span></span></div>
+                    <div class="partners-platform">
+                        <div class="partners-platform-name"><span class="logo-mark" aria-hidden="true"></span><strong>One Fluxzero foundation.</strong></div>
+                        <p>Data · Security · Workflows · Observability · Runtime</p>
+                    </div>
+                    <figcaption>The same foundation across projects. Separate environments for every client.</figcaption>
+                </figure>
+            </div>
+        </header>
+
+        <section class="partners-section" aria-labelledby="repeat-title">
+            <div class="partners-shell partners-split">
+                <div>
+                    <p class="partners-eyebrow">01 / Start further ahead</p>
+                    <h2 id="repeat-title">New client.<br>Same head start.</h2>
+                </div>
+                <div class="partners-copy">
+                    <p>Every client brings a different product. The need for data, security, background work and reliable execution stays the same. Fluxzero already has that covered.</p>
+                    <p>Your team and AI agents use one familiar foundation across projects. Spend your time and prompt budget on the features that make each client’s product valuable.</p>
+                    <dl class="partners-outcomes">
+                        <div><dt>Faster delivery</dt><dd>Start with product behavior, without repeating infrastructure setup.</dd></div>
+                        <div><dt>More predictable projects</dt><dd>Fewer backend decisions and infrastructure surprises between idea and launch.</dd></div>
+                        <div><dt>Healthier margins</dt><dd>Put more of the project budget into work your client values.</dd></div>
+                    </dl>
+                </div>
+            </div>
+        </section>
+
+        <section class="partners-section partners-guarantees" aria-labelledby="guarantees-title">
+            <div class="partners-shell">
+                <div class="partners-section-head">
+                    <p class="partners-eyebrow">02 / Built in from day one</p>
+                    <h2 id="guarantees-title">Enterprise foundations.<br>For every client project.</h2>
+                    <p>A small project still needs to keep its promises. Every Fluxzero project starts with the product guarantees that serious software depends on.</p>
+                </div>
+                <dl class="partners-guarantee-grid">
+                    {guarantees.map((guarantee, index) => (
+                        <div>
+                            <dt><span class="partners-guarantee-index" aria-hidden="true">0{index + 1}</span>{guarantee.title}</dt>
+                            <dd>{guarantee.copy}</dd>
+                        </div>
+                    ))}
+                </dl>
+                <a class="partners-text-link" href="/technical-foundation">See how the guarantees work <span aria-hidden="true">→</span></a>
+            </div>
+        </section>
+
+        <section class="partners-section" aria-labelledby="portfolio-title">
+            <div class="partners-shell partners-split">
+                <div>
+                    <p class="partners-eyebrow">03 / Beyond the launch</p>
+                    <h2 id="portfolio-title">Grow your portfolio.<br>Keep your focus.</h2>
+                </div>
+                <div class="partners-copy">
+                    <p>A finished project should make room for the next one. With Fluxzero operating the foundation, every new client doesn’t leave you with another infrastructure stack to maintain.</p>
+                    <p>Keep your attention on new features, integrations and changing client needs. A familiar way to build, test and understand every product also makes it easier to move between projects and bring teammates in.</p>
+                    <div class="partners-responsibilities">
+                        <div><h3>Your team</h3><p>Client relationships, product behavior and the next useful feature.</p></div>
+                        <div><h3>Fluxzero</h3><p>The cloud foundation that keeps those products running.</p></div>
+                    </div>
+                    <a class="partners-text-link" href="/product-insight">See what’s happening in every product <span aria-hidden="true">→</span></a>
+                </div>
+            </div>
+        </section>
+
+        <section class="partners-section partners-europe" aria-labelledby="europe-title">
+            <div class="partners-shell partners-split">
+                <div>
+                    <p class="partners-eyebrow">04 / A European foundation</p>
+                    <h2 id="europe-title">Close to your clients.<br>Clear about their data.</h2>
+                </div>
+                <div class="partners-copy">
+                    <p>Fluxzero is European and 100% EU-operated. Give your clients a clear answer about the cloud behind their product, with isolated environments and privacy controls built into the foundation.</p>
+                    <p>Decide who can access personal data and remove it without losing the product’s operational history. Make privacy part of how the product works from the start.</p>
+                    <a class="partners-text-link" href="/technical-foundation#privacy">Explore the privacy foundation <span aria-hidden="true">→</span></a>
+                </div>
+            </div>
+        </section>
+
+        <section class="partners-closing" aria-labelledby="closing-title">
+            <div class="partners-shell">
+                <p class="partners-eyebrow">Your next client project</p>
+                <h2 id="closing-title">Build the product.<br>We’ll run the foundation.</h2>
+                <p>Tell us what you build and how you work. Let’s explore how Fluxzero can support your next project—and the ones after it.</p>
+                <div class="partners-actions">
+                    <a class="v4-button v4-button--primary" href="/contact#contactForm">Let’s talk <span aria-hidden="true">→</span></a>
+                    <a class="partners-text-link" href="/pricing">Explore pricing <span aria-hidden="true">↗</span></a>
+                </div>
+            </div>
+        </section>
+    </main>
+    <MarketingFooter />
+</body>
+</html>
