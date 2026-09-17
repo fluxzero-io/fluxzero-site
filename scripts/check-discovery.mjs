@@ -2,7 +2,8 @@ import { readFile, readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
-import { corePages, inlineMarketingPages, retiredPages, siteUrl, normalizePath } from './core-pages.mjs';
+import { corePages, inlineMarketingPages, retiredPages, unlistedPages, siteUrl, normalizePath } from './core-pages.mjs';
+import { inspectLinks } from './check-links.mjs';
 
 const attr = (node, name) => node.attrs?.find(a => a.name === name)?.value;
 function elements(node, predicate, result = []) {
@@ -20,9 +21,10 @@ export function inspectPage(html, path) {
             return url.origin === siteUrl && !/\bnofollow\b/.test(attr(n, 'rel') ?? '') ? [normalizePath(url.pathname)] : [];
         } catch { return []; }
     });
-    return { canonical, noindex, links };
+    const allLinks = inspectLinks(html, path).links.filter(url => url.origin === siteUrl).map(url => normalizePath(url.pathname));
+    return { canonical, noindex, links, allLinks };
 }
-export function validateDiscovery({ pages, sitemap, llms, markdown, robots }, required = corePages) {
+export function validateDiscovery({ pages, sitemap, llms, markdown, robots }, required = corePages, unlisted = unlistedPages) {
     const failures = [];
     for (const path of required) {
         const page = pages.get(path);
@@ -38,6 +40,11 @@ export function validateDiscovery({ pages, sitemap, llms, markdown, robots }, re
     }
     for (const path of retiredPages) {
         if (pages.has(path) || sitemap.has(path) || llms.includes(path) || [...markdown.values()].some(text => text.includes(path)) || [...pages.values()].some(p => p.links.includes(path))) failures.push(`${path}: retired page remains discoverable`);
+    }
+    for (const path of unlisted) {
+        if (!pages.get(path)?.noindex) failures.push(`${path}: unlisted page must exist with noindex`);
+        if (sitemap.has(path) || llms.includes(path.replace(/\/$/, '')) || markdown.has(path) || [...markdown.values()].some(text => text.includes(path.replace(/\/$/, '')))) failures.push(`${path}: unlisted page appears in public indexes`);
+        if ([...pages].some(([from, page]) => from !== path && page.allLinks.includes(path))) failures.push(`${path}: unlisted page has an incoming link`);
     }
     if (llms.includes('/llms-full.txt')) failures.push('llms.txt links to its own alias');
     if (!robots.includes(`Sitemap: ${siteUrl}/sitemap-index.xml`)) failures.push('robots.txt does not advertise the sitemap');

@@ -167,6 +167,10 @@ source of truth. No model runs during generation. Proposals must remain outside
 Every build verifies that required pages exist, are in the sitemap and LLM index,
 have a self-canonical URL and an incoming internal link, and have no `noindex` meta
 tag. Retired routes must not occur in HTML, internal links, sitemap or text exports.
+Unlisted routes in `scripts/core-pages.mjs` remain directly accessible but require
+`noindex`, have no incoming site links, and stay outside the sitemap and text
+exports. The build removes them from the generated sitemap and verifies these
+boundaries.
 Unknown URLs use `src/pages/404.astro`, the shared marketing error page.
 Starlight’s default 404 is disabled so missing website URLs do not show the docs
 shell. The response retains HTTP 404 and the page is marked noindex.

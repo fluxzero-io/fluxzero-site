@@ -6,5 +6,6 @@ export const inlineMarketingPages = marketingPages.filter(path => !['/get-starte
 export const documentationPages = ['/docs/getting-started/introduction/', '/docs/getting-started/core-concepts/'];
 export const corePages = [...marketingPages, ...documentationPages];
 export const retiredPages = ['/makeitreal/'];
+export const unlistedPages = ['/partners/'];
 export const htmlFile = path => `${path.replace(/^\//, '')}index.html`;
 export const normalizePath = path => path === '/' ? '/' : `${path.replace(/\/$/, '')}/`;
