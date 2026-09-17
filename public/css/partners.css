@@ -27,7 +27,8 @@
     padding: 164px 0 78px;
     text-align: center;
     background:
-        radial-gradient(ellipse at 50% 0%, #d8923724, transparent 45%),
+        radial-gradient(ellipse 520px 260px at 50% -60px, rgba(255, 232, 184, 0.58), rgba(255, 198, 113, 0.18) 48%, transparent 85%),
+        radial-gradient(ellipse 940px 600px at 50% -140px, rgba(238, 163, 70, 0.32), rgba(205, 127, 52, 0.11) 46%, transparent 80%),
         radial-gradient(ellipse at 50% 78%, #268bda12, transparent 52%);
 }
 
