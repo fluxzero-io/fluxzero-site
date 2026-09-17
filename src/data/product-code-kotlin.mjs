@@ -48,10 +48,10 @@ fun reservationIsLostWhenPaymentIsLate() {
     fixture
         .whenPostByUser("customer-42",
             "/api/reservations", "/ticketing/reserve.json")
-        .expectEvents(ReserveTicket::class.java)
+        .expectEvents(ReserveTicket::class)
         .andThen()
         .whenTimeElapses(Duration.ofMinutes(15))
-        .expectEvents(ExpireReservation::class.java)
+        .expectEvents(ExpireReservation::class)
 }
 
 @Test
@@ -71,7 +71,7 @@ fun reservationIsConfirmedWhenPaymentIsOnTime() {
 ) {
     @HandleQuery
     fun handle(): List<Ticket> =
-        Fluxzero.search(Ticket::class.java)
+        Fluxzero.search<Ticket>(Ticket::class)
             .whereParent(showId)
             .match(AVAILABLE, "status")
             .match(section, "details/section")
