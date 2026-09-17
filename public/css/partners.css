@@ -152,7 +152,10 @@
 .partners-closing h2 { font-size: clamp(36px, 4.6vw, 58px); }
 .partners-closing .partners-shell > p:not(.partners-eyebrow) { max-width: 570px; margin: 24px auto 0; color: var(--partners-muted); font-size: 17px; }
 
+.partners-desktop-break { display: none; }
+
 @media (min-width: 1024px) {
+    .partners-desktop-break { display: initial; }
     .partners-europe-trust { width: max-content; white-space: nowrap; }
 }
 
