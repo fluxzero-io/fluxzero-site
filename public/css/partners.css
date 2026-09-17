@@ -139,15 +139,8 @@
 .partners-responsibilities > div:last-child { border-color: #76c6b5; }
 .partners-responsibilities h3 { font-family: var(--font-body); font-size: 15px; font-weight: 650; letter-spacing: 0; }
 .partners-responsibilities p { margin-top: 12px; color: var(--partners-muted); font-size: 14px; }
-.partners-insight { margin: 40px 0 0; overflow: hidden; border: 1px solid #a4c5ee30; border-radius: 12px; background: #131f30; }
-.partners-insight-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px; }
-.partners-insight-heading h3 { font-size: 24px; line-height: 1.25; letter-spacing: -.02em; }
-.partners-insight-heading > span { color: var(--partners-muted); font-size: 12px; white-space: nowrap; }
-.partners-insight picture, .partners-insight img { display: block; width: 100%; }
-.partners-insight img { height: auto; }
-.partners-insight figcaption { display: flex; align-items: center; justify-content: space-between; gap: 16px 32px; padding: 16px 24px; background: #0c141e; }
-.partners-insight figcaption p { color: var(--partners-muted); font-size: 14px; line-height: 1.7; }
-.partners-insight .partners-text-link { flex-shrink: 0; }
+.partners-insight { max-width: 380px; margin: 32px 0 0; }
+.partners-insight img { display: block; width: 100%; height: auto; border: 1px solid #a4c5ee30; border-radius: 10px; }
 .partners-europe { background: radial-gradient(ellipse at 8% 50%, #2f70bb16, transparent 65%); }
 .partners-europe .partners-text-link { margin-top: 20px; }
 .partners-closing { padding: 104px 0 112px; border-top: 1px solid var(--border); text-align: center; background: radial-gradient(ellipse at 50% 100%, #3488c820, transparent 65%); }
@@ -187,9 +180,6 @@
     .partners-responsibilities { gap: 20px; }
     .partners-responsibilities > div { padding-left: 14px; }
     .partners-insight { margin-top: 28px; }
-    .partners-insight-heading { flex-direction: column; align-items: flex-start; gap: 8px; padding: 20px; }
-    .partners-insight-heading h3 { font-size: 22px; }
-    .partners-insight figcaption { flex-direction: column; align-items: flex-start; gap: 8px; padding: 16px 20px; }
     .partners-closing { padding: 72px 0; }
 }
 
