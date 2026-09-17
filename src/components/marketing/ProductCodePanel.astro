@@ -32,27 +32,27 @@ const lines = (html: string) => html.split('\n').map((line) => {
         <div class="product-code-panel__caption">
             <strong>Your agent writes</strong>
             <small>{label}</small>
+            <div class="product-code-panel__tools" data-llms-exclude>
+                <div class="product-code-panel__languages" role="group" aria-label="Language for all examples">
+                    <button type="button" data-code-language="kotlin" aria-pressed="true">Kotlin</button>
+                    <span aria-hidden="true">/</span>
+                    <button type="button" data-code-language="java" aria-pressed="false">Java</button>
+                </div>
+                <button
+                    type="button"
+                    class="product-code-panel__copy"
+                    data-copy-code
+                    data-copy-title={kotlinTitle}
+                    aria-label={`Copy code from ${kotlinTitle}`}
+                    title={`Copy code from ${kotlinTitle}`}
+                >
+                    <i class="bx bx-copy" aria-hidden="true"></i>
+                </button>
+                <span class="product-code-panel__copy-status" data-copy-code-status role="status" aria-live="polite"></span>
+            </div>
         </div>
     </figcaption>
     <div class="product-code-panel__source">
-        <div class="product-code-panel__tools" data-llms-exclude>
-            <div class="product-code-panel__languages" role="group" aria-label="Language for all examples">
-                <button type="button" data-code-language="kotlin" aria-pressed="true">Kotlin</button>
-                <span aria-hidden="true">/</span>
-                <button type="button" data-code-language="java" aria-pressed="false">Java</button>
-            </div>
-            <button
-                type="button"
-                class="product-code-panel__copy"
-                data-copy-code
-                data-copy-title={kotlinTitle}
-                aria-label={`Copy code from ${kotlinTitle}`}
-                title={`Copy code from ${kotlinTitle}`}
-            >
-                <i class="bx bx-copy" aria-hidden="true"></i>
-            </button>
-            <span class="product-code-panel__copy-status" data-copy-code-status role="status" aria-live="polite"></span>
-        </div>
         <div class="product-code-panel__body" data-code-variant="kotlin" data-code-title={kotlinTitle}>
             {fragments(kotlinCode).map((fragment) => (
                 <pre><code class="language-kotlin" set:html={lines(highlightKotlin(fragment))}></code></pre>
