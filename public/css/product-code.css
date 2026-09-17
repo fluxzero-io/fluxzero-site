@@ -1260,13 +1260,23 @@
     .product-code-page { --product-code-font-size: 10.75px; }
 }
 
-/* Quiet, synchronized language choice next to the existing copy control. */
+/* Keep controls on the first code line without obscuring source text. */
+.product-code-panel__source {
+    position: relative;
+}
+
 .product-code-panel__tools {
+    position: absolute;
+    z-index: 3;
+    top: 18px;
+    right: 12px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 10px;
-    padding: 5px 12px 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 140ms ease;
 }
 
 .product-code-panel__languages {
@@ -1315,7 +1325,89 @@
     display: none;
 }
 
-.product-code-panel__tools + .product-code-panel__body pre,
-.product-code-panel [data-code-variant] pre {
-    padding-top: 4px;
+.product-code-panel:hover .product-code-panel__tools,
+.product-code-panel:focus-within .product-code-panel__tools {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.product-code-panel__source pre:first-child .product-code-panel__line:first-child {
+    padding-right: 120px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+
+@media (max-width: 720px) {
+    .product-code-panel__tools {
+        top: 12px;
+    }
+
+    .product-code-panel__tools .product-code-panel__copy {
+        display: inline-flex;
+    }
+
+    .product-code-relation-map__code--combined {
+        grid-row: auto;
+    }
+}
+
+@media (hover: none) {
+    .product-code-panel__tools {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .product-code-panel__tools {
+        transition: none;
+    }
+}
+
+.product-code-panel__source pre {
+    padding-right: 23px;
+}
+@media (max-width: 720px) {
+    .product-code-panel__source pre {
+        padding-right: 16px;
+    }
+}
+
+/* A shared panel, with each model on the same grid track as its graph level. */
+@media (min-width: 721px) {
+    .product-code-relation-map__code--combined {
+        display: grid;
+        grid-row: 1 / 5;
+        grid-template-rows: subgrid;
+    }
+
+    .product-code-relation-map__code--combined > figcaption {
+        grid-row: 1;
+    }
+
+    .product-code-relation-map__code--combined .product-code-panel__source {
+        display: grid;
+        grid-row: 2 / 5;
+        grid-template-rows: subgrid;
+    }
+
+    .product-code-relation-map__code--combined [data-code-variant]:not([hidden]) {
+        display: grid;
+        grid-row: 1 / 4;
+        grid-column: 1;
+        grid-template-rows: subgrid;
+    }
+
+    .product-code-relation-map__level--show {
+        grid-row: 2;
+    }
+
+    .product-code-relation-map__level--tickets {
+        grid-row: 3;
+    }
+
+    .product-code-relation-map__level--reservations {
+        grid-row: 4;
+    }
 }

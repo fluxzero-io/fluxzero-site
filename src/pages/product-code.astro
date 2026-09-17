@@ -284,13 +284,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <div class="product-code-proof product-code-proof--model" data-reveal data-reveal-delay="1">
                     <figure class="product-code-relation-map">
                         <div class="product-code-relation-map__grid">
-                            <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--show" title="Show.java" label="Root model" code={showModelCode} kotlinCode={kotlinExamples.showModelCode} prompt="I'd like to keep a history of our concerts and reservations." />
+                            <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--combined" title="Models.java" label="Concerts, tickets & reservations" code={[showModelCode, ticketModelCode, reservationModelCode]} kotlinCode={[kotlinExamples.showModelCode, kotlinExamples.ticketModelCode, kotlinExamples.reservationModelCode]} prompt="I'd like to keep a history of our concerts and reservations." />
                             <div class="product-code-relation-map__level product-code-relation-map__level--show" aria-hidden="true">
                                 <span class="product-code-relation-map__link product-code-relation-map__link--show-ticket" aria-hidden="true"></span>
                                 <strong class="product-code-relation-map__root">Show</strong>
                             </div>
 
-                            <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--tickets" title="Ticket.java" label="Child of Show" code={ticketModelCode} kotlinCode={kotlinExamples.ticketModelCode} />
                             <div class="product-code-relation-map__level product-code-relation-map__level--tickets" aria-hidden="true">
                                 <span class="product-code-relation-map__link product-code-relation-map__link--ticket-up" aria-hidden="true"></span>
                                 <span class="product-code-relation-map__link product-code-relation-map__link--ticket-down" aria-hidden="true"></span>
@@ -302,7 +301,6 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                                 </ul>
                             </div>
 
-                            <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--reservations" title="Reservation.java" label="Child of Ticket" code={reservationModelCode} kotlinCode={kotlinExamples.reservationModelCode} />
                             <div class="product-code-relation-map__level product-code-relation-map__level--reservations" aria-hidden="true">
                                 <span class="product-code-relation-map__link product-code-relation-map__link--reservation-up" aria-hidden="true"></span>
                                 <ul class="product-code-relation-map__reservations" aria-label="Reservations connected to tickets">
@@ -507,6 +505,6 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
 
     <MarketingFooter />
     <script src="/js/v4.js?v=20260904-3" defer></script>
-    <script src="/js/product-code.js?v=20260917-1" defer></script>
+    <script src="/js/product-code.js?v=20260917-2" defer></script>
 </body>
 </html>

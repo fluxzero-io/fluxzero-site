@@ -63,7 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('click', async () => {
             window.clearTimeout(resetTimer);
             try {
-                const text = panel.querySelector('[data-code-variant]:not([hidden]) pre code')?.textContent || '';
+                const text = [...panel.querySelectorAll('[data-code-variant]:not([hidden]) pre code')]
+                    .map((source) => source.textContent || '').join('\n\n');
                 if (navigator.clipboard && window.isSecureContext) {
                     await navigator.clipboard.writeText(text);
                 } else if (!copyCodeFallback(text)) {

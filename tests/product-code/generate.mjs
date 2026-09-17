@@ -25,7 +25,8 @@ const source = readFileSync(new URL('ProductCodeTest.java.template', directory),
         }
         return snippet.split('\n').map(line => '    ' + line).join('\n');
     });
-const rendered = [...page.matchAll(/code=\{(\w+)\}/g)].map(match => match[1]);
+const rendered = [...page.matchAll(/code=\{(\w+|\[[^\]]+\])\}/g)]
+    .flatMap(match => match[1].match(/\w+/g));
 for (const name of rendered) {
     if (!used.has(name)) throw new Error(`Unverified code panel: ${name}`);
 }
@@ -53,7 +54,8 @@ const kotlinSource = readFileSync(new URL('KotlinProductCodeTest.kt.template', d
         }
         return snippet.split('\n').map(line => '    ' + line).join('\n');
     });
-const kotlinRendered = [...page.matchAll(/kotlinCode=\{kotlinExamples\.(\w+)\}/g)].map(match => match[1]);
+const kotlinRendered = [...page.matchAll(/kotlinCode=\{([^}]+)\}/g)]
+    .flatMap(match => [...match[1].matchAll(/kotlinExamples\.(\w+)/g)].map(entry => entry[1]));
 for (const name of rendered) {
     if (!kotlinUsed.has(name) || !kotlinRendered.includes(name)) throw new Error(`Missing Kotlin panel qualification: ${name}`);
 }

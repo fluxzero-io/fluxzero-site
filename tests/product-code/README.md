@@ -66,8 +66,12 @@ cover content extraction and presentation separately.
 
 ## Language presentation
 
-Kotlin is the initial selection. Each panel has a small `Kotlin / Java` control;
-changing any one updates every panel and its copy button. The rendered HTML
+Kotlin is the initial selection. Each panel has a small `Kotlin / Java` control
+and copy button alongside its first code line. Controls appear on hover or
+keyboard focus, and remain available on touch devices. Changing the language
+updates every panel and its copy button. The three models in section 02 share
+one panel and copy action, while each model stays aligned with its graph level
+in both languages. The rendered HTML
 contains both variants. The Java container uses the generic `data-llms-include`
 visibility override so its initially hidden code also reaches the text exports.
 Exports contain the shared prompt once, then Kotlin and Java code fences in that
