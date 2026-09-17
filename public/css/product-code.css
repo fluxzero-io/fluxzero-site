@@ -1411,3 +1411,35 @@
         grid-row: 4;
     }
 }
+
+/* Shared model rows need only a small break between declarations. */
+.product-code-relation-map {
+    --relation-row-gap: 0px;
+}
+
+.product-code-relation-map__code--combined pre {
+    padding-block: 10px;
+}
+
+.product-code-relation-map__code--combined pre:first-child {
+    padding-top: 22px;
+}
+
+.product-code-relation-map__code--combined pre:last-child {
+    padding-bottom: 22px;
+}
+
+.product-code-relation-map__level {
+    min-height: 110px;
+    padding-block: 8px;
+}
+
+@media (max-width: 720px) {
+    .product-code-relation-map__code--combined {
+        margin-top: 20px;
+    }
+
+    .product-code-relation-map__code--combined pre:first-child {
+        padding-top: 18px;
+    }
+}
