@@ -1,0 +1,218 @@
+package qualification.kotlin
+
+import io.fluxzero.sdk.Fluxzero
+import io.fluxzero.sdk.configuration.DefaultFluxzero
+import io.fluxzero.sdk.modeling.*
+import io.fluxzero.sdk.persisting.eventsourcing.*
+import io.fluxzero.sdk.publishing.dataprotection.ProtectData
+import io.fluxzero.sdk.tracking.Consumer
+import io.fluxzero.sdk.tracking.handling.*
+import io.fluxzero.sdk.tracking.handling.authentication.*
+import io.fluxzero.sdk.scheduling.ScheduleId
+import io.fluxzero.sdk.web.*
+import io.fluxzero.sdk.test.TestFixture
+import org.springframework.stereotype.Component
+import jakarta.validation.Valid
+import jakarta.validation.constraints.*
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.*
+import java.time.Duration
+import qualification.kotlin.KotlinProductCodeTest.ReservationStatus.*
+import qualification.kotlin.KotlinProductCodeTest.TicketStatus.*
+
+class KotlinProductCodeTest {
+    val fixture = fixture(ReservationApi(), ReservationTimers(), PaymentProcess::class.java, TestPaymentProvider())
+
+    // @snippet actionCode
+    // @snippet showModelCode
+    // @snippet ticketModelCode
+    // @snippet reservationModelCode
+    // @snippet testCode
+    // @snippet searchCode
+    // @snippet timerCode
+    // @snippet expiryCode
+    // @snippet personalDataCode
+    // @snippet webCode
+    // @snippet historyCode
+    // @snippet paymentProcessCode
+    // @snippet queryCallerCode
+    // @snippet consumerCode
+
+    enum class TicketStatus { AVAILABLE, RESERVED }
+    enum class ShowStatus { OPEN }
+    enum class ReservationStatus { AWAITING_PAYMENT, CONFIRMED }
+    data class TicketDetails(val section: String, val row: Int)
+    class ShowId(id: String) : Id<Show>(id)
+    class TicketId(id: String) : Id<Ticket>(id)
+    class ReservationId(id: String) : Id<Reservation>(id)
+    object TicketErrors { val notAvailable = IllegalStateException("Not available") }
+    object ReservationErrors {
+        val notAwaitingPayment = IllegalStateException("Not awaiting payment")
+        val notOwner = IllegalStateException("Not owner")
+    }
+    data class CreateShow(val showId: ShowId) {
+        @Apply fun apply() = Show(showId, "Show", ShowStatus.OPEN)
+    }
+    data class CreateTicket(val ticketId: TicketId, val showId: ShowId, val details: TicketDetails) {
+        @Apply fun apply() = Ticket(ticketId, showId, details, AVAILABLE)
+    }
+    data class CreateReservation(val reservationId: ReservationId, val ticketId: TicketId, val customerId: String) {
+        @Apply fun apply() = Reservation.awaitingPayment(reservationId, ticketId, customerId)
+    }
+    data class ConfirmReservation(val reservationId: ReservationId) {
+        @InterceptApply fun ignoreIfConfirmed(current: Reservation): Any? =
+            if (current.status == CONFIRMED) null else this
+        @AssertLegal fun check(current: Reservation) {
+            if (current.status != AWAITING_PAYMENT) throw ReservationErrors.notAwaitingPayment
+        }
+        @Apply fun apply(current: Reservation) = current.copy(status = CONFIRMED)
+    }
+    data class StartPayment(val reservationId: ReservationId)
+    data class PaymentSucceeded(val pspReference: String)
+    class TestPaymentProvider {
+        @HandleCommand fun start(request: StartPayment) = "payment-${request.reservationId}"
+    }
+    data class ReservationRequest(@field:NotNull val ticketId: TicketId)
+    data class ExampleUser(val value: String) : User {
+        override fun getName() = value
+        override fun id() = value
+        override fun hasRole(role: String) = false
+    }
+    data class FraudAssessment(val requiresReview: Boolean)
+    data class CheckForFraud(val reservationId: ReservationId) {
+        @HandleQuery fun handle() = FraudAssessment(reservationId == reservation)
+    }
+    data class ReviewReservation(val reservationId: ReservationId, val assessment: FraudAssessment)
+    @Model
+    data class RewardBalance(@EntityId val customerId: String, val grants: Map<ReservationId, Int>) {
+        fun points() = grants.values.sum()
+    }
+    data class GrantReward(val reservationId: ReservationId, val customerId: String, val points: Int) {
+        @Apply fun apply(current: RewardBalance?): RewardBalance {
+            val grants = current?.grants.orEmpty().toMutableMap()
+            grants.putIfAbsent(reservationId, points)
+            return RewardBalance(customerId, grants.toMap())
+        }
+    }
+
+    companion object {
+        val show = ShowId("show-1")
+        val ticket = TicketId("ticket-1")
+        val reservation = ReservationId("reservation-1")
+        val other = ReservationId("reservation-2")
+        const val customer = "customer-1"
+
+        fun fixture(vararg handlers: Any): TestFixture = TestFixture.create(DefaultFluxzero.builder()
+            .configureGraphProjectionCompletion(GraphProjectionCompletion.AWAIT)
+            .registerUserProvider(object : AbstractUserProvider(ExampleUser::class.java) {
+                override fun getUserById(id: Any): User = ExampleUser(id.toString())
+                override fun getSystemUser(): User? = null
+            }), *handlers)
+            .givenCommands(CreateShow(show), CreateTicket(ticket, show, TicketDetails("balcony", 1)),
+                CreateReservation(reservation, ticket, customer), CreateReservation(other, ticket, customer))
+    }
+
+    @Test fun rejectsASecondReservation() {
+        fixture().givenCommandsByUser("customer-42", "/ticketing/reserve-ticket.json")
+            .whenCommandByUser("customer-77", "/ticketing/reserve-ticket.json")
+            .expectExceptionalResult(TicketErrors.notAvailable).expectNoEvents()
+    }
+
+    @Test fun expiredWebReservationReleasesTheTicket() {
+        val requested = fixture(ReservationApi(), ReservationTimers())
+            .whenPostByUser("customer-42", "/api/reservations", "/ticketing/reserve.json")
+            .expectSuccessfulResult().expectEvents(ReserveTicket::class.java)
+            .expectThat { assertEquals(RESERVED, Fluxzero.loadModel(ticket).get().status) }
+            .expectNoErrors()
+        val created = requested.getResult(ReservationId::class.java)
+        requested.andThen().whenTimeElapses(Duration.ofMinutes(15))
+            .expectThat {
+                assertNull(Fluxzero.loadModel(created).get())
+                assertEquals(AVAILABLE, Fluxzero.loadModel(ticket).get().status)
+            }.expectEvents(ExpireReservation(created)).expectNoErrors()
+    }
+
+    @Test fun queriesReturnTypedTickets() {
+        fixture(FindAvailableTickets::class.java)
+            .whenApplying { _: Fluxzero -> TicketApi().available(show, "balcony") }
+            .expectResult(listOf(Ticket(ticket, show, TicketDetails("balcony", 1), AVAILABLE)))
+            .expectNoErrors()
+    }
+
+    @Test fun queryParametersUseKotlinNames() {
+        fixture(TicketApi(), FindAvailableTickets::class.java)
+            .whenWebRequest(WebRequest.get("/api/tickets?showId=show-1&section=balcony").build())
+            .expectQueries(FindAvailableTickets(show, "balcony")).expectSuccessfulResult().expectNoErrors()
+    }
+
+    @Test fun statefulPaymentsResumeTheMatchingProcess() {
+        val secondTicket = TicketId("ticket-2")
+        val started = fixture(PaymentProcess::class.java, TestPaymentProvider())
+            .givenCommands(CreateTicket(secondTicket, show, TicketDetails("balcony", 2)))
+            .whenCommandByUser(customer, ReserveTicket(reservation, ticket))
+            .expectOnlyCommands(StartPayment(reservation))
+            .expectEvents(ReserveTicket(reservation, ticket)).expectNoErrors()
+        val waiting = started.andThen().givenCommandsByUser(customer, ReserveTicket(other, secondTicket))
+        waiting.whenApplying { _: Fluxzero -> Fluxzero.search(PaymentProcess::class.java).fetchAll() }
+            .expectResult { items: List<PaymentProcess> -> items.size == 2 }.expectNoErrors()
+        waiting.whenEvent(PaymentSucceeded("unknown")).expectNoCommands().expectNoErrors()
+        val completed = waiting.whenEvent(PaymentSucceeded("payment-reservation-1"))
+            .expectOnlyCommands(ConfirmReservation(reservation))
+            .expectEvents(ConfirmReservation(reservation)).expectNoErrors()
+            .expectThat {
+                assertEquals(CONFIRMED, Fluxzero.loadModel(reservation).get().status)
+                assertEquals(AWAITING_PAYMENT, Fluxzero.loadModel(other).get().status)
+                assertEquals(listOf(PaymentProcess(other, "payment-reservation-2")),
+                    Fluxzero.search(PaymentProcess::class.java).fetchAll())
+            }.andThen()
+        completed.whenEvent(PaymentSucceeded("payment-reservation-1")).expectNoCommands().expectNoErrors()
+    }
+
+    @Test fun schedulesCanBeCancelled() {
+        fixture(ReservationTimers()).givenCommandsByUser(ExampleUser(customer), ReserveTicket(reservation, ticket))
+            .whenTimeElapses(Duration.ofMinutes(15)).expectEvents(ExpireReservation(reservation)).expectNoErrors()
+        fixture(ReservationTimers()).givenCommandsByUser(ExampleUser(customer),
+            ReserveTicket(reservation, ticket), ConfirmReservation(reservation))
+            .whenTimeElapses(Duration.ofMinutes(15)).expectNoCommands().expectNoErrors()
+    }
+
+    @Test fun contactEmailIsValidatedAndProtected() {
+        val owner = ExampleUser(customer)
+        fixture().whenCommandByUser(owner, UpdateContactEmail(reservation, "customer@example.com"))
+            .expectSuccessfulResult().expectNoErrors()
+            .expectThat { assertEquals("customer@example.com", Fluxzero.loadModel(reservation).get().contactEmail) }
+        fixture().whenCommandByUser(ExampleUser("other-user"), UpdateContactEmail(reservation, "customer@example.com"))
+            .expectExceptionalResult(ReservationErrors.notOwner).expectNoEvents()
+        fixture().whenCommandByUser(owner, UpdateContactEmail(reservation, "not-an-email"))
+            .expectExceptionalResult(Exception::class.java).expectNoEvents()
+        fixture().whenCommand(UpdateContactEmail(reservation, "customer@example.com"))
+            .expectExceptionalResult(UnauthenticatedException::class.java).expectNoEvents()
+    }
+
+    @Test fun historicalRewardsChangeProductState() {
+        val rewards = fixture(CustomerRewards()).whenCommand(ConfirmReservation(reservation))
+            .expectEvents(GrantReward(reservation, customer, 100)).expectNoErrors().andThen()
+        rewards.whenApplying { _: Fluxzero -> Fluxzero.loadModel(customer, RewardBalance::class.java).get().points() }
+            .expectResult(100).expectNoErrors()
+        rewards.whenApplying { _: Fluxzero ->
+            CustomerRewards().reward(ConfirmReservation(reservation), Fluxzero.loadModel(reservation).get())
+            null
+        }.expectThat { assertEquals(100, Fluxzero.loadModel(customer, RewardBalance::class.java).get().points()) }
+            .expectNoErrors()
+        rewards.whenCommand(ConfirmReservation(other)).expectEvents(GrantReward(other, customer, 100))
+            .expectThat { assertEquals(200, Fluxzero.loadModel(customer, RewardBalance::class.java).get().points()) }
+            .expectNoErrors()
+    }
+
+    @Test fun fraudQueriesOnlyRequestNecessaryReviews() {
+        fixture(FraudDetection(), CheckForFraud::class.java).whenCommand(ConfirmReservation(reservation))
+            .expectQueries(CheckForFraud(reservation))
+            .expectCommands(ReviewReservation(reservation, FraudAssessment(true)))
+            .expectThat { assertTrue(Fluxzero.search(FraudAssessment::class.java).fetchAll().isEmpty()) }
+            .expectNoErrors()
+        fixture(FraudDetection(), CheckForFraud::class.java).whenCommand(ConfirmReservation(other))
+            .expectQueries(CheckForFraud(other)).expectNoCommands()
+            .expectThat { assertTrue(Fluxzero.search(FraudAssessment::class.java).fetchAll().isEmpty()) }
+            .expectNoErrors()
+    }
+}

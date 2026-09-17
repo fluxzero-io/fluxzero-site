@@ -1259,3 +1259,63 @@
 @media (max-width: 420px) {
     .product-code-page { --product-code-font-size: 10.75px; }
 }
+
+/* Quiet, synchronized language choice next to the existing copy control. */
+.product-code-panel__tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 5px 12px 0;
+}
+
+.product-code-panel__languages {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #687380;
+    font-size: 11px;
+}
+
+.product-code-panel__languages button {
+    padding: 6px 0;
+    border: 0;
+    border-radius: 2px;
+    background: transparent;
+    color: #929ca8;
+    font: inherit;
+    cursor: pointer;
+}
+
+.product-code-panel__languages button[aria-pressed="true"] {
+    color: #d6e2ef;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: #788b9d;
+}
+
+.product-code-panel__languages button:hover {
+    color: #fff;
+}
+
+.product-code-panel__languages button:focus-visible {
+    outline: 2px solid #66b9ff;
+    outline-offset: 4px;
+}
+
+.product-code-panel__tools .product-code-panel__copy {
+    position: relative;
+    inset: auto;
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+}
+
+.product-code-panel [data-code-variant][hidden] {
+    display: none;
+}
+
+.product-code-panel__tools + .product-code-panel__body pre,
+.product-code-panel [data-code-variant] pre {
+    padding-top: 4px;
+}

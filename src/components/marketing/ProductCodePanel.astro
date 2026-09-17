@@ -1,15 +1,19 @@
 ---
+import { highlightKotlin } from './product-code-highlight.mjs';
+
 interface Props {
     title: string;
     label: string;
     code: string;
+    kotlinCode: string;
     prompt?: string;
     class?: string;
 }
 
-const { title, label, code, prompt, class: className } = Astro.props;
+const { title, label, code, kotlinCode, prompt, class: className } = Astro.props;
+const kotlinTitle = title.replace(/\.java$/, '.kt');
 // Keep real newlines for copying and text export; soft wraps are visual only.
-const lines = code.split('\n').map((line) => {
+const lines = (html: string) => html.split('\n').map((line) => {
     const indent = line.match(/^ */)?.[0].length ?? 0;
     const spacing = `<span class="product-code-panel__indent">${line.slice(0, indent)}</span>`;
     return `<span class="product-code-panel__line" style="--indent: ${indent}ch">${spacing}${line.slice(indent)}</span>`;
@@ -29,19 +33,29 @@ const lines = code.split('\n').map((line) => {
             <small>{label}</small>
         </div>
     </figcaption>
-    <div class="product-code-panel__body">
+    <div class="product-code-panel__tools" data-llms-exclude>
+        <div class="product-code-panel__languages" role="group" aria-label="Language for all examples">
+            <button type="button" data-code-language="kotlin" aria-pressed="true">Kotlin</button>
+            <span aria-hidden="true">/</span>
+            <button type="button" data-code-language="java" aria-pressed="false">Java</button>
+        </div>
         <button
             type="button"
             class="product-code-panel__copy"
             data-copy-code
-            data-copy-title={title}
-            data-llms-exclude
-            aria-label={`Copy code from ${title}`}
-            title={`Copy code from ${title}`}
+            data-copy-title={kotlinTitle}
+            aria-label={`Copy code from ${kotlinTitle}`}
+            title={`Copy code from ${kotlinTitle}`}
         >
             <i class="bx bx-copy" aria-hidden="true"></i>
         </button>
         <span class="product-code-panel__copy-status" data-copy-code-status role="status" aria-live="polite"></span>
-        <pre><code class="language-java" set:html={lines}></code></pre>
+    </div>
+    <div class="product-code-panel__body" data-code-variant="kotlin" data-code-title={kotlinTitle}>
+        <pre><code class="language-kotlin" set:html={lines(highlightKotlin(kotlinCode))}></code></pre>
+    </div>
+    <!-- Both equivalent languages belong in text exports, regardless of the UI selection. -->
+    <div class="product-code-panel__body" data-code-variant="java" data-code-title={title} hidden data-llms-include>
+        <pre><code class="language-java" set:html={lines(code)}></code></pre>
     </div>
 </figure>

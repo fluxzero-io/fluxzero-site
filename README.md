@@ -63,12 +63,12 @@ Run commands from the repository root.
 | `pnpm test:discovery` | Test the discoverability release checks and source modification dates |
 | `pnpm check:discovery` | Check the existing build without rebuilding |
 | `pnpm test:llms` | Verify Markdown export, code formatting, and semantic content |
-| `pnpm test:product-code` | Compile the page examples and test their behavior with the published SDK (Java 25 and Maven required) |
+| `pnpm test:product-code` | Compile the Java and Kotlin page examples and test their behavior with the published SDK (Java 25 and Maven required) |
 | `pnpm astro ...` | Run another Astro CLI command |
 
 The production build also generates `dist/llms.txt` and per-page Markdown from the rendered core marketing pages. These files are build artifacts; the website HTML remains their source of truth. `/llms-full.txt` temporarily redirects to `/llms.txt`.
 
-The [product-code tests](tests/product-code/README.md) extract all Java examples directly from `/product-code` and exercise their behavior with the real SDK `TestFixture`. They run locally and in CI without an SDK checkout or a running Fluxzero server.
+The [product-code tests](tests/product-code/README.md) extract both Java and Kotlin examples from the sources rendered by `/product-code` and exercise their behavior with the real SDK `TestFixture`. They run locally and in CI without an SDK checkout or a running Fluxzero server.
 
 ## Project structure
 

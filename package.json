@@ -16,7 +16,7 @@
     "sync:docs": "node scripts/sync-sdk-docs.mjs",
     "test:changelog": "node --import tsx --test src/loaders/*releases.test.ts scripts/changelog-pagination.test.mjs",
     "test:llms": "node --test scripts/generate-llms.test.mjs",
-    "test:product-code": "node tests/product-code/generate.mjs && mvn -B -f tests/product-code/pom.xml test",
+    "test:product-code": "node tests/product-code/generate.mjs && mvn -B -f tests/product-code/pom.xml test && mvn -B -f tests/product-code/pom.xml -Pkotlin test",
     "test:discovery": "node --test scripts/check-discovery.test.mjs scripts/markdown-negotiation.test.mjs scripts/check-links.test.mjs scripts/remark-docs-links.test.mjs",
     "check:discovery": "node scripts/check-discovery.mjs",
     "test:seo": "node --test src/utils/docs-description.test.mjs scripts/inline-marketing-css.test.mjs"
