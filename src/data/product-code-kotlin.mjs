@@ -71,7 +71,7 @@ fun reservationIsConfirmedWhenPaymentIsOnTime() {
 ) {
     @HandleQuery
     fun handle(): List<Ticket> =
-        Fluxzero.search<Ticket>(Ticket::class)
+        Fluxzero.search(Ticket::class.java)
             .whereParent(showId)
             .match(AVAILABLE, "status")
             .match(section, "details/section")
