@@ -143,6 +143,8 @@
 .partners-insight img { display: block; width: 100%; height: auto; border: 1px solid #a4c5ee30; border-radius: 10px; }
 .partners-europe { background: radial-gradient(ellipse at 8% 50%, #2f70bb16, transparent 65%); }
 .partners-europe .partners-text-link { margin-top: 20px; }
+.partners-split.partners-split--aligned { row-gap: 24px; }
+.partners-split--aligned > .partners-eyebrow { grid-column: 1 / -1; margin: 0; }
 .partners-closing { padding: 104px 0 112px; border-top: 1px solid var(--border); text-align: center; background: radial-gradient(ellipse at 50% 100%, #3488c820, transparent 65%); }
 .partners-closing h2 { font-size: clamp(36px, 4.6vw, 58px); }
 .partners-closing .partners-shell > p:not(.partners-eyebrow) { max-width: 570px; margin: 24px auto 0; color: var(--partners-muted); font-size: 17px; }
