@@ -72,7 +72,7 @@ class KotlinProductCodeTest {
     class TestPaymentProvider {
         @HandleCommand fun start(request: StartPayment) = "payment-${request.reservationId}"
     }
-    data class ReservationRequest(@field:NotNull val ticketId: TicketId)
+    data class ReservationRequest(@NotNull val ticketId: TicketId)
     data class ExampleUser(val value: String) : User {
         override fun getName() = value
         override fun id() = value

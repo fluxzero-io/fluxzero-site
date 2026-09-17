@@ -1,8 +1,8 @@
 // Rendered by ProductCodePanel and compiled unchanged by the example qualification.
 export const kotlinExamples = {
     actionCode: `data class ReserveTicket(
-    @field:NotNull val reservationId: ReservationId,
-    @field:NotNull val ticketId: TicketId
+    @NotNull val reservationId: ReservationId,
+    @NotNull val ticketId: TicketId
 ) {
     @AssertLegal
     fun assertAvailable(ticket: Ticket) {
@@ -41,7 +41,7 @@ data class Reservation(
     val ticketId: TicketId,
     val customerId: String,
     val status: ReservationStatus,
-    @field:ProtectData val contactEmail: String?
+    @ProtectData val contactEmail: String?
 )`,
     testCode: `@Test
 fun reservationIsLostWhenPaymentIsLate() {
@@ -66,8 +66,8 @@ fun reservationIsConfirmedWhenPaymentIsOnTime() {
         .expectNoEvents()
 }`,
     searchCode: `data class FindAvailableTickets(
-    @field:NotNull val showId: ShowId,
-    @field:NotBlank val section: String
+    @NotNull val showId: ShowId,
+    @NotBlank val section: String
 ) {
     @HandleQuery
     fun handle(): List<Ticket> =
@@ -95,7 +95,7 @@ class ReservationTimers {
     }
 }`,
     expiryCode: `data class ExpireReservation(
-    @field:NotNull val reservationId: ReservationId
+    @NotNull val reservationId: ReservationId
 ) {
     @AssertLegal
     fun assertAwaitingPayment(reservation: Reservation) {
@@ -113,8 +113,8 @@ class ReservationTimers {
 }`,
     personalDataCode: `@RequiresUser
 data class UpdateContactEmail(
-    @field:NotNull val reservationId: ReservationId,
-    @field:NotBlank @field:Email @field:ProtectData
+    @NotNull val reservationId: ReservationId,
+    @NotBlank @Email @ProtectData
     val contactEmail: String
 ) {
     @AssertLegal
@@ -157,7 +157,7 @@ class CustomerRewards {
     paymentProcessCode: `@Stateful
 data class PaymentProcess(
     @EntityId val reservationId: ReservationId,
-    @field:Association val pspReference: String
+    @Association val pspReference: String
 ) {
     companion object {
         @JvmStatic
