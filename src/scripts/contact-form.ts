@@ -9,6 +9,12 @@ if (form instanceof HTMLFormElement && status && submitButton instanceof HTMLBut
     const originalButtonText = buttonLabel.textContent || "Send";
     const preview = document.getElementById("previewConfirmation");
 
+    const fadeOutLabel = async () => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        submitButton.dataset.state = "switching";
+        await new Promise(resolve => window.setTimeout(resolve, 180));
+    };
+
     const restoreButton = () => {
         submitButton.disabled = false;
         buttonLabel.textContent = originalButtonText;
@@ -20,9 +26,11 @@ if (form instanceof HTMLFormElement && status && submitButton instanceof HTMLBut
         status.textContent = status.dataset.successMessage || "Thanks, your message was sent.";
         status.dataset.state = "success";
         if (submitButton.dataset.confirmation === "true") {
+            await fadeOutLabel();
             buttonLabel.textContent = status.textContent;
             submitButton.dataset.state = "success";
             await new Promise(resolve => window.setTimeout(resolve, 2800));
+            await fadeOutLabel();
         }
     };
 

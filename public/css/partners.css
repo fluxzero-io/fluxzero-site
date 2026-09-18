@@ -44,8 +44,10 @@ body.partners-page {
 .partners-contact [data-button-label] {
     display: inline-block;
     transform-origin: center center;
+    transition: opacity .18s ease;
 }
-.partners-contact button[data-state="success"] { cursor: default; opacity: 1; }
+.partners-contact button[data-state="success"], .partners-contact button[data-state="switching"] { cursor: default; opacity: 1; }
+.partners-contact button[data-state="switching"] [data-button-label] { opacity: 0; }
 .partners-contact button[data-state="success"] [data-button-label] {
     animation: partners-confirmation 2.8s ease-in-out;
 }
