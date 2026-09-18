@@ -4,18 +4,6 @@ import '../../public/css/marketing-shell.css';
 import '../../public/css/partners.css';
 import BrandHead from '../components/BrandHead.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
-import MarketingFooter from '../components/marketing/MarketingFooter.astro';
-
-const projects = [
-    { name: 'Customer portal', type: 'Client A', variant: 'portal' },
-    { name: 'Booking platform', type: 'Client B', variant: 'booking' },
-    { name: 'Operations app', type: 'Client C', variant: 'operations' },
-];
-const guarantees = [
-    { title: 'Reliable execution', copy: 'Business rules hold under pressure. Data persists and interrupted work can recover.' },
-    { title: 'Security & privacy', copy: 'Isolated environments, controlled access and personal data you can erase.' },
-    { title: 'Insight & scale', copy: 'Trace what happened and grow without rebuilding your foundation.' },
-];
 ---
 
 <!DOCTYPE html>
@@ -23,138 +11,49 @@ const guarantees = [
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Keep this standalone page out of search results while it is being reviewed. -->
     <meta name="robots" content="noindex">
-    <BrandHead title="For agencies & builders — Fluxzero" description="More projects. Less to manage. Build every product on the same proven European cloud foundation." />
+    <BrandHead title="Partners — Fluxzero" description="More projects. Less to manage. Fluxzero maintains the technical foundation, so your team can focus on the product. Let’s talk." />
 </head>
 <body class="v4-page partners-page">
     <a class="partners-skip" href="#main">Skip to content</a>
     <MarketingHeader />
-    <main id="main">
-        <header class="partners-hero">
-            <div class="partners-shell">
-                <p class="partners-eyebrow">For agencies & builders</p>
+    <main id="main" class="partners-main">
+        <div class="partners-layout">
+            <header class="partners-intro">
+                <p class="partners-eyebrow">For agencies &amp; builders</p>
                 <h1>More projects.<br><span>Less to manage.</span></h1>
-                <p class="partners-lead">One proven foundation for every client project.<br class="partners-desktop-break"> Build the product. Not the tech stack.</p>
-                <div class="partners-actions">
-                    <a class="v4-button v4-button--primary" href="/contact#contactForm">Talk to us <span aria-hidden="true">→</span></a>
-                    <a class="v4-button v4-button--secondary" href="/get-started">Try Fluxzero <span aria-hidden="true">↗</span></a>
-                </div>
+                <p class="partners-lead">Take on more client projects. Fluxzero runs and maintains the technical foundation, so your team can focus on the product.</p>
+            </header>
 
-                <figure class="partners-foundation">
-                    <ul class="partners-projects" aria-label="Example client projects">
-                        {projects.map(project => (
-                            <li class={`partners-project partners-project--${project.variant}`}>
-                                <div class="partners-project-top"><span>{project.type}</span><span class="partners-project-dot" aria-hidden="true"></span></div>
-                                <strong>{project.name}</strong>
-                                <div class="partners-project-preview" aria-hidden="true">
-                                    <span></span><span></span><span></span><span></span><span></span><span></span>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                    <div class="partners-connections" aria-hidden="true"><span></span><span></span><span></span></div>
-                    <div class="partners-platform">
-                        <div class="partners-platform-name"><span class="logo-mark" aria-hidden="true"></span><strong>One Fluxzero foundation.</strong></div>
-                        <p>Data · Security · Workflows · Observability · Runtime</p>
-                    </div>
-                    <figcaption>One foundation. Separate environments for every project.</figcaption>
-                </figure>
-            </div>
-        </header>
-
-        <section class="partners-section" aria-labelledby="repeat-title">
-            <div class="partners-shell">
-                <div class="partners-split">
-                    <div>
-                        <p class="partners-eyebrow">Hit the ground running</p>
-                        <h2 id="repeat-title">New client.<br>Same head start.</h2>
-                    </div>
-                    <div class="partners-copy">
-                        <p>Different products. The same need for data, security and reliable execution. Fluxzero has that covered.</p>
-                        <p>Your team and AI agents spend their time and prompt budget on what makes each product valuable.</p>
-                    </div>
-                </div>
-                <dl class="partners-outcomes partners-cards">
-                    <div><dt>Faster delivery</dt><dd>Build features from day one. Skip repeated infrastructure setup.</dd></div>
-                    <div><dt>Predictable projects</dt><dd>Fewer backend decisions and surprises on the way to launch.</dd></div>
-                    <div><dt>A foundation that keeps improving</dt><dd>Platform improvements benefit every project, without extra work for your team.</dd></div>
-                </dl>
-            </div>
-        </section>
-
-        <section class="partners-section partners-guarantees" aria-labelledby="guarantees-title">
-            <div class="partners-shell">
-                <div class="partners-section-head">
-                    <p class="partners-eyebrow">Built in from day one</p>
-                    <h2 id="guarantees-title">Enterprise foundations.<br>For every client project.</h2>
-                    <p>The guarantees serious software needs, built into every project from day one.</p>
-                </div>
-                <dl class="partners-guarantee-grid partners-cards">
-                    {guarantees.map(guarantee => (
-                        <div>
-                            <dt>{guarantee.title}</dt>
-                            <dd>{guarantee.copy}</dd>
+            <section class="partners-contact" aria-labelledby="contact-title">
+                <h2 id="contact-title">Let’s talk.</h2>
+                <form action="https://getform.io/f/bejeorxa" id="contactForm" method="POST" novalidate>
+                    <input type="hidden" name="_gotcha">
+                    <input type="hidden" name="source" value="Partners">
+                    <div class="partners-fields">
+                        <div class="partners-field">
+                            <label for="fn">Name</label>
+                            <input name="name" type="text" id="fn" autocomplete="name" required>
                         </div>
-                    ))}
-                </dl>
-                <a class="partners-text-link" href="/technical-foundation">Explore the technical foundation <span aria-hidden="true">→</span></a>
-            </div>
-        </section>
-
-        <section class="partners-section" aria-labelledby="portfolio-title">
-            <div class="partners-shell partners-split partners-split--aligned">
-                <p class="partners-eyebrow">Beyond the launch</p>
-                <div>
-                    <h2 id="portfolio-title">Grow your portfolio.<br>Keep your focus.</h2>
-                    <figure class="partners-insight">
-                        <img src="/images/partners/reservation-trace@2x.webp" width="392" height="320" loading="lazy" decoding="async" alt="Example trace linking a reservation request to ticket reservation and payment processing, with timing for each step.">
-                    </figure>
-                </div>
-                <div class="partners-copy">
-                    <p>Support more client projects on one familiar foundation.</p>
-                    <p>Keep your focus on features, fixes and client needs. Fluxzero maintains the technical foundation and shows you what’s happening inside every product.</p>
-                    <div class="partners-responsibilities">
-                        <div><h3>Your team</h3><p>Building and maintaining the product.</p></div>
-                        <div><h3>Fluxzero</h3><p>Running and improving the foundation.</p></div>
+                        <div class="partners-field">
+                            <label for="email">Work email</label>
+                            <input name="email" type="email" id="email" autocomplete="email" required>
+                        </div>
                     </div>
-                    <a class="partners-text-link" href="/product-insight#traces">Explore product insight <span aria-hidden="true">→</span></a>
-                </div>
-            </div>
-        </section>
-
-        <section class="partners-section partners-europe" aria-labelledby="europe-title">
-            <div class="partners-shell partners-split partners-split--aligned">
-                <p class="partners-eyebrow">A European foundation</p>
-                <div>
-                    <h2 id="europe-title">European cloud.<br>Privacy built in.</h2>
-                    <p class="partners-europe-trust">
-                        <span class="partners-eu-stars" aria-hidden="true">
-                            {Array.from({ length: 12 }, (_, index) => <span style={`--star:${index}`}>★</span>)}
-                        </span>
-                        <span>Built on ISO 27001-certified and SOC 2 Type 2-audited infrastructure.</span>
-                    </p>
-                </div>
-                <div class="partners-copy">
-                    <p>European and 100% EU-operated. Every project gets an isolated environment with privacy controls built in.</p>
-                    <p>Control access to personal data and erase it without losing operational history.</p>
-                    <a class="partners-text-link" href="/technical-foundation#privacy">Explore the privacy foundation <span aria-hidden="true">→</span></a>
-                </div>
-            </div>
-        </section>
-
-        <section class="partners-closing" aria-labelledby="closing-title">
-            <div class="partners-shell">
-                <p class="partners-eyebrow">Ready for more?</p>
-                <h2 id="closing-title">Build every product.<br>We’ll run the foundation.</h2>
-                <p>Let’s explore how Fluxzero can support your next project.</p>
-                <div class="partners-actions">
-                    <a class="v4-button v4-button--primary" href="/contact#contactForm">Let’s talk <span aria-hidden="true">→</span></a>
-                    <a class="v4-button v4-button--secondary" href="/pricing">Explore pricing <span aria-hidden="true">↗</span></a>
-                </div>
-            </div>
-        </section>
+                    <div class="partners-field">
+                        <label for="message">Tell us about your projects</label>
+                        <textarea name="message" id="message" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" id="submitButton" class="v4-button v4-button--primary">Send message</button>
+                    <p id="formStatus" class="partners-status" role="status" aria-live="polite"></p>
+                </form>
+            </section>
+        </div>
     </main>
-    <MarketingFooter />
+    <footer class="partners-footer">
+        <span>© {new Date().getFullYear()} Fluxzero</span>
+        <a href="/docs/about/privacy/">Privacy</a>
+    </footer>
+    <script src="../scripts/contact-form.ts"></script>
 </body>
 </html>
