@@ -68,6 +68,12 @@ Run commands from the repository root.
 
 The production build also generates `dist/llms.txt` and per-page Markdown from the rendered core marketing pages. These files are build artifacts; the website HTML remains their source of truth. `/llms-full.txt` temporarily redirects to `/llms.txt`.
 
+After CSS inlining, `scripts/protect-homepage-styles.mjs` adds a stylesheet Content
+Security Policy to the homepage. Hashes permit its exact built styles while
+blocking injected stylesheets that could recolor its existing dark theme. Inline
+style attributes remain available for star positions and animation properties.
+Verify this policy with a production build; the development server does not apply it.
+
 The [product-code tests](tests/product-code/README.md) extract both Java and Kotlin examples from the sources rendered by `/product-code` and exercise their behavior with the real SDK `TestFixture`. They run locally and in CI without an SDK checkout or a running Fluxzero server.
 
 ## Project structure
