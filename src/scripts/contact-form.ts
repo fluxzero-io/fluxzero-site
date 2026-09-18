@@ -27,7 +27,7 @@ if (form instanceof HTMLFormElement && status && submitButton instanceof HTMLBut
             });
 
             if (response.ok) {
-                status.textContent = "Thanks, your message was sent.";
+                status.textContent = status.dataset.successMessage || "Thanks, your message was sent.";
                 status.dataset.state = "success";
                 form.reset();
             } else {

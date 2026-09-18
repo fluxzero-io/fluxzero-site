@@ -64,8 +64,8 @@ body.partners-page {
         text-shadow: 0 0 3px #ffffffbf, 0 0 9px #ffffff59;
     }
 }
-.partners-status { min-height: 1.6em; color: var(--partners-muted); font-size: 14px; line-height: 1.6; }
-.partners-status[data-state="success"] { color: #85d6b4; }
+.partners-status { color: var(--partners-muted); font-size: 14px; line-height: 1.6; }
+.partners-status:empty, .partners-status[data-state="success"] { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .partners-status[data-state="error"] { color: #ffab98; }
 .partners-contact .partners-preview { padding: 8px; border: 1px dashed var(--border); border-radius: 8px; background: transparent; color: var(--partners-muted); font: inherit; font-size: 12px; }
 .partners-footer { display: flex; justify-content: space-between; align-items: center; gap: 24px; width: min(1120px, calc(100% - 64px)); margin-inline: auto; padding: 24px 0; border-top: 1px solid var(--border); color: var(--partners-muted); font-size: 12px; }
