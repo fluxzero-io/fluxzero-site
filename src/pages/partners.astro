@@ -44,13 +44,13 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                         <label for="message">Tell us about your projects</label>
                         <textarea name="message" id="message" rows="4" required></textarea>
                     </div>
+                    {import.meta.env.DEV && (
+                        <button type="button" class="partners-preview" id="previewConfirmation">Preview confirmation</button>
+                    )}
                     <button type="submit" id="submitButton" class="v4-button v4-button--primary">Send message</button>
                     <p class="partners-form-note">We’ll be in touch.</p>
                     <p id="formStatus" class="partners-status" role="status" aria-live="polite"></p>
                 </form>
-                {import.meta.env.DEV && (
-                    <button type="button" class="partners-preview" id="previewConfirmation">Preview confirmation</button>
-                )}
             </section>
         </div>
     </main>

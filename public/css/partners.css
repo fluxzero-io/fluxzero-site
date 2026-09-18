@@ -47,19 +47,26 @@ body.partners-page {
     font-size: 13px;
     line-height: 1.5;
     text-align: center;
-    transition: font-size 1.8s ease, color 1.8s ease, text-shadow 2.4s ease, margin-top 1.8s ease;
 }
 .partners-contact form:has(.partners-status[data-state="success"]) .partners-form-note {
-    margin-top: 4px;
-    color: #fff;
-    font-size: clamp(24px, 3vw, 30px);
-    text-shadow: 0 0 3px #ffffffbf, 0 0 9px #ffffff59;
+    animation: partners-confirmation 2.8s ease-in-out;
 }
-.partners-status { color: var(--partners-muted); font-size: 14px; line-height: 1.6; }
-.partners-status:empty { display: none; }
+@keyframes partners-confirmation {
+    0%, 100% {
+        transform: scale(1);
+        color: var(--partners-muted);
+        text-shadow: 0 0 3px #fff0, 0 0 9px #fff0;
+    }
+    15%, 65% {
+        transform: scale(1.15);
+        color: #fff;
+        text-shadow: 0 0 3px #ffffffbf, 0 0 9px #ffffff59;
+    }
+}
+.partners-status { min-height: 1.6em; color: var(--partners-muted); font-size: 14px; line-height: 1.6; }
 .partners-status[data-state="success"] { color: #85d6b4; }
 .partners-status[data-state="error"] { color: #ffab98; }
-.partners-contact .partners-preview { margin-top: 20px; padding: 8px; border: 1px dashed var(--border); border-radius: 8px; background: transparent; color: var(--partners-muted); font: inherit; font-size: 12px; }
+.partners-contact .partners-preview { padding: 8px; border: 1px dashed var(--border); border-radius: 8px; background: transparent; color: var(--partners-muted); font: inherit; font-size: 12px; }
 .partners-footer { display: flex; justify-content: space-between; align-items: center; gap: 24px; width: min(1120px, calc(100% - 64px)); margin-inline: auto; padding: 24px 0; border-top: 1px solid var(--border); color: var(--partners-muted); font-size: 12px; }
 .partners-footer a { display: inline-flex; align-items: center; min-height: 44px; }
 .partners-footer a:hover { color: var(--text); text-decoration: underline; text-underline-offset: 4px; }
