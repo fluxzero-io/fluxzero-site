@@ -41,24 +41,18 @@ body.partners-page {
 .partners-field input:focus, .partners-field textarea:focus { border-color: #a8cee8; box-shadow: 0 0 0 3px #a8cee815; }
 .partners-contact button { width: 100%; justify-content: center; cursor: pointer; }
 .partners-contact button:disabled { cursor: wait; opacity: .7; transform: none; }
-.partners-form-note {
-    justify-self: center;
-    width: fit-content;
+.partners-contact [data-button-label] {
+    display: inline-block;
     transform-origin: center center;
-    margin-top: -10px;
-    color: var(--partners-muted);
-    font-size: 13px;
-    line-height: 1.5;
-    text-align: center;
 }
-.partners-contact form:has(.partners-status[data-state="success"]) .partners-form-note {
+.partners-contact button[data-state="success"] { cursor: default; opacity: 1; }
+.partners-contact button[data-state="success"] [data-button-label] {
     animation: partners-confirmation 2.8s ease-in-out;
 }
 @keyframes partners-confirmation {
     0% { animation-timing-function: cubic-bezier(.22, 1, .36, 1); }
     0%, 100% {
         transform: scale(1);
-        color: var(--partners-muted);
         text-shadow: 0 0 3px #fff0, 0 0 9px #fff0;
     }
     30%, 65% {
