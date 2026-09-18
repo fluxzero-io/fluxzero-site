@@ -42,6 +42,9 @@ body.partners-page {
 .partners-contact button { width: 100%; justify-content: center; cursor: pointer; }
 .partners-contact button:disabled { cursor: wait; opacity: .7; transform: none; }
 .partners-form-note {
+    justify-self: center;
+    width: fit-content;
+    transform-origin: center center;
     margin-top: -10px;
     color: var(--partners-muted);
     font-size: 13px;
@@ -59,7 +62,7 @@ body.partners-page {
         text-shadow: 0 0 3px #fff0, 0 0 9px #fff0;
     }
     30%, 65% {
-        transform: scale(1.15);
+        transform: scale(1.08);
         color: #fff;
         text-shadow: 0 0 3px #ffffffbf, 0 0 9px #ffffff59;
     }
