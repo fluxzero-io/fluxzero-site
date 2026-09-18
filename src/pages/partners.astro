@@ -48,6 +48,9 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                     <p class="partners-form-note">We’ll be in touch.</p>
                     <p id="formStatus" class="partners-status" role="status" aria-live="polite"></p>
                 </form>
+                {import.meta.env.DEV && (
+                    <button type="button" class="partners-preview" id="previewConfirmation">Preview confirmation</button>
+                )}
             </section>
         </div>
     </main>
@@ -56,5 +59,17 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         <a href="/docs/about/privacy/">Privacy</a>
     </footer>
     <script src="../scripts/contact-form.ts"></script>
+    <script>
+        const preview = document.getElementById('previewConfirmation');
+        const status = document.getElementById('formStatus');
+        preview?.addEventListener('click', () => {
+            if (!status) return;
+            const reset = status.dataset.state === 'success';
+            status.textContent = reset ? '' : 'Thanks, your message was sent.';
+            if (reset) delete status.dataset.state;
+            else status.dataset.state = 'success';
+            preview.textContent = reset ? 'Preview confirmation' : 'Reset preview';
+        });
+    </script>
 </body>
 </html>
