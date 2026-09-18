@@ -41,6 +41,7 @@ body.partners-page {
 .partners-field input:focus, .partners-field textarea:focus { border-color: #a8cee8; box-shadow: 0 0 0 3px #a8cee815; }
 .partners-contact button { width: 100%; justify-content: center; cursor: pointer; }
 .partners-contact button:disabled { cursor: wait; opacity: .7; transform: none; }
+.partners-form-note { margin-top: -10px; color: var(--partners-muted); font-size: 13px; text-align: center; }
 .partners-status { color: var(--partners-muted); font-size: 14px; line-height: 1.6; }
 .partners-status:empty { display: none; }
 .partners-status[data-state="success"] { color: #85d6b4; }
