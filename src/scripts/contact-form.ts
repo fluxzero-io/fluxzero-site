@@ -7,7 +7,6 @@ const submitButton = document.getElementById("submitButton");
 if (form instanceof HTMLFormElement && status && submitButton instanceof HTMLButtonElement) {
     const buttonLabel = submitButton.querySelector('[data-button-label]') || submitButton;
     const originalButtonText = buttonLabel.textContent || "Send";
-    const preview = document.getElementById("previewConfirmation");
 
     const fadeOutLabel = async () => {
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -19,7 +18,6 @@ if (form instanceof HTMLFormElement && status && submitButton instanceof HTMLBut
         submitButton.disabled = false;
         buttonLabel.textContent = originalButtonText;
         delete submitButton.dataset.state;
-        if (preview instanceof HTMLButtonElement) preview.disabled = false;
     };
 
     const showSuccess = async () => {
@@ -34,15 +32,6 @@ if (form instanceof HTMLFormElement && status && submitButton instanceof HTMLBut
         }
     };
 
-    preview?.addEventListener("click", async () => {
-        if (submitButton.disabled) return;
-        submitButton.disabled = true;
-        if (preview instanceof HTMLButtonElement) preview.disabled = true;
-        status.textContent = "";
-        await showSuccess();
-        restoreButton();
-    });
-
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
         if (submitButton.disabled) return;
@@ -54,7 +43,6 @@ if (form instanceof HTMLFormElement && status && submitButton instanceof HTMLBut
 
         submitButton.disabled = true;
         buttonLabel.textContent = "Sending...";
-        if (preview instanceof HTMLButtonElement) preview.disabled = true;
         status.textContent = "";
         delete status.dataset.state;
 

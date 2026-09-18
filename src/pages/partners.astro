@@ -44,9 +44,6 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
                         <label for="message">Tell us about your projects</label>
                         <textarea name="message" id="message" rows="4" required></textarea>
                     </div>
-                    {import.meta.env.DEV && (
-                        <button type="button" class="partners-preview" id="previewConfirmation">Preview confirmation</button>
-                    )}
                     <button type="submit" id="submitButton" class="v4-button v4-button--primary" data-confirmation="true"><span data-button-label>Send message</span></button>
                     <p id="formStatus" class="partners-status" role="status" aria-live="polite" data-success-message="Thanks! We'll be in touch."></p>
                 </form>
