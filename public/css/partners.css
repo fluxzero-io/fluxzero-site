@@ -52,12 +52,13 @@ body.partners-page {
     animation: partners-confirmation 2.8s ease-in-out;
 }
 @keyframes partners-confirmation {
+    0% { animation-timing-function: cubic-bezier(.22, 1, .36, 1); }
     0%, 100% {
         transform: scale(1);
         color: var(--partners-muted);
         text-shadow: 0 0 3px #fff0, 0 0 9px #fff0;
     }
-    15%, 65% {
+    30%, 65% {
         transform: scale(1.15);
         color: #fff;
         text-shadow: 0 0 3px #ffffffbf, 0 0 9px #ffffff59;
