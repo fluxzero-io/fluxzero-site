@@ -2,7 +2,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parse, serialize } from 'parse5';
-import { corePages, inlineMarketingPages, retiredPages, unlistedPages, unlistedLinkSources, siteUrl, normalizePath } from './core-pages.mjs';
+import { corePages, inlineMarketingPages, retiredPages, unlistedPages, restrictedLinkSources, siteUrl, normalizePath } from './core-pages.mjs';
 import { inspectLinks } from './check-links.mjs';
 
 const attr = (node, name) => node.attrs?.find(a => a.name === name)?.value;
@@ -46,10 +46,12 @@ export function validateDiscovery({ pages, sitemap, llms, markdown, robots }, re
         if (pages.has(path) || sitemap.has(path) || llms.includes(path) || [...markdown.values()].some(text => text.includes(path)) || [...pages.values()].some(p => p.links.includes(path))) failures.push(`${path}: retired page remains discoverable`);
     }
     for (const path of unlisted) {
-        const allowed = unlistedLinkSources[path] ?? { pages: [] };
         if (!pages.get(path)?.noindex) failures.push(`${path}: unlisted page must exist with noindex`);
-        if (sitemap.has(path) || llms.includes(path.replace(/\/$/, '')) || markdown.has(path) || [...markdown].some(([from, text]) => !allowed.pages.includes(from) && text.includes(path.replace(/\/$/, '')))) failures.push(`${path}: unlisted page appears in public indexes`);
-        if ([...pages].some(([from, page]) => from !== path && !allowed.pages.includes(from) && (allowed.footer ? page.nonFooterLinks : page.allLinks).includes(path))) failures.push(`${path}: unlisted page has an incoming link`);
+        if (sitemap.has(path) || llms.includes(path.replace(/\/$/, '')) || markdown.has(path) || [...markdown.values()].some(text => text.includes(path.replace(/\/$/, '')))) failures.push(`${path}: unlisted page appears in public indexes`);
+        if ([...pages].some(([from, page]) => from !== path && page.allLinks.includes(path))) failures.push(`${path}: unlisted page has an incoming link`);
+    }
+    for (const [path, allowed] of Object.entries(restrictedLinkSources)) {
+        if ([...pages].some(([from, page]) => from !== path && !allowed.pages.includes(from) && (allowed.footer ? page.nonFooterLinks : page.allLinks).includes(path))) failures.push(`${path}: incoming link outside permitted locations`);
     }
     if (llms.includes('/llms-full.txt')) failures.push('llms.txt links to its own alias');
     if (!robots.includes(`Sitemap: ${siteUrl}/sitemap-index.xml`)) failures.push('robots.txt does not advertise the sitemap');
