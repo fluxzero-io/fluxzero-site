@@ -4,6 +4,7 @@ import '../../public/css/marketing-shell.css';
 import '../../public/css/partners.css';
 import BrandHead from '../components/BrandHead.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 ---
 
 <!DOCTYPE html>
@@ -50,10 +51,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             </section>
         </div>
     </main>
-    <footer class="partners-footer">
-        <span>© {new Date().getFullYear()} Fluxzero</span>
-        <a href="/docs/about/privacy/">Privacy</a>
-    </footer>
+    <MarketingFooter />
     <script src="../scripts/contact-form.ts"></script>
 </body>
 </html>
