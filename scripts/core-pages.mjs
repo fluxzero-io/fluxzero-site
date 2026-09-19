@@ -7,5 +7,7 @@ export const documentationPages = ['/docs/getting-started/introduction/', '/docs
 export const corePages = [...marketingPages, ...documentationPages];
 export const retiredPages = ['/makeitreal/'];
 export const unlistedPages = ['/partners/'];
+// Deliberate entry points for otherwise unindexed pages.
+export const unlistedLinkSources = { '/partners/': { footer: true, pages: ['/contact/'] } };
 export const htmlFile = path => `${path.replace(/^\//, '')}index.html`;
 export const normalizePath = path => path === '/' ? '/' : `${path.replace(/\/$/, '')}/`;

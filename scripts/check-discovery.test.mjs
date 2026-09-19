@@ -105,3 +105,27 @@ test('IndexNow waits for deployed assets before notifying', async () => {
     assert.equal(pauses, 2);
     assert.equal(posts, 1);
 });
+
+
+test('partners links are limited to footers and Contact while remaining unindexed', () => {
+    const make = () => {
+        const f = fixture();
+        f.pages.set('/partners/', inspectPage('<meta name="robots" content="noindex">', '/partners/'));
+        f.pages.set('/contact/', inspectPage('<main><a href="/partners/">Partnerships</a></main>', '/contact/'));
+        f.pages.set('/other/', inspectPage('<footer><a href="/partners/">Partners</a></footer>', '/other/'));
+        f.markdown.set('/contact/', '[Partnerships](https://fluxzero.io/partners/)');
+        return f;
+    };
+    const validate = f => validateDiscovery(f, ['/', '/proof/'], ['/partners/']);
+    assert.deepEqual(validate(make()), []);
+    for (const mutate of [
+        f => f.pages.set('/other/', inspectPage('<header><a href="/partners/">Partners</a></header>', '/other/')),
+        f => f.pages.set('/other/', inspectPage('<main><a href="/partners/">Partners</a></main>', '/other/')),
+        f => f.sitemap.add('/partners/'),
+        f => { f.llms += '[Partners](https://fluxzero.io/partners/)'; },
+        f => { f.pages.get('/partners/').noindex = false; },
+    ]) {
+        const f = make(); mutate(f);
+        assert.ok(validate(f).some(message => message.includes('unlisted page')));
+    }
+});

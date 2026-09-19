@@ -73,6 +73,12 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
             line-height: 1.68;
         }
 
+        .contact-subtitle a {
+            color: #a8d5ed;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
         .contact-card {
             position: relative;
             display: grid;
@@ -427,7 +433,7 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
         <p class="contact-kicker">Contact</p>
         <h1 class="contact-title" id="contact-title"><span class="contact-title-line">Get in touch</span></h1>
         <p class="contact-subtitle">
-            Questions about Fluxzero, pricing, partnerships, or something else? We’d love to hear from you.
+            Questions about Fluxzero, pricing, <a href="/partners/">partnerships</a>, or something else? We’d love to hear from you.
         </p>
     </section>
 
