@@ -60,3 +60,23 @@ test('legacy monitoring URLs redirect temporarily and preserve query context',()
     assert.equal(redirectLegacyMonitoring(new Request('https://fluxzero.io/monitoring-demo/index.html')),undefined);
     assert.equal(redirectLegacyMonitoring(new Request('https://fluxzero.io/product-insight/')),undefined);
 });
+
+test('public static pages can be reused briefly without caching private responses or redirects', async () => {
+    for (const accept of ['text/html', 'text/markdown']) {
+        const response = await negotiateMarkdown(new Request('https://fluxzero.io/about/', {headers:{Accept:accept}}), {
+            fetch: async () => new Response('page', {headers:{'Cache-Control':'public, max-age=0, must-revalidate'}})
+        });
+        assert.equal(response.headers.get('Cache-Control'), 'public, max-age=60, must-revalidate');
+        assert.equal(response.headers.get('Vary'), 'Accept');
+    }
+    for (const options of [
+        {headers:{'Cache-Control':'private, max-age=0'}},
+        {headers:{'Cache-Control':'public, no-store, max-age=0'}},
+        {headers:{'Cache-Control':'public, max-age=0','Set-Cookie':'session=example'}},
+        {status:301,headers:{'Cache-Control':'public, max-age=0',Location:'/about/'}},
+        {status:500,headers:{'Cache-Control':'public, max-age=0'}},
+    ]) {
+        const response = await negotiateMarkdown(new Request('https://fluxzero.io/about/'), {fetch:async()=>new Response('',options)});
+        assert.equal(response.headers.get('Cache-Control'), options.headers['Cache-Control']);
+    }
+});

@@ -24,6 +24,11 @@ export async function negotiateMarkdown(request, assets) {
     }
     const response = await assets.fetch(new Request(url, request));
     const headers = new Headers(response.headers);
+    // Reuse public static pages during a visit, while limiting stale releases to one minute.
+    const cacheControl = headers.get('Cache-Control') ?? '';
+    if (response.status === 200 && !headers.has('Set-Cookie') && /\bpublic\b/i.test(cacheControl) && !/\b(no-store|private)\b/i.test(cacheControl)) {
+        headers.set('Cache-Control', cacheControl.replace(/\bmax-age=0\b/i, 'max-age=60'));
+    }
     const vary = headers.get('vary');
     if (vary !== '*' && !vary?.split(',').some(v => v.trim().toLowerCase() === 'accept')) headers.set('Vary', [vary, 'Accept'].filter(Boolean).join(', '));
     if (markdown && (response.ok || response.status === 304)) {

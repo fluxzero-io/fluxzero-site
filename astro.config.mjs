@@ -11,6 +11,7 @@ import remarkDocsLinks from './scripts/remark-docs-links.mjs';
 // https://astro.build/config
 export default defineConfig({
     site: 'https://fluxzero.io',
+    prefetch: { defaultStrategy: 'hover' },
     markdown: { remarkPlugins: [remarkDocsLinks] },
     vite: {
         plugins: [tailwindcss()],
