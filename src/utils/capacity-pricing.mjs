@@ -52,6 +52,19 @@ export function availableSizes(catalog, plan, type) {
     .sort((a, b) => Number(productFor(catalog,type,a).details.price) - Number(productFor(catalog,type,b).details.price));
 }
 
+export function allowsHighAvailability(policy, size) {
+  return !!policy.highAvailability && policy.clusterSizes.includes(size)
+    && (!policy.highAvailabilityClusterSizes?.length || policy.highAvailabilityClusterSizes.includes(size));
+}
+
+export function highAvailabilityLabel(policy) {
+  const sizes = policy.highAvailabilityClusterSizes;
+  const order = ['v1_starter', 'v1_small', 'v1_medium', 'v1_large', 'v1_xl', 'v1_2xl', 'v1_4xl', 'v1_8xl'];
+  const first = sizes?.length ? order.find(size => sizes.includes(size)) : undefined;
+  const name = first?.slice(3).replace(/^./, c => c.toUpperCase());
+  return `High availability${name ? ' from ' + name : ''} (Pro)`;
+}
+
 export function estimateCapacity(catalog, planId, rows, seats, storage, days) {
   const offer = catalog.offers.find(o => o.plan.planId === planId);
   if (!offer) throw new Error('Unknown plan');
@@ -64,7 +77,9 @@ export function estimateCapacity(catalog, planId, rows, seats, storage, days) {
     const count = ++seen[row.type];
     const maximum = row.type === 'cluster' ? policy.maximumClusters : policy.maximumApplications;
     if (maximum != null && count > maximum) throw new Error('Additional capacity requires Pro');
-    if (row.ha && (row.type !== 'cluster' || !policy.highAvailability)) throw new Error('High availability requires Pro');
+    if (row.ha && (row.type !== 'cluster' || !allowsHighAvailability(policy, row.size))) {
+      throw new Error('High availability requires Pro and an eligible cluster size');
+    }
     const product = productFor(catalog, row.type, row.size);
     const catalogAmount = Number(product.details.price);
     const included = capability(plan, `${row.type}.`, true);
@@ -101,7 +116,7 @@ export function offerFeatures(offer) {
     policy.maximumClusters == null ? 'Purchase additional clusters and apps; larger sizes available' : 'One cluster and one app; upgrade either up to Medium',
     policy.ticketSupport ? 'Ticket support' : 'Community support'
   ];
-  if (policy.highAvailability) features.push('High availability available as a paid option');
+  if (policy.highAvailability) features.push(`${highAvailabilityLabel(policy)} available as a paid option`);
   if (policy.backups) features.push('Manual and automated backups; storage usage applies');
   if (policy.pointInTimeRecoveryDays) features.push(`Point-in-time recovery over the last ${policy.pointInTimeRecoveryDays} days`);
   if (users) features.push(`${Number(users.included).toLocaleString('en-GB')} identity users included${policy.identityUsers ? '' : ' when available'}`);

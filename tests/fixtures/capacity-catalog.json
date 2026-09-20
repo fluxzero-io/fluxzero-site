@@ -266,7 +266,15 @@
             "ticketSupport": true,
             "staticIp": false,
             "identityUsers": false,
-            "serviceLevelAgreement": false
+            "serviceLevelAgreement": false,
+            "highAvailabilityClusterSizes": [
+              "v1_medium",
+              "v1_large",
+              "v1_xl",
+              "v1_2xl",
+              "v1_4xl",
+              "v1_8xl"
+            ]
           },
           "sortOrder": 50
         },
@@ -440,7 +448,15 @@
           "ticketSupport": true,
           "staticIp": false,
           "identityUsers": false,
-          "serviceLevelAgreement": false
+          "serviceLevelAgreement": false,
+          "highAvailabilityClusterSizes": [
+            "v1_medium",
+            "v1_large",
+            "v1_xl",
+            "v1_2xl",
+            "v1_4xl",
+            "v1_8xl"
+          ]
         },
         "capacityBased": true
       }

@@ -55,7 +55,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
             <label>{type === 'cluster' ? 'First cluster' : 'First app'}
               <select data-size>{availableSizes(catalog,starter,type).map(size => <option value={size} selected={size === includedSize(type)}>{productFor(catalog,type,size).details.description}</option>)}</select>
             </label>
-            {type === 'cluster' && <label class="ha-choice"><input type="checkbox" data-ha disabled /> High availability (Pro)</label>}
+            {type === 'cluster' && <label class="ha-choice"><input type="checkbox" data-ha disabled /> <span data-ha-label>High availability (Pro)</span></label>}
             <output data-row-total>{money(0)}</output>
           </div>)}
         </div>
@@ -97,7 +97,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
 <MarketingFooter />
 <script type="application/json" id="capacity-catalog" set:html={serializedCatalog}></script>
 <script>
-  import {availableSizes, capability, estimateCapacity, productFor} from '../../utils/capacity-pricing.mjs';
+  import {availableSizes, capability, estimateCapacity, productFor, allowsHighAvailability, highAvailabilityLabel} from '../../utils/capacity-pricing.mjs';
   const catalog = JSON.parse(document.getElementById('capacity-catalog')!.textContent!);
   const select = document.querySelector<HTMLSelectElement>('#estimate-plan')!;
   const container = document.getElementById('capacity-rows')!;
@@ -106,6 +106,13 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
   const selected = () => catalog.offers.find(o => o.plan.planId === select.value).subscription;
   function update() {
     try {
+      container.querySelectorAll<HTMLElement>('[data-capacity-type="cluster"]').forEach(row => {
+        const ha = row.querySelector<HTMLInputElement>('[data-ha]')!;
+        const size = row.querySelector<HTMLSelectElement>('[data-size]')!.value;
+        ha.disabled = !allowsHighAvailability(selected().capacityPolicy, size);
+        if (ha.disabled) ha.checked = false;
+        row.querySelector('[data-ha-label]')!.textContent = highAvailabilityLabel(selected().capacityPolicy);
+      });
       const rows = [...container.querySelectorAll<HTMLElement>('[data-capacity-type]')].map(row => ({
         type: row.dataset.capacityType, size: row.querySelector<HTMLSelectElement>('[data-size]')!.value,
         ha: !!row.querySelector<HTMLInputElement>('[data-ha]')?.checked
@@ -132,7 +139,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
         control.replaceChildren(...sizes.map(size => new Option(productFor(catalog,type,size).details.description, size)));
         control.value = sizes.includes(oldSize) ? oldSize : sizes[sizes.length - 1];
         const ha = row.querySelector<HTMLInputElement>('[data-ha]');
-        if (ha) { ha.disabled = !p.capacityPolicy.highAvailability; if (ha.disabled) ha.checked = false; }
+        if (ha) { ha.disabled = !allowsHighAvailability(p.capacityPolicy, control.value); if (ha.disabled) ha.checked = false; }
       });
       document.querySelector<HTMLButtonElement>(`[data-add="${type}"]`)!.disabled = maximum != null;
     }
