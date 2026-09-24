@@ -902,7 +902,7 @@ function renderChangelogPage(releases, page, totalPages, anchorPages) {
 
 <a class="changelog-release__link" href="${escapeAttribute(release.url)}" target="_blank" rel="noreferrer"><span>GitHub</span></a>
     </summary>
-    <div class="changelog-release__body" set:html={marked.parse(releaseBodies[${JSON.stringify(release.version)}] ?? '')} />
+    <div class="changelog-release__body" set:html={renderChangelogBody(releaseBodies[${JSON.stringify(release.version)}] ?? '', ${JSON.stringify(release.version)})} />
   </details>
 </div>`;
     }).join('\n\n');
@@ -930,7 +930,7 @@ tableOfContents:
   maxHeadingLevel: 3
 ---
 
-import { marked } from 'marked';
+import { renderChangelogBody } from '~/utils/changelog-body.mjs';
 
 import releaseBodies from './changelog-release-bodies${page === 1 ? '' : `-${page}`}.json';
 export const changelogTocScript = ${JSON.stringify(tocScript)};

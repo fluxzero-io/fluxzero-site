@@ -94,6 +94,11 @@ release fragments forward to the page containing that release when JavaScript is
 enabled, including after new releases shift the page boundaries. Each page imports
 only its own release bodies.
 
+Headings inside each release body have release-scoped, GitHub-compatible anchor
+IDs. Fragment links in the imported notes resolve within that release, so repeated
+headings in other releases cannot redirect readers to the wrong section. Missing
+targets still fail the ordinary production link check.
+
 `src/data/changelog-cache.json` is generated site data. A normal sync or build may update it; commit the change only after confirming that it contains expected public release data and no secrets.
 
 ## Build and deployment
