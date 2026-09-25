@@ -79,6 +79,7 @@ test('rejects missing, non-finite and ambiguous prices instead of displaying a f
 
 test('rejects incomplete storage, seat and HA publication', () => {
   for (const change of [
+    c => c.products.find(p => p.details.size === 'v1_3xl').details.price = 'NaN',
     c => c.products.find(p => p.details.resourceType === 'database_storage').details.price = null,
     c => c.offers[0].subscription.capabilities.find(p => p.key === 'seats.count').unitPrice = null,
     c => c.offers[1].subscription.capacityPolicy.highAvailabilityPriceMultiplier = null,

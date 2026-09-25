@@ -31,6 +31,7 @@ try {
   assert.ok(markdown.includes('Not yet available'), 'Catalog-only sizes must not appear purchasable');
   assert.ok(markdown.includes('allocated database volumes'), 'Text export must explain all billed storage');
   assert.ok(!html.includes('Request scale up plan'), 'Capacity pricing must not render the old offer');
+  assert.ok(!html.includes('.pricing-v2-card'), 'Legacy pricing CSS must not leak into capacity pricing');
   console.log('Capacity pricing HTML, CTA and text-export checks passed.');
 } finally {
   server.close();

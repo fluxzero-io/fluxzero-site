@@ -11,6 +11,10 @@ export function validateCatalog(catalog) {
   if (!Array.isArray(offers) || offers.length !== 2 || !Array.isArray(catalog.products)) {
     throw new Error('Publish exactly one Starter offer and one Pro addition before releasing capacity pricing');
   }
+  if (catalog.products.some(p => p.details.billingUnit === 'billing_period'
+      && (!isAmount(p.details.price) || !['cluster', 'application'].includes(p.details.resourceType)))) {
+    throw new Error('Every displayed capacity price must be valid, including catalog-only sizes');
+  }
   const starter = offers.find(o => !o.plan.details.basePlanId);
   const pro = offers.find(o => o.plan.details.basePlanId === starter?.plan.planId);
   if (!starter || !pro) throw new Error('The Pro addition must reference the published Starter offer');
