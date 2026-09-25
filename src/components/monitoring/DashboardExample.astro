@@ -1,0 +1,30 @@
+---
+interface Props {view:'trace'|'audit'|'logs'|'issues'|'documents'|'insights';}
+const {view}=Astro.props;
+const titles={trace:'Traces',audit:'Audit trail',logs:'Logs',issues:'Issues',documents:'Documents',insights:'Insights'};
+---
+<figure class="monitoring-example">
+  <div class="monitoring-example__frame" data-view={view}>
+    <iframe title={`${titles[view]} — interactive ticketing demo`} data-monitoring-frame
+      data-source={`/monitoring-demo/index.html?view=${view}`} sandbox="allow-scripts allow-same-origin" allow="clipboard-write" referrerpolicy="no-referrer"></iframe>
+    <noscript><p>Enable JavaScript to explore this interactive example.</p></noscript>
+  </div>
+
+</figure>
+<script>
+ const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
+   if(!entry.isIntersecting)return;
+   const frame=entry.target as HTMLIFrameElement;
+   if(frame.dataset.source)frame.src=frame.dataset.source;
+   observer.unobserve(frame);
+ }),{rootMargin:'120px'});
+ window.addEventListener('message',event=>{
+   if(event.origin!==location.origin || event.data?.type!=='monitoring-height')return;
+   const frame=[...document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]')].find(frame=>frame.contentWindow===event.source);
+   const height=Number(event.data.height);
+   if(frame && Number.isFinite(height) && height>=100 && height<=2400) {
+     (frame.parentElement as HTMLElement).style.height=`${Math.ceil(height)}px`;
+   }
+ });
+ document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]').forEach(frame=>observer.observe(frame));
+</script>

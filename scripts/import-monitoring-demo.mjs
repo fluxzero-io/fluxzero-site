@@ -1,0 +1,11 @@
+import {cp,mkdir,readFile,writeFile,rm} from 'node:fs/promises';
+import {resolve} from 'node:path';
+const source=resolve(process.argv[2]??'../fluxzero-auditlog/frontend/dist/monitoring-demo/browser');
+const target=resolve('public/monitoring-demo');
+let html=await readFile(resolve(source,'index.html'),'utf8');
+if(!html.includes('<app-root>')||!html.includes('data-theme="dark"'))throw Error('Expected dark monitoring demo build');
+html=html.replace('<base href="/">','<base href="/monitoring-demo/">');
+html=html.replace('<head>',`<head><meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; frame-src 'none'; form-action 'none'; base-uri 'self'">`);
+await rm(target,{recursive:true,force:true});await mkdir(target,{recursive:true});
+await cp(source,target,{recursive:true});await writeFile(resolve(target,'index.html'),html);
+console.log('Imported offline interactive monitoring demo. Network connections are disabled by CSP.');

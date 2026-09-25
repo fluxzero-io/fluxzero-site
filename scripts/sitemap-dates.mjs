@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { marketingPages } from './core-pages.mjs';
+import { marketingPages, unlistedPages, normalizePath } from './core-pages.mjs';
 
 // Git dates survive fresh checkouts. Never use build time or copied-file mtimes.
 export function lastChanged(cwd, files) {
@@ -35,6 +35,7 @@ export async function addSitemapDates(directory = 'dist') {
         const xml = await readFile(target,'utf8');
         const updated = xml.replace(/<url>([\s\S]*?)<\/url>/g, (match,body) => {
             const url = body.match(/<loc>(.*?)<\/loc>/)?.[1];
+            if (url && unlistedPages.includes(normalizePath(new URL(url).pathname))) return '';
             const date = url && dates.get(new URL(url).pathname);
             if (!date) return match;
             count++;

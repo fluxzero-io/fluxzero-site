@@ -17,16 +17,37 @@ function copyCodeFallback(text) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const languageButtons = document.querySelectorAll('[data-code-language]');
+    languageButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+            const language = button.dataset.codeLanguage;
+            // Keep the clicked control in place when preceding examples change height.
+            const top = button.getBoundingClientRect().top;
+            document.querySelectorAll('[data-code-variant]').forEach((variant) => {
+                variant.hidden = variant.dataset.codeVariant !== language;
+            });
+            languageButtons.forEach((choice) => {
+                choice.setAttribute('aria-pressed', String(choice.dataset.codeLanguage === language));
+            });
+            document.querySelectorAll('[data-copy-code]').forEach((copy) => {
+                const panel = copy.closest('.product-code-panel');
+                copy.dataset.copyTitle = panel.querySelector('[data-code-variant]:not([hidden])').dataset.codeTitle;
+                copy.dispatchEvent(new Event('code-language-change'));
+            });
+            window.scrollBy({ top: button.getBoundingClientRect().top - top, behavior: 'instant' });
+        });
+    });
     document.querySelectorAll('[data-copy-code]').forEach((button) => {
         const panel = button.closest('.product-code-panel');
         const code = panel?.querySelector('pre code');
         const icon = button.querySelector('i');
         const status = panel?.querySelector('[data-copy-code-status]');
-        const title = button.dataset.copyTitle || 'Code';
+        let title = button.dataset.copyTitle || 'Code';
         if (!code || !icon) return;
 
         let resetTimer;
         const reset = () => {
+            title = button.dataset.copyTitle || 'Code';
             button.classList.remove('is-copied', 'is-error');
             button.setAttribute('aria-label', `Copy code from ${title}`);
             button.setAttribute('title', `Copy code from ${title}`);
@@ -34,10 +55,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (status) status.textContent = '';
         };
 
+        button.addEventListener('code-language-change', () => {
+            window.clearTimeout(resetTimer);
+            reset();
+        });
+
         button.addEventListener('click', async () => {
             window.clearTimeout(resetTimer);
             try {
-                const text = code.textContent || '';
+                const text = [...panel.querySelectorAll('[data-code-variant]:not([hidden]) pre code')]
+                    .map((source) => source.textContent || '').join('\n\n');
                 if (navigator.clipboard && window.isSecureContext) {
                     await navigator.clipboard.writeText(text);
                 } else if (!copyCodeFallback(text)) {

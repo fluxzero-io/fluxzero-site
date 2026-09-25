@@ -8,6 +8,7 @@ import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 import ProductCodePanel from '../components/marketing/ProductCodePanel.astro';
+import { kotlinExamples } from '../data/product-code-kotlin.mjs';
 import 'boxicons/css/boxicons.min.css';
 
 const actionCode = `<span class="tok-keyword">record</span> <span class="tok-type">ReserveTicket</span>(
@@ -246,11 +247,11 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
             <span class="product-code-hero__sun" aria-hidden="true"></span>
             <div class="v4-shell cloud-proof-shell product-code-hero__layout">
                 <div class="product-code-hero__copy">
-                    <p class="cloud-proof-hero__back" data-reveal><a href="/how-it-works#behavior-title" data-browser-back><i class="bx bx-left-arrow-alt" aria-hidden="true"></i> Back</a></p>
+                    <p class="cloud-proof-hero__back" data-reveal><a href="/how-it-works/#behavior-title" data-browser-back><i class="bx bx-left-arrow-alt" aria-hidden="true"></i> Back</a></p>
                     <p class="cloud-proof-next__eyebrow" data-reveal>Product code</p>
                     <h1 data-reveal data-reveal-delay="1">Product decisions<br><span>are the code.</span></h1>
                     <p class="cloud-proof-hero__lead" data-reveal data-reveal-delay="2">When the cloud handles the engineering underneath, a feature can be just its business rules and follow-up actions. These examples show what that leaves your agent to write.</p>
-                    <p class="cloud-proof-hero__lead product-code-hero__context" data-reveal data-reveal-delay="3">You build in natural language. Fluxzero chose Java for the code underneath: a proven backend language that agents speak fluently. Your code remains easy to extend as your product grows.</p>
+                    <p class="cloud-proof-hero__lead product-code-hero__context" data-reveal data-reveal-delay="3">You prompt in natural language. Your agent turns your ideas into Kotlin or Java: proven backend languages that agents speak fluently. Your code remains easy to extend as your product grows.</p>
                 </div>
             </div>
         </header>
@@ -263,7 +264,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>You decide how a feature should work. Fluxzero keeps its rules intact when many customers act at once. The same logic continues to work as usage grows, without engineering work for your agent.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--action" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="ReserveTicket.java" label="One rule, two changes" code={actionCode} />
+                    <ProductCodePanel title="ReserveTicket.java" label="One rule, two changes" code={actionCode} kotlinCode={kotlinExamples.actionCode} prompt="Let's build a ticketing system for concerts. Make sure the same ticket can't be booked twice, even when lots of customers book at once." />
                     <dl class="product-code-proof__notes">
                         <div><dt>State loads automatically</dt><dd>Fluxzero provides the product state and which customer is making the change.</dd></div>
                         <div><dt>Everything changes together</dt><dd>If something changes while the rule runs, it runs again before the changes are saved.</dd></div>
@@ -283,13 +284,12 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <div class="product-code-proof product-code-proof--model" data-reveal data-reveal-delay="1">
                     <figure class="product-code-relation-map">
                         <div class="product-code-relation-map__grid">
-                            <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--show" title="Show.java" label="Root model" code={showModelCode} />
+                            <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--combined" title="Models.java" label="Concerts, tickets & reservations" code={[showModelCode, ticketModelCode, reservationModelCode]} kotlinCode={[kotlinExamples.showModelCode, kotlinExamples.ticketModelCode, kotlinExamples.reservationModelCode]} prompt="I'd like to keep a history of our concerts and reservations." />
                             <div class="product-code-relation-map__level product-code-relation-map__level--show" aria-hidden="true">
                                 <span class="product-code-relation-map__link product-code-relation-map__link--show-ticket" aria-hidden="true"></span>
                                 <strong class="product-code-relation-map__root">Show</strong>
                             </div>
 
-                            <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--tickets" title="Ticket.java" label="Child of Show" code={ticketModelCode} />
                             <div class="product-code-relation-map__level product-code-relation-map__level--tickets" aria-hidden="true">
                                 <span class="product-code-relation-map__link product-code-relation-map__link--ticket-up" aria-hidden="true"></span>
                                 <span class="product-code-relation-map__link product-code-relation-map__link--ticket-down" aria-hidden="true"></span>
@@ -301,7 +301,6 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                                 </ul>
                             </div>
 
-                            <ProductCodePanel class="product-code-relation-map__code product-code-relation-map__code--reservations" title="Reservation.java" label="Child of Ticket" code={reservationModelCode} />
                             <div class="product-code-relation-map__level product-code-relation-map__level--reservations" aria-hidden="true">
                                 <span class="product-code-relation-map__link product-code-relation-map__link--reservation-up" aria-hidden="true"></span>
                                 <ul class="product-code-relation-map__reservations" aria-label="Reservations connected to tickets">
@@ -331,13 +330,13 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">03 · Testing behavior</p>
                     <h2 id="tests-title">Know it works.<br><span>Before customers use it.</span></h2>
-                    <p>Even if you’ve never written code, you can check that your agent built what you asked for. Fluxzero provides the foundation. End-to-end tests verify your product’s behavior before customers use it. The same tests check that features keep working after each change.</p>
+                    <p>Tests are part of every feature your agent builds. You describe the behavior; your agent writes the code and tests together. Fluxzero lets those tests run complete flows, including time passing, so they keep checking the feature as your product changes.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--test" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="ReserveTicketTest.java" label="Behavior tested end-to-end" code={testCode} />
+                    <ProductCodePanel title="ReserveTicketTest.java" label="Behavior tested end-to-end" code={testCode} kotlinCode={kotlinExamples.testCode} prompt="A booking is only confirmed once the customer has paid." />
                     <dl class="product-code-proof__notes">
                         <div><dt>Production behavior</dt><dd>The scenario runs through the same rules as the real application.</dd></div>
-                        <div><dt>Check before you ship</dt><dd>Your agent writes the code. Passing behavior tests show that it meets your requirements.</dd></div>
+                        <div><dt>Included with the feature</dt><dd>Your agent adds the tests as it builds. You don’t need to ask for them separately.</dd></div>
                         <div><dt>Visible outcome</dt><dd>Success and expected rejections are checked without infrastructure or mocks.</dd></div>
                     </dl>
                 </div>
@@ -352,7 +351,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>Query your data from anywhere in your code. Use a dedicated query class to define what to fetch and who may access it. Fluxzero keeps your data and its relationships searchable as the product changes, without a separate search system to build or maintain.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--query" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="FindAvailableTickets.java" label="Query and search" code={searchCode} />
+                    <ProductCodePanel title="FindAvailableTickets.java" label="Query and search" code={searchCode} kotlinCode={kotlinExamples.searchCode} prompt="I'd like to find available tickets by concert and section." />
                     <dl class="product-code-proof__notes">
                         <div><dt>Search maintained automatically</dt><dd>Searchable data stays up to date as your product changes.</dd></div>
                         <div><dt>Relationships already known</dt><dd>Fluxzero follows the connections in your product data to find what belongs together.</dd></div>
@@ -371,8 +370,8 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 </header>
                 <div class="product-code-proof product-code-proof--stacked" data-reveal data-reveal-delay="1">
                     <div class="product-code-proof__code-stack">
-                        <ProductCodePanel title="ReservationTimers.java" label="Start and cancel a deadline" code={timerCode} />
-                        <ProductCodePanel title="ExpireReservation.java" label="Remove hold and release ticket" code={expiryCode} />
+                        <ProductCodePanel title="ReservationTimers.java" label="Start and cancel a deadline" code={timerCode} kotlinCode={kotlinExamples.timerCode} prompt="Give people 15 minutes to pay for their tickets." />
+                        <ProductCodePanel title="ExpireReservation.java" label="Remove hold and release ticket" code={expiryCode} kotlinCode={kotlinExamples.expiryCode} />
                     </div>
                     <dl class="product-code-proof__notes">
                         <div><dt>Scheduled work preserved</dt><dd>Scheduled actions survive application restarts and deployments.</dd></div>
@@ -391,7 +390,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>Some workflows need to wait for an external service before continuing. Define what happens when the response arrives. Fluxzero preserves progress and connects each response to the right process, even after a restart.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--workflow" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="PaymentProcess.java" label="Wait for a payment response" code={paymentProcessCode} />
+                    <ProductCodePanel title="PaymentProcess.java" label="Wait for a payment response" code={paymentProcessCode} kotlinCode={kotlinExamples.paymentProcessCode} prompt="Let's add payments. They might take a while to come through." />
                     <dl class="product-code-proof__notes">
                         <div><dt>Progress preserved</dt><dd>Each workflow’s progress is preserved, including after a restart.</dd></div>
                         <div><dt>Responses connected</dt><dd>The reference on an incoming response connects it to the right waiting process.</dd></div>
@@ -406,10 +405,10 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <header class="cloud-proof-copy" data-reveal>
                     <p class="cloud-proof-next__number">07 · Access and privacy</p>
                     <h2 id="policy-title">You decide who may do what.<br><span>Fluxzero enforces it.</span></h2>
-                    <p>Define the access rules that fit your product. Fluxzero enforces them before allowing a change. Information marked as private stays protected and can be erased without losing the surrounding history.</p>
+                    <p>Keep personal details private and removable when needed. Fluxzero stores protected values separately, so they can be erased without losing the surrounding history. Your access rules control who can view or change them.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--policy" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="UpdateContactEmail.java" label="Ownership and protected data" code={personalDataCode} />
+                    <ProductCodePanel title="UpdateContactEmail.java" label="Ownership and protected data" code={personalDataCode} kotlinCode={kotlinExamples.personalDataCode} prompt="We need to be able to erase customers' personal details." />
                     <dl class="product-code-proof__notes">
                         <div><dt>Identity supplied</dt><dd>Your rule receives the authenticated customer making the change.</dd></div>
                         <div><dt>Access checked first</dt><dd>When sign-in is required, unauthenticated requests are rejected before the feature runs.</dd></div>
@@ -427,7 +426,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>Your web endpoints live in Fluxzero. Your application has no public endpoint of its own and securely pulls requests when it can handle them. This keeps it out of reach of direct network attacks. Excess traffic waits in Fluxzero instead of flooding the application.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--web" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="ReservationApi.java" label="Web request to command" code={webCode} />
+                    <ProductCodePanel title="ReservationApi.java" label="Web request to command" code={webCode} kotlinCode={kotlinExamples.webCode} prompt="Let's make it possible to book from our website." />
                     <dl class="product-code-proof__notes">
                         <div><dt>Input checked</dt><dd>Fluxzero checks the submitted data against your requirements before running the feature.</dd></div>
                         <div><dt>Identity carried through</dt><dd>The feature receives the customer making the request without extra code to pass that identity along.</dd></div>
@@ -445,7 +444,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>Send a request without choosing which application will handle it. Fluxzero delivers it and returns the result. Whether the handler runs in your own app or another one, the calling code stays the same.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--location" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="TicketApi.java" label="Requests without routing code" code={queryCallerCode} />
+                    <ProductCodePanel title="TicketApi.java" label="Requests without routing code" code={queryCallerCode} kotlinCode={kotlinExamples.queryCallerCode} prompt="Can our other apps use the same ticket search?" />
                     <dl class="product-code-proof__notes">
                         <div><dt>Web handlers anywhere</dt><dd>The web handler can run in any connected application. The public endpoint stays the same.</dd></div>
                         <div><dt>Queries across applications</dt><dd>The query handler can run alongside it or in another app. The call stays the same.</dd></div>
@@ -463,7 +462,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>Not every part of your application is equally busy. With separate consumers, parts run and scale independently. Fluxzero keeps their progress separate and distributes the work, so capacity can grow where it is needed.</p>
                 </header>
                 <div class="product-code-proof" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="FraudDetection.java" label="Fraud checks with their own capacity" code={consumerCode} />
+                    <ProductCodePanel title="FraudDetection.java" label="Fraud checks with their own capacity" code={consumerCode} kotlinCode={kotlinExamples.consumerCode} prompt="Let's add fraud checks without slowing down ticket sales." />
                     <dl class="product-code-proof__notes">
                         <div><dt>Capacity where it counts</dt><dd>Give demanding work its own consumer. Add threads or app instances as demand grows.</dd></div>
                         <div><dt>Independent progress</dt><dd>Each consumer keeps its own place. Slower work does not hold up other consumers.</dd></div>
@@ -481,7 +480,7 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                     <p>Fluxzero preserves your product’s history. Use it to add features retroactively, with the information as it was at the time. The same code processes earlier activity and continues with new activity.</p>
                 </header>
                 <div class="product-code-proof product-code-proof--history" data-reveal data-reveal-delay="1">
-                    <ProductCodePanel title="CustomerRewards.java" label="Retroactive event handler" code={historyCode} />
+                    <ProductCodePanel title="CustomerRewards.java" label="Retroactive event handler" code={historyCode} kotlinCode={kotlinExamples.historyCode} prompt="Let's add a rewards program. Can we include earlier purchases?" />
                     <dl class="product-code-proof__notes">
                         <div><dt>History supplied</dt><dd>Your new feature receives recorded activity from the point you choose.</dd></div>
                         <div><dt>Earlier state reconstructed</dt><dd>Fluxzero supplies the data as it was then, without your code having to rebuild it.</dd></div>
@@ -497,8 +496,8 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
                 <h2 id="conclusion-title">Your product is<br><span>the entire application.</span></h2>
                 <p>Your agent writes what the product should do. Fluxzero takes responsibility for making it run. What remains is an application entirely devoted to the product, from the first feature to a fully distributed system.</p>
                 <div class="cloud-proof-next__actions">
-                    <a class="v4-button v4-button--primary" href="/get-started"><span>Start building</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
-                    <a class="v4-button v4-button--secondary" href="/docs"><span>Inspect the SDK</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
+                    <a class="v4-button v4-button--primary" href="/get-started/"><span>Start building</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
+                    <a class="v4-button v4-button--secondary" href="/docs/"><span>Inspect the SDK</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
                 </div>
             </div>
         </section>
@@ -506,6 +505,6 @@ const consumerCode = `<span class="tok-annotation">@Component</span>
 
     <MarketingFooter />
     <script src="/js/v4.js?v=20260904-3" defer></script>
-    <script src="/js/product-code.js?v=20260911-2" defer></script>
+    <script src="/js/product-code.js?v=20260917-2" defer></script>
 </body>
 </html>

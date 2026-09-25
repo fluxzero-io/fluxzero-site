@@ -102,3 +102,17 @@ test('llms includes the instruction once while page Markdown retains setup and c
     assert.ok(llms.includes(home.content));
     for (const page of pages) assert.ok(renderMarkdownPage(page).includes(`Source: ${page.url}\n\n${page.content}`));
 });
+
+test('exports equivalent code languages in source order without repeating their shared prompt', () => {
+    const result = render(`<main><figure>
+        <figcaption><p>You write</p><blockquote>Reserve a ticket.</blockquote></figcaption>
+        <div data-llms-exclude><button>Kotlin</button><button>Java</button></div>
+        <div><pre><code class="language-kotlin">data class Ticket(val id: String)</code></pre></div>
+        <div hidden data-llms-include><pre><code class="language-java">record Ticket(String id) {}</code></pre></div>
+        </figure></main>`);
+    assert.equal(result.match(/Reserve a ticket\./g)?.length, 1);
+    assert.ok(result.includes('```kotlin\ndata class Ticket(val id: String)\n```'));
+    assert.ok(result.includes('```java\nrecord Ticket(String id) {}\n```'));
+    assert.ok(result.indexOf('```kotlin') < result.indexOf('```java'));
+    assert.equal(result.includes('Kotlin'), false);
+});

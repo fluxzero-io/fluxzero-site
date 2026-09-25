@@ -1,5 +1,21 @@
 # Marketing fonts
 
+Inter uses the upstream variable font (weights 100–900) so buttons and emphasized
+copy use designed weights instead of browser-synthesized bold. Source:
+https://github.com/rsms/inter/blob/master/docs/font-files/InterVariable.woff2
+The SIL Open Font License is included in `inter/LICENSE.txt`.
+
+To regenerate its Latin subset with `fonttools[woff]`:
+
+```sh
+pyftsubset public/fonts/inter/InterVariable.woff2 --flavor=woff2 --unicodes="U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2100-22FF,U+25A0-27FF,U+FEFF,U+FFFD" --output-file=public/fonts/inter/InterVariable-latin.woff2
+```
+
+The older Inter Regular files remain as source assets; marketing pages use
+InterVariable. Keep the preload in BrandHead aligned with the active Latin face.
+
+## Original static font assets
+
 The original TTF files are the source for the lossless WOFF2 files. The Latin
 subsets cover the English marketing copy, Western European accents, punctuation,
 and arrows. `src/styles/marketing-fonts.css` declares these after the full faces with `unicode-range`,

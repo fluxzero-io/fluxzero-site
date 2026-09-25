@@ -6,10 +6,13 @@ import tailwindcss from '@tailwindcss/vite';
 import starlightLinksValidator from 'starlight-links-validator'
 import cloudflare from '@astrojs/cloudflare';
 import { fluxzeroBrand } from './src/config/brand.mjs';
+import remarkDocsLinks from './scripts/remark-docs-links.mjs';
 
 // https://astro.build/config
 export default defineConfig({
     site: 'https://fluxzero.io',
+    prefetch: { defaultStrategy: 'hover' },
+    markdown: { remarkPlugins: [remarkDocsLinks] },
     vite: {
         plugins: [tailwindcss()],
         css: {
@@ -35,6 +38,9 @@ export default defineConfig({
         }
     },
     redirects: {
+        "/monitoring": { status: 302, destination: "/product-insight/" },
+        "/monitoring/index.html": { status: 302, destination: "/product-insight/" },
+        "/monitoring/index.md": { status: 302, destination: "/product-insight/index.md" },
         "/docs/guides/messaging/071-role-based-access-control/": { status: 301, destination: "/docs/guides/messaging/role-based-access-control/" },
         "/docs/guides/scheduling": { status: 301, destination: "/docs/guides/messaging/message-scheduling/" },
         "/docs/guides/testing": { status: 301, destination: "/docs/guides/messaging/testing-your-handlers/" },

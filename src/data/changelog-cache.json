@@ -1,7 +1,142 @@
 {
-  "lastUpdated": "2026-09-13T12:06:47.811Z",
-  "latestVersion": "2.0.0-rc.11",
+  "lastUpdated": "2026-09-17T13:53:19.693Z",
+  "latestVersion": "1.284.0",
   "releases": [
+    {
+      "version": "1.284.0",
+      "date": "2026-09-17",
+      "body": "#### [1.284.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.283.0...1.284.0) (2026-09-17)\n\n##### Bug Fixes\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>search: retain document updates without active monitors <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/18bb9ae55a258d284bd00594e779a68f1d2ec062\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Keep in-memory document updates available to later consumers while limiting callbacks to active monitors. Use a per-collection revision lookup to preserve coalescing without scanning the growing stream on every write.</p>\n</div>\n</details></li>\n<li><details open class=\"commit-message-details\"><summary>testing: retain pending document revisions across batch completion <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/9fdf406e182a657ea06e1f0d63dc11586a37bf3d\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Track document revisions independently so batch completion and failed writes cannot discard newer pending updates. Preserve coalescing and compare effective consumer namespaces when applying index bounds.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.284.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.283.0",
+      "date": "2026-09-17",
+      "body": "#### [1.283.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.282.0...1.283.0) (2026-09-17)\n\n##### Dependency updates\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>bump io.fluxzero.tools:fluxzero-maven-plugin from 1.18.8 to 1.18.9 <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/83dd19a3b5284a9f634e0bb622e0828e8035fc48\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>io.fluxzero.tools:fluxzero-maven-plugin</strong>: 1.18.8 -> 1.18.9 <a href=\"https://github.com/fluxzero-io/fluxzero-cli/blob/main/CHANGELOG.md\">changelog</a></p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.283.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "2.0.0-rc.16",
+      "date": "2026-09-16",
+      "body": "#### [2.0.0-rc.16](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.0.0-rc.15...2.0.0-rc.16) (2026-09-16)\n\n##### Bug Fixes\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>modeling: preserve synchronous conflict resolution <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/e0bc96354aa0e5a95bb7d223973151b2036b1d1d\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Keep local conflict decisions in the same execution mode as reevaluation while retaining contextual virtual workers for asynchronous handling.</p>\n</div>\n</details></li>\n<li><details open class=\"commit-message-details\"><summary>modeling: preserve synchronous conflict resolution <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/ef69f8067af18545a626072a4c845f5cd235e9cd\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Follow the pipeline execution mode when resolving Model conflicts so local synchronous handling cannot return before its retry completes. Keep asynchronous resolvers on contextual virtual workers and preserve retry bounds and failure mapping.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.0.0-rc.16",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "2.0.0-rc.15",
+      "date": "2026-09-16",
+      "body": "#### Fluxzero SDK 2.0.0-rc.15\n\nThis release candidate fixes command validation and conflict recovery for Models.\n\n- **Targeted Graph updates keep command safeguards.** `graph.assertAndApply(command)` now runs applicable assertions on the effective command even when they read another Model. Their dependencies participate in conflict detection, while writes remain limited to the selected Model.\n- **RETRY is the default for both updates and creations.** Without an explicit override, changed dependencies trigger a fresh evaluation regardless of `fluxzero.defaults.version`. Explicit policies retain their precedence.\n- **Create-only remains create-only.** A factory cannot overwrite a Model created by another writer while the command was being evaluated.\n- **Staged Graph updates recover correctly from conflicts.** Retry reevaluates update functions against a fresh snapshot and preserves the original absence condition, including chained updates, multiple targets and previously deleted Models.\n\nJava and Kotlin guidance and public API documentation have been aligned with these contracts.\n\nThis is a prerelease, not the 2.0 GA release.\n\nKnown issue: in synchronous local handling, a Model conflict retry can complete after `TestFixture` checks its result,\ncausing an intermittent test timeout. A correction has been merged into `next/2.0` but is not included in this immutable\nrelease.",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.0.0-rc.15",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "2.0.0-rc.14",
+      "date": "2026-09-16",
+      "body": "#### Fluxzero SDK 2.0.0-rc.14\n\nThis release candidate hardens Model and Graph reads, mutations and replay.\n\n- Manual Graph reads inside Model assertions and applies now retain their transaction dependencies, including consumed alias bindings and nested validation references.\n- New detached Graph views observe completed relationship changes regardless of whether the root value, presence or children are read first. Historical views retain their event boundary.\n- Direct Graph creation distinguishes an absent Model head from the Graph snapshot. Concurrent creation and update protection remain intact.\n- Cold replay preserves explicitly selected Model identities and compatible concrete types without collapsing distinct read dependencies or widening explicitly typed parameters.\n- Historical ancestor navigation retains the relationship boundary before deletion or reparenting.\n- Cache reuse keeps ownership and validity checks; ordinary successful cached mutations do not acquire an unconditional freshness request.\n- Java and Kotlin documentation clarify ordered atomic updates and the exact previous-state boundary of cascaded deletions.\n- Embedded test-server interface binding and proxy listener isolation improve concurrent local test execution.\n\nThe changes include deterministic regression coverage for creation, cold replay, historical relationships, cache freshness, conflict handling and rollback, plus complete downstream application qualification.\n\nThis is a prerelease, not the 2.0 GA release.",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.0.0-rc.14",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.282.0",
+      "date": "2026-09-16",
+      "body": "#### [1.282.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.281.0...1.282.0) (2026-09-16)\n\n##### Dependency updates\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>bump org.apache.maven.plugins:maven-install-plugin <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/923dd4b2afed854dc3bb272ce32913f9d833e151\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>org.apache.maven.plugins:maven-install-plugin</strong>: 3.1.4 -> 3.2.0 <a href=\"https://github.com/apache/maven-install-plugin/releases\">changelog</a></p>\n</div>\n</details></li>\n<li><details open class=\"commit-message-details\"><summary>bump at.yawk.lz4:lz4-java from 1.11.1 to 1.11.3 <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/43a156dfe87ea75b2a278dd7d54dcb79ab37f183\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>at.yawk.lz4:lz4-java</strong>: 1.11.1 -> 1.11.3 <a href=\"https://github.com/yawkat/lz4-java/blob/main/CHANGES.md\">changelog</a></p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.282.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.281.0",
+      "date": "2026-09-16",
+      "body": "#### [1.281.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.280.0...1.281.0) (2026-09-16)\n\n##### Dependency updates\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>bump org.apache.maven.plugins:maven-deploy-plugin <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/2c3944ead0ecbc209ac64bb8ea260d0ac27b7963\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>org.apache.maven.plugins:maven-deploy-plugin</strong>: 3.1.4 -> 3.2.0 <a href=\"https://github.com/apache/maven-deploy-plugin/releases\">changelog</a></p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.281.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.280.0",
+      "date": "2026-09-16",
+      "body": "#### [1.280.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.279.0...1.280.0) (2026-09-16)\n\n##### Dependency updates\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>bump io.fluxzero.tools:fluxzero-maven-plugin from 1.18.6 to 1.18.8 <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/2ac528c0fc676a2a39e28928bb8659c0fe802ab6\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>io.fluxzero.tools:fluxzero-maven-plugin</strong>: 1.18.6 -> 1.18.8 <a href=\"https://github.com/fluxzero-io/fluxzero-cli/blob/main/CHANGELOG.md\">changelog</a></p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.280.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.279.0",
+      "date": "2026-09-15",
+      "body": "#### [1.279.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.278.0...1.279.0) (2026-09-15)\n\n##### Dependency updates\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>bump org.codehaus.mojo:build-helper-maven-plugin <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/8f218535bce175931ea33107ac85bf0c91e15eb6\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>org.codehaus.mojo:build-helper-maven-plugin</strong>: 3.6.1 -> 3.6.2 <a href=\"https://github.com/mojohaus/build-helper-maven-plugin/releases\">changelog</a></p>\n</div>\n</details></li>\n<li><details open class=\"commit-message-details\"><summary>bump org.codehaus.mojo:exec-maven-plugin from 3.6.3 to 3.6.4 <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/faf4f47f91edfe971e086134e829a252c4e87a60\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>org.codehaus.mojo:exec-maven-plugin</strong>: 3.6.3 -> 3.6.4 <a href=\"https://github.com/mojohaus/exec-maven-plugin/releases\">changelog</a></p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.279.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.278.0",
+      "date": "2026-09-15",
+      "body": "#### [1.278.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.277.0...1.278.0) (2026-09-15)\n\n##### Dependency updates\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>bump org.codehaus.mojo:versions-maven-plugin from 2.21.0 to 2.22.0 <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/ee3c1a541ae5c4e2f7f3eec5088dceb5d20cbed1\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>org.codehaus.mojo:versions-maven-plugin</strong>: 2.21.0 -> 2.22.0 <a href=\"https://github.com/mojohaus/versions/blob/master/ReleaseNotes.md\">changelog</a></p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.278.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.277.0",
+      "date": "2026-09-15",
+      "body": "#### [1.277.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.276.0...1.277.0) (2026-09-15)\n\n##### Dependency updates\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>bump io.fluxzero.tools:fluxzero-maven-plugin from 1.18.0 to 1.18.6 <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/cb1ae7e5bc787207dca1205126ff1cb60f03bd16\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>io.fluxzero.tools:fluxzero-maven-plugin</strong>: 1.18.0 -> 1.18.6 <a href=\"https://github.com/fluxzero-io/fluxzero-cli/blob/main/CHANGELOG.md\">changelog</a></p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.277.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "2.0.0-rc.13",
+      "date": "2026-09-14",
+      "body": "#### Fluxzero Java SDK 2.0.0-rc.13\n\n#### Highlights\n\n- `graph.current()` returns a fresh view of the same Model identity while preserving the original historical Graph.\n- Stronger Model/Graph cache isolation and publication fences keep current assertions sensitive to committed state,\n  membership changes and deletion, including commands received in the same batch.\n- Current-read batching drains immediately, without an artificial collection delay. Compatible requests accumulated\n  during an in-flight read can still be combined; ordinary Model cache reads keep their own fast path.\n- Lower temporary allocation when reconstructing fresh Graph views.\n- Kotlin-generated component methods no longer make Model target IDs appear ambiguous.\n- Executable examples cover one-to-one Models, derived Graph properties and atomic Model actions.\n- Clearer payload-validation, HTTP test-double, consumer-diagnostic and message-envelope guidance.\n- Actual Spring Boot and application-configured shaded-JAR checks cover OpenAPI merging and actionable conflicts.\n\nJava 25 remains required. This is a release candidate, not the final 2.0 release.\n\n[Changes since rc.12](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.0.0-rc.12...2.0.0-rc.13)",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.0.0-rc.13",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "2.0.0-rc.12",
+      "date": "2026-09-14",
+      "body": "Fluxzero SDK 2.0.0-rc.12 strengthens Model lifecycles, delayed work and migration testing.\n\n##### Schedules that follow a Model's lifetime\n\nDeclare `@Parent` on a schedule payload, or use `Schedule.withParents(...)`, to tie\ndelayed work to an existing committed Model. Deleting that Model also cancels its\npending schedules, including cascaded deletion. Lifetime bindings protect against\nold schedules after deletion and recreation; cancellation is asynchronous.\n\n##### More predictable Model changes\n\n- Duplicate creation and missing updates produce explicit lifecycle failures;\n  nullable state and the existing compatibility opt-out keep upsert/idempotency intentional.\n- Dynamic writes retain their read revisions, and complete Graph-change handlers\n  can observe cascaded child deletions and their previous event-sourced state.\n- Complete Graph changes retain their exact before-state through lazy navigation;\n  creation does not accidentally inherit an empty or unrelated previous model.\n- Optional parent identities, ancestor updates and current-intent scheduling have\n  clearer contracts and consistent Java/Kotlin examples.\n- Public DOCUMENT projections are independent of internal Model/Graph state.\n  Explicit DOCUMENT therefore has additional write and storage costs; ordinary\n  event-only Models do not acquire document copies.\n\n##### Migration tests and fixture improvements\n\nValue-preserving upcasting, `givenModelEvents(...)` reconstruction and retained-storage\nmigration examples now form one documented route. Typed Graph document handling preserves\nthe original source revisions, avoiding repeated root upcasting. Active-schedule assertions\ncover retained schedules as well as newly scheduled work, and rejected old schedule attempts\nno longer leave phantom fixture waits. Local document consumers retain updates\nfrom registration onward, including writes before their first asynchronous read.\n\n##### Clearer modeling guidance\n\nThe developer and agent documentation now consistently explains details value objects,\nfunctional failures, event sourcing for `previous()`, and the distinction between a\nplain typed reference, a Graph relationship and deletion ownership.\n\nThis is a prerelease. Existing tags remain immutable; use the exact Maven version\n`2.0.0-rc.12`.",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.0.0-rc.12",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.276.0",
+      "date": "2026-09-14",
+      "body": "#### [1.276.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.275.0...1.276.0) (2026-09-14)\n\n##### Documentation\n\n<ul>\n<li>compatibility: update the tested JDK to 25 <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/955c23632748f5392a7a1a90066f448d19cddfcc\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>onboarding: remove outdated FAQs <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/d352c7a9757cca8089440e1546f98bb0bc9d4d64\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>installation: label the coding agent route with a badge <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/27ff971ef76c90e83e5fe97186d2e61cf743a7f8\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>cookies: remove retired feedback tip storage <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/cc2cd41091c5d8ca091f992c0b6f1a4116a17322\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li><details open class=\"commit-message-details\"><summary>installation: remove the web project generator <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/64b29f087d8d95fd710e8b0cbf1423629dd2bd78\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Retire the generator form and its onboarding copy while keeping the coding-agent, CLI and manual SDK installation routes.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.276.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
+    {
+      "version": "1.275.0",
+      "date": "2026-09-14",
+      "body": "#### [1.275.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.274.0...1.275.0) (2026-09-14)\n\n##### Bug Fixes\n\n<ul>\n<li>readme: restore responsive project buttons [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/fbefc9232f902e62f32f21a6925874dea154de87\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n</ul>\n\n##### Documentation\n\n<ul>\n<li>sdk: remove JDK version from overview [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/2665b12779b9df31d71901f3aa823137ddfcb2bd\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>community: welcome SDK contributions [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/18035c9468322f7098b1dd2eeb3c04d2ec4234d2\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>readme: compact project links on mobile [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/80ad36dfcc80cd4e823683490aa8dab512b9bb8b\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>readme: clarify package and release policy [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/4c627cc4939c65980513957572d4950d4f6d6526\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>readme: add shared project footer [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/bb99baa61b7dccca09094ea876f35eb41fdb8f83\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>readme: link to the website [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/1896395d4e893adaf4b95bc3e038bc58e86f8fde\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>readme: trim SDK maintenance details [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/1e888cabca17c63a5508f255df238451c0418019\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>readme: shorten the SDK title [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/7b785b2b6e6a191cd39aacdfc3d2acfa1de3caa5\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>readme: link Packages to its homepage [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/f75e52ddc9c6a38af5da9f1febae55e999d87d1d\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>readme: simplify the manual build path [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/8a7b1f17ac30f65ded9af8ae1e19677045ca1aaa\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>readme: explain how builders use the SDK [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/a0a6c384ae1b47e7d23177c306ea7b76f8cc18b6\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li><details open class=\"commit-message-details\"><summary>readme: focus the SDK landing page [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/b50c31596052df091473f199ccb25f59f49768da\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Move detailed installation and API guidance to fluxzero.io/docs. Keep the repository page focused on capabilities, starting an app, working on the SDK, and contributing.</p>\n</div>\n</details></li>\n<li>brand: use the corrected repository banner [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/c69869f6e494acff168c9a27e77d5fa7cba41ee6\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>readme: keep the introduction factual [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/3b72567bb7881391a32e91e6f0e8d450d4482ca9\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n<li>readme: align presentation with Fluxzero Cloud [skip ci] <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/db0c55716c4594f071b9d58c38c8b0bc6037b492\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></li>\n</ul>\n\n##### Dependency updates\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>bump io.fluxzero:lychee-maven-plugin from 0.2.10 to 0.2.18 <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/76ad356d49b0f97dfb00689caf7e6dac38449e1f\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p><strong>io.fluxzero:lychee-maven-plugin</strong>: 0.2.10 -> 0.2.18 <a href=\"https://github.com/fluxzero-io/lychee-maven-plugin/blob/main/CHANGELOG.md\">changelog</a></p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.275.0",
+      "quarterKey": "2026-Q3",
+      "year": 2026,
+      "quarter": "Q3"
+    },
     {
       "version": "2.0.0-rc.11",
       "date": "2026-09-13",

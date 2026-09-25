@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { mkdir, readdir, readFile, rm, stat, copyFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { rcompare } from 'semver';
+import { compareReleasesByDate, formatReleaseDate, changelogPageUrl, paginateReleases, changelogAnchorPages } from './changelog-pagination.mjs';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -42,20 +42,6 @@ async function copyDirectory(source, target) {
     }
   }
   return mdxCount;
-}
-
-function compareReleasesByDate(a, b) {
-  const dateCompare = String(b.date).localeCompare(String(a.date));
-  return dateCompare || rcompare(a.version, b.version);
-}
-
-function formatReleaseDate(date) {
-  const dateValue = date?.length === 10 ? `${date}T00:00:00Z` : date;
-  return new Intl.DateTimeFormat('en', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }).format(new Date(dateValue));
 }
 
 function escapeAttribute(value) {
@@ -402,41 +388,45 @@ function groupReleasesByYear(releases) {
     .map(([year, releases]) => ({ year, releases }));
 }
 
-function renderChangelogPage(releases) {
+function renderChangelogPage(releases, page, totalPages, anchorPages) {
+  const pagination = `<nav class="changelog-pagination" aria-label="Changelog pages">
+    ${page > 1 ? `<a href="${changelogPageUrl(page - 1)}" rel="prev">← Newer</a>` : '<span></span>'}
+    <span>Page ${page} of ${totalPages}</span>
+    ${page < totalPages ? `<a href="${changelogPageUrl(page + 1)}" rel="next">Older →</a>` : '<span></span>'}
+  </nav>`;
   const yearGroups = groupReleasesByYear(releases);
   const styles = `
-  .changelog-hero {
-    display: grid;
-    gap: 0.6rem;
-    margin: 1.25rem 0 2rem;
-    padding: 1.15rem 1.25rem 1.25rem;
-    border: 1px solid var(--sl-color-gray-6);
-    border-radius: 0.5rem;
-    background:
-      linear-gradient(
-        135deg,
-        color-mix(in srgb, var(--sl-color-accent) 7%, transparent),
-        transparent 42%
-      ),
-      var(--sl-color-bg-nav);
+  .changelog-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    margin-block: 1.5rem;
+    padding-block: 1rem;
+    border-block: 1px solid var(--sl-color-gray-6);
+    font-size: var(--sl-text-sm);
   }
-
-  .changelog-hero__intro {
-    display: grid;
-    gap: 0.5rem;
+  .changelog-pagination a {
+    font-weight: 600;
+    text-decoration: none;
+    padding-block: 0.5rem;
   }
-
-  .changelog-hero__intro h2 {
+  .changelog-pagination a:hover { text-decoration: underline; }
+  .changelog-pagination > span { color: var(--sl-color-gray-2); }
+  .changelog-pagination--toc {
+    margin: 0.5rem 0;
+    padding: 0.25rem 0;
+    font-size: var(--sl-text-xs);
+  }
+  .changelog-pagination--toc a { color: var(--sl-color-text-accent); }
+  mobile-starlight-toc .changelog-pagination--toc {
     margin: 0;
-    font-size: clamp(1.45rem, 3vw, 2rem);
-    letter-spacing: 0;
+    padding: 0.5rem 1rem;
+    position: sticky;
+    top: 0;
+    background: var(--sl-color-black);
   }
-
-  .changelog-hero__copy {
-    max-width: 52rem;
-    margin: 0;
-    color: var(--sl-color-gray-2);
-  }
+  .changelog-intro { color: var(--sl-color-gray-2); }
 
   .changelog-year {
     margin-top: 1.15rem;
@@ -838,10 +828,31 @@ function renderChangelogPage(releases) {
 `;
   const tocScript = String.raw`
 (() => {
-  const releasePattern = /^([A-Z][a-z]{2} \d{1,2}, \d{4})\s*·\s*(\d+\.\d+\.\d+)$/;
+  const releasePattern = /^([A-Z][a-z]{2} \d{1,2}, \d{4})\s*·\s*(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)$/;
   const tocLabelSelector = ".right-sidebar a[href^='#'] > span, mobile-starlight-toc a[href^='#'] > span";
 
+  const anchorPages = ${JSON.stringify(anchorPages)};
+  const followReleaseAnchor = () => {
+    let anchor;
+    try { anchor = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+    if (!anchor || document.getElementById(anchor)) return;
+    const targetPage = anchorPages[anchor];
+    if (typeof targetPage !== "number" || targetPage === ${page}) return;
+    const target = targetPage === 1 ? "/docs/changelog/" : "/docs/changelog/page/" + targetPage + "/";
+    location.replace(target + location.hash);
+  };
+  window.addEventListener("hashchange", followReleaseAnchor);
   const formatChangelogToc = () => {
+    followReleaseAnchor();
+    const pagination = document.querySelector(".changelog-pagination:not(.changelog-pagination--toc)");
+    if (pagination) {
+      document.querySelectorAll("starlight-toc > nav, mobile-starlight-toc .dropdown").forEach((container) => {
+        if (container.querySelector(".changelog-pagination--toc")) return;
+        const pager = pagination.cloneNode(true);
+        pager.classList.add("changelog-pagination--toc");
+        container.insertBefore(pager, container.querySelector("ul"));
+      });
+    }
     document.querySelectorAll(tocLabelSelector).forEach((label) => {
       if (label.classList.contains("changelog-toc-release-label")) return;
 
@@ -891,7 +902,7 @@ function renderChangelogPage(releases) {
 
 <a class="changelog-release__link" href="${escapeAttribute(release.url)}" target="_blank" rel="noreferrer"><span>GitHub</span></a>
     </summary>
-    <div class="changelog-release__body" set:html={marked.parse(releaseBodies[${JSON.stringify(release.version)}] ?? '')} />
+    <div class="changelog-release__body" set:html={renderChangelogBody(releaseBodies[${JSON.stringify(release.version)}] ?? '', ${JSON.stringify(release.version)})} />
   </details>
 </div>`;
     }).join('\n\n');
@@ -906,33 +917,35 @@ ${releaseItems}
   }).join('\n\n');
 
   return `---
-title: Changelog
-description: Complete release history for fluxzero-sdk-java
-slug: docs/changelog
+title: ${page === 1 ? 'Changelog' : `Changelog — page ${page}`}
+description: Fluxzero SDK release history, page ${page} of ${totalPages}
+slug: ${changelogPageUrl(page).replace(/^\/|\/$/g, '')}
 sidebar:
   order: 05
+  hidden: ${page > 1}
+prev: false
+next: false
 tableOfContents:
   minHeadingLevel: 2
   maxHeadingLevel: 3
 ---
 
-import { marked } from 'marked';
+import { renderChangelogBody } from '~/utils/changelog-body.mjs';
 
-import releaseBodies from './changelog-release-bodies.json';
+import releaseBodies from './changelog-release-bodies${page === 1 ? '' : `-${page}`}.json';
 export const changelogTocScript = ${JSON.stringify(tocScript)};
 
 <style>{\`${styles}\`}</style>
 
 <script is:inline set:html={changelogTocScript}></script>
 
-<section class="changelog-hero">
-  <div class="changelog-hero__intro">
-    <h2>Fluxzero SDK changes</h2>
-    <p class="changelog-hero__copy">Follow SDK changes that may affect application behavior, integrations, build setup, and operational defaults. Use this overview to plan upgrades, scan recent changes by version, and open GitHub when you need deeper implementation context.</p>
-  </div>
-</section>
+<p class="changelog-intro">New features, improvements, and fixes in the Fluxzero SDK.</p>
+
+${pagination}
 
 ${sections}
+
+${pagination}
 `;
 }
 
@@ -946,13 +959,20 @@ async function generateChangelogPage() {
     return false;
   }
 
-  // Keep the full release history out of MDX's JavaScript-expression parser.
-  const releaseBodies = Object.fromEntries(
-    cache.releases.map((release) => [release.version, normalizeReleaseBody(release.body)])
-  );
-  await writeFile(path.join(path.dirname(changelogTargetFile), 'changelog-release-bodies.json'),
-    JSON.stringify(releaseBodies), 'utf8');
-  await writeFile(changelogTargetFile, renderChangelogPage(cache.releases), 'utf8');
+  const pages = paginateReleases(cache.releases);
+  const anchorPages = changelogAnchorPages(pages);
+  for (const [index, releases] of pages.entries()) {
+    const page = index + 1;
+    const suffix = page === 1 ? '' : `-${page}`;
+    // Each MDX page imports only the bodies it renders.
+    const releaseBodies = Object.fromEntries(
+      releases.map((release) => [release.version, normalizeReleaseBody(release.body)])
+    );
+    await writeFile(path.join(path.dirname(changelogTargetFile), `changelog-release-bodies${suffix}.json`),
+      JSON.stringify(releaseBodies), 'utf8');
+    await writeFile(path.join(path.dirname(changelogTargetFile), `changelog${suffix}.mdx`),
+      renderChangelogPage(releases, page, pages.length, anchorPages), 'utf8');
+  }
   return true;
 }
 
@@ -975,5 +995,5 @@ if (mdxCount === 0) {
 
 console.log('Synced ' + mdxCount + ' SDK docs pages from ' + sourceDir + ' to ' + targetDir + '.');
 if (generatedChangelog) {
-  console.log('Generated static changelog page from ' + changelogCacheFile + '.');
+  console.log('Generated paginated changelog from ' + changelogCacheFile + '.');
 }

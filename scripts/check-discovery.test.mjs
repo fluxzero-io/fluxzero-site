@@ -12,7 +12,27 @@ function fixture() {
     const proof = `# Proof\n\nSource: ${site}/proof/\n\nDetails.\n`;
     return {pages:new Map([['/',inspectPage(`<link rel="canonical" href="${site}/"><a href="/proof">Proof</a>`,'/')],['/proof/',inspectPage(`<link rel="canonical" href="${site}/proof/"><a href="/">Home</a>`,'/proof/')]]),sitemap:new Set(['/','/proof/']),llms:`[Home](${site}/) [Proof](${site}/proof/)\n\n${home}\n---\n\n${proof}`,markdown:new Map([['/',home],['/proof/',proof]]),robots:`Sitemap: ${site}/sitemap-index.xml`};
 }
-const check = f => validateDiscovery(f,['/','/proof/']);
+const check = f => validateDiscovery(f,['/','/proof/'],[]);
+test('unlisted pages require noindex and stay outside links and indexes', () => {
+    const make = () => {
+        const f = fixture();
+        f.pages.set('/preview/', inspectPage('<meta name="robots" content="noindex">', '/preview/'));
+        return f;
+    };
+    const validate = f => validateDiscovery(f, ['/', '/proof/'], ['/preview/']);
+    assert.deepEqual(validate(make()), []);
+    for (const mutate of [
+        f => f.pages.delete('/preview/'),
+        f => { f.pages.get('/preview/').noindex = false; },
+        f => f.sitemap.add('/preview/'),
+        f => { f.llms += '[Preview](https://fluxzero.io/preview)'; },
+        f => f.markdown.set('/preview/', 'Preview'),
+        f => { f.pages.set('/other/', inspectPage('<a rel="nofollow" href="/preview">Preview</a>', '/other/')); },
+    ]) {
+        const f = make(); mutate(f);
+        assert.ok(validate(f).some(message => message.includes('unlisted page')));
+    }
+});
 test('accepts linked canonical pages and complete exports',()=>assert.deepEqual(check(fixture()),[]));
 for(const [label,mutate] of [
     ['missing HTML', f=>f.pages.delete('/proof/')],
@@ -84,4 +104,19 @@ test('IndexNow waits for deployed assets before notifying', async () => {
     });
     assert.equal(pauses, 2);
     assert.equal(posts, 1);
+});
+
+
+test('partners links stay limited to footers and Contact independently of indexing', () => {
+    const f = fixture();
+    f.pages.set('/partners/', inspectPage('<h1>Partners</h1>', '/partners/'));
+    f.pages.set('/contact/', inspectPage('<main><a href="/partners/">Partnerships</a></main>', '/contact/'));
+    f.pages.set('/other/', inspectPage('<footer><a href="/partners/">Partners</a></footer>', '/other/'));
+    f.sitemap.add('/partners/');
+    f.llms += '[Partners](https://fluxzero.io/partners/)';
+    assert.deepEqual(check(f), []);
+    for (const element of ['header', 'main']) {
+        f.pages.set('/other/', inspectPage(`<${element}><a href="/partners/">Partners</a></${element}>`, '/other/'));
+        assert.ok(check(f).some(message => message.includes('outside permitted locations')));
+    }
 });

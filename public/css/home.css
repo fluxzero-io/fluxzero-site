@@ -196,7 +196,6 @@ p,
 .btn-p:hover {
     border-color: rgba(32, 134, 240, 0.3);
     transform: translateY(-1px);
-    filter: brightness(1.04);
 }
 
 .btn-s {

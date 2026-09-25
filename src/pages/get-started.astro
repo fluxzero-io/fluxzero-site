@@ -4,6 +4,7 @@ import '../../public/css/marketing-shell.css';
 import '../../public/css/start-building-v4.css';
 import BrandHead from '../components/BrandHead.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import { launchAccess } from '../config/launch.mjs';
 
 const isDevelopmentPreview = launchAccess.authenticationEnabled && import.meta.env.DEV;
@@ -85,6 +86,8 @@ const compatibleAgents = [
 
     </section>
 </main>
+
+<MarketingFooter />
 
 <script src="/js/start-building-v4.js?v=20260904-6" defer></script>
 </body>

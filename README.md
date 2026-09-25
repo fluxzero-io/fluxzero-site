@@ -38,6 +38,8 @@ The site is then available at <http://localhost:4321>.
 
 `pnpm dev` refreshes the Astro content, copies the current SDK documentation into the site, and starts Astro. The SDK-sourced files under `src/content/docs/docs/` are generated and ignored by Git; edit their source in `fluxzero-sdk-java` instead.
 
+Relative Markdown links to `.md` and `.mdx` source files are resolved to the target's frontmatter `slug` when rendered. Query strings and fragments are preserved. Missing targets or slugs fail the build, and the final link check validates the published routes.
+
 A GitHub token is not required for ordinary local development. The changelog loader can read public releases without authentication, although setting `GITHUB_TOKEN` avoids GitHub's lower anonymous rate limit:
 
 ```bash
@@ -61,12 +63,18 @@ Run commands from the repository root.
 | `pnpm test:discovery` | Test the discoverability release checks and source modification dates |
 | `pnpm check:discovery` | Check the existing build without rebuilding |
 | `pnpm test:llms` | Verify Markdown export, code formatting, and semantic content |
-| `pnpm test:product-code` | Compile the page examples and test their behavior with the published SDK (Java 25 and Maven required) |
+| `pnpm test:product-code` | Compile the Java and Kotlin page examples and test their behavior with the published SDK (Java 25 and Maven required) |
 | `pnpm astro ...` | Run another Astro CLI command |
 
 The production build also generates `dist/llms.txt` and per-page Markdown from the rendered core marketing pages. These files are build artifacts; the website HTML remains their source of truth. `/llms-full.txt` temporarily redirects to `/llms.txt`.
 
-The [product-code tests](tests/product-code/README.md) extract all Java examples directly from `/product-code` and exercise their behavior with the real SDK `TestFixture`. They run locally and in CI without an SDK checkout or a running Fluxzero server.
+After CSS inlining, `scripts/protect-homepage-styles.mjs` adds a stylesheet Content
+Security Policy to the homepage. Hashes permit its exact built styles while
+blocking injected stylesheets that could recolor its existing dark theme. Inline
+style attributes remain available for star positions and animation properties.
+Verify this policy with a production build; the development server does not apply it.
+
+The [product-code tests](tests/product-code/README.md) extract both Java and Kotlin examples from the sources rendered by `/product-code` and exercise their behavior with the real SDK `TestFixture`. They run locally and in CI without an SDK checkout or a running Fluxzero server.
 
 ## Project structure
 
@@ -79,6 +87,17 @@ The [product-code tests](tests/product-code/README.md) extract all Java examples
 | `scripts/sync-sdk-docs.mjs` | SDK documentation and static changelog sync |
 | `scripts/generate-llms.mjs` | Machine-readable marketing-content generation |
 | `wrangler.jsonc` | Cloudflare Worker environments, bindings, and production domains |
+
+The changelog is generated in pages of 20 releases, newest first. Older pages stay
+out of the main docs sidebar and are reachable through Newer/Older links. Existing
+release fragments forward to the page containing that release when JavaScript is
+enabled, including after new releases shift the page boundaries. Each page imports
+only its own release bodies.
+
+Headings inside each release body have release-scoped, GitHub-compatible anchor
+IDs. Fragment links in the imported notes resolve within that release, so repeated
+headings in other releases cannot redirect readers to the wrong section. Missing
+targets still fail the ordinary production link check.
 
 `src/data/changelog-cache.json` is generated site data. A normal sync or build may update it; commit the change only after confirming that it contains expected public release data and no secrets.
 
@@ -159,6 +178,10 @@ source of truth. No model runs during generation. Proposals must remain outside
 Every build verifies that required pages exist, are in the sitemap and LLM index,
 have a self-canonical URL and an incoming internal link, and have no `noindex` meta
 tag. Retired routes must not occur in HTML, internal links, sitemap or text exports.
+Unlisted routes in `scripts/core-pages.mjs` remain directly accessible but require
+`noindex`, have no incoming site links, and stay outside the sitemap and text
+exports. The build removes them from the generated sitemap and verifies these
+boundaries.
 Unknown URLs use `src/pages/404.astro`, the shared marketing error page.
 Starlight’s default 404 is disabled so missing website URLs do not show the docs
 shell. The response retains HTTP 404 and the page is marked noindex.
