@@ -38,6 +38,7 @@ export default defineConfig({
         }
     },
     redirects: {
+        "/docs/building/devboard-walkthrough": { status: 301, destination: "/docs/building/local-development/" },
         "/monitoring": { status: 302, destination: "/product-insight/" },
         "/monitoring/index.html": { status: 302, destination: "/product-insight/" },
         "/monitoring/index.md": { status: 302, destination: "/product-insight/index.md" },
@@ -98,20 +99,30 @@ export default defineConfig({
             ],
             sidebar: [
                 {
-                    label: 'Getting started',
-                    autogenerate: { directory: 'docs/getting-started' },
+                    label: 'Building with Fluxzero',
+                    items: [
+                        { label: 'Introduction', slug: 'docs/getting-started/introduction' },
+                        { label: 'Build your first feature', slug: 'docs/building/first-feature' },
+                        { label: 'Example apps', slug: 'docs/building/example-apps' },
+                        { label: 'The Fluxzero toolkit', slug: 'docs/building/fluxzero-toolkit' },
+                        { label: 'Local development', slug: 'docs/building/local-development' },
+                        { label: 'Understand your app', slug: 'docs/building/monitoring' },
+                        { label: 'Test and improve your app', slug: 'docs/building/test-and-improve' },
+                        { label: 'Publishing your app', slug: 'docs/tutorials/cloud-deployment' },
+                    ],
                 },
                 {
-                    label: 'Tutorials',
-                    autogenerate: { directory: 'docs/tutorials' },
-                },
-                {
-                    label: 'Guides',
-                    autogenerate: { directory: 'docs/guides' },
-                },
-                {
-                    label: 'Reference',
-                    autogenerate: { directory: 'docs/reference' },
+                    label: 'Developer Guides',
+                    collapsed: true,
+                    items: [
+                        { label: 'Core concepts', slug: 'docs/getting-started/core-concepts' },
+                        { label: 'Installation', slug: 'docs/getting-started/installation' },
+                        { label: 'Hello world', slug: 'docs/getting-started/hello-world' },
+                        { label: 'Building your first app', slug: 'docs/tutorials/first-app' },
+                        { label: 'Fluxzero 2.0', slug: 'docs/fluxzero-2' },
+                        { label: 'In depth', autogenerate: { directory: 'docs/guides' } },
+                        { label: 'Reference', autogenerate: { directory: 'docs/reference' } },
+                    ],
                 },
                 {
                     label: 'About',

@@ -5,7 +5,7 @@
 Source code for the [Fluxzero website](https://fluxzero.io) and [documentation](https://fluxzero.io/docs).
 
 - The marketing site explains Fluxzero to people building products with AI.
-- The documentation under `/docs` is the technical layer for developers and coding agents.
+- The documentation under `/docs` separates the builder workflow from optional Developer Guides. Coding agents use the SDK’s dedicated agent documentation.
 - The application is deployed as a Cloudflare Worker.
 
 ## Requirements

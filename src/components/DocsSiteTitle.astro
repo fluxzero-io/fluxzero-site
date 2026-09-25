@@ -6,7 +6,7 @@ const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
 
 <a href={siteTitleHref} class="site-title sl-flex">
     <img src={fluxzeroBrand.mark} width="32" height="35" alt="" aria-hidden="true">
-    <span translate="no">{siteTitle}</span>
+    <span class="brand-copy"><span translate="no">{siteTitle}</span><span class="brand-tagline">The cloud for AI-built apps</span></span>
 </a>
 
 <style>
@@ -30,8 +30,18 @@ const { siteTitle, siteTitleHref } = Astro.locals.starlightRoute;
             object-position: 0 50%;
         }
 
-        span {
-            overflow: hidden;
+        .brand-copy {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            line-height: 1.15;
+        }
+
+        .brand-tagline {
+            margin-top: 0.2rem;
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: var(--sl-color-text);
         }
     }
 </style>
