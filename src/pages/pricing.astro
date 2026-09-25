@@ -2,7 +2,9 @@
 import LegacyPricing from '../components/marketing/LegacyPricing.astro';
 import CapacityPricing from '../components/marketing/CapacityPricing.astro';
 import {loadPricingCatalog} from '../utils/capacity-pricing.mjs';
-const capacity = import.meta.env.PRICING_MODEL === 'capacity';
+const model = import.meta.env.PRICING_MODEL || 'legacy';
+if (!['legacy', 'capacity'].includes(model)) throw new Error('Unknown PRICING_MODEL');
+const capacity = model === 'capacity';
 const catalog = capacity ? await loadPricingCatalog(import.meta.env.PRICING_CATALOG_URL) : null;
 ---
 {capacity ? <CapacityPricing catalog={catalog} /> : <LegacyPricing />}

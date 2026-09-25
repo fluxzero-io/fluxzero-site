@@ -93,6 +93,13 @@ jobs:
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm test:discovery
 
+      - name: Test capacity pricing
+        if: steps.sdk-docs.outputs.changed == 'true'
+        run: pnpm test:pricing && pnpm test:pricing-build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FLUXZERO_SDK_DOCS_SOURCE: .cache/fluxzero-sdk-java/docs/developer
+
       - name: Setup Java for product examples
         if: steps.sdk-docs.outputs.changed == 'true'
         uses: actions/setup-java@v4
@@ -112,6 +119,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FLUXZERO_SDK_DOCS_SOURCE: .cache/fluxzero-sdk-java/docs/developer
+          PRICING_MODEL: ${{ vars.PRICING_MODEL || 'legacy' }}
+          PRICING_CATALOG_URL: ${{ vars.PRICING_CATALOG_URL }}
 
       - name: Deploy to Cloudflare
         if: steps.sdk-docs.outputs.changed == 'true'

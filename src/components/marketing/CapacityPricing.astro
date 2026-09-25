@@ -4,7 +4,7 @@ import '../../../public/css/capacity-pricing.css';
 import BrandHead from '../BrandHead.astro';
 import MarketingFooter from './MarketingFooter.astro';
 import MarketingHeader from './MarketingHeader.astro';
-import {availableSizes, capability, offerFeatures, productFor} from '../../utils/capacity-pricing.mjs';
+import {availableSizes, capability, offerFeatures, productFor, isPurchasable} from '../../utils/capacity-pricing.mjs';
 const {catalog} = Astro.props;
 const offers = [...catalog.offers].sort((a, b) => Number(!!a.plan.details.basePlanId) - Number(!!b.plan.details.basePlanId));
 const currency = offers[0].subscription.currency;
@@ -39,7 +39,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
       <p class="offer-note">Additional seats: {money(capability(offer.subscription, 'seats.count').unitPrice)} per seat per month.</p>
     </article>)}
   </section>
-  <p class="capacity-note">Prices exclude VAT. The fixed Starter and Pro subscriptions continue while capacity is paused. <a href="/get-started">Build locally for free →</a></p>
+  <p class="capacity-note">Prices exclude VAT. The fixed Starter and Pro subscriptions continue while capacity is paused. <a href="/get-started/">Build locally for free →</a></p>
 
   <section class="capacity-section" aria-labelledby="estimate-heading">
     <p class="eyebrow">Plan your costs</p>
@@ -62,7 +62,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
         <div class="capacity-add-actions"><button type="button" data-add="cluster" disabled>Add cluster</button><button type="button" data-add="application" disabled>Add app</button><span>Additional resources require Pro.</span></div>
         <div class="capacity-inputs">
           <label>Total seats<input id="estimate-seats" type="number" min="1" step="1" value={capability(starter,'seats.count').included} /></label>
-          <label>Storage including backups ({capability(starter,'storage.gib').unit})<input id="estimate-storage" type="number" min="0" step="any" value={capability(starter,'storage.gib').included} /></label>
+          <label>Total storage ({capability(starter,'storage.gib').unit})<input id="estimate-storage" type="number" min="0" step="any" value={capability(starter,'storage.gib').included} /></label>
           <label>Days in billing month<input id="estimate-days" type="number" min="28" max="31" step="1" value="30" /></label>
         </div>
         <p class="calculator-error" id="estimate-error" role="alert"></p>
@@ -73,10 +73,10 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
           <dt>Estimated storage overage</dt><dd id="estimate-storage-total">{money(0)}</dd>
           <dt class="estimate-total">Estimated monthly total</dt><dd class="estimate-total" id="estimate-total">{money(starter.amount)}</dd>
         </dl>
-        <p class="capacity-note">This estimates a full month. Dashboard checkout shows the amount for the remaining billing period and applies your available credits. Storage is billed afterwards from actual volume. HA uses the published temporary multiplier on the full cluster catalog price, before the included allowance. Unpriced options are excluded.</p>
+        <p class="capacity-note">This estimates a full month. Dashboard checkout shows the amount for the remaining billing period and applies your available credits. One storage allowance covers allocated database volumes, including HA replicas, logs and metrics, plus measured object and backup storage. Extra storage is billed afterwards, separately from the HA charge. HA uses the published temporary multiplier on the full cluster catalog price, before the included allowance. Unpriced options are excluded.</p>
         <details class="capacity-catalog"><summary>View catalog capacity prices</summary>
-          <table><thead><tr><th scope="col">Resource</th><th scope="col">Full catalog price / month</th></tr></thead><tbody>
-            {catalog.products.filter(p => p.details.billingUnit === 'billing_period').map(p => <tr><th scope="row">{p.details.description}</th><td>{money(p.details.price)}</td></tr>)}
+          <table><thead><tr><th scope="col">Resource</th><th scope="col">Full catalog price / month</th><th scope="col">Availability</th></tr></thead><tbody>
+            {catalog.products.filter(p => p.details.billingUnit === 'billing_period').map(p => <tr><th scope="row">{p.details.description}</th><td>{money(p.details.price)}</td><td>{isPurchasable(catalog, p) ? 'Available' : 'Not yet available'}</td></tr>)}
           </tbody></table>
         </details>
       </div>
@@ -92,7 +92,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
     <details><summary>What changes for existing customers?</summary><p>Your existing agreement stays in place until we arrange your migration. We review your resources, availability, pricing and billing date together. Existing data, backups and high availability are preserved.</p></details>
     <details><summary>Which options are coming later?</summary><p>Static IP pricing, additional identity-user pricing and SLA terms are still to be announced. Identity allowances apply when the identity service is available. Unavailable options cannot be purchased.</p></details>
   </section>
-  <section class="capacity-help"><h2>Ready for your first launch?</h2><p>Start building, or talk through what your product needs.</p><a class="capacity-action" href="/get-started">Get started</a><a href="/contact">Talk to us →</a></section>
+  <section class="capacity-help"><h2>Ready for your first launch?</h2><p>Start building, or talk through what your product needs.</p><a class="capacity-action" href="/get-started/">Get started</a><a href="/contact/">Talk to us →</a></section>
 </main>
 <MarketingFooter />
 <script type="application/json" id="capacity-catalog" set:html={serializedCatalog}></script>

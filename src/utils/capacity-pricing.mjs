@@ -17,24 +17,47 @@ export function validateCatalog(catalog) {
   for (const offer of offers) {
     const s = offer.subscription;
     if (!offer.plan.activated || !s?.capacityPolicy || s.interval !== 'monthly'
-        || !s.version || s.currency !== starter.subscription.currency || !Number.isFinite(Number(s.amount))) {
+        || !s.version || s.currency !== starter.subscription.currency || !isAmount(s.amount)) {
       throw new Error('Pricing requires activated monthly offers with a version and a shared currency');
     }
     const own = offer.plan.details.prices.find(p => p.interval === 'monthly');
-    if (!own || Number(own.amount) < 0 || own.currency !== s.currency
+    if (!own || !isAmount(own.amount) || own.currency !== s.currency
         || Math.abs(Number(s.amount) - Number(own.amount) - Number(s.basePlan?.amount || 0)) > .001) {
       throw new Error('Published plan totals do not match their price components');
     }
     for (const [type, sizes] of [['cluster', s.capacityPolicy.clusterSizes], ['application', s.capacityPolicy.applicationSizes]]) {
+      if (!Array.isArray(sizes) || !sizes.length || new Set(sizes).size !== sizes.length) {
+        throw new Error('Each offer requires distinct purchasable capacity sizes');
+      }
       for (const size of sizes) productFor(catalog, type, size);
       const included = capability(s, `${type}.`, true);
-      if (!included?.productId || !catalog.products.some(p => p.productId === included.productId)) {
+      const products = catalog.products.filter(p => p.productId === included?.productId);
+      if (products.length !== 1 || products[0].details.resourceType !== type
+          || !sizes.includes(products[0].details.size)
+          || products[0] !== productFor(catalog, type, products[0].details.size)) {
         throw new Error('Included capacity must reference a published catalog product');
       }
+    }
+    const storage = capability(s, 'storage.gib'), seats = capability(s, 'seats.count');
+    const storageProducts = catalog.products.filter(p => p.productId === storage?.productId);
+    if (!isAmount(storage?.included) || !isAmount(seats?.included) || !isAmount(seats?.unitPrice)
+        || storageProducts.length !== 1 || storageProducts[0].details.billingUnit !== 'gib_day'
+        || storageProducts[0].details.resourceType !== 'database_storage'
+        || !isAmount(storageProducts[0].details.price)) {
+      throw new Error('Storage and seat allowances require complete, non-negative prices');
+    }
+    const policy = s.capacityPolicy;
+    if (policy.highAvailability && (!isAmount(policy.highAvailabilityPriceMultiplier)
+        || Number(policy.highAvailabilityPriceMultiplier) < 1
+        || policy.highAvailabilityClusterSizes?.some(size => !policy.clusterSizes.includes(size)))) {
+      throw new Error('HA requires a valid multiplier and purchasable cluster sizes');
     }
   }
   return catalog;
 }
+
+const isAmount = value => (typeof value === 'number' || typeof value === 'string' && value.trim() !== '')
+  && Number.isFinite(Number(value)) && Number(value) >= 0;
 
 export function capability(plan, key, prefix = false) {
   return plan.capabilities.find(c => prefix ? c.key.startsWith(key) && c.key.endsWith('.count') && Number(c.included) > 0 : c.key === key);
@@ -43,7 +66,7 @@ export function capability(plan, key, prefix = false) {
 export function productFor(catalog, type, size) {
   const matches = catalog.products.filter(p => p.details.resourceType === type && p.details.size === size
     && p.details.billingUnit === 'billing_period');
-  if (matches.length !== 1 || Number(matches[0].details.price) < 0) throw new Error('A unique monthly capacity price is required');
+  if (matches.length !== 1 || !isAmount(matches[0].details.price)) throw new Error('A unique monthly capacity price is required');
   return matches[0];
 }
 
@@ -59,10 +82,17 @@ export function allowsHighAvailability(policy, size) {
 
 export function highAvailabilityLabel(policy) {
   const sizes = policy.highAvailabilityClusterSizes;
-  const order = ['v1_starter', 'v1_small', 'v1_medium', 'v1_large', 'v1_xl', 'v1_2xl', 'v1_4xl', 'v1_8xl'];
+  const order = ['v1_starter', 'v1_small', 'v1_medium', 'v1_large', 'v1_xl',
+    ...Array.from({length: 7}, (_, i) => `v1_${i + 2}xl`)];
   const first = sizes?.length ? order.find(size => sizes.includes(size)) : undefined;
   const name = first?.slice(3).replace(/^./, c => c.toUpperCase());
   return `High availability${name ? ' from ' + name : ''} (Pro)`;
+}
+
+export function isPurchasable(catalog, product) {
+  const type = product.details.resourceType;
+  return catalog.offers.some(({subscription: {capacityPolicy}}) =>
+    (type === 'cluster' ? capacityPolicy.clusterSizes : capacityPolicy.applicationSizes).includes(product.details.size));
 }
 
 export function estimateCapacity(catalog, planId, rows, seats, storage, days) {

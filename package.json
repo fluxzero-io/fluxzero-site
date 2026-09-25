@@ -19,7 +19,9 @@
     "test:product-code": "node tests/product-code/generate.mjs && mvn -B -f tests/product-code/pom.xml test && mvn -B -f tests/product-code/pom.xml -Pkotlin test",
     "test:discovery": "node --test scripts/check-discovery.test.mjs scripts/markdown-negotiation.test.mjs scripts/check-links.test.mjs scripts/remark-docs-links.test.mjs",
     "check:discovery": "node scripts/check-discovery.mjs",
-    "test:seo": "node --test src/utils/docs-description.test.mjs scripts/inline-marketing-css.test.mjs scripts/protect-homepage-styles.test.mjs"
+    "test:seo": "node --test src/utils/docs-description.test.mjs scripts/inline-marketing-css.test.mjs scripts/protect-homepage-styles.test.mjs",
+    "test:pricing": "node --test src/utils/capacity-pricing.test.mjs",
+    "test:pricing-build": "node scripts/test-capacity-build.mjs"
   },
   "config": {
     "javadoc.optional": false,
