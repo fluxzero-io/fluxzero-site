@@ -1,0 +1,776 @@
+---
+import '../../../public/css/marketing-shell.css';
+import legacyPricingCss from '../../../public/css/legacy-pricing.css?inline';
+import BrandHead from '../BrandHead.astro';
+import MarketingFooter from './MarketingFooter.astro';
+import MarketingHeader from './MarketingHeader.astro';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <BrandHead title="Fluxzero Pricing — Build free. Launch, then run." description="Fluxzero pricing for builders: build locally for free, put your app online with Starter, then run with Startup, Scale Up, or Enterprise." />
+    <style is:inline set:html={legacyPricingCss} />
+</head>
+<body>
+
+<MarketingHeader active="pricing" />
+
+<svg class="pricing-v2-icon-defs" aria-hidden="true" width="0" height="0" focusable="false">
+    <symbol id="pricing-icon-terminal" viewBox="0 0 24 24">
+        <path d="m4 17 5-5-5-5"></path>
+        <path d="M12 19h8"></path>
+    </symbol>
+    <symbol id="pricing-icon-logs" viewBox="0 0 24 24">
+        <path d="M8 6h12"></path>
+        <path d="M8 12h12"></path>
+        <path d="M8 18h12"></path>
+        <path d="M4 6h.01"></path>
+        <path d="M4 12h.01"></path>
+        <path d="M4 18h.01"></path>
+    </symbol>
+    <symbol id="pricing-icon-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4.3-4.3"></path>
+    </symbol>
+    <symbol id="pricing-icon-support" viewBox="0 0 24 24">
+        <path d="M4 14a8 8 0 0 1 16 0"></path>
+        <path d="M18 19c0 1.1-.9 2-2 2h-3"></path>
+        <path d="M4 14v3a2 2 0 0 0 2 2h1v-7H6a2 2 0 0 0-2 2Z"></path>
+        <path d="M20 14v3a2 2 0 0 1-2 2h-1v-7h1a2 2 0 0 1 2 2Z"></path>
+    </symbol>
+    <symbol id="pricing-icon-cluster" viewBox="0 0 24 24">
+        <rect x="4" y="4" width="7" height="7" rx="1.6"></rect>
+        <rect x="13" y="4" width="7" height="7" rx="1.6"></rect>
+        <rect x="8.5" y="13" width="7" height="7" rx="1.6"></rect>
+    </symbol>
+    <symbol id="pricing-icon-task" viewBox="0 0 24 24">
+        <rect x="4" y="5" width="16" height="14" rx="2"></rect>
+        <path d="m8 12 2.2 2.2L16 8.8"></path>
+    </symbol>
+    <symbol id="pricing-icon-storage" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="5" rx="7" ry="3"></ellipse>
+        <path d="M5 5v7c0 1.7 3.1 3 7 3s7-1.3 7-3V5"></path>
+        <path d="M5 12v7c0 1.7 3.1 3 7 3s7-1.3 7-3v-7"></path>
+    </symbol>
+    <symbol id="pricing-icon-users" viewBox="0 0 24 24">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"></path>
+        <circle cx="9.5" cy="7" r="4"></circle>
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+    </symbol>
+    <symbol id="pricing-icon-domain" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M3 12h18"></path>
+        <path d="M12 3a14 14 0 0 1 0 18"></path>
+        <path d="M12 3a14 14 0 0 0 0 18"></path>
+    </symbol>
+    <symbol id="pricing-icon-audit" viewBox="0 0 24 24">
+        <path d="M9 11h6"></path>
+        <path d="M9 15h4"></path>
+        <path d="M7 3h7l4 4v14H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"></path>
+        <path d="M14 3v5h5"></path>
+    </symbol>
+    <symbol id="pricing-icon-backup" viewBox="0 0 24 24">
+        <path d="M3 12a9 9 0 1 0 3-6.7"></path>
+        <path d="M3 4v6h6"></path>
+        <path d="M12 7v5l3 2"></path>
+    </symbol>
+    <symbol id="pricing-icon-scale" viewBox="0 0 24 24">
+        <path d="M4 17 17 4"></path>
+        <path d="M10 4h7v7"></path>
+        <path d="M4 7v10h10"></path>
+    </symbol>
+    <symbol id="pricing-icon-routing" viewBox="0 0 24 24">
+        <circle cx="5" cy="12" r="2.4"></circle>
+        <circle cx="18" cy="6" r="2.4"></circle>
+        <circle cx="18" cy="18" r="2.4"></circle>
+        <path d="M7.4 12h3.1c2.6 0 3.5-6 5.1-6"></path>
+        <path d="M7.4 12h3.1c2.6 0 3.5 6 5.1 6"></path>
+    </symbol>
+    <symbol id="pricing-icon-sso" viewBox="0 0 24 24">
+        <circle cx="8" cy="8" r="3"></circle>
+        <circle cx="16" cy="16" r="3"></circle>
+        <path d="M11 8h3a2 2 0 0 1 2 2v3"></path>
+        <path d="M13 16h-3a2 2 0 0 1-2-2v-3"></path>
+    </symbol>
+    <symbol id="pricing-icon-uptime" viewBox="0 0 24 24">
+        <path d="M22 12h-4l-3 8-6-16-3 8H2"></path>
+    </symbol>
+    <symbol id="pricing-icon-ip" viewBox="0 0 24 24">
+        <path d="M12 21s7-4.4 7-11a7 7 0 1 0-14 0c0 6.6 7 11 7 11Z"></path>
+        <circle cx="12" cy="10" r="2"></circle>
+    </symbol>
+    <symbol id="pricing-icon-slack" viewBox="0 0 24 24">
+        <path d="M7 15a2 2 0 1 1-2-2h2v2Z"></path>
+        <path d="M9 15a2 2 0 1 1 4 0v5a2 2 0 1 1-4 0v-5Z"></path>
+        <path d="M9 7a2 2 0 1 1 2-2v2H9Z"></path>
+        <path d="M9 9a2 2 0 1 1 0 4H4a2 2 0 1 1 0-4h5Z"></path>
+        <path d="M17 9a2 2 0 1 1 2 2h-2V9Z"></path>
+        <path d="M15 9a2 2 0 1 1-4 0V4a2 2 0 1 1 4 0v5Z"></path>
+        <path d="M15 17a2 2 0 1 1-2 2v-2h2Z"></path>
+        <path d="M15 15a2 2 0 1 1 0-4h5a2 2 0 1 1 0 4h-5Z"></path>
+    </symbol>
+    <symbol id="pricing-icon-hardware" viewBox="0 0 24 24">
+        <rect x="5" y="5" width="14" height="14" rx="2"></rect>
+        <path d="M9 9h6v6H9z"></path>
+        <path d="M9 1v4"></path>
+        <path d="M15 1v4"></path>
+        <path d="M9 19v4"></path>
+        <path d="M15 19v4"></path>
+        <path d="M1 9h4"></path>
+        <path d="M1 15h4"></path>
+        <path d="M19 9h4"></path>
+        <path d="M19 15h4"></path>
+    </symbol>
+    <symbol id="pricing-icon-sla" viewBox="0 0 24 24">
+        <path d="M12 3 20 7v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7l8-4Z"></path>
+        <path d="m9 12 2 2 4-4"></path>
+    </symbol>
+</svg>
+
+<main class="pricing-v2">
+    <section class="pricing-v2-hero" aria-labelledby="pricing-title">
+        <div class="pricing-v2-kicker">Fluxzero pricing</div>
+        <h1 id="pricing-title">Choose your plan</h1>
+        <p>Build your entire app for free, then launch it. Scale your product as you grow, without changing foundations.</p>
+    </section>
+
+    <section class="pricing-v2-plans" aria-label="Pricing plans">
+        <input class="pricing-v2-toggle-input" type="radio" name="pricing-stage" id="pricing-launch" checked>
+        <input class="pricing-v2-toggle-input" type="radio" name="pricing-stage" id="pricing-scale">
+
+        <div class="pricing-v2-toggle" role="radiogroup" aria-label="Plan type" aria-owns="pricing-launch pricing-scale">
+            <label for="pricing-launch">Launch</label>
+            <label for="pricing-scale">Run</label>
+        </div>
+
+        <div class="pricing-v2-panels">
+            <div class="pricing-v2-panel pricing-v2-panel-launch">
+                <article class="pricing-v2-card">
+                    <div class="pricing-v2-card-top">
+                        <span class="pricing-v2-label">Free</span>
+                        <h2>Builder</h2>
+                        <div class="pricing-v2-price">
+                            <span class="pricing-v2-currency">€</span>
+                            <strong>0</strong>
+                        </div>
+                        <p class="pricing-v2-card-summary">Build your entire app before you pay.</p>
+                        <a href="/get-started/" class="pricing-v2-card-action">Get started</a>
+                    </div>
+                    <ul class="pricing-v2-list">
+                        <li><img class="pricing-v2-brand-icon" src="/assets/openai-logo.svg" alt="" aria-hidden="true">Use Claude Code, Codex or other agent</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-terminal"></use></svg><strong>Local runtime</strong></li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-logs"></use></svg>Local logs</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>Community support</li>
+                    </ul>
+                </article>
+
+                <article class="pricing-v2-card is-featured">
+                    <div class="pricing-v2-card-top">
+                        <span class="pricing-v2-label">Launch</span>
+                        <h2>Starter</h2>
+                        <div class="pricing-v2-price">
+                            <span class="pricing-v2-currency">€</span>
+                            <strong>49</strong>
+                            <span class="pricing-v2-term">per week or €190 per month</span>
+                        </div>
+                        <p class="pricing-v2-card-summary">Start running in production.</p>
+                        <a href="/contact/" class="pricing-v2-card-action is-primary">Request launch access</a>
+                    </div>
+                    <ul class="pricing-v2-list">
+                        <li class="pricing-v2-list-intro">Includes a fully-featured environment:</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-cluster"></use></svg><strong>Starter cluster included</strong></li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-task"></use></svg><strong>Starter app included</strong></li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-storage"></use></svg>100GB storage included</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-users"></use></svg>Auth included (max 100 users)</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-domain"></use></svg>1 custom domain</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-audit"></use></svg>Audit trail</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-slack"></use></svg>Slack support</li>
+                    </ul>
+                </article>
+            </div>
+
+            <div class="pricing-v2-panel pricing-v2-panel-scale">
+                <article class="pricing-v2-card is-featured">
+                    <div class="pricing-v2-card-top">
+                        <span class="pricing-v2-label">Grow</span>
+                        <h2>Startup</h2>
+                        <div class="pricing-v2-price">
+                            <span class="pricing-v2-currency">€</span>
+                            <strong>490</strong>
+                            <span class="pricing-v2-term">per month</span>
+                        </div>
+                        <p class="pricing-v2-card-summary">For products gaining traction.</p>
+                        <a href="/contact/" class="pricing-v2-card-action is-primary">Request startup plan</a>
+                    </div>
+                    <ul class="pricing-v2-list">
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-cluster"></use></svg><strong>Small cluster included</strong></li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-task"></use></svg><strong>2 small apps included</strong></li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-storage"></use></svg><span>200GB storage included<sup class="pricing-v2-footnote-ref">1</sup></span></li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-users"></use></svg>1000 users included</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-backup"></use></svg><span>7 days backup<sup class="pricing-v2-footnote-ref">1</sup></span></li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-domain"></use></svg>Unlimited domains</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-audit"></use></svg>Audit trail</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>Ticket support</li>
+                    </ul>
+                </article>
+
+                <article class="pricing-v2-card pricing-v2-flip-card" data-scale-card>
+                    <div class="pricing-v2-flip-inner">
+                        <div class="pricing-v2-flip-face pricing-v2-flip-face--front" aria-hidden="false">
+                            <div class="pricing-v2-card-top">
+                                <span class="pricing-v2-label">Scale</span>
+                                <h2>Scale Up</h2>
+                                <div class="pricing-v2-price">
+                                    <span class="pricing-v2-currency">€</span>
+                                    <strong>890</strong>
+                                    <span class="pricing-v2-term">per month</span>
+                                </div>
+                                <p class="pricing-v2-card-summary">For products that need more capacity.</p>
+                                <a href="/contact/" class="pricing-v2-card-action">Request scale up plan</a>
+                            </div>
+                            <ul class="pricing-v2-list">
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-cluster"></use></svg><strong>Medium cluster included</strong></li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-task"></use></svg><strong>2 medium apps included</strong></li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-scale"></use></svg><span>Unlimited clusters &amp; apps<sup class="pricing-v2-footnote-ref">1</sup></span></li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-storage"></use></svg><span>400GB storage included<sup class="pricing-v2-footnote-ref">1</sup></span></li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-users"></use></svg>Unlimited users included</li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-backup"></use></svg><span>Unlimited backups<sup class="pricing-v2-footnote-ref">1</sup></span></li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-domain"></use></svg>Unlimited domains</li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-sso"></use></svg>SSO</li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-uptime"></use></svg>99.9% uptime target</li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-ip"></use></svg>Optional static IPs</li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-audit"></use></svg>Audit trail &amp; insights</li>
+                                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>Priority support</li>
+                            </ul>
+                            <button class="pricing-v2-card-action pricing-v2-card-action-secondary scale-calc-trigger" type="button">
+                                <svg viewBox="0 0 16 16" aria-hidden="true">
+                                    <path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/>
+                                </svg>
+                                Calculate extra capacity
+                            </button>
+                        </div>
+
+                        <div class="pricing-v2-flip-face pricing-v2-flip-face--back" aria-hidden="true">
+                            <div class="scale-calculator" data-scale-calculator>
+                                <div class="scale-calculator-head">
+                                    <button class="scale-calculator-back" type="button">&lt;- Back</button>
+                                    <div>
+                                        <h3>Calculator</h3>
+                                    </div>
+                                </div>
+
+                                <div class="scale-price-list" aria-live="polite">
+                                    <div class="scale-row scale-row--storage">
+                                        <div class="scale-row-main">
+                                            <span class="scale-row-type scale-row-type--storage">Storage</span>
+                                            <input class="scale-storage-input" type="number" min="400" step="50" value="400" inputmode="numeric" aria-label="Storage usage in GB" data-scale-storage-gb>
+                                            <span class="scale-storage-unit">GB</span>
+                                        </div>
+                                        <strong class="scale-row-price" data-scale-storage-extra>€0</strong>
+                                        <input class="scale-row-range" type="range" min="400" max="10000" step="50" value="400" aria-label="Storage usage in GB" data-scale-storage-range>
+                                    </div>
+                                    <div class="scale-price-rows" data-scale-rows></div>
+                                    <div class="scale-summary">
+                                        <div class="scale-summary-row">
+                                            <span>Scale Up plan</span>
+                                            <strong>€890</strong>
+                                        </div>
+                                        <div class="scale-summary-row">
+                                            <span>Extra capacity &amp; storage</span>
+                                            <strong data-scale-extra-total>€0</strong>
+                                        </div>
+                                        <div class="scale-total-row">
+                                            <span>Monthly total</span>
+                                            <strong data-scale-total>€890</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="scale-add-actions">
+                                    <button class="scale-calculator-add scale-calculator-add--app" type="button" data-add-scale-row="app">+ Add app</button>
+                                    <button class="scale-calculator-add scale-calculator-add--cluster" type="button" data-add-scale-row="cluster">+ Add cluster</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="pricing-v2-card">
+                    <div class="pricing-v2-card-top">
+                        <span class="pricing-v2-label">Customize</span>
+                        <h2>Enterprise</h2>
+                        <div class="pricing-v2-price pricing-v2-price-custom">
+                            <strong>Custom</strong>
+                            <span class="pricing-v2-term">pricing</span>
+                        </div>
+                        <p class="pricing-v2-card-summary">Dedicated setup for larger teams.</p>
+                        <a href="/contact/" class="pricing-v2-card-action">Contact us</a>
+                    </div>
+                    <ul class="pricing-v2-list">
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-cluster"></use></svg><strong>Custom workloads</strong></li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-scale"></use></svg>Additional sizes</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-storage"></use></svg>Custom storage</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-backup"></use></svg>Custom backup policy</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-sla"></use></svg>Custom SLAs</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-slack"></use></svg>Private Slack channel</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-hardware"></use></svg>Unshared hardware optional</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-domain"></use></svg>Unlimited domains</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-audit"></use></svg>Audit trail &amp; insights</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>24/7 support</li>
+                    </ul>
+                </article>
+                <p class="pricing-v2-billing-note"><sup class="pricing-v2-footnote-ref">1</sup> Extra clusters, apps, backup storage, and storage above the included amount are measured during the month and settled at month-end.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="pricing-v2-included" aria-labelledby="pricing-included-title">
+        <div class="pricing-v2-included-head">
+            <h2 id="pricing-included-title">Included in every paid plan</h2>
+            <p>The limits change by plan,<br class="desktop-break"> but the production foundation stays the same.</p>
+        </div>
+
+        <div class="pricing-v2-included-grid">
+            <article class="pricing-v2-included-group">
+                <h3>Hosting & runtime</h3>
+                <ul class="pricing-v2-list">
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-terminal"></use></svg>App and frontend hosting</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-domain"></use></svg>Secure web gateways</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-routing"></use></svg>Automatic load balancing</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-scale"></use></svg>App and frontend scaling</li>
+                </ul>
+                <div class="pricing-v2-included-visual pricing-v2-included-hosting" aria-hidden="true">
+                    <span class="pricing-v2-included-node"></span>
+                    <span class="pricing-v2-included-segment"></span>
+                    <span class="pricing-v2-included-node"></span>
+                    <span class="pricing-v2-included-node"></span>
+                    <span class="pricing-v2-included-bar"></span>
+                    <span class="pricing-v2-included-bar"></span>
+                    <span class="pricing-v2-included-bar"></span>
+                    <span class="pricing-v2-included-dot"></span>
+                    <span class="pricing-v2-included-dot"></span>
+                    <span class="pricing-v2-included-dot"></span>
+                </div>
+            </article>
+            <article class="pricing-v2-included-group">
+                <h3>Data & messaging</h3>
+                <ul class="pricing-v2-list">
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-storage"></use></svg>Data stores</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-search"></use></svg>Search</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-logs"></use></svg>Durable message logs</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-sso"></use></svg>Seamless inter-app communication</li>
+                </ul>
+                <div class="pricing-v2-included-visual pricing-v2-included-data" aria-hidden="true">
+                    <span class="pricing-v2-included-node"></span>
+                    <span class="pricing-v2-included-node"></span>
+                    <span class="pricing-v2-included-node"></span>
+                    <span class="pricing-v2-included-bar"></span>
+                    <span class="pricing-v2-included-bar"></span>
+                    <span class="pricing-v2-included-bar"></span>
+                    <span class="pricing-v2-included-dot"></span>
+                    <span class="pricing-v2-included-dot"></span>
+                    <span class="pricing-v2-included-dot"></span>
+                </div>
+            </article>
+            <article class="pricing-v2-included-group">
+                <h3>Visibility</h3>
+                <ul class="pricing-v2-list">
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-audit"></use></svg>Searchable audit trails</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-logs"></use></svg>Request traces</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>Contextual errors</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-uptime"></use></svg>Full visibility into your apps</li>
+                </ul>
+                <div class="pricing-v2-included-visual pricing-v2-included-visibility" aria-hidden="true">
+                    <svg class="pricing-v2-included-scope" viewBox="0 0 320 76" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="pricing-included-scope-tail" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="black"></stop>
+                                <stop offset="26%" stop-color="white" stop-opacity="0.2"></stop>
+                                <stop offset="100%" stop-color="white"></stop>
+                            </linearGradient>
+                            <mask id="pricing-included-scope-mask" maskUnits="userSpaceOnUse">
+                                <rect x="-176" y="0" width="176" height="76" fill="url(#pricing-included-scope-tail)">
+                                    <animate attributeName="x" values="-176;320" dur="4.8s" repeatCount="indefinite" calcMode="linear"></animate>
+                                </rect>
+                            </mask>
+                        </defs>
+                        <path class="pricing-v2-included-scope-grid" d="M0 20H320M0 38H320M0 56H320M54 8V70M124 8V70M194 8V70M264 8V70"></path>
+                        <path class="pricing-v2-included-scope-baseline" d="M0 42H320"></path>
+                        <path class="pricing-v2-included-scope-line" mask="url(#pricing-included-scope-mask)" d="M0 42H118L126 42L132 32L140 52L148 42H156L164 16L176 66L186 30L196 52L204 38L212 42H320"></path>
+                    </svg>
+                </div>
+            </article>
+            <article class="pricing-v2-included-group">
+                <h3>Access & isolation</h3>
+                <ul class="pricing-v2-list">
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-users"></use></svg>Auth</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-sla"></use></svg>Role-based access</li>
+                    <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-hardware"></use></svg>Fully isolated app components</li>
+                </ul>
+                <div class="pricing-v2-included-visual pricing-v2-included-access" aria-hidden="true">
+                    <span class="pricing-v2-included-shield"></span>
+                    <span class="pricing-v2-included-ring"></span>
+                    <span class="pricing-v2-included-ring"></span>
+                    <span class="pricing-v2-included-ring"></span>
+                    <span class="pricing-v2-included-dot"></span>
+                    <span class="pricing-v2-included-dot"></span>
+                    <span class="pricing-v2-included-blocked"></span>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="pricing-v2-faq" aria-labelledby="pricing-faq-title">
+        <div class="pricing-v2-faq-head">
+            <h2 id="pricing-faq-title">Frequently asked questions</h2>
+        </div>
+
+        <div class="pricing-v2-faq-list">
+            <div class="pricing-v2-faq-item">
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What are clusters and apps?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
+                <div class="pricing-v2-faq-a">
+                    <p>A cluster is the managed environment your app runs on. An app is one running application inside that environment.</p>
+                    <p>Starter capacity gets you online quickly; Scale Up lets you add more clusters and apps when your product needs more room.</p>
+                </div>
+            </div>
+            <div class="pricing-v2-faq-item">
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>When will I be billed?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
+                <div class="pricing-v2-faq-a">
+                    <p>You can build locally for free. Billing starts when you activate a paid plan for an app. Your billing schedule starts on the day your first payment is made. Starter is billed every 7 days; Startup and Scale Up are billed monthly unless agreed otherwise.</p>
+                    <p>Extra or larger clusters and apps, and storage above the included amount, are measured during the month and billed at the end of the month.</p>
+                </div>
+            </div>
+            <div class="pricing-v2-faq-item">
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>Why can I pay weekly for Starter?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
+                <div class="pricing-v2-faq-a">
+                    <p>The weekly Starter option is there so you can experiment with a real Fluxzero cluster for a short period without committing to a full month.</p>
+                    <p>It is not meant as a discounted version of the monthly plan. It gives builders a low-friction way to try a live production foundation, validate an idea, or test launch readiness before choosing a longer-running plan.</p>
+                </div>
+            </div>
+            <div class="pricing-v2-faq-item">
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>Is sales tax included?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
+                <div class="pricing-v2-faq-a">
+                    <p>Prices are shown excluding sales tax, VAT, and similar taxes unless stated otherwise. Any required tax may be added during billing based on your billing details and local rules.</p>
+                </div>
+            </div>
+            <div class="pricing-v2-faq-item">
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What capacity is included, and can I cap my bill?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
+                <div class="pricing-v2-faq-a">
+                    <p>Every paid plan includes fixed cluster, app, and storage capacity as shown on the plan card. That included capacity is part of the plan price.</p>
+                    <p>From Scale Up, you decide which extra clusters, apps, storage, or options are added before they affect your bill. Fluxzero is designed to make usage visible before it becomes a surprise.</p>
+                </div>
+            </div>
+            <div class="pricing-v2-faq-item">
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>Will prices change in the future?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
+                <div class="pricing-v2-faq-a">
+                    <p>Pricing may evolve as Fluxzero grows and the platform changes. If a price change affects an active paid plan, we will communicate it before it applies.</p>
+                </div>
+            </div>
+            <div class="pricing-v2-faq-item">
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What happens if I cancel or pause my plan?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
+                <div class="pricing-v2-faq-a">
+                    <p>Your app will stop running on the paid plan after cancellation takes effect. In many cases you can stop runtime capacity when an app is not actively running.</p>
+                    <p>If you need to pause while keeping data or configuration, contact support and we will help choose the safest option.</p>
+                </div>
+            </div>
+            <div class="pricing-v2-faq-item">
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What happens if my payment fails?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
+                <div class="pricing-v2-faq-a">
+                    <p>We will notify you and give you time to fix the payment method. If payment remains unresolved, paid runtime access may be paused until billing is restored.</p>
+                </div>
+            </div>
+            <div class="pricing-v2-faq-item">
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What if I need development, test, or staging environments?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
+                <div class="pricing-v2-faq-a">
+                    <p>Additional clusters for development, test, staging, or preview environments can be added from Scale Up. We can help you choose the right size and setup.</p>
+                </div>
+            </div>
+            <div class="pricing-v2-faq-item">
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What if I need more scale or higher availability?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
+                <div class="pricing-v2-faq-a">
+                    <p>Scale Up supports additional clusters and apps and includes a 99.9% uptime target.</p>
+                    <p>Enterprise adds custom workloads, additional sizes, private hardware, custom SLAs, and dedicated operational support. Fluxzero currently runs from Europe, with more regions planned.</p>
+                </div>
+            </div>
+            <div class="pricing-v2-faq-item">
+                <h3 class="pricing-v2-faq-question-heading">
+                    <button class="pricing-v2-faq-q">
+                        <span>What happens if I go over included limits?</span>
+                        <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
+                    </button>
+                </h3>
+                <div class="pricing-v2-faq-a">
+                    <p>Extra or larger clusters and apps can be added from Scale Up. These are measured during the month and billed at the end of the month.</p>
+                    <p>If your data volume exceeds included storage, additional storage is billed at €0.0048 per GB per day.</p>
+                    <p>Our fair use limits are designed to cover typical application traffic for most products. If your application generates unusually high public network traffic, we may temporarily limit traffic, request changes, or move you to a suitable plan.</p>
+                </div>
+            </div>
+        </div>
+
+        <p class="pricing-v2-faq-help">Still wondering? <a href="/contact/">Get in touch</a> and we'll help.</p>
+    </section>
+
+</main>
+
+<MarketingFooter />
+
+<script is:inline>
+    function togglePricingFaq(btn) {
+        const item = btn.closest('.pricing-v2-faq-item');
+        if (!item) return;
+        item.classList.toggle('open');
+    }
+
+    function toggleScaleCalculator() {
+        const scaleCard = document.querySelector('[data-scale-card]');
+        if (!scaleCard) return;
+
+        const isFlipped = scaleCard.classList.toggle('is-flipped');
+        scaleCard.querySelector('.pricing-v2-flip-face--front').setAttribute('aria-hidden', String(isFlipped));
+        scaleCard.querySelector('.pricing-v2-flip-face--back').setAttribute('aria-hidden', String(!isFlipped));
+    }
+
+    document.querySelectorAll('.pricing-v2-faq-q').forEach(button => {
+        button.addEventListener('click', () => togglePricingFaq(button));
+    });
+
+    document.querySelectorAll('.scale-calc-trigger, .scale-calculator-back').forEach(button => {
+        button.addEventListener('click', toggleScaleCalculator);
+    });
+
+    (function () {
+        const scaleCard = document.querySelector('[data-scale-card]');
+        const calculator = document.querySelector('[data-scale-calculator]');
+        if (!scaleCard || !calculator) return;
+
+        const sizes = [
+            { name: 'Starter', cluster: 200, app: 40 },
+            { name: 'Small', cluster: 400, app: 80 },
+            { name: 'Medium', cluster: 800, app: 160 },
+            { name: 'Large', cluster: 1600, app: 320 },
+            { name: 'XL', cluster: 3200, app: 640 },
+            { name: '2XL', cluster: 6400, app: 1280 },
+            { name: '3XL', cluster: 9600, app: 1920 },
+            { name: '4XL', cluster: 12800, app: 2560 },
+            { name: '5XL', cluster: 16000, app: 3200 },
+            { name: '6XL', cluster: 19200, app: 3840 },
+            { name: '7XL', cluster: 22400, app: 4480 },
+            { name: '8XL', cluster: 25600, app: 5120 }
+        ];
+
+        const planPrice = 890;
+        const includedSizeIndex = 2;
+        const addedSizeIndex = 1;
+        const includedStorageGb = 400;
+        const maxStorageGb = 10000;
+        const storageStepGb = 50;
+        const storagePricePerGbPerDay = 0.0048;
+        const state = [
+            { type: 'cluster', sizeIndex: includedSizeIndex, included: true },
+            { type: 'app', sizeIndex: includedSizeIndex, included: true },
+            { type: 'app', sizeIndex: includedSizeIndex, included: true }
+        ];
+
+        const formatEuro = value => '€' + Math.round(value).toLocaleString('en-US');
+
+        function fullRowPrice(type, sizeIndex) {
+            return sizes[sizeIndex][type];
+        }
+
+        function extraRowPrice(row) {
+            const fullPrice = fullRowPrice(row.type, row.sizeIndex);
+            if (!row.included) return fullPrice;
+            return Math.max(0, fullPrice - fullRowPrice(row.type, includedSizeIndex));
+        }
+
+        function normalizeStorageGb(value, options = {}) {
+            const maxGb = options.maxGb ?? Infinity;
+            const parsed = Number(value || includedStorageGb);
+            const bounded = Math.min(maxGb, Math.max(includedStorageGb, parsed));
+            return Math.round(bounded / storageStepGb) * storageStepGb;
+        }
+
+        function renderRows() {
+            const rows = calculator.querySelector('[data-scale-rows]');
+            rows.innerHTML = '';
+
+            state.forEach((item, rowIndex) => {
+                const size = sizes[item.sizeIndex];
+                const row = document.createElement('div');
+                row.className = 'scale-row';
+
+                const main = document.createElement('div');
+                main.className = 'scale-row-main';
+
+                const typeBadge = document.createElement('span');
+                typeBadge.className = 'scale-row-type scale-row-type--' + item.type;
+                typeBadge.textContent = item.type;
+
+                const sizeBadge = document.createElement('span');
+                sizeBadge.className = 'scale-row-size';
+                sizeBadge.textContent = size.name;
+
+                main.append(typeBadge, sizeBadge);
+
+                const actions = document.createElement('div');
+                actions.className = 'scale-row-actions';
+
+                const price = document.createElement('strong');
+                price.className = 'scale-row-price';
+                price.textContent = formatEuro(extraRowPrice(item));
+
+                if (!item.included) {
+                    const remove = document.createElement('button');
+                    remove.className = 'scale-row-remove';
+                    remove.type = 'button';
+                    remove.setAttribute('aria-label', 'Remove ' + item.type);
+                    remove.textContent = 'x';
+                    remove.addEventListener('click', () => {
+                        state.splice(rowIndex, 1);
+                        render();
+                    });
+                    main.appendChild(remove);
+                }
+
+                actions.appendChild(price);
+
+                const range = document.createElement('input');
+                range.className = 'scale-row-range';
+                range.type = 'range';
+                range.min = item.included ? String(includedSizeIndex) : '0';
+                range.max = String(sizes.length - 1);
+                range.step = '1';
+                range.value = String(item.sizeIndex);
+                range.setAttribute('aria-label', item.type + ' size');
+                range.addEventListener('input', () => {
+                    const nextSizeIndex = Number(range.value);
+                    item.sizeIndex = nextSizeIndex;
+                    sizeBadge.textContent = sizes[nextSizeIndex].name;
+                    price.textContent = formatEuro(extraRowPrice(item));
+                    updateTotals();
+                });
+
+                row.append(main, actions, range);
+                rows.appendChild(row);
+            });
+        }
+
+        function updateTotals() {
+            const capacityExtra = state.reduce((total, row) => total + extraRowPrice(row), 0);
+            const storageInput = calculator.querySelector('[data-scale-storage-gb]');
+            const storageRange = calculator.querySelector('[data-scale-storage-range]');
+            const parsedStorageGb = Number(storageInput.value);
+            const storageGb = Number.isFinite(parsedStorageGb) ? Math.max(0, parsedStorageGb) : includedStorageGb;
+            const storageExtra = Math.max(0, storageGb - includedStorageGb) * 30 * storagePricePerGbPerDay;
+            const extraTotal = capacityExtra + storageExtra;
+
+            storageRange.value = String(Math.min(maxStorageGb, storageGb));
+            calculator.querySelector('[data-scale-storage-extra]').textContent = formatEuro(storageExtra);
+            calculator.querySelector('[data-scale-extra-total]').textContent = formatEuro(extraTotal);
+            calculator.querySelector('[data-scale-total]').textContent = formatEuro(planPrice + extraTotal);
+        }
+
+        function render() {
+            renderRows();
+            updateTotals();
+        }
+
+        calculator.querySelectorAll('[data-add-scale-row]').forEach(button => {
+            button.addEventListener('click', () => {
+                const type = button.dataset.addScaleRow;
+                state.push({ type, sizeIndex: addedSizeIndex, included: false });
+                render();
+            });
+        });
+
+        const storageInput = calculator.querySelector('[data-scale-storage-gb]');
+        const storageRange = calculator.querySelector('[data-scale-storage-range]');
+        storageInput.addEventListener('input', updateTotals);
+        storageRange.addEventListener('input', () => {
+            storageInput.value = String(normalizeStorageGb(storageRange.value, { maxGb: maxStorageGb }));
+            updateTotals();
+        });
+        storageInput.addEventListener('blur', () => {
+            storageInput.value = String(normalizeStorageGb(storageInput.value));
+            updateTotals();
+        });
+
+        scaleCard.querySelector('.pricing-v2-flip-face--back').setAttribute('aria-hidden', 'true');
+        render();
+    }());
+
+    (function () {
+        const homeLink = document.querySelector('[data-home-link]');
+        if (!homeLink) return;
+
+        homeLink.addEventListener('click', function (event) {
+            try {
+                if (document.referrer) {
+                    const referrer = new URL(document.referrer);
+                    if (referrer.origin === window.location.origin) {
+                        event.preventDefault();
+                        window.history.back();
+                    }
+                }
+            } catch (error) {
+                /* fall back to href */
+            }
+        });
+    }());
+</script>
+</body>
+</html>

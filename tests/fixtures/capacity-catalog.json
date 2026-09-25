@@ -1,0 +1,710 @@
+{
+  "offers": [
+    {
+      "plan": {
+        "planId": "starter-flex",
+        "activated": true,
+        "details": {
+          "version": "2026-09-capacity-v1",
+          "displayName": "Starter",
+          "prices": [
+            {
+              "interval": "monthly",
+              "currency": "EUR",
+              "amount": 49
+            }
+          ],
+          "capabilities": [
+            {
+              "key": "cluster.v1_starter.count",
+              "label": "Starter cluster",
+              "unit": "cluster",
+              "included": 1,
+              "hardLimit": false,
+              "productId": "capacity-v1-cluster-v1-starter",
+              "meterKey": "cluster.v1_starter.hours"
+            },
+            {
+              "key": "application.v1_starter.count",
+              "label": "Starter app",
+              "unit": "app",
+              "included": 1,
+              "hardLimit": false,
+              "productId": "capacity-v1-application-v1-starter",
+              "meterKey": "application.v1_starter.hours"
+            },
+            {
+              "key": "storage.gib",
+              "label": "Storage",
+              "unit": "GiB",
+              "included": 50,
+              "hardLimit": false,
+              "productId": "database-storage-gib",
+              "meterKey": "storage.gib.days"
+            },
+            {
+              "key": "domains.custom.count",
+              "label": "Custom domains",
+              "unit": "domain",
+              "included": 1,
+              "hardLimit": false,
+              "maximum": 1
+            },
+            {
+              "key": "seats.count",
+              "label": "Seats",
+              "unit": "seat",
+              "included": 1,
+              "hardLimit": false,
+              "unitPrice": 10
+            },
+            {
+              "key": "identity.users",
+              "label": "Identity users",
+              "unit": "user",
+              "included": 100,
+              "hardLimit": false
+            }
+          ],
+          "capacityPolicy": {
+            "clusterSizes": [
+              "v1_starter",
+              "v1_small",
+              "v1_medium"
+            ],
+            "applicationSizes": [
+              "v1_starter",
+              "v1_small",
+              "v1_medium"
+            ],
+            "maximumClusters": 1,
+            "maximumApplications": 1,
+            "productCatalogVersion": "2026-09-capacity-v1",
+            "infrastructureProfile": "capacity-v1",
+            "initialDatabaseStorageGiB": 20,
+            "allDataVolumeMetering": true
+          },
+          "sortOrder": 40
+        }
+      },
+      "subscription": {
+        "version": "2026-09-capacity-v1",
+        "displayName": "Starter",
+        "capabilities": [
+          {
+            "key": "cluster.v1_starter.count",
+            "label": "Starter cluster",
+            "unit": "cluster",
+            "included": 1,
+            "hardLimit": false,
+            "productId": "capacity-v1-cluster-v1-starter",
+            "meterKey": "cluster.v1_starter.hours"
+          },
+          {
+            "key": "application.v1_starter.count",
+            "label": "Starter app",
+            "unit": "app",
+            "included": 1,
+            "hardLimit": false,
+            "productId": "capacity-v1-application-v1-starter",
+            "meterKey": "application.v1_starter.hours"
+          },
+          {
+            "key": "storage.gib",
+            "label": "Storage",
+            "unit": "GiB",
+            "included": 50,
+            "hardLimit": false,
+            "productId": "database-storage-gib",
+            "meterKey": "storage.gib.days"
+          },
+          {
+            "key": "domains.custom.count",
+            "label": "Custom domains",
+            "unit": "domain",
+            "included": 1,
+            "hardLimit": false,
+            "maximum": 1
+          },
+          {
+            "key": "seats.count",
+            "label": "Seats",
+            "unit": "seat",
+            "included": 1,
+            "hardLimit": false,
+            "unitPrice": 10
+          },
+          {
+            "key": "identity.users",
+            "label": "Identity users",
+            "unit": "user",
+            "included": 100,
+            "hardLimit": false
+          }
+        ],
+        "capacityPolicy": {
+          "clusterSizes": [
+            "v1_starter",
+            "v1_small",
+            "v1_medium"
+          ],
+          "applicationSizes": [
+            "v1_starter",
+            "v1_small",
+            "v1_medium"
+          ],
+          "maximumClusters": 1,
+          "maximumApplications": 1,
+          "productCatalogVersion": "2026-09-capacity-v1",
+          "infrastructureProfile": "capacity-v1",
+          "initialDatabaseStorageGiB": 20,
+          "allDataVolumeMetering": true
+        },
+        "planId": "starter-flex",
+        "interval": "monthly",
+        "currency": "EUR",
+        "amount": 49,
+        "allowsPaidOverage": false
+      }
+    },
+    {
+      "plan": {
+        "planId": "pro",
+        "activated": true,
+        "details": {
+          "version": "2026-09-capacity-v1",
+          "displayName": "Pro",
+          "basePlanId": "starter-flex",
+          "prices": [
+            {
+              "interval": "monthly",
+              "currency": "EUR",
+              "amount": 50
+            }
+          ],
+          "capabilities": [
+            {
+              "key": "cluster.v1_starter.count",
+              "label": "Starter cluster",
+              "unit": "cluster",
+              "included": 1,
+              "hardLimit": false,
+              "productId": "capacity-v1-cluster-v1-starter",
+              "meterKey": "cluster.v1_starter.hours"
+            },
+            {
+              "key": "application.v1_starter.count",
+              "label": "Starter app",
+              "unit": "app",
+              "included": 1,
+              "hardLimit": false,
+              "productId": "capacity-v1-application-v1-starter",
+              "meterKey": "application.v1_starter.hours"
+            },
+            {
+              "key": "storage.gib",
+              "label": "Storage",
+              "unit": "GiB",
+              "included": 50,
+              "hardLimit": false,
+              "productId": "database-storage-gib",
+              "meterKey": "storage.gib.days"
+            },
+            {
+              "key": "domains.custom.count",
+              "label": "Custom domains",
+              "unit": "domain",
+              "included": 0,
+              "hardLimit": false,
+              "maximum": null
+            },
+            {
+              "key": "seats.count",
+              "label": "Seats",
+              "unit": "seat",
+              "included": 3,
+              "hardLimit": false,
+              "unitPrice": 10
+            },
+            {
+              "key": "identity.users",
+              "label": "Identity users",
+              "unit": "user",
+              "included": 1000,
+              "hardLimit": false
+            }
+          ],
+          "capacityPolicy": {
+            "clusterSizes": [
+              "v1_starter",
+              "v1_small",
+              "v1_medium",
+              "v1_large",
+              "v1_xl",
+              "v1_2xl",
+              "v1_4xl",
+              "v1_8xl"
+            ],
+            "applicationSizes": [
+              "v1_starter",
+              "v1_small",
+              "v1_medium",
+              "v1_large",
+              "v1_xl",
+              "v1_2xl",
+              "v1_4xl"
+            ],
+            "highAvailability": true,
+            "highAvailabilityClusterSizes": [
+              "v1_medium",
+              "v1_large",
+              "v1_xl",
+              "v1_2xl",
+              "v1_4xl",
+              "v1_8xl"
+            ],
+            "highAvailabilityPriceMultiplier": 1.5,
+            "backups": true,
+            "pointInTimeRecoveryDays": 9,
+            "ticketSupport": true,
+            "productCatalogVersion": "2026-09-capacity-v1",
+            "infrastructureProfile": "capacity-v1",
+            "initialDatabaseStorageGiB": 20,
+            "allDataVolumeMetering": true
+          },
+          "sortOrder": 50
+        }
+      },
+      "subscription": {
+        "version": "2026-09-capacity-v1",
+        "displayName": "Pro",
+        "capabilities": [
+          {
+            "key": "cluster.v1_starter.count",
+            "label": "Starter cluster",
+            "unit": "cluster",
+            "included": 1,
+            "hardLimit": false,
+            "productId": "capacity-v1-cluster-v1-starter",
+            "meterKey": "cluster.v1_starter.hours"
+          },
+          {
+            "key": "application.v1_starter.count",
+            "label": "Starter app",
+            "unit": "app",
+            "included": 1,
+            "hardLimit": false,
+            "productId": "capacity-v1-application-v1-starter",
+            "meterKey": "application.v1_starter.hours"
+          },
+          {
+            "key": "storage.gib",
+            "label": "Storage",
+            "unit": "GiB",
+            "included": 50,
+            "hardLimit": false,
+            "productId": "database-storage-gib",
+            "meterKey": "storage.gib.days"
+          },
+          {
+            "key": "domains.custom.count",
+            "label": "Custom domains",
+            "unit": "domain",
+            "included": 0,
+            "hardLimit": false,
+            "maximum": null
+          },
+          {
+            "key": "seats.count",
+            "label": "Seats",
+            "unit": "seat",
+            "included": 3,
+            "hardLimit": false,
+            "unitPrice": 10
+          },
+          {
+            "key": "identity.users",
+            "label": "Identity users",
+            "unit": "user",
+            "included": 1000,
+            "hardLimit": false
+          }
+        ],
+        "capacityPolicy": {
+          "clusterSizes": [
+            "v1_starter",
+            "v1_small",
+            "v1_medium",
+            "v1_large",
+            "v1_xl",
+            "v1_2xl",
+            "v1_4xl",
+            "v1_8xl"
+          ],
+          "applicationSizes": [
+            "v1_starter",
+            "v1_small",
+            "v1_medium",
+            "v1_large",
+            "v1_xl",
+            "v1_2xl",
+            "v1_4xl"
+          ],
+          "highAvailability": true,
+          "highAvailabilityClusterSizes": [
+            "v1_medium",
+            "v1_large",
+            "v1_xl",
+            "v1_2xl",
+            "v1_4xl",
+            "v1_8xl"
+          ],
+          "highAvailabilityPriceMultiplier": 1.5,
+          "backups": true,
+          "pointInTimeRecoveryDays": 9,
+          "ticketSupport": true,
+          "productCatalogVersion": "2026-09-capacity-v1",
+          "infrastructureProfile": "capacity-v1",
+          "initialDatabaseStorageGiB": 20,
+          "allDataVolumeMetering": true
+        },
+        "planId": "pro",
+        "interval": "monthly",
+        "currency": "EUR",
+        "amount": 99,
+        "allowsPaidOverage": false,
+        "basePlan": {
+          "version": "2026-09-capacity-v1",
+          "displayName": "Starter",
+          "capabilities": [
+            {
+              "key": "cluster.v1_starter.count",
+              "label": "Starter cluster",
+              "unit": "cluster",
+              "included": 1,
+              "hardLimit": false,
+              "productId": "capacity-v1-cluster-v1-starter",
+              "meterKey": "cluster.v1_starter.hours"
+            },
+            {
+              "key": "application.v1_starter.count",
+              "label": "Starter app",
+              "unit": "app",
+              "included": 1,
+              "hardLimit": false,
+              "productId": "capacity-v1-application-v1-starter",
+              "meterKey": "application.v1_starter.hours"
+            },
+            {
+              "key": "storage.gib",
+              "label": "Storage",
+              "unit": "GiB",
+              "included": 50,
+              "hardLimit": false,
+              "productId": "database-storage-gib",
+              "meterKey": "storage.gib.days"
+            },
+            {
+              "key": "domains.custom.count",
+              "label": "Custom domains",
+              "unit": "domain",
+              "included": 1,
+              "hardLimit": false,
+              "maximum": 1
+            },
+            {
+              "key": "seats.count",
+              "label": "Seats",
+              "unit": "seat",
+              "included": 1,
+              "hardLimit": false,
+              "unitPrice": 10
+            },
+            {
+              "key": "identity.users",
+              "label": "Identity users",
+              "unit": "user",
+              "included": 100,
+              "hardLimit": false
+            }
+          ],
+          "capacityPolicy": {
+            "clusterSizes": [
+              "v1_starter",
+              "v1_small",
+              "v1_medium"
+            ],
+            "applicationSizes": [
+              "v1_starter",
+              "v1_small",
+              "v1_medium"
+            ],
+            "maximumClusters": 1,
+            "maximumApplications": 1,
+            "productCatalogVersion": "2026-09-capacity-v1",
+            "infrastructureProfile": "capacity-v1",
+            "initialDatabaseStorageGiB": 20,
+            "allDataVolumeMetering": true
+          },
+          "planId": "starter-flex",
+          "interval": "monthly",
+          "currency": "EUR",
+          "amount": 49,
+          "allowsPaidOverage": false
+        }
+      }
+    }
+  ],
+  "products": [
+    {
+      "productId": "capacity-v1-cluster-v1-starter",
+      "details": {
+        "description": "Starter cluster",
+        "resourceType": "cluster",
+        "size": "v1_starter",
+        "price": "150.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-starter",
+      "details": {
+        "description": "Starter application",
+        "resourceType": "application",
+        "size": "v1_starter",
+        "price": "40.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-cluster-v1-small",
+      "details": {
+        "description": "Small cluster",
+        "resourceType": "cluster",
+        "size": "v1_small",
+        "price": "300.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-small",
+      "details": {
+        "description": "Small application",
+        "resourceType": "application",
+        "size": "v1_small",
+        "price": "80.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-cluster-v1-medium",
+      "details": {
+        "description": "Medium cluster",
+        "resourceType": "cluster",
+        "size": "v1_medium",
+        "price": "600.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-medium",
+      "details": {
+        "description": "Medium application",
+        "resourceType": "application",
+        "size": "v1_medium",
+        "price": "160.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-cluster-v1-large",
+      "details": {
+        "description": "Large cluster",
+        "resourceType": "cluster",
+        "size": "v1_large",
+        "price": "1200.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-large",
+      "details": {
+        "description": "Large application",
+        "resourceType": "application",
+        "size": "v1_large",
+        "price": "320.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-cluster-v1-xl",
+      "details": {
+        "description": "XL cluster",
+        "resourceType": "cluster",
+        "size": "v1_xl",
+        "price": "2400.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-xl",
+      "details": {
+        "description": "XL application",
+        "resourceType": "application",
+        "size": "v1_xl",
+        "price": "640.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-cluster-v1-2xl",
+      "details": {
+        "description": "2XL cluster",
+        "resourceType": "cluster",
+        "size": "v1_2xl",
+        "price": "4800.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-2xl",
+      "details": {
+        "description": "2XL application",
+        "resourceType": "application",
+        "size": "v1_2xl",
+        "price": "1280.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-cluster-v1-3xl",
+      "details": {
+        "description": "3XL cluster",
+        "resourceType": "cluster",
+        "size": "v1_3xl",
+        "price": "7200.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-3xl",
+      "details": {
+        "description": "3XL application",
+        "resourceType": "application",
+        "size": "v1_3xl",
+        "price": "1920.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-cluster-v1-4xl",
+      "details": {
+        "description": "4XL cluster",
+        "resourceType": "cluster",
+        "size": "v1_4xl",
+        "price": "9600.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-4xl",
+      "details": {
+        "description": "4XL application",
+        "resourceType": "application",
+        "size": "v1_4xl",
+        "price": "2560.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-cluster-v1-5xl",
+      "details": {
+        "description": "5XL cluster",
+        "resourceType": "cluster",
+        "size": "v1_5xl",
+        "price": "12000.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-5xl",
+      "details": {
+        "description": "5XL application",
+        "resourceType": "application",
+        "size": "v1_5xl",
+        "price": "3200.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-cluster-v1-6xl",
+      "details": {
+        "description": "6XL cluster",
+        "resourceType": "cluster",
+        "size": "v1_6xl",
+        "price": "14400.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-6xl",
+      "details": {
+        "description": "6XL application",
+        "resourceType": "application",
+        "size": "v1_6xl",
+        "price": "3840.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-cluster-v1-7xl",
+      "details": {
+        "description": "7XL cluster",
+        "resourceType": "cluster",
+        "size": "v1_7xl",
+        "price": "16800.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-7xl",
+      "details": {
+        "description": "7XL application",
+        "resourceType": "application",
+        "size": "v1_7xl",
+        "price": "4480.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-cluster-v1-8xl",
+      "details": {
+        "description": "8XL cluster",
+        "resourceType": "cluster",
+        "size": "v1_8xl",
+        "price": "19200.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "capacity-v1-application-v1-8xl",
+      "details": {
+        "description": "8XL application",
+        "resourceType": "application",
+        "size": "v1_8xl",
+        "price": "5120.00",
+        "billingUnit": "billing_period"
+      }
+    },
+    {
+      "productId": "database-storage-gib",
+      "details": {
+        "description": "Database storage (GiB day)",
+        "resourceType": "database_storage",
+        "size": "gib",
+        "price": "0.0048",
+        "billingUnit": "gib_day"
+      }
+    }
+  ]
+}

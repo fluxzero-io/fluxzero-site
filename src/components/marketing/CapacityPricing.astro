@@ -1,0 +1,162 @@
+---
+import '../../../public/css/marketing-shell.css';
+import capacityPricingCss from '../../../public/css/capacity-pricing.css?inline';
+import BrandHead from '../BrandHead.astro';
+import MarketingFooter from './MarketingFooter.astro';
+import MarketingHeader from './MarketingHeader.astro';
+import {availableSizes, capability, offerFeatures, productFor, isPurchasable} from '../../utils/capacity-pricing.mjs';
+const {catalog} = Astro.props;
+const offers = [...catalog.offers].sort((a, b) => Number(!!a.plan.details.basePlanId) - Number(!!b.plan.details.basePlanId));
+const currency = offers[0].subscription.currency;
+const money = value => new Intl.NumberFormat('en-GB', {style:'currency', currency, maximumFractionDigits:2, minimumFractionDigits:0}).format(Number(value));
+const starter = offers[0].subscription;
+const includedSize = type => catalog.products.find(p => p.productId === capability(starter, `${type}.`, true).productId).details.size;
+const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <BrandHead title="Fluxzero Pricing — Start small. Grow when you're ready." description="Launch with Starter. Add Pro when your product needs more capacity, collaboration and recovery options. Review every capacity purchase before you pay." />
+<style is:inline set:html={capacityPricingCss} />
+</head>
+<body>
+<MarketingHeader active="pricing" />
+<main class="capacity-pricing">
+  <header class="capacity-hero">
+    <p class="eyebrow">Fluxzero pricing</p>
+    <h1>Start small.<br />Grow when you're ready.</h1>
+    <p>Build your app locally for free. Choose Starter to launch, and add Pro as your product grows.</p>
+  </header>
+  <section class="capacity-offers" aria-label="Pricing plans">
+    {offers.map(offer => <article class:list={['capacity-offer', {'capacity-offer--pro': !!offer.plan.details.basePlanId}]}>
+      <p class="eyebrow">{offer.plan.details.basePlanId ? 'Room to grow' : 'Your first launch'}</p>
+      <h2>{offer.subscription.displayName}</h2>
+      <p class="offer-price"><strong>{offer.plan.details.basePlanId ? '+' : ''}{money(offer.plan.details.prices.find(p => p.interval === 'monthly').amount)}</strong><span>per month</span></p>
+      <p class="offer-context">{offer.plan.details.basePlanId ? `${money(offer.subscription.amount)} per month including Starter, before extras.` : 'Your first production environment, with room to upgrade.'}</p>
+      <a class="capacity-action" href={`https://dashboard.fluxzero.io/?plan=${encodeURIComponent(offer.plan.planId)}`}>Choose {offer.subscription.displayName}</a>
+      <ul>{offerFeatures(offer).map(feature => <li>{feature}</li>)}</ul>
+      <p class="offer-note">Additional seats: {money(capability(offer.subscription, 'seats.count').unitPrice)} per seat per month.</p>
+    </article>)}
+  </section>
+  <p class="capacity-note">Prices exclude VAT. The fixed Starter and Pro subscriptions continue while capacity is paused. <a href="/get-started/">Build locally for free →</a></p>
+
+  <section class="capacity-section" aria-labelledby="estimate-heading">
+    <p class="eyebrow">Plan your costs</p>
+    <h2 id="estimate-heading">Make room for your next step.</h2>
+    <p>Keep your first-cluster and first-app allowance when upgrading. Extra resources use their full catalog price.</p>
+    <details class="capacity-calculator" id="capacity-calculator">
+      <summary>Open the pricing calculator</summary>
+      <div class="calculator-body">
+        <label for="estimate-plan">Subscription</label>
+        <select id="estimate-plan">{offers.map(o => <option value={o.plan.planId}>{o.subscription.displayName}</option>)}</select>
+        <div id="capacity-rows">
+          {['cluster', 'application'].map(type => <div class="capacity-row" data-capacity-type={type}>
+            <label>{type === 'cluster' ? 'First cluster' : 'First app'}
+              <select data-size>{availableSizes(catalog,starter,type).map(size => <option value={size} selected={size === includedSize(type)}>{productFor(catalog,type,size).details.description}</option>)}</select>
+            </label>
+            {type === 'cluster' && <label class="ha-choice"><input type="checkbox" data-ha disabled /> <span data-ha-label>High availability (Pro)</span></label>}
+            <output data-row-total>{money(0)}</output>
+          </div>)}
+        </div>
+        <div class="capacity-add-actions"><button type="button" data-add="cluster" disabled>Add cluster</button><button type="button" data-add="application" disabled>Add app</button><span>Additional resources require Pro.</span></div>
+        <div class="capacity-inputs">
+          <label>Total seats<input id="estimate-seats" type="number" min="1" step="1" value={capability(starter,'seats.count').included} /></label>
+          <label>Total storage ({capability(starter,'storage.gib').unit})<input id="estimate-storage" type="number" min="0" step="any" value={capability(starter,'storage.gib').included} /></label>
+          <label>Days in billing month<input id="estimate-days" type="number" min="28" max="31" step="1" value="30" /></label>
+        </div>
+        <p class="calculator-error" id="estimate-error" role="alert"></p>
+        <dl class="capacity-estimate" aria-live="polite">
+          <dt>Fixed subscription</dt><dd id="estimate-fixed">{money(starter.amount)}</dd>
+          <dt>Additional capacity</dt><dd id="estimate-capacity">{money(0)}</dd>
+          <dt>Additional seats</dt><dd id="estimate-seat-total">{money(0)}</dd>
+          <dt>Estimated storage overage</dt><dd id="estimate-storage-total">{money(0)}</dd>
+          <dt class="estimate-total">Estimated monthly total</dt><dd class="estimate-total" id="estimate-total">{money(starter.amount)}</dd>
+        </dl>
+        <p class="capacity-note">This estimates a full month. Dashboard checkout shows the amount for the remaining billing period and applies your available credits. One storage allowance covers allocated database volumes, including HA replicas, logs and metrics, plus measured object and backup storage. Extra storage is billed afterwards, separately from the HA charge. HA uses the published temporary multiplier on the full cluster catalog price, before the included allowance. Unpriced options are excluded.</p>
+        <details class="capacity-catalog"><summary>View catalog capacity prices</summary>
+          <table><thead><tr><th scope="col">Resource</th><th scope="col">Full catalog price / month</th><th scope="col">Availability</th></tr></thead><tbody>
+            {catalog.products.filter(p => p.details.billingUnit === 'billing_period').map(p => <tr><th scope="row">{p.details.description}</th><td>{money(p.details.price)}</td><td>{isPurchasable(catalog, p) ? 'Available' : 'Not yet available'}</td></tr>)}
+          </tbody></table>
+        </details>
+      </div>
+    </details>
+  </section>
+
+  <section class="capacity-section capacity-faq" aria-labelledby="billing-heading">
+    <p class="eyebrow">Clear from the start</p><h2 id="billing-heading">How billing works.</h2>
+    <details><summary>When do I pay for capacity?</summary><p>Purchases and upgrades are charged immediately to your saved payment method, after available credits. You review the remaining-period amount before confirming. The fixed subscription renews monthly.</p></details>
+    <details><summary>Can I run extra capacity for just a few hours?</summary><p>Yes. Stopping, destroying or pausing capacity credits its unused paid time toward future payments. The fixed Starter and Pro subscriptions continue, and retained storage remains billable. Resuming shows a new quote at the current prices.</p></details>
+    <details><summary>What can I upgrade with Starter?</summary><p>You can increase your one cluster and one app up to Medium. Storage can keep growing beyond the included allowance. Pro unlocks more clusters and apps, larger sizes and optional high availability.</p></details>
+    <details><summary>Does a larger cluster automatically include high availability?</summary><p>No. High availability is a separate Pro option. Existing customers retain their current configuration until an agreed migration.</p></details>
+    <details><summary>What changes for existing customers?</summary><p>Your existing agreement stays in place until we arrange your migration. We review your resources, availability, pricing and billing date together. Existing data, backups and high availability are preserved.</p></details>
+    <details><summary>Which options are coming later?</summary><p>Static IP pricing, additional identity-user pricing and SLA terms are still to be announced. Identity allowances apply when the identity service is available. Unavailable options cannot be purchased.</p></details>
+  </section>
+  <section class="capacity-help"><h2>Ready for your first launch?</h2><p>Start building, or talk through what your product needs.</p><a class="capacity-action" href="/get-started/">Get started</a><a href="/contact/">Talk to us →</a></section>
+</main>
+<MarketingFooter />
+<script type="application/json" id="capacity-catalog" set:html={serializedCatalog}></script>
+<script>
+  import {availableSizes, capability, estimateCapacity, productFor, allowsHighAvailability, highAvailabilityLabel} from '../../utils/capacity-pricing.mjs';
+  const catalog = JSON.parse(document.getElementById('capacity-catalog')!.textContent!);
+  const select = document.querySelector<HTMLSelectElement>('#estimate-plan')!;
+  const container = document.getElementById('capacity-rows')!;
+  const money = value => new Intl.NumberFormat('en-GB', {style:'currency', currency: catalog.offers[0].subscription.currency}).format(value);
+  const input = id => document.getElementById(id) as HTMLInputElement;
+  const selected = () => catalog.offers.find(o => o.plan.planId === select.value).subscription;
+  function update() {
+    try {
+      container.querySelectorAll<HTMLElement>('[data-capacity-type="cluster"]').forEach(row => {
+        const ha = row.querySelector<HTMLInputElement>('[data-ha]')!;
+        const size = row.querySelector<HTMLSelectElement>('[data-size]')!.value;
+        ha.disabled = !allowsHighAvailability(selected().capacityPolicy, size);
+        if (ha.disabled) ha.checked = false;
+        row.querySelector('[data-ha-label]')!.textContent = highAvailabilityLabel(selected().capacityPolicy);
+      });
+      const rows = [...container.querySelectorAll<HTMLElement>('[data-capacity-type]')].map(row => ({
+        type: row.dataset.capacityType, size: row.querySelector<HTMLSelectElement>('[data-size]')!.value,
+        ha: !!row.querySelector<HTMLInputElement>('[data-ha]')?.checked
+      }));
+      const result = estimateCapacity(catalog, select.value, rows, Number(input('estimate-seats').value), Number(input('estimate-storage').value), Number(input('estimate-days').value));
+      container.querySelectorAll('[data-row-total]').forEach((out, i) => out.textContent = money(result.lines[i].amount) + ' / month');
+      for (const [id, key] of [['fixed','fixed'],['capacity','capacity'],['seat-total','seatAmount'],['storage-total','storageAmount'],['total','total']]) document.getElementById('estimate-'+id)!.textContent = money(result[key]);
+      document.getElementById('estimate-error')!.textContent = '';
+    } catch (error) {
+      document.getElementById('estimate-error')!.textContent = error.message;
+      document.getElementById('estimate-total')!.textContent = '—';
+    }
+  }
+  function configureRows() {
+    const p = selected();
+    for (const type of ['cluster','application']) {
+      const rows = [...container.querySelectorAll<HTMLElement>(`[data-capacity-type="${type}"]`)];
+      const maximum = type === 'cluster' ? p.capacityPolicy.maximumClusters : p.capacityPolicy.maximumApplications;
+      rows.forEach((row, index) => {
+        if (maximum != null && index >= maximum) { row.remove(); return; }
+        const sizes = availableSizes(catalog,p,type);
+        const control = row.querySelector<HTMLSelectElement>('[data-size]')!;
+        const oldSize = control.value;
+        control.replaceChildren(...sizes.map(size => new Option(productFor(catalog,type,size).details.description, size)));
+        control.value = sizes.includes(oldSize) ? oldSize : sizes[sizes.length - 1];
+        const ha = row.querySelector<HTMLInputElement>('[data-ha]');
+        if (ha) { ha.disabled = !allowsHighAvailability(p.capacityPolicy, control.value); if (ha.disabled) ha.checked = false; }
+      });
+      document.querySelector<HTMLButtonElement>(`[data-add="${type}"]`)!.disabled = maximum != null;
+    }
+    update();
+  }
+  document.querySelectorAll<HTMLButtonElement>('[data-add]').forEach(button => button.addEventListener('click', () => {
+    const type = button.dataset.add!;
+    const row = container.querySelector<HTMLElement>(`[data-capacity-type="${type}"]`)!.cloneNode(true) as HTMLElement;
+    row.querySelector('label')!.firstChild!.textContent = type === 'cluster' ? 'Additional cluster' : 'Additional app';
+    const remove = document.createElement('button'); remove.type = 'button'; remove.textContent = 'Remove';
+    remove.addEventListener('click', () => { row.remove(); update(); }); row.append(remove);
+    container.append(row); configureRows();
+  }));
+  select.addEventListener('change', () => { input('estimate-seats').value = String(Math.max(Number(input('estimate-seats').value), Number(capability(selected(),'seats.count').included))); configureRows(); });
+  document.getElementById('capacity-calculator')!.addEventListener('input', update);
+  configureRows();
+</script>
+</body>
+</html>
