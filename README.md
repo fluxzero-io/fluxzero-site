@@ -124,7 +124,9 @@ Deployment is automated by [`.github/workflows/build-and-deploy.yaml`](.github/w
 - A pull request builds and deploys the `preview` Cloudflare environment.
 - A push to `main` builds and deploys the `production` environment at [fluxzero.io](https://fluxzero.io).
 - `workflow_dispatch` can start the workflow manually.
-- An SDK repository dispatch rebuilds the website when the public MDX documentation changed.
+- An SDK repository dispatch rebuilds the website when any file under `docs/developer/` changed, including Markdown, MDX and images. Documentation-only SDK pushes can trigger this refresh without an SDK release; the dispatch pins the exact source commit.
+
+Production runs queue instead of cancelling an earlier documentation refresh when a later SDK dispatch has no docs changes. PR previews retain cancellation of superseded runs.
 
 The workflow checks out the SDK docs, installs dependencies with the frozen lockfile, tests the changelog import, builds the site, and deploys it with Wrangler. Deployment credentials are managed as GitHub Actions secrets: `CLOUDFLARE_API_TOKEN`, `CF_GITHUB_APP_CLIENT_ID`, `CF_GITHUB_APP_CLIENT_SECRET`, `CF_COOKIE_SECRET`, and `CF_GITHUB_TOKEN`. Do not replace this process with manually managed local production secrets.
 

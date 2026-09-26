@@ -8,10 +8,11 @@ on:
   repository_dispatch:
     types: [ fluxzero-sdk-updated ]
 
-# Prevent overlapping deploys per ref
+# Queue production refreshes; newer previews may still supersede older previews.
 concurrency:
   group: cloudflare-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  queue: ${{ github.event_name == 'pull_request' && 'single' || 'max' }}
 
 permissions:
   contents: read
@@ -36,32 +37,20 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Test SDK docs change detection
+        run: python3 .github/scripts/sdk-docs-changed.test.py
+
       - name: Detect SDK docs changes
         id: sdk-docs
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SDK_BEFORE: ${{ github.event.client_payload.sdk_before || github.event.client_payload.before }}
+          SDK_AFTER: ${{ github.event.client_payload.sdk_sha || github.event.client_payload.after || github.event.client_payload.sha || 'HEAD' }}
         run: |
-          if [ "${{ github.event_name }}" != "repository_dispatch" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          before="${{ github.event.client_payload.sdk_before || github.event.client_payload.before }}"
-          after="${{ github.event.client_payload.sdk_sha || github.event.client_payload.after || github.event.client_payload.sha || 'HEAD' }}"
-
-          if [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          if ! git -C .cache/fluxzero-sdk-java cat-file -e "$before^{commit}"; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          changed_files="$(git -C .cache/fluxzero-sdk-java diff --name-only "$before" "$after" -- docs/developer)"
-          if printf '%s\n' "$changed_files" | grep -q '\.mdx$'; then
+          if [ "$EVENT_NAME" != "repository_dispatch" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+            bash .github/scripts/sdk-docs-changed.sh .cache/fluxzero-sdk-java "$SDK_BEFORE" "$SDK_AFTER" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Setup PNPM
