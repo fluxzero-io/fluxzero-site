@@ -59,12 +59,13 @@ const diagrams: Record<string, Diagram> = {
     labels: [{ x: 320, y: 202, text: 'Possible stored outcomes', bold: true }, { x: 320, y: 250, text: 'or' }],
   },
   'history': {
-    title: 'A completion handler can distinguish the state before its event, after its event and now',
-    caption: 'The event-bound Graph stays at completion. Only the explicit current() read sees the later reopening.',
-    height: 304,
-    labels: [{ x: 105, y: 26, text: '10:00', bold: true }, { x: 320, y: 26, text: '10:05', bold: true }, { x: 535, y: 26, text: '10:10', bold: true }, { x: 320, y: 154, text: 'Three reads in the completion handler', bold: true }],
-    boxes: [box(16, 43, 178, ['Task completed'], 'success', 64), box(231, 43, 178, ['Task reopened'], 'neutral', 64), box(446, 43, 178, ['Completion handler', 'runs later'], 'command', 64), box(16, 183, 194, ['Before', 'task.previous().get()', 'completed = false'], 'entity', 98), box(223, 183, 194, ['After', 'task.get()', 'completed = true'], 'entity', 98), box(430, 183, 194, ['Now', 'task.current().get()', 'completed = false'], 'neutral', 98)],
-    edges: [{ d: 'M 194 75 H 227' }, { d: 'M 409 75 H 442' }, { d: 'M 535 107 V 127 H 320 V 137' }],
+    title: 'The slow handler receives the completion event after Task has already been reopened',
+    caption: 'The downward arrow follows delivery of the completion event. The handler’s Graph stays at 10:00; only current() sees the later reopening.',
+    height: 365,
+    labels: [{ x: 113, y: 26, text: '10:00', bold: true }, { x: 527, y: 26, text: '10:05', bold: true }, { x: 320, y: 54, text: 'Task history' }, { x: 132, y: 147, text: 'Completion event delivered later', start: true }],
+    panels: [panel(8, 187, 624, 166, '10:10 · A slow handler', 'command')],
+    boxes: [box(16, 43, 194, ['Task completed'], 'success', 64), box(430, 43, 194, ['Task reopened'], 'neutral', 64), box(24, 241, 186, ['Before', 'task.previous().get()', 'completed = false'], 'entity', 96), box(227, 241, 186, ['After', 'task.get()', 'completed = true'], 'entity', 96), box(430, 241, 186, ['Now', 'task.current().get()', 'completed = false'], 'neutral', 96)],
+    edges: [{ d: 'M 210 75 H 426' }, { d: 'M 113 107 V 183' }],
   },
   'response': {
     title: 'Independent Model state is assembled into one nested response',
@@ -83,11 +84,10 @@ const diagrams: Record<string, Diagram> = {
     edges: [{ d: 'M 267 175 L 139 98', parent: true }, { d: 'M 373 175 L 501 98', parent: true }],
   },
   'persistence': {
-    title: 'Related Models can retain different kinds of state',
-    caption: 'Related Models can keep business history, replace only their latest value, or be erased independently.',
-    height: 283,
-    boxes: [box(16, 20, 165, ['Task']), box(244, 12, 379, ['Event stream', 'Created → Assigned → Completed'], 'neutral', 64), box(16, 114, 165, ['TaskStatus']), box(244, 106, 379, ['Latest document', 'online = true replaces online = false'], 'neutral', 64), box(16, 208, 165, ['Approval']), box(244, 200, 379, ['Erase this process when appropriate', 'Keep Task and Project'], 'neutral', 64)],
-    edges: [44, 138, 232].map(y => ({ d: `M 181 ${y} H 240` })),
+    title: 'Task uses an event stream; TaskStatus uses document-based storage',
+    height: 190,
+    boxes: [box(16, 24, 180, ['Task']), box(285, 24, 338, ['Event stream'], 'neutral'), box(16, 118, 180, ['TaskStatus']), box(285, 118, 338, ['Document-based'], 'neutral')],
+    edges: [48, 142].map(y => ({ d: `M 196 ${y} H 281` })),
   },
 };
 interface Props { name: string }
