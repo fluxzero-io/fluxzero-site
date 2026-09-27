@@ -38,6 +38,7 @@ export default defineConfig({
         }
     },
     redirects: {
+        "/docs/fluxzero-2-overview": { status: 301, destination: "/docs/fluxzero-2/" },
         "/docs/building/devboard-walkthrough": { status: 301, destination: "/docs/building/local-development/" },
         "/monitoring": { status: 302, destination: "/product-insight/" },
         "/monitoring/index.html": { status: 302, destination: "/product-insight/" },
@@ -123,8 +124,8 @@ export default defineConfig({
                             label: 'Fluxzero 2.0',
                             collapsed: true,
                             items: [
-                                { label: 'Overview', slug: 'docs/fluxzero-2-overview' },
-                                { label: 'Deep dive', slug: 'docs/fluxzero-2' },
+                                { label: 'Overview', slug: 'docs/fluxzero-2' },
+                                { label: 'Deep dive', slug: 'docs/fluxzero-2-deep-dive' },
                             ],
                         },
                         { label: 'In depth', autogenerate: { directory: 'docs/guides' } },
