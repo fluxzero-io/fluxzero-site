@@ -119,8 +119,14 @@ export default defineConfig({
                         { label: 'Installation', slug: 'docs/getting-started/installation' },
                         { label: 'Hello world', slug: 'docs/getting-started/hello-world' },
                         { label: 'Building your first app', slug: 'docs/tutorials/first-app' },
-                        { label: 'Fluxzero 2.0: overview', slug: 'docs/fluxzero-2-overview' },
-                        { label: 'Fluxzero 2.0: deep dive', slug: 'docs/fluxzero-2' },
+                        {
+                            label: 'Fluxzero 2.0',
+                            collapsed: true,
+                            items: [
+                                { label: 'Overview', slug: 'docs/fluxzero-2-overview' },
+                                { label: 'Deep dive', slug: 'docs/fluxzero-2' },
+                            ],
+                        },
                         { label: 'In depth', autogenerate: { directory: 'docs/guides' } },
                         { label: 'Reference', autogenerate: { directory: 'docs/reference' } },
                     ],
