@@ -85,9 +85,9 @@ const diagrams: Record<string, Diagram> = {
   },
   'persistence': {
     title: 'Task uses an event stream; TaskStatus uses document-based storage',
-    height: 190,
-    boxes: [box(16, 24, 180, ['Task']), box(285, 24, 338, ['Event stream'], 'neutral'), box(16, 118, 180, ['TaskStatus']), box(285, 118, 338, ['Document-based'], 'neutral')],
-    edges: [48, 142].map(y => ({ d: `M 196 ${y} H 281` })),
+    height: 204,
+    boxes: [box(16, 24, 180, ['Task']), { ...box(315, 10, 280, ['Event stream'], 'neutral', 76), shape: 'cylinder' }, box(16, 124, 180, ['TaskStatus']), { ...box(315, 110, 280, ['Document-based'], 'neutral', 76), shape: 'cylinder' }],
+    edges: [48, 148].map(y => ({ d: `M 196 ${y} H 311` })),
   },
 };
 interface Props { name: string }
