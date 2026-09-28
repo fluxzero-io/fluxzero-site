@@ -5,7 +5,7 @@
         "planId": "starter-flex",
         "activated": true,
         "details": {
-          "version": "2026-09-capacity-v1",
+          "version": "2026-09-capacity-v2",
           "displayName": "Starter",
           "prices": [
             {
@@ -80,7 +80,7 @@
             "maximumClusters": 1,
             "maximumApplications": 1,
             "productCatalogVersion": "2026-09-capacity-v1",
-            "infrastructureProfile": "capacity-v1",
+            "infrastructureProfile": "capacity-v2",
             "initialDatabaseStorageGiB": 20,
             "allDataVolumeMetering": true
           },
@@ -88,7 +88,7 @@
         }
       },
       "subscription": {
-        "version": "2026-09-capacity-v1",
+        "version": "2026-09-capacity-v2",
         "displayName": "Starter",
         "capabilities": [
           {
@@ -156,7 +156,7 @@
           "maximumClusters": 1,
           "maximumApplications": 1,
           "productCatalogVersion": "2026-09-capacity-v1",
-          "infrastructureProfile": "capacity-v1",
+          "infrastructureProfile": "capacity-v2",
           "initialDatabaseStorageGiB": 20,
           "allDataVolumeMetering": true
         },
@@ -172,7 +172,7 @@
         "planId": "pro",
         "activated": true,
         "details": {
-          "version": "2026-09-capacity-v1",
+          "version": "2026-09-capacity-v2",
           "displayName": "Pro",
           "basePlanId": "starter-flex",
           "prices": [
@@ -242,7 +242,11 @@
               "v1_large",
               "v1_xl",
               "v1_2xl",
+              "v1_3xl",
               "v1_4xl",
+              "v1_5xl",
+              "v1_6xl",
+              "v1_7xl",
               "v1_8xl"
             ],
             "applicationSizes": [
@@ -260,7 +264,11 @@
               "v1_large",
               "v1_xl",
               "v1_2xl",
+              "v1_3xl",
               "v1_4xl",
+              "v1_5xl",
+              "v1_6xl",
+              "v1_7xl",
               "v1_8xl"
             ],
             "highAvailabilityPriceMultiplier": 1.5,
@@ -268,7 +276,7 @@
             "pointInTimeRecoveryDays": 9,
             "ticketSupport": true,
             "productCatalogVersion": "2026-09-capacity-v1",
-            "infrastructureProfile": "capacity-v1",
+            "infrastructureProfile": "capacity-v2",
             "initialDatabaseStorageGiB": 20,
             "allDataVolumeMetering": true
           },
@@ -276,7 +284,7 @@
         }
       },
       "subscription": {
-        "version": "2026-09-capacity-v1",
+        "version": "2026-09-capacity-v2",
         "displayName": "Pro",
         "capabilities": [
           {
@@ -338,7 +346,11 @@
             "v1_large",
             "v1_xl",
             "v1_2xl",
+            "v1_3xl",
             "v1_4xl",
+            "v1_5xl",
+            "v1_6xl",
+            "v1_7xl",
             "v1_8xl"
           ],
           "applicationSizes": [
@@ -356,7 +368,11 @@
             "v1_large",
             "v1_xl",
             "v1_2xl",
+            "v1_3xl",
             "v1_4xl",
+            "v1_5xl",
+            "v1_6xl",
+            "v1_7xl",
             "v1_8xl"
           ],
           "highAvailabilityPriceMultiplier": 1.5,
@@ -364,7 +380,7 @@
           "pointInTimeRecoveryDays": 9,
           "ticketSupport": true,
           "productCatalogVersion": "2026-09-capacity-v1",
-          "infrastructureProfile": "capacity-v1",
+          "infrastructureProfile": "capacity-v2",
           "initialDatabaseStorageGiB": 20,
           "allDataVolumeMetering": true
         },
@@ -374,7 +390,7 @@
         "amount": 99,
         "allowsPaidOverage": false,
         "basePlan": {
-          "version": "2026-09-capacity-v1",
+          "version": "2026-09-capacity-v2",
           "displayName": "Starter",
           "capabilities": [
             {
@@ -442,7 +458,7 @@
             "maximumClusters": 1,
             "maximumApplications": 1,
             "productCatalogVersion": "2026-09-capacity-v1",
-            "infrastructureProfile": "capacity-v1",
+            "infrastructureProfile": "capacity-v2",
             "initialDatabaseStorageGiB": 20,
             "allDataVolumeMetering": true
           },
