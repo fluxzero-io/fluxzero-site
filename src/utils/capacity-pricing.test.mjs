@@ -57,12 +57,18 @@ test('shares the 50 GiB allowance across storage and charges additional seats on
   assert.equal(estimateCapacity(fixture,'pro',[...rows('v1_medium',true), {type:'cluster',size:'v1_medium',ha:true}],3,50,30).total,1749);
 });
 
-test('keeps all twelve catalog prices without offering unsupported resource sizes', () => {
+test('offers all twelve cluster sizes while keeping unsupported app sizes unavailable', () => {
   for (const type of ['cluster','application']) {
     const products = fixture.products.filter(p => p.details.resourceType === type);
     assert.equal(products.length,12);
-    assert.equal(isPurchasable(fixture, products.find(p => p.details.size === 'v1_3xl')),false);
+    assert.equal(isPurchasable(fixture, products.find(p => p.details.size === 'v1_3xl')),type === 'cluster');
     assert.equal(isPurchasable(fixture, products.find(p => p.details.size === 'v1_medium')),true);
+  }
+  const pro = fixture.offers.find(o => o.plan.planId === 'pro').subscription;
+  assert.equal(availableSizes(fixture, pro, 'cluster').length, 12);
+  for (const size of pro.capacityPolicy.clusterSizes.slice(2)) {
+    assert.equal(allowsHighAvailability(pro.capacityPolicy, size), true);
+    assert.ok(estimateCapacity(fixture, 'pro', rows(size, true), 3, 50, 30).total > 99);
   }
 });
 
@@ -83,7 +89,7 @@ test('rejects incomplete storage, seat and HA publication', () => {
     c => c.products.find(p => p.details.resourceType === 'database_storage').details.price = null,
     c => c.offers[0].subscription.capabilities.find(p => p.key === 'seats.count').unitPrice = null,
     c => c.offers[1].subscription.capacityPolicy.highAvailabilityPriceMultiplier = null,
-    c => c.offers[1].subscription.capacityPolicy.highAvailabilityClusterSizes = ['v1_3xl']
+    c => c.offers[1].subscription.capacityPolicy.highAvailabilityClusterSizes = ['v1_9xl']
   ]) {
     const c = structuredClone(fixture); change(c); assert.throws(() => validateCatalog(c));
   }
