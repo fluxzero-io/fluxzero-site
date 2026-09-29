@@ -48,6 +48,32 @@ GITHUB_TOKEN=your_token pnpm dev
 
 The local feedback provider defaults to in-memory storage. Testing the deployed GitHub-backed feedback and sign-in flow additionally requires the Cloudflare runtime variables used in production: `FEEDBACK_PROVIDER`, `GITHUB_REPO`, `GITHUB_TOKEN`, `GITHUB_APP_CLIENT_ID`, `GITHUB_APP_CLIENT_SECRET`, and `COOKIE_SECRET`. Put local Cloudflare secrets in `.dev.vars`; never commit that file.
 
+### Website dashboard sign-in indicator
+
+The Dashboard link starts neutral. When website OIDC is enabled, it makes a silent Authorization Code + PKCE request with `prompt=none` in a hidden iframe. Only a confirmed session gives the link a blue signed-in style and, when available, a first name. An absent session, timeout, blocked iframe, or IDP error leaves the link neutral and usable. The website does not initiate an interactive login or store tokens persistently. This check is independent of the older development-only account preview.
+
+For a self-contained local demo, start the website and its **website-only** OIDC stub:
+
+```bash
+pnpm dev:website-stub
+# or: fz dev --profile website-stub (the default Devboard profile)
+```
+
+Open <http://site.fluxzero.localhost:4321/> and then <http://login.fluxzero.localhost:4390/> to sign in as **Demo Builder**. Reload the website to see the signed-in Dashboard link. Sign out on the stub page and reload again to see the neutral state. The stub binds only to local loopback, does not use the IDP repository, and sends no email. Its client and callback are fixed to the website demo origin.
+
+For the separately started local IDP, register a **public** OIDC client there with Authorization Code, PKCE S256, `openid profile`, `prompt=none`, and the exact callback `http://site.fluxzero.localhost:4321/oidc/silent-callback/`. Permit `http://site.fluxzero.localhost:4321` as the token endpoint's CORS origin. The IDP's session cookie must be available in a same-site iframe, and its authorization endpoint must permit this website as a frame ancestor. Set these values in an ignored `.env.local` file in this repository (adjust the IDP port to match its own profile, which may use 4330):
+
+```dotenv
+PUBLIC_WEBSITE_OIDC_ENABLED=true
+PUBLIC_WEBSITE_OIDC_ISSUER=http://login.fluxzero.localhost:4300
+PUBLIC_WEBSITE_OIDC_CLIENT_ID=fluxzero-website
+PUBLIC_WEBSITE_DASHBOARD_URL=http://dashboard.localhost:4200/
+```
+
+Start the IDP using its own repository's local `login.fluxzero.localhost` development variant, then start the website with `pnpm dev:website-live-idp` or `fz dev --profile website-live-idp`. Open <http://site.fluxzero.localhost:4321/>. Sign in through the IDP's normal local flow; the website itself never shows a login or error prompt. If the IDP requires an OAuth resource, set `PUBLIC_WEBSITE_OIDC_RESOURCE` to its exact resource URL. Do not use that option with the website stub.
+
+For production, supply the same `PUBLIC_WEBSITE_OIDC_*` variables at **build time** with the production issuer and registered public client. Register `https://fluxzero.io/oidc/silent-callback/` as the exact redirect and `https://fluxzero.io` as the allowed token CORS origin. `PUBLIC_WEBSITE_DASHBOARD_URL` is optional and defaults to `https://dashboard.fluxzero.io/`. Set `PUBLIC_WEBSITE_OIDC_ENABLED=false` (or omit it) to disable the check entirely. These variables are public browser configuration; never put a client secret in them. The local live demo depends on the IDP supporting `prompt=none`; that work is tracked in IDP-I240.
+
 ## Commands
 
 Run commands from the repository root.
@@ -55,6 +81,9 @@ Run commands from the repository root.
 | Command | Purpose |
 | --- | --- |
 | `pnpm dev` | Sync content and SDK docs, then start Astro at `localhost:4321` |
+| `pnpm dev:website-stub` | Start Astro and the website-only local OIDC stub |
+| `pnpm dev:website-live-idp` | Start Astro for a separately running local IDP |
+| `pnpm test:website-oidc` | Check website OIDC configuration and the local stub's code+PKCE flow |
 | `pnpm build` | Create the production Worker and static assets in `dist/` |
 | `pnpm preview` | Serve the existing production build locally with Wrangler |
 | `pnpm sync:docs` | Refresh the generated docs from `fluxzero-sdk-java` |

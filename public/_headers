@@ -3,3 +3,7 @@
 
 /*/index.md
   Content-Type: text/markdown; charset=utf-8
+
+/oidc/silent-callback/
+  Cache-Control: no-store
+  Referrer-Policy: no-referrer
