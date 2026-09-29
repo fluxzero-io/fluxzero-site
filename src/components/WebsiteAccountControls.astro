@@ -163,6 +163,11 @@ const oidc = websiteOidcConfig(import.meta.env);
     .website-account-trigger:hover .profile-filled,
     .website-account-menu[open] .profile-filled { display: inline; }
 
+    .website-account-trigger[data-oidc-state='signed-in'] { color: #4197d3; }
+    .website-account-trigger[data-oidc-state='signed-in'] .profile-outline { display: none; }
+    .website-account-trigger[data-oidc-state='signed-in'] .profile-filled { display: inline; }
+    .website-account-trigger[data-oidc-state='signed-in']:hover { color: #62addf; }
+
     .website-dashboard-link:focus-visible,
     .website-account-trigger:focus-visible,
     .website-account-popover a:focus-visible,

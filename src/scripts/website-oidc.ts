@@ -92,7 +92,11 @@ export function initWebsiteOidc(): void {
                 nameElement.textContent = name ?? '';
                 nameElement.hidden = !name;
             }
-            if (trigger) trigger.setAttribute('aria-label', name ? `Account, signed in as ${name}` : user ? 'Account, signed in' : 'Account');
+            if (trigger) {
+                if (user) trigger.dataset.oidcState = 'signed-in';
+                else trigger.removeAttribute('data-oidc-state');
+                trigger.setAttribute('aria-label', name ? `Account, signed in as ${name}` : user ? 'Account, signed in' : 'Account');
+            }
         });
     };
 
