@@ -202,31 +202,6 @@
     background: rgba(255, 255, 255, 0.1);
 }
 
-.nav-cta[data-oidc-state="signed-in"] {
-    border-color: rgba(136, 215, 255, 0.7);
-    background: linear-gradient(115deg, #bdeaff, #4197d3);
-    color: #102131;
-}
-
-.nav-cta[data-oidc-state="signed-in"]:hover {
-    border-color: #d7f2ff;
-    background: linear-gradient(115deg, #d4f1ff, #62addf);
-}
-
-.nav-cta-name:not([hidden]) {
-    display: inline-block;
-    max-width: 8rem;
-    margin-left: 0.55rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-weight: 500;
-}
-
-@media (max-width: 700px) {
-    .nav-cta-name { display: none !important; }
-}
-
 .nav-actions > [hidden],
 .nav-authenticated[hidden],
 .nav-profile-menu[hidden] {
@@ -549,6 +524,10 @@ footer::before {
         display: inline-block;
         padding-block: 4px;
     }
+}
+
+@media (max-width: 380px) {
+    .nav-main-links .nav-link-about { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,4 +1,4 @@
-import { InMemoryWebStorage, UserManager, WebStorageStateStore } from 'oidc-client-ts';
+import { InMemoryWebStorage, UserManager, WebStorageStateStore, type User } from 'oidc-client-ts';
 
 type OidcElement = HTMLElement & {
     dataset: DOMStringMap & {
@@ -30,53 +30,67 @@ function managerFor(element: OidcElement): UserManager {
     });
 }
 
-export function initWebsiteOidc(link: HTMLAnchorElement): void {
+export function initWebsiteOidc(): void {
+    const controls = Array.from(document.querySelectorAll<OidcElement>('[data-website-account-controls]'));
+    const configured = controls.find((element) => element.hasAttribute('data-website-oidc'));
+    if (!configured) return;
+
     let manager: UserManager;
     try {
-        manager = managerFor(link);
+        manager = managerFor(configured);
     } catch {
         return;
     }
 
     let checking = false;
     let lastCheck = 0;
-    const nameElement = link.querySelector<HTMLElement>('[data-oidc-name]');
-    const reset = () => {
-        link.removeAttribute('data-oidc-state');
-        if (nameElement) {
-            nameElement.hidden = true;
-            nameElement.textContent = '';
-        }
-        link.removeAttribute('aria-label');
+    const render = (user: User | null) => {
+        const name = user
+            ? [user.profile.given_name, user.profile.name]
+                .find((value): value is string => typeof value === 'string' && value.trim().length > 0)
+                ?.trim().slice(0, 32)
+            : undefined;
+
+        controls.forEach((control) => {
+            const dashboard = control.querySelector<HTMLAnchorElement>('[data-website-dashboard]');
+            const identity = control.querySelector<HTMLElement>('[data-oidc-identity]');
+            const nameElement = control.querySelector<HTMLElement>('[data-oidc-name]');
+            const accountLink = control.querySelector<HTMLAnchorElement>('[data-oidc-account-link]');
+            const trigger = control.querySelector<HTMLElement>('.website-account-trigger');
+            if (dashboard) {
+                if (user) dashboard.dataset.oidcState = 'signed-in';
+                else dashboard.removeAttribute('data-oidc-state');
+                dashboard.setAttribute('aria-label', user ? 'Dashboard, signed in' : 'Dashboard');
+            }
+            if (identity) identity.hidden = !user;
+            if (nameElement) {
+                nameElement.textContent = name ?? '';
+                nameElement.hidden = !name;
+            }
+            if (accountLink) {
+                const label = user ? 'Open dashboard' : 'Sign in';
+                accountLink.textContent = label;
+                accountLink.setAttribute('aria-label', label);
+            }
+            if (trigger) trigger.setAttribute('aria-label', name ? `Account, signed in as ${name}` : user ? 'Account, signed in' : 'Account');
+        });
     };
     const check = async () => {
         if (checking) return;
         checking = true;
         lastCheck = Date.now();
-        reset();
         try {
-            const resource = link.dataset.oidcResource;
+            const resource = configured.dataset.oidcResource;
             const user = await manager.signinSilent({
                 forceIframeAuth: true,
                 ...(resource ? { resource } : {}),
             });
-            if (!user || user.expired) return;
-            link.dataset.oidcState = 'signed-in';
-            const name = [user.profile.given_name, user.profile.name]
-                .find((value): value is string => typeof value === 'string' && value.trim().length > 0)
-                ?.trim().slice(0, 32);
-            if (name && nameElement) {
-                nameElement.textContent = name;
-                nameElement.hidden = false;
-                link.setAttribute('aria-label', `Dashboard, signed in as ${name}`);
-            } else {
-                link.setAttribute('aria-label', 'Dashboard, signed in');
-            }
+            render(user && !user.expired ? user : null);
         } catch (error) {
             if (import.meta.env.DEV) {
                 console.debug('Website silent OIDC unavailable', error);
             }
-            reset();
+            render(null);
         } finally {
             checking = false;
         }

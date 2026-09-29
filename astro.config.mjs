@@ -75,6 +75,7 @@ export default defineConfig({
             components: {
                 Head: './src/components/DocsHead.astro',
                 SiteTitle: './src/components/DocsSiteTitle.astro',
+                SocialIcons: './src/components/DocsSocialIcons.astro',
                 MarkdownContent: './src/components/MarkdownContentWithFeedback.astro',
                 Footer: './src/components/DocsFooter.astro',
             },
