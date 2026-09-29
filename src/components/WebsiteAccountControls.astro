@@ -17,21 +17,33 @@ const oidc = websiteOidcConfig(import.meta.env);
     data-oidc-client-id={oidc.enabled ? oidc.clientId : undefined}
     data-oidc-resource={oidc.enabled ? oidc.resource : undefined}
 >
-    <a class="website-dashboard-link" href={oidc.dashboardUrl} data-website-dashboard>Dashboard</a>
+    {surface === 'marketing' && <a class="website-dashboard-link" href={oidc.dashboardUrl} data-website-dashboard>Dashboard</a>}
     <details class="website-account-menu">
-        <summary class="website-account-trigger">
+        <summary class="website-account-trigger" aria-label="Account" title="Account">
             <svg viewBox="0 0 24 24" aria-hidden="true">
-                <circle cx="12" cy="8" r="3.25"></circle>
-                <path d="M5.75 19c.5-3.2 2.58-5 6.25-5s5.75 1.8 6.25 5"></path>
+                <g class="profile-outline">
+                    <circle cx="12" cy="8" r="3.25"></circle>
+                    <path d="M5.75 19c.5-3.2 2.58-5 6.25-5s5.75 1.8 6.25 5"></path>
+                </g>
+                <g class="profile-filled">
+                    <circle cx="12" cy="8" r="3.7"></circle>
+                    <path d="M4.75 19.2c.52-3.9 3-6.1 7.25-6.1s6.73 2.2 7.25 6.1a1 1 0 0 1-.99 1.1H5.74a1 1 0 0 1-.99-1.1Z"></path>
+                </g>
             </svg>
-            <span>Account</span>
         </summary>
         <div class="website-account-popover">
             <div class="website-account-identity" data-oidc-identity hidden>
                 <strong data-oidc-name hidden></strong>
-                <span>Signed in</span>
             </div>
-            <a href={oidc.dashboardUrl} data-oidc-account-link aria-label="Sign in">Sign in</a>
+            <div data-oidc-signed-in hidden>
+                <a href={oidc.enabled ? `${oidc.issuer}/account` : oidc.dashboardUrl} data-oidc-profile>Profile</a>
+                <a href={oidc.dashboardUrl}>Goto Dashboard</a>
+                <button type="button" data-oidc-logout>Logout</button>
+            </div>
+            <div data-oidc-signed-out>
+                <a href={oidc.enabled ? `${oidc.issuer}/register` : oidc.dashboardUrl} data-oidc-create>Create account</a>
+                <a href={oidc.enabled ? `${oidc.issuer}/login` : oidc.dashboardUrl} data-oidc-login>Login</a>
+            </div>
         </div>
     </details>
 </div>
@@ -108,18 +120,18 @@ const oidc = websiteOidcConfig(import.meta.env);
     }
 
     .website-account-trigger {
-        min-width: 110px;
-        gap: 8px;
-        padding: 0 12px;
+        width: 40px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
         cursor: pointer;
         list-style: none;
     }
 
     .website-account-trigger::-webkit-details-marker { display: none; }
 
-    .website-dashboard-link:hover,
-    .website-account-trigger:hover,
-    .website-account-menu[open] .website-account-trigger {
+    .website-dashboard-link:hover {
         background: var(--account-hover);
     }
 
@@ -135,8 +147,8 @@ const oidc = websiteOidcConfig(import.meta.env);
     }
 
     .website-account-trigger svg {
-        width: 18px;
-        height: 18px;
+        width: 22px;
+        height: 22px;
         fill: none;
         stroke: currentColor;
         stroke-width: 1.6;
@@ -145,9 +157,16 @@ const oidc = websiteOidcConfig(import.meta.env);
         flex: none;
     }
 
+    .website-account-trigger .profile-filled { display: none; fill: currentColor; stroke: none; }
+    .website-account-trigger:hover .profile-outline,
+    .website-account-menu[open] .profile-outline { display: none; }
+    .website-account-trigger:hover .profile-filled,
+    .website-account-menu[open] .profile-filled { display: inline; }
+
     .website-dashboard-link:focus-visible,
     .website-account-trigger:focus-visible,
-    .website-account-popover a:focus-visible {
+    .website-account-popover a:focus-visible,
+    .website-account-popover button:focus-visible {
         outline: 2px solid #69c7ff;
         outline-offset: 3px;
     }
@@ -170,10 +189,10 @@ const oidc = websiteOidcConfig(import.meta.env);
 
     .website-account-identity {
         display: grid;
-        gap: 4px;
-        padding: 9px 11px 11px;
+        padding: 9px 11px;
         color: var(--account-text);
         font-size: 13px;
+        border-bottom: 1px solid var(--account-border);
     }
 
     .website-account-identity[hidden],
@@ -186,31 +205,36 @@ const oidc = websiteOidcConfig(import.meta.env);
         font-weight: 600;
     }
 
-    .website-account-identity span {
-        color: var(--account-muted);
-        font-size: 12px;
-    }
-
-    .website-account-popover a {
+    .website-account-popover a,
+    .website-account-popover button {
         display: flex;
         align-items: center;
+        width: 100%;
         min-height: 36px;
         padding: 0 11px;
+        border: 0;
         border-radius: 7px;
+        background: transparent;
         color: var(--account-text);
+        font-family: inherit;
         font-size: 13px;
         font-weight: 500;
         text-decoration: none;
+        text-align: left;
+        cursor: pointer;
     }
 
-    .website-account-popover a:hover { background: var(--account-hover); }
+    .website-account-popover a:hover,
+    .website-account-popover button:hover { background: var(--account-hover); }
+
+    .website-account-popover [hidden] { display: none; }
 
     @media (max-width: 700px) {
         .website-account-controls--marketing { gap: 7px; }
         .website-account-controls--marketing .website-dashboard-link,
-        .website-account-controls--marketing .website-account-trigger { min-height: 36px; font-size: 13px; }
+        .website-account-controls--marketing .website-account-trigger { min-height: 36px; }
         .website-account-controls--marketing .website-dashboard-link { min-width: 94px; padding: 0 12px; }
-        .website-account-controls--marketing .website-account-trigger { min-width: 99px; padding: 0 10px; }
+        .website-account-controls--marketing .website-account-trigger { width: 36px; }
     }
 
     @media (max-width: 799px) {

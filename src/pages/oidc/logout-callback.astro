@@ -1,0 +1,24 @@
+---
+import { websiteOidcConfig } from '../../config/website-oidc.mjs';
+
+const oidc = websiteOidcConfig(import.meta.env);
+---
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="no-referrer">
+    <title>Completing sign-out</title>
+</head>
+<body
+    data-website-oidc-callback={oidc.enabled ? '' : undefined}
+    data-oidc-issuer={oidc.enabled ? oidc.issuer : undefined}
+    data-oidc-client-id={oidc.enabled ? oidc.clientId : undefined}
+>
+<script>
+    import { finishWebsiteLogout } from '../../scripts/website-oidc';
+    void finishWebsiteLogout();
+</script>
+</body>
+</html>

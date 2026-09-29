@@ -10,10 +10,12 @@ if (!['stub', 'live'].includes(mode) || !/^\d+$/.test(port || '') || Number(port
 const environment = { ...process.env };
 // Local previews should stay available when the public GitHub release API is rate limited.
 environment.npm_package_config_ghreleases_optional = 'true';
+environment.npm_package_config_javadoc_optional = 'true';
 let stub;
 if (mode === 'stub') {
     const websiteOrigin = process.env.WEBSITE_STUB_ORIGIN || 'http://site.fluxzero.localhost:4321';
-    stub = await startWebsiteOidcStub({ websiteOrigin });
+    const stubPort = Number(process.env.WEBSITE_STUB_PORT || '4390');
+    stub = await startWebsiteOidcStub({ websiteOrigin, port: stubPort });
     environment.PUBLIC_WEBSITE_OIDC_ENABLED = 'true';
     environment.PUBLIC_WEBSITE_OIDC_ISSUER = stub.issuer;
     environment.PUBLIC_WEBSITE_OIDC_CLIENT_ID = stub.clientId;

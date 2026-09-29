@@ -31,6 +31,12 @@ function withQuery(redirectUri, values) {
     return url.href;
 }
 
+function authorizationReturn(value, issuer) {
+    if (!value || !value.startsWith('/oauth2/auth?') || value.includes('\\')) return undefined;
+    const target = new URL(value, issuer);
+    return target.origin === issuer && target.pathname === '/oauth2/auth' ? target.href : undefined;
+}
+
 function hasSession(cookieHeader) {
     return String(cookieHeader || '').split(';').some((part) => part.trim() === `${SESSION_COOKIE}=${SESSION_VALUE}`);
 }
@@ -59,7 +65,9 @@ export async function startWebsiteOidcStub({
         || websiteUrl.search || websiteUrl.hash || websiteUrl.username || websiteUrl.password) {
         throw new Error('websiteOrigin must be an HTTP(S) origin');
     }
-    const redirectUri = `${websiteUrl.origin}/oidc/silent-callback/`;
+    const silentRedirectUri = `${websiteUrl.origin}/oidc/silent-callback/`;
+    const interactiveRedirectUri = `${websiteUrl.origin}/oidc/callback/`;
+    const logoutRedirectUri = `${websiteUrl.origin}/oidc/logout-callback/`;
     const { publicKey, privateKey } = generateKeyPairSync('rsa', { modulusLength: 2048 });
     const jwk = publicKey.export({ format: 'jwk' });
     const kid = randomBytes(12).toString('base64url');
@@ -98,6 +106,7 @@ export async function startWebsiteOidcStub({
                 issuer,
                 authorization_endpoint: `${issuer}/oauth2/auth`,
                 token_endpoint: `${issuer}/oauth2/token`,
+                end_session_endpoint: `${issuer}/oauth2/sessions/logout`,
                 jwks_uri: `${issuer}/.well-known/jwks.json`,
                 response_types_supported: ['code'],
                 grant_types_supported: ['authorization_code'],
@@ -106,7 +115,7 @@ export async function startWebsiteOidcStub({
                 token_endpoint_auth_methods_supported: ['none'],
                 code_challenge_methods_supported: ['S256'],
                 scopes_supported: ['openid', 'profile'],
-                prompt_values_supported: ['none'],
+                prompt_values_supported: ['none', 'login'],
             }, cors);
             return;
         }
@@ -120,8 +129,9 @@ export async function startWebsiteOidcStub({
             const state = params.get('state');
             const nonce = params.get('nonce');
             const challenge = params.get('code_challenge');
+            const requestedRedirectUri = params.get('redirect_uri');
             const scopes = new Set((params.get('scope') || '').split(' ').filter(Boolean));
-            if (params.get('client_id') !== clientId || params.get('redirect_uri') !== redirectUri
+            if (params.get('client_id') !== clientId || ![silentRedirectUri, interactiveRedirectUri].includes(requestedRedirectUri)
                 || params.get('response_type') !== 'code' || !state
                 || params.get('code_challenge_method') !== 'S256' || !challenge
                 || params.has('resource') || params.has('audience')
@@ -130,25 +140,25 @@ export async function startWebsiteOidcStub({
                 json(response, 400, { error: 'invalid_request' });
                 return;
             }
-            if (params.get('prompt') !== 'none') {
-                lastSilentCheck = 'Interaction required';
-                redirect(response, withQuery(redirectUri, { error: 'interaction_required', state }));
-                return;
-            }
             if (!scopes.has('openid') || [...scopes].some((scope) => !['openid', 'profile'].includes(scope))) {
                 lastSilentCheck = 'Consent required';
-                redirect(response, withQuery(redirectUri, { error: 'consent_required', state }));
+                redirect(response, withQuery(requestedRedirectUri, { error: 'consent_required', state }));
                 return;
             }
             if (!hasSession(request.headers.cookie)) {
                 lastSilentCheck = 'No session';
-                redirect(response, withQuery(redirectUri, { error: 'login_required', state }));
+                if (params.get('prompt') === 'none') {
+                    redirect(response, withQuery(requestedRedirectUri, { error: 'login_required', state }));
+                } else {
+                    redirect(response, `/login?returnTo=${encodeURIComponent(`${url.pathname}${url.search}`)}`);
+                }
                 return;
             }
             lastSilentCheck = 'Code issued';
             const code = randomBytes(32).toString('base64url');
-            codes.set(code, { challenge, nonce, scopes: [...scopes].join(' '), expiresAt: Date.now() + 60_000 });
-            redirect(response, withQuery(redirectUri, { code, state }));
+            codes.set(code, { challenge, nonce, redirectUri: requestedRedirectUri,
+                scopes: [...scopes].join(' '), expiresAt: Date.now() + 60_000 });
+            redirect(response, withQuery(requestedRedirectUri, { code, state }));
             return;
         }
 
@@ -173,7 +183,7 @@ export async function startWebsiteOidcStub({
             const challengeMatches = expectedChallenge.length === actualChallenge.length
                 && timingSafeEqual(Buffer.from(expectedChallenge), Buffer.from(actualChallenge));
             if (form.get('grant_type') !== 'authorization_code' || form.get('client_id') !== clientId
-                || form.get('redirect_uri') !== redirectUri || !authorization
+                || form.get('redirect_uri') !== authorization?.redirectUri || !authorization
                 || authorization.expiresAt < Date.now() || !challengeMatches) {
                 json(response, 400, { error: 'invalid_grant' }, cors);
                 return;
@@ -194,6 +204,38 @@ export async function startWebsiteOidcStub({
                 id_token: `${header}.${payload}.${signature}`,
                 token_type: 'Bearer', expires_in: 300, scope: authorization.scopes,
             }, cors);
+            return;
+        }
+
+        if (request.method === 'GET' && ['/login', '/register'].includes(url.pathname)) {
+            const returnTo = authorizationReturn(url.searchParams.get('returnTo'), issuer);
+            if (!returnTo) {
+                json(response, 400, { error: 'invalid_return' });
+                return;
+            }
+            redirect(response, returnTo, `${SESSION_COOKIE}=${SESSION_VALUE}; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600`);
+            return;
+        }
+
+        if (request.method === 'GET' && url.pathname === '/account') {
+            if (!hasSession(request.headers.cookie)) {
+                redirect(response, '/');
+                return;
+            }
+            response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' });
+            response.end('<!doctype html><html lang="en"><title>Profile</title><h1>Demo Builder</h1><p>Website-only local profile.</p></html>');
+            return;
+        }
+
+        if (request.method === 'GET' && url.pathname === '/oauth2/sessions/logout') {
+            if (url.searchParams.get('post_logout_redirect_uri') !== logoutRedirectUri
+                || (url.searchParams.has('client_id') && url.searchParams.get('client_id') !== clientId)) {
+                json(response, 400, { error: 'invalid_request' });
+                return;
+            }
+            const state = url.searchParams.get('state');
+            redirect(response, state ? withQuery(logoutRedirectUri, { state }) : logoutRedirectUri,
+                `${SESSION_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`);
             return;
         }
 
