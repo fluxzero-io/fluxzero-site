@@ -82,6 +82,10 @@ jobs:
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm test:discovery
 
+      - name: Test website OIDC
+        if: steps.sdk-docs.outputs.changed == 'true'
+        run: pnpm test:website-oidc
+
       - name: Test capacity pricing
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm test:pricing && pnpm test:pricing-build
@@ -110,6 +114,7 @@ jobs:
           FLUXZERO_SDK_DOCS_SOURCE: .cache/fluxzero-sdk-java/docs/developer
           PRICING_MODEL: ${{ vars.PRICING_MODEL || 'legacy' }}
           PRICING_CATALOG_URL: ${{ vars.PRICING_CATALOG_URL }}
+          PUBLIC_WEBSITE_OIDC_ENABLED: 'false'
 
       - name: Deploy to Cloudflare
         if: steps.sdk-docs.outputs.changed == 'true'

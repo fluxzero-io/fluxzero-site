@@ -1,0 +1,17 @@
+version: 1
+defaultProfile: website-stub
+profiles:
+  website-stub:
+    environment: local
+    port: 4321
+    frontendOnly: true
+    frontend:
+      directory: .
+      command: "node scripts/dev-website.mjs stub {frontendPort}"
+  website-live-idp:
+    environment: local
+    port: 4321
+    frontendOnly: true
+    frontend:
+      directory: .
+      command: "node scripts/dev-website.mjs live {frontendPort}"

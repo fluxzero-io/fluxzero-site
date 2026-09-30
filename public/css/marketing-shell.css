@@ -526,6 +526,10 @@ footer::before {
     }
 }
 
+@media (max-width: 380px) {
+    .nav-main-links .nav-link-about { display: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .status-dot {
         animation: none;

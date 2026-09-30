@@ -1,0 +1,305 @@
+---
+import { websiteOidcConfig } from '../config/website-oidc.mjs';
+
+interface Props {
+    surface: 'marketing' | 'docs';
+}
+
+const { surface } = Astro.props;
+const oidc = websiteOidcConfig(import.meta.env);
+const accountEnabled = oidc.enabled;
+---
+
+<div
+    class:list={['website-account-controls', `website-account-controls--${surface}`]}
+    data-website-account-controls
+    hidden={surface === 'docs' && !accountEnabled}
+    data-website-oidc={accountEnabled ? '' : undefined}
+    data-oidc-issuer={accountEnabled ? oidc.issuer : undefined}
+    data-oidc-client-id={accountEnabled ? oidc.clientId : undefined}
+    data-oidc-resource={accountEnabled ? oidc.resource : undefined}
+    data-oidc-site-origin={accountEnabled ? oidc.siteOrigin : undefined}
+>
+    {surface === 'marketing' && <a class="website-dashboard-link" href={oidc.dashboardUrl} data-website-dashboard>Dashboard</a>}
+    {accountEnabled && <details class="website-account-menu" hidden={Boolean(oidc.siteOrigin)}>
+        <summary class="website-account-trigger" aria-label="Account" title="Account">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <g class="profile-outline">
+                    <circle cx="12" cy="8" r="3.25"></circle>
+                    <path d="M5.75 19c.5-3.2 2.58-5 6.25-5s5.75 1.8 6.25 5"></path>
+                </g>
+                <g class="profile-filled">
+                    <circle cx="12" cy="8" r="3.7"></circle>
+                    <path d="M4.75 19.2c.52-3.9 3-6.1 7.25-6.1s6.73 2.2 7.25 6.1a1 1 0 0 1-.99 1.1H5.74a1 1 0 0 1-.99-1.1Z"></path>
+                </g>
+            </svg>
+        </summary>
+        <div class="website-account-popover">
+            <div class="website-account-identity" data-oidc-identity hidden>
+                <strong data-oidc-name hidden></strong>
+            </div>
+            <div data-oidc-signed-in hidden>
+                <a href={oidc.enabled ? `${oidc.issuer}/account` : oidc.dashboardUrl} data-oidc-profile>Profile</a>
+                <a href={oidc.dashboardUrl}>Goto Dashboard</a>
+                <button type="button" data-oidc-logout>Logout</button>
+            </div>
+            <div data-oidc-signed-out>
+                <a href={oidc.enabled ? `${oidc.issuer}/register` : oidc.dashboardUrl} data-oidc-create>Create account</a>
+                <a href={oidc.enabled ? `${oidc.issuer}/login` : oidc.dashboardUrl} data-oidc-login>Login</a>
+            </div>
+        </div>
+    </details>}
+</div>
+
+<script is:inline>
+    (() => {
+        const control = document.currentScript?.previousElementSibling;
+        if (!(control instanceof HTMLElement) || !control.hasAttribute('data-website-oidc')) return;
+        const menu = control.querySelector('.website-account-menu');
+        if (control.dataset.oidcSiteOrigin && location.origin !== control.dataset.oidcSiteOrigin) {
+            control.removeAttribute('data-website-oidc');
+            if (control.classList.contains('website-account-controls--docs')) control.hidden = true;
+            return;
+        }
+        if (menu) menu.hidden = false;
+        try {
+            const cached = JSON.parse(sessionStorage.getItem('fluxzero.website.oidc.presence.v1') || 'null');
+            const now = Date.now();
+            if (cached?.version !== 1 || cached.issuer !== control.dataset.oidcIssuer
+                || cached.clientId !== control.dataset.oidcClientId
+                || typeof cached.name !== 'string' || typeof cached.savedAt !== 'number'
+                || cached.savedAt > now || now - cached.savedAt > 12 * 60 * 60 * 1000) return;
+
+            const name = cached.name.slice(0, 32);
+            const dashboard = control.querySelector('[data-website-dashboard]');
+            const trigger = control.querySelector('.website-account-trigger');
+            const identity = control.querySelector('[data-oidc-identity]');
+            const nameElement = control.querySelector('[data-oidc-name]');
+            const signedIn = control.querySelector('[data-oidc-signed-in]');
+            const signedOut = control.querySelector('[data-oidc-signed-out]');
+            if (dashboard) {
+                dashboard.dataset.oidcState = 'signed-in';
+                dashboard.setAttribute('aria-label', 'Dashboard, signed in');
+            }
+            if (trigger) {
+                trigger.dataset.oidcState = 'signed-in';
+                trigger.setAttribute('aria-label', name ? `Account, signed in as ${name}` : 'Account, signed in');
+            }
+            if (identity) identity.hidden = false;
+            if (nameElement) {
+                nameElement.textContent = name;
+                nameElement.hidden = !name;
+            }
+            if (signedIn) signedIn.hidden = false;
+            if (signedOut) signedOut.hidden = true;
+            control.dataset.oidcRestored = 'signed-in';
+        } catch {
+            // An invalid or unavailable visual hint falls back to the neutral header.
+        }
+    })();
+</script>
+
+<script>
+    const menus = document.querySelectorAll<HTMLDetailsElement>('.website-account-menu');
+    document.addEventListener('pointerdown', (event) => {
+        menus.forEach((menu) => {
+            if (!menu.contains(event.target as Node)) menu.open = false;
+        });
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        menus.forEach((menu) => {
+            if (!menu.open) return;
+            menu.open = false;
+            menu.querySelector('summary')?.focus();
+        });
+    });
+
+    if (document.querySelector('[data-website-oidc]')) {
+        void import('../scripts/website-oidc')
+            .then(({ initWebsiteOidc }) => initWebsiteOidc())
+            .catch(() => {});
+    }
+</script>
+
+<style>
+    .website-account-controls {
+        --account-text: #eef2f7;
+        --account-border: rgba(255, 255, 255, 0.12);
+        --account-bg: rgba(255, 255, 255, 0.06);
+        --account-hover: rgba(255, 255, 255, 0.1);
+        --account-popover-bg: #111923;
+        --account-muted: #a4b4c5;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        white-space: nowrap;
+        flex: none;
+    }
+
+    .website-account-controls[hidden] { display: none; }
+    .website-account-menu[hidden] { display: none; }
+
+    .website-account-controls--docs {
+        --account-text: var(--sl-color-text);
+        --account-border: var(--sl-color-gray-5);
+        --account-bg: var(--sl-color-bg-nav);
+        --account-hover: var(--sl-color-gray-6);
+        --account-popover-bg: var(--sl-color-bg-nav);
+        --account-muted: var(--sl-color-gray-2);
+    }
+
+    .website-dashboard-link,
+    .website-account-trigger {
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        border: 1px solid var(--account-border);
+        border-radius: 999px;
+        background: var(--account-bg);
+        color: var(--account-text);
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+        text-decoration: none;
+        transition: border-color 0.14s ease, background-color 0.14s ease, color 0.14s ease;
+    }
+
+    .website-dashboard-link {
+        min-width: 108px;
+        padding: 0 16px;
+    }
+
+    .website-account-trigger {
+        width: 40px;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        cursor: pointer;
+        list-style: none;
+    }
+
+    .website-account-trigger::-webkit-details-marker { display: none; }
+
+    .website-dashboard-link:hover {
+        background: var(--account-hover);
+    }
+
+    .website-dashboard-link[data-oidc-state='signed-in'] {
+        border-color: rgba(136, 215, 255, 0.7);
+        background: linear-gradient(115deg, #bdeaff, #4197d3);
+        color: #102131;
+    }
+
+    .website-dashboard-link[data-oidc-state='signed-in']:hover {
+        border-color: #d7f2ff;
+        background: linear-gradient(115deg, #d4f1ff, #62addf);
+    }
+
+    .website-account-trigger svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        flex: none;
+    }
+
+    .website-account-trigger .profile-filled { display: none; fill: currentColor; stroke: none; }
+    .website-account-trigger:hover .profile-outline,
+    .website-account-menu[open] .profile-outline { display: none; }
+    .website-account-trigger:hover .profile-filled,
+    .website-account-menu[open] .profile-filled { display: inline; }
+
+    .website-account-trigger[data-oidc-state='signed-in'] { color: #4197d3; }
+    .website-account-trigger[data-oidc-state='signed-in'] .profile-outline { display: none; }
+    .website-account-trigger[data-oidc-state='signed-in'] .profile-filled { display: inline; }
+    .website-account-trigger[data-oidc-state='signed-in']:hover { color: #62addf; }
+
+    .website-dashboard-link:focus-visible,
+    .website-account-trigger:focus-visible,
+    .website-account-popover a:focus-visible,
+    .website-account-popover button:focus-visible {
+        outline: 2px solid #69c7ff;
+        outline-offset: 3px;
+    }
+
+    .website-account-menu { position: relative; }
+
+    .website-account-popover {
+        position: absolute;
+        z-index: 200;
+        top: calc(100% + 10px);
+        right: 0;
+        display: grid;
+        min-width: 174px;
+        padding: 7px;
+        border: 1px solid var(--account-border);
+        border-radius: 12px;
+        background: var(--account-popover-bg);
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.25);
+    }
+
+    .website-account-identity {
+        display: grid;
+        padding: 9px 11px;
+        color: var(--account-text);
+        font-size: 13px;
+        border-bottom: 1px solid var(--account-border);
+    }
+
+    .website-account-identity[hidden],
+    .website-account-identity [hidden] { display: none; }
+
+    .website-account-identity strong {
+        max-width: 18ch;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-weight: 600;
+    }
+
+    .website-account-popover a,
+    .website-account-popover button {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        min-height: 36px;
+        padding: 0 11px;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        color: var(--account-text);
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .website-account-popover a:hover,
+    .website-account-popover button:hover { background: var(--account-hover); }
+
+    .website-account-popover [hidden] { display: none; }
+
+    @media (max-width: 700px) {
+        .website-account-controls--marketing { gap: 7px; }
+        .website-account-controls--marketing .website-dashboard-link,
+        .website-account-controls--marketing .website-account-trigger { min-height: 36px; }
+        .website-account-controls--marketing .website-dashboard-link { min-width: 94px; padding: 0 12px; }
+        .website-account-controls--marketing .website-account-trigger { width: 36px; }
+    }
+
+    @media (max-width: 799px) {
+        .website-account-controls--docs .website-account-popover {
+            top: auto;
+            bottom: calc(100% + 10px);
+        }
+    }
+</style>

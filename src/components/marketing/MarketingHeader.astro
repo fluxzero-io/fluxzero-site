@@ -1,6 +1,8 @@
 ---
 import { fluxzeroBrand } from '../../config/brand.mjs';
 import { launchAccess } from '../../config/launch.mjs';
+import { websiteOidcConfig } from '../../config/website-oidc.mjs';
+import WebsiteAccountControls from '../WebsiteAccountControls.astro';
 
 interface Props {
     active?: 'pricing' | 'about' | 'how-it-works';
@@ -8,6 +10,7 @@ interface Props {
 
 const { active } = Astro.props;
 const isDevelopmentPreview = launchAccess.authenticationEnabled && import.meta.env.DEV;
+const websiteOidc = websiteOidcConfig(import.meta.env);
 const pricingClass = `nav-link nav-link-pricing${active === 'pricing' ? ' is-active' : ''}`;
 const aboutClass = `nav-link nav-link-about${active === 'about' ? ' is-active' : ''}`;
 const howItWorksClass = `nav-link nav-link-agents${active === 'how-it-works' ? ' is-active' : ''}`;
@@ -33,7 +36,7 @@ const howItWorksClass = `nav-link nav-link-agents${active === 'how-it-works' ? '
             <a href="/get-started/" class="nav-cta" data-nav-sign-in>Sign in</a>
 
             <div class="nav-authenticated" data-nav-authenticated hidden>
-                <a href={launchAccess.dashboardUrl} class="nav-cta">Dashboard</a>
+                <a href={websiteOidc.dashboardUrl} class="nav-cta">Dashboard</a>
 
                 <div class="nav-profile">
                     <button
@@ -59,7 +62,7 @@ const howItWorksClass = `nav-link nav-link-agents${active === 'how-it-works' ? '
         </div>
     ) : (
         <div class="nav-actions">
-            <a href={launchAccess.dashboardUrl} class="nav-cta">Dashboard</a>
+            <WebsiteAccountControls surface="marketing" />
         </div>
     )}
 </nav>

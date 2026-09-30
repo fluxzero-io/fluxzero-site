@@ -18,6 +18,11 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+.env.local
+.env.*.local
+
+# Fluxzero Devboard session files
+.fluxzero/dev/
 
 # IDE files
 /.idea
