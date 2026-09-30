@@ -5,6 +5,8 @@ import { startWebsiteOidcStub } from './website-oidc-stub.mjs';
 
 test('website stub completes silent code+PKCE and requires a local session', async () => {
     const stub = await startWebsiteOidcStub({ port: 0 });
+    assert.equal(stub.websiteOrigin, 'http://localhost:4321');
+    assert.equal(new URL(stub.issuer).hostname, 'localhost');
     const redirectUri = `${stub.websiteOrigin}/oidc/silent-callback/`;
     const verifier = randomBytes(32).toString('base64url');
     const challenge = createHash('sha256').update(verifier).digest('base64url');

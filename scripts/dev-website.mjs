@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process';
+import { existsSync } from 'node:fs';
 import { startWebsiteOidcStub } from './website-oidc-stub.mjs';
 
 const [, , mode, port] = process.argv;
@@ -7,21 +8,32 @@ if (!['stub', 'live'].includes(mode) || !/^\d+$/.test(port || '') || Number(port
     process.exit(2);
 }
 
+if (mode === 'live' && existsSync('.env.local')) process.loadEnvFile('.env.local');
 const environment = { ...process.env };
 // Local previews should stay available when the public GitHub release API is rate limited.
 environment.npm_package_config_ghreleases_optional = 'true';
 environment.npm_package_config_javadoc_optional = 'true';
 let stub;
 if (mode === 'stub') {
-    const websiteOrigin = process.env.WEBSITE_STUB_ORIGIN || 'http://site.fluxzero.localhost:4321';
+    const websiteOrigin = process.env.WEBSITE_STUB_ORIGIN || 'http://localhost:4321';
     const stubPort = Number(process.env.WEBSITE_STUB_PORT || '4390');
-    stub = await startWebsiteOidcStub({ websiteOrigin, port: stubPort });
+    const hostname = process.env.WEBSITE_STUB_HOSTNAME || new URL(websiteOrigin).hostname;
+    stub = await startWebsiteOidcStub({ websiteOrigin, hostname, port: stubPort });
     environment.PUBLIC_WEBSITE_OIDC_ENABLED = 'true';
     environment.PUBLIC_WEBSITE_OIDC_ISSUER = stub.issuer;
     environment.PUBLIC_WEBSITE_OIDC_CLIENT_ID = stub.clientId;
+    environment.PUBLIC_WEBSITE_OIDC_SITE_ORIGIN = new URL(websiteOrigin).origin;
     delete environment.PUBLIC_WEBSITE_OIDC_RESOURCE;
     process.stdout.write(`Website OIDC stub: ${stub.issuer}/ (sign in here as Demo Builder)\n`);
     process.stdout.write(`Website: ${websiteOrigin}/\n`);
+} else {
+    environment.PUBLIC_WEBSITE_OIDC_ENABLED = 'true';
+    environment.PUBLIC_WEBSITE_OIDC_ISSUER ||= 'http://login.fluxzero.localhost:4300';
+    environment.PUBLIC_WEBSITE_OIDC_CLIENT_ID ||= 'fluxzero-website';
+    environment.PUBLIC_WEBSITE_OIDC_SITE_ORIGIN ||= 'http://site.fluxzero.localhost:4321';
+    environment.PUBLIC_WEBSITE_DASHBOARD_URL ||= 'http://localhost:4200/';
+    process.stdout.write(`Website live IDP: ${environment.PUBLIC_WEBSITE_OIDC_ISSUER} (${environment.PUBLIC_WEBSITE_OIDC_CLIENT_ID})\n`);
+    process.stdout.write(`Website sign-in: ${new URL(environment.PUBLIC_WEBSITE_OIDC_SITE_ORIGIN).origin}/\n`);
 }
 
 const commands = [

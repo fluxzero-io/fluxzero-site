@@ -56,8 +56,8 @@ async function bodyOf(request) {
 
 export async function startWebsiteOidcStub({
     port = 4390,
-    hostname = 'login.fluxzero.localhost',
-    websiteOrigin = 'http://site.fluxzero.localhost:4321',
+    hostname = 'localhost',
+    websiteOrigin = 'http://localhost:4321',
     clientId = 'fluxzero-website-local',
 } = {}) {
     const websiteUrl = new URL(websiteOrigin);

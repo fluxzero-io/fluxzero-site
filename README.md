@@ -48,31 +48,42 @@ GITHUB_TOKEN=your_token pnpm dev
 
 The local feedback provider defaults to in-memory storage. Testing the deployed GitHub-backed feedback and sign-in flow additionally requires the Cloudflare runtime variables used in production: `FEEDBACK_PROVIDER`, `GITHUB_REPO`, `GITHUB_TOKEN`, `GITHUB_APP_CLIENT_ID`, `GITHUB_APP_CLIENT_SECRET`, and `COOKIE_SECRET`. Put local Cloudflare secrets in `.dev.vars`; never commit that file.
 
-### Website dashboard sign-in indicator
+### Website account menu and OIDC
 
-The Dashboard link starts neutral. When website OIDC is enabled, it makes a silent Authorization Code + PKCE request with `prompt=none` in a hidden iframe. Only a confirmed session gives the link a blue signed-in style. The adjacent Account control keeps the same label and dimensions in every state; the user's name appears only inside its menu. Before a session is confirmed, the menu offers a Sign in link to the dashboard. An absent session, timeout, blocked iframe, or IDP error leaves the Dashboard link neutral and usable. Rechecks keep the last visible state until a result arrives, so the controls do not briefly reset or shift. The same controls appear in the marketing navigation and in Starlight's desktop header and mobile menu. The website does not initiate an interactive login or store tokens persistently. This check is independent of the older development-only account preview.
+The marketing header always has a Dashboard link. The profile icon appears on marketing and docs pages only when website OIDC is enabled for that origin. Before a session is confirmed it remains a neutral outline; a confirmed session makes it filled and blue and gives the marketing Dashboard link its blue style. The user's name is inside the menu. An absent session or failed silent check leaves the site usable without a visible error. The website checks the IDP session with Authorization Code + PKCE and `prompt=none` in a hidden iframe. Login and Create account start interactive flows and return to the same website page; Profile opens the IDP account page and Logout uses the IDP end-session endpoint. Tokens are kept in memory. With OIDC disabled, the marketing header shows only Dashboard and docs have no account control.
 
-For a self-contained local demo, start the website and its **website-only** OIDC stub:
+The **website-only stub** is the default local demo and needs no custom host name:
 
 ```bash
 pnpm dev:website-stub
-# or: fz dev --profile website-stub (the default Devboard profile)
+# or: fz dev --profile website-stub
 ```
 
-Open <http://site.fluxzero.localhost:4321/> and use the profile icon at the far right of the marketing or docs navigation. **Create account** and **Login** use the website-only stub's Demo Builder session and return to the page where they began. When signed in, the menu shows the name, **Profile**, **Goto Dashboard**, and **Logout**; logout returns to the same page. The marketing Dashboard link turns blue when signed in; docs have no Dashboard link outside the account menu. The stub binds only to local loopback, does not use the IDP repository, and sends no email.
+Open <http://localhost:4321/> (or Devboard App preview). Its stub issuer is `http://localhost:4390`, on the same site but a different port. Login and Create account sign in as Demo Builder without sending email. The stub listens only on loopback and does not use the IDP repository. To try named local hosts instead, set `WEBSITE_STUB_ORIGIN=http://site.fluxzero.localhost:4321` before starting the stub; optionally set `WEBSITE_STUB_HOSTNAME=login.fluxzero.localhost` for a separate same-site issuer. The stub's exact callbacks and CORS origin follow `WEBSITE_STUB_ORIGIN`. [`.localhost` and its subdomains are special-use names](https://www.rfc-editor.org/rfc/rfc6761.html#section-6.3), but the normal stub flow does not depend on subdomain resolution or hosts-file entries.
 
-For the separately started local IDP, register a **public** OIDC client there with Authorization Code, PKCE S256, `openid profile`, `prompt=none`, and exact redirect URIs `http://site.fluxzero.localhost:4321/oidc/silent-callback/` and `http://site.fluxzero.localhost:4321/oidc/callback/`. Register `http://site.fluxzero.localhost:4321/oidc/logout-callback/` as the exact post-logout redirect URI. Permit `http://site.fluxzero.localhost:4321` as the token endpoint's CORS origin. The IDP's session cookie must be available in a same-site iframe, and its authorization endpoint must permit this website as a frame ancestor. Set these values in an ignored `.env.local` file in this repository (adjust the IDP port to match its own profile, which may use 4330):
+The **website-live-idp** profile uses the separately started IDP `identity-local` profile. It defaults to:
 
-```dotenv
-PUBLIC_WEBSITE_OIDC_ENABLED=true
-PUBLIC_WEBSITE_OIDC_ISSUER=http://login.fluxzero.localhost:4300
-PUBLIC_WEBSITE_OIDC_CLIENT_ID=fluxzero-website
-PUBLIC_WEBSITE_DASHBOARD_URL=http://dashboard.localhost:4200/
-```
+| Setting | Local live value | Purpose |
+| --- | --- | --- |
+| `PUBLIC_WEBSITE_OIDC_ENABLED` | `true` | Enables the account menu and OIDC client. The live profile forces this on. |
+| `PUBLIC_WEBSITE_OIDC_ISSUER` | `http://login.fluxzero.localhost:4300` | IDP issuer and discovery base URL. |
+| `PUBLIC_WEBSITE_OIDC_CLIENT_ID` | `fluxzero-website` | Seeded **public** website client; no client secret. |
+| `PUBLIC_WEBSITE_OIDC_SITE_ORIGIN` | `http://site.fluxzero.localhost:4321` | Exact website origin registered by this seeded client. On another origin, including Devboard's `localhost` preview, the account control is hidden. |
+| `PUBLIC_WEBSITE_DASHBOARD_URL` | `http://localhost:4200/` | Header Dashboard and account menu's Goto Dashboard destination. It does not configure the IDP issuer. |
+| `PUBLIC_WEBSITE_OIDC_RESOURCE` | unset | Set only if the chosen IDP client requires an OAuth resource. |
 
-Start the IDP using its own repository's local `login.fluxzero.localhost` development variant, then start the website with `pnpm dev:website-live-idp` or `fz dev --profile website-live-idp`. Open <http://site.fluxzero.localhost:4321/>. The menu's Login and Create account actions start an OIDC code+PKCE flow at the IDP and return to the original website page. Profile opens the IDP's `/account` page; Logout uses its OIDC end-session endpoint. If the IDP requires an OAuth resource, set `PUBLIC_WEBSITE_OIDC_RESOURCE` to its exact resource URL. Do not use that option with the website stub.
+On the first IDP run, prepare its local material with `node scripts/prepare-local-oidc.mjs --fluxzero-only --test-support` in the IDP repository. Start `fz dev --profile identity-local` there, then `fz dev --profile website-live-idp` here (or `pnpm dev:website-live-idp`). Open <http://site.fluxzero.localhost:4321/> as a **top-level page** for login, registration, profile and logout. Devboard App preview uses `http://localhost:4321/` inside an iframe; that origin is not registered for the seeded IDP client and is intentionally only a non-auth preview. The `identity-local` profile seeds local demo accounts and routes local mail to Rebound; `../fluxzero-idp/docs/local-development.md` describes those accounts. The live website profile loads optional overrides from an ignored `.env.local`; already exported environment variables take precedence. Restart the profile after changing them.
 
-For production, supply the same `PUBLIC_WEBSITE_OIDC_*` variables at **build time** with the production issuer and registered public client. Register `https://fluxzero.io/oidc/silent-callback/` and `https://fluxzero.io/oidc/callback/` as exact redirects and `https://fluxzero.io/oidc/logout-callback/` as the exact post-logout redirect. Allow `https://fluxzero.io` as the token CORS origin. `PUBLIC_WEBSITE_DASHBOARD_URL` is optional and defaults to `https://dashboard.fluxzero.io/`. Set `PUBLIC_WEBSITE_OIDC_ENABLED=false` (or omit it) to disable the check; until enabled, account actions use the configured Dashboard URL. These variables are public browser configuration; never put a client secret in them. The local live demo depends on the IDP supporting `prompt=none`; that work is tracked in IDP-I240.
+The seeded local client accepts these exact website addresses:
+
+| Purpose | Address |
+| --- | --- |
+| Token endpoint CORS origin | `http://site.fluxzero.localhost:4321` |
+| Interactive callback | `http://site.fluxzero.localhost:4321/oidc/callback/` |
+| Silent iframe callback | `http://site.fluxzero.localhost:4321/oidc/silent-callback/` |
+| Post-logout callback | `http://site.fluxzero.localhost:4321/oidc/logout-callback/` |
+
+For **production**, register a separate website public client in the production IDP with Authorization Code, PKCE S256 and `openid profile`. Set `PUBLIC_WEBSITE_OIDC_ENABLED=true`, `PUBLIC_WEBSITE_OIDC_ISSUER` to that client's actual issuer, and `PUBLIC_WEBSITE_OIDC_CLIENT_ID` to its public client ID **at build time**. Register `https://fluxzero.io/oidc/callback/`, `https://fluxzero.io/oidc/silent-callback/` and `https://fluxzero.io/oidc/logout-callback/` exactly; allow `https://fluxzero.io` for token CORS and as a frame ancestor of the IDP authorization endpoint. The IDP session cookie must be available in that same-site iframe. Set `PUBLIC_WEBSITE_DASHBOARD_URL` to the intended dashboard destination, or omit it to use `https://dashboard.fluxzero.io/`. Leave `PUBLIC_WEBSITE_OIDC_SITE_ORIGIN` unset unless a deployment must restrict the account control to one exact origin. These `PUBLIC_` values are browser configuration, never secrets. `auth.fluxzero.io` is the current Dashboard login destination; it is not automatically the issuer for this website client.
 
 ## Commands
 

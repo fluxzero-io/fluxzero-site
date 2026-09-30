@@ -35,11 +35,17 @@ export function websiteOidcConfig(env) {
         throw new Error('PUBLIC_WEBSITE_OIDC_CLIENT_ID contains unsupported characters');
     }
     const resource = env.PUBLIC_WEBSITE_OIDC_RESOURCE?.trim();
+    const siteOrigin = env.PUBLIC_WEBSITE_OIDC_SITE_ORIGIN?.trim();
+    const siteUrl = siteOrigin ? new URL(configuredUrl(siteOrigin, 'PUBLIC_WEBSITE_OIDC_SITE_ORIGIN')) : undefined;
+    if (siteUrl && siteUrl.pathname !== '/') {
+        throw new Error('PUBLIC_WEBSITE_OIDC_SITE_ORIGIN must be an origin without a path');
+    }
     return {
         enabled: true,
         issuer: issuerUrl.origin,
         clientId,
         resource: resource ? configuredUrl(resource, 'PUBLIC_WEBSITE_OIDC_RESOURCE') : undefined,
+        siteOrigin: siteUrl?.origin,
         dashboardUrl,
     };
 }
