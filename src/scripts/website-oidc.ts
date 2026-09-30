@@ -8,6 +8,32 @@ type OidcElement = HTMLElement & {
     };
 };
 
+const PRESENCE_KEY = 'fluxzero.website.oidc.presence.v1';
+
+function displayName(user: User): string | undefined {
+    return [user.profile.name, user.profile.given_name]
+        .find((value): value is string => typeof value === 'string' && value.trim().length > 0)
+        ?.trim().slice(0, 32);
+}
+
+function rememberPresence(user: User | null, element: OidcElement): void {
+    try {
+        if (!user || user.expired) {
+            sessionStorage.removeItem(PRESENCE_KEY);
+            return;
+        }
+        sessionStorage.setItem(PRESENCE_KEY, JSON.stringify({
+            version: 1,
+            issuer: element.dataset.oidcIssuer,
+            clientId: element.dataset.oidcClientId,
+            name: displayName(user) ?? '',
+            savedAt: Date.now(),
+        }));
+    } catch {
+        // Storage may be unavailable; the normal silent session check still works.
+    }
+}
+
 function managerFor(element: OidcElement): UserManager {
     const { oidcIssuer: authority, oidcClientId: client_id } = element.dataset;
     if (!authority || !client_id) {
@@ -33,6 +59,11 @@ function managerFor(element: OidcElement): UserManager {
 
 function currentPage(): string {
     return `${window.location.pathname}${window.location.search}${window.location.hash}`;
+}
+
+function authorizationNonce(): string {
+    const bytes = crypto.getRandomValues(new Uint8Array(32));
+    return btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
 function safePage(value: unknown): string {
@@ -62,16 +93,13 @@ export function initWebsiteOidc(): void {
         return;
     }
 
-    let checking = false;
+    let pendingCheck: Promise<void> | null = null;
     let lastCheck = 0;
     let currentUser: User | null = null;
     const render = (user: User | null) => {
         currentUser = user;
-        const name = user
-            ? [user.profile.name, user.profile.given_name]
-                .find((value): value is string => typeof value === 'string' && value.trim().length > 0)
-                ?.trim().slice(0, 32)
-            : undefined;
+        rememberPresence(user, configured);
+        const name = user ? displayName(user) : undefined;
 
         controls.forEach((control) => {
             const dashboard = control.querySelector<HTMLAnchorElement>('[data-website-dashboard]');
@@ -109,11 +137,11 @@ export function initWebsiteOidc(): void {
         const resource = configured.dataset.oidcResource;
         const request = async () => {
             if (action.hasAttribute('data-oidc-login')) {
-                await manager.signinRedirect({ state: { returnTo }, ...(resource ? { resource } : {}) });
+                await manager.signinRedirect({ state: { returnTo }, nonce: authorizationNonce(), ...(resource ? { resource } : {}) });
             } else if (action.hasAttribute('data-oidc-create')) {
                 const client = new OidcClient(manager.settings, manager.metadataService);
                 const signin = await client.createSigninRequest({
-                    request_type: 'si:r', state: { returnTo },
+                    request_type: 'si:r', state: { returnTo }, nonce: authorizationNonce(),
                     ...(resource ? { resource } : {}),
                 });
                 const authorization = new URL(signin.url);
@@ -124,33 +152,37 @@ export function initWebsiteOidc(): void {
                 const registration = new URL('/register', issuer);
                 registration.searchParams.set('returnTo', `${authorization.pathname}${authorization.search}`);
                 window.location.assign(registration.href);
-            } else if (currentUser) {
-                await manager.signoutRedirect({ state: { returnTo } });
+            } else if (action.hasAttribute('data-oidc-logout')) {
+                if (!currentUser) await check();
+                if (currentUser) await manager.signoutRedirect({ state: { returnTo } });
             }
         };
         void request().catch((error) => {
             if (import.meta.env.DEV) console.debug('Website account action unavailable', error);
         });
     }));
-    const check = async () => {
-        if (checking) return;
-        checking = true;
+    const check = (): Promise<void> => {
+        if (pendingCheck) return pendingCheck;
         lastCheck = Date.now();
-        try {
-            const resource = configured.dataset.oidcResource;
-            const user = await manager.signinSilent({
-                forceIframeAuth: true,
-                ...(resource ? { resource } : {}),
-            });
-            render(user && !user.expired ? user : null);
-        } catch (error) {
-            if (import.meta.env.DEV) {
-                console.debug('Website silent OIDC unavailable', error);
+        pendingCheck = (async () => {
+            try {
+                const resource = configured.dataset.oidcResource;
+                const user = await manager.signinSilent({
+                    forceIframeAuth: true,
+                    nonce: authorizationNonce(),
+                    ...(resource ? { resource } : {}),
+                });
+                render(user && !user.expired ? user : null);
+            } catch (error) {
+                if (import.meta.env.DEV) {
+                    console.debug('Website silent OIDC unavailable', error);
+                }
+                render(null);
+            } finally {
+                pendingCheck = null;
             }
-            render(null);
-        } finally {
-            checking = false;
-        }
+        })();
+        return pendingCheck;
     };
 
     void check();
@@ -169,6 +201,7 @@ export async function finishInteractiveWebsiteOidc(): Promise<void> {
     window.history.replaceState(null, '', window.location.pathname);
     try {
         const user = await managerFor(root).signinRedirectCallback(responseUrl);
+        rememberPresence(user, root);
         window.location.replace(returnPage(user.state));
     } catch (error) {
         if (import.meta.env.DEV) console.debug('Website sign-in callback failed', error);
@@ -181,6 +214,7 @@ export async function finishWebsiteLogout(): Promise<void> {
     if (!root) return;
     const responseUrl = window.location.href;
     window.history.replaceState(null, '', window.location.pathname);
+    rememberPresence(null, root);
     try {
         const response = await managerFor(root).signoutRedirectCallback(responseUrl);
         window.location.replace(returnPage(response.userState));

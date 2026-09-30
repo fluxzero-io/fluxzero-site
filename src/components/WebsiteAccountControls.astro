@@ -7,7 +7,7 @@ interface Props {
 
 const { surface } = Astro.props;
 const oidc = websiteOidcConfig(import.meta.env);
-const accountEnabled = oidc.enabled && (!oidc.siteOrigin || Astro.url.origin === oidc.siteOrigin);
+const accountEnabled = oidc.enabled;
 ---
 
 <div
@@ -18,9 +18,10 @@ const accountEnabled = oidc.enabled && (!oidc.siteOrigin || Astro.url.origin ===
     data-oidc-issuer={accountEnabled ? oidc.issuer : undefined}
     data-oidc-client-id={accountEnabled ? oidc.clientId : undefined}
     data-oidc-resource={accountEnabled ? oidc.resource : undefined}
+    data-oidc-site-origin={accountEnabled ? oidc.siteOrigin : undefined}
 >
     {surface === 'marketing' && <a class="website-dashboard-link" href={oidc.dashboardUrl} data-website-dashboard>Dashboard</a>}
-    {accountEnabled && <details class="website-account-menu">
+    {accountEnabled && <details class="website-account-menu" hidden={Boolean(oidc.siteOrigin)}>
         <summary class="website-account-trigger" aria-label="Account" title="Account">
             <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g class="profile-outline">
@@ -49,6 +50,54 @@ const accountEnabled = oidc.enabled && (!oidc.siteOrigin || Astro.url.origin ===
         </div>
     </details>}
 </div>
+
+<script is:inline>
+    (() => {
+        const control = document.currentScript?.previousElementSibling;
+        if (!(control instanceof HTMLElement) || !control.hasAttribute('data-website-oidc')) return;
+        const menu = control.querySelector('.website-account-menu');
+        if (control.dataset.oidcSiteOrigin && location.origin !== control.dataset.oidcSiteOrigin) {
+            control.removeAttribute('data-website-oidc');
+            if (control.classList.contains('website-account-controls--docs')) control.hidden = true;
+            return;
+        }
+        if (menu) menu.hidden = false;
+        try {
+            const cached = JSON.parse(sessionStorage.getItem('fluxzero.website.oidc.presence.v1') || 'null');
+            const now = Date.now();
+            if (cached?.version !== 1 || cached.issuer !== control.dataset.oidcIssuer
+                || cached.clientId !== control.dataset.oidcClientId
+                || typeof cached.name !== 'string' || typeof cached.savedAt !== 'number'
+                || cached.savedAt > now || now - cached.savedAt > 12 * 60 * 60 * 1000) return;
+
+            const name = cached.name.slice(0, 32);
+            const dashboard = control.querySelector('[data-website-dashboard]');
+            const trigger = control.querySelector('.website-account-trigger');
+            const identity = control.querySelector('[data-oidc-identity]');
+            const nameElement = control.querySelector('[data-oidc-name]');
+            const signedIn = control.querySelector('[data-oidc-signed-in]');
+            const signedOut = control.querySelector('[data-oidc-signed-out]');
+            if (dashboard) {
+                dashboard.dataset.oidcState = 'signed-in';
+                dashboard.setAttribute('aria-label', 'Dashboard, signed in');
+            }
+            if (trigger) {
+                trigger.dataset.oidcState = 'signed-in';
+                trigger.setAttribute('aria-label', name ? `Account, signed in as ${name}` : 'Account, signed in');
+            }
+            if (identity) identity.hidden = false;
+            if (nameElement) {
+                nameElement.textContent = name;
+                nameElement.hidden = !name;
+            }
+            if (signedIn) signedIn.hidden = false;
+            if (signedOut) signedOut.hidden = true;
+            control.dataset.oidcRestored = 'signed-in';
+        } catch {
+            // An invalid or unavailable visual hint falls back to the neutral header.
+        }
+    })();
+</script>
 
 <script>
     const menus = document.querySelectorAll<HTMLDetailsElement>('.website-account-menu');
@@ -89,6 +138,7 @@ const accountEnabled = oidc.enabled && (!oidc.siteOrigin || Astro.url.origin ===
     }
 
     .website-account-controls[hidden] { display: none; }
+    .website-account-menu[hidden] { display: none; }
 
     .website-account-controls--docs {
         --account-text: var(--sl-color-text);
