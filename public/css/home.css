@@ -5102,7 +5102,8 @@ section:not(.hero):not(.cta-end) {
     margin: 0;
 }
 
-.cta-end::before {
+.cta-end::before,
+.homepage-finish::before {
     content: "";
     position: absolute;
     z-index: -2;
@@ -5118,7 +5119,8 @@ section:not(.hero):not(.cta-end) {
     pointer-events: none;
 }
 
-.cta-end::after {
+.cta-end::after,
+.homepage-finish::after {
     content: "";
     position: absolute;
     z-index: -1;
@@ -5169,7 +5171,8 @@ section:not(.hero):not(.cta-end) {
 }
 
 @media (min-width: 861px) {
-    .cta-end::after {
+    .cta-end::after,
+    .homepage-finish::after {
         width: max(1860px, 142vw);
     }
 
@@ -5624,11 +5627,13 @@ h4, :where(.v4-home .fc, .v4-home .ai-pt) h3 {
         padding-right: 16px;
         padding-bottom: 84px;
     }
-    .cta-end::before {
+    .cta-end::before,
+    .homepage-finish::before {
         bottom: -6px;
         opacity: 0.58;
     }
-    .cta-end::after {
+    .cta-end::after,
+    .homepage-finish::after {
         bottom: -482px;
         background: linear-gradient(180deg, #060709 0, #121317 26px, #1e1e22 58px, #1e1e22 100%);
     }

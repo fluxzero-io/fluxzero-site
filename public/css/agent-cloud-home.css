@@ -71,16 +71,12 @@
 }
 
 .agent-cloud-home .homepage-finish {
+    isolation: isolate;
+    overflow: hidden;
     max-width: none;
     padding-inline: 0;
     --section-pad-top: clamp(48px, 5vw, 72px);
-    --section-pad-bottom: 0px;
-}
-
-.agent-cloud-home .homepage-finish__horizon {
-    height: clamp(180px, 18vw, 224px);
-    padding: 0;
-    mask-image: linear-gradient(180deg, transparent, #000 35%);
+    --section-pad-bottom: clamp(170px, 16vw, 224px);
 }
 
 .homepage-finish__actions {
