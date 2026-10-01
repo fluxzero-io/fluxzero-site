@@ -47,14 +47,7 @@ body.about-page::before {
     margin-top: 24px;
 }
 
-.about-lead {
-    color: var(--text);
-    font-size: clamp(24px, 2.5vw, 30px);
-    line-height: 1.5;
-    letter-spacing: -.02em;
-    text-wrap: balance;
-}
-
+.about-lead,
 .about-possibility {
     color: var(--text);
 }
