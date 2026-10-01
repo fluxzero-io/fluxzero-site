@@ -51,14 +51,7 @@ const comparisonRows = [
         label: "When something breaks",
         values: [
             { status: "Piece together logs and state", kind: 'owned' },
-            { status: "Your agent sees what happened", kind: 'included' },
-        ],
-    },
-    {
-        label: "Path to scale",
-        values: [
-            { status: "Refactor or start over", kind: 'owned' },
-            { status: "Product doesn’t need to change", kind: 'included' },
+            { status: "See exactly what happened", kind: 'included' },
         ],
     },
     {
@@ -68,11 +61,18 @@ const comparisonRows = [
             { status: "Maintained and improved by Fluxzero", kind: 'included' },
         ],
     },
+    {
+        label: "Path to scale",
+        values: [
+            { status: "Refactor or start over", kind: 'owned' },
+            { status: "No change needed", kind: 'included' },
+        ],
+    },
 ];
 
 const comparisonOptions = [
-    { name: 'Infrastructure cloud', sub: 'Supabase, Vercel, Railway, Lovable & others', index: 0 },
-    { name: 'Product cloud', sub: 'Fluxzero', index: 1, featured: true },
+    { name: 'Other clouds', sub: 'Supabase, Vercel, Railway, Lovable & others', index: 0 },
+    { name: 'Fluxzero', sub: 'The product cloud', index: 1, featured: true },
 ];
 
 const homepageFaqs = [
