@@ -21,16 +21,18 @@ const agentReflections = [
 </section>
 
 <style>
-.agent-reflections { --section-pad-top: 0px; --section-pad-bottom: 100px; max-width: 1180px; padding-inline: 32px; margin: 0 auto; }
-.agent-reflections header { margin-bottom: 32px; text-align: center; }
-.agent-reflections h2 { font-size: clamp(22px, 2.4vw, 30px); letter-spacing: -.035em; }
+.agent-reflections { max-width: 1180px; padding-inline: 32px; margin: 0 auto; }
+.agent-reflections header { margin-bottom: 56px; text-align: left; }
+.agent-reflections h2 { margin-inline: 0; font-size: clamp(38px, 4.2vw, 58px); text-align: left; letter-spacing: -.035em; }
 .agent-reflections__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
 .agent-reflections article { border-top: 1px solid #253247; padding-top: 24px; }
 .agent-reflections h3 { display: flex; align-items: center; gap: 12px; font-size: 15px; }
 .agent-reflections h3 img { object-fit: contain; filter: brightness(0) invert(1); opacity: .8; }
 .agent-reflections article p { margin-top: 20px; color: #c6d2e3; font-size: 18px; line-height: 1.65; letter-spacing: -.015em; }
     @media (max-width: 760px) {
-        .agent-reflections { --section-pad-bottom: 64px; padding-inline: 22px; }
+        .agent-reflections { padding-inline: 22px; }
+        .agent-reflections header { margin-bottom: 36px; }
+        .agent-reflections h2 { font-size: clamp(32px, 7.6vw, 46px); }
         .agent-reflections__grid { grid-template-columns: 1fr; gap: 28px; }
         .agent-reflections article p { margin-top: 14px; }
     }

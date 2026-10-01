@@ -1,4 +1,13 @@
 /* The agent-first homepage reuses the shared marketing shell and cloud comparison. */
+.agent-cloud-home {
+    --homepage-section-space: clamp(112px, 10.5vw, 160px);
+}
+
+.agent-cloud-home main > section:not(.hero):not(.homepage-finish) {
+    --section-pad-top: var(--homepage-section-space);
+    --section-pad-bottom: var(--homepage-section-space);
+}
+
 .agent-cloud-home .hero h1 {
     max-width: 1000px;
 }
@@ -13,8 +22,6 @@
 
 .agent-cloud-home .homepage-start {
     max-width: 904px;
-    --section-pad-top: clamp(96px, 8vw, 128px);
-    --section-pad-bottom: clamp(112px, 10vw, 156px);
 }
 
 .homepage-start .section-intro {
@@ -32,6 +39,17 @@
     font-size: clamp(38px, 4.6vw, 56px);
     line-height: 1.08;
     letter-spacing: -.045em;
+}
+
+.agent-cloud-home .comparison-v4__heading > h2,
+.agent-cloud-home .comparison-v4__heading > p {
+    margin-left: 0;
+    margin-right: 0;
+    text-align: left;
+}
+
+.agent-cloud-home .comparison-v4__actions {
+    justify-content: flex-start;
 }
 
 .agent-cloud-home .homepage-finish {
@@ -107,8 +125,8 @@
 }
 
 @media (max-width: 760px) {
-    .agent-cloud-home .homepage-start {
-        --section-pad-bottom: 80px;
+    .agent-cloud-home {
+        --homepage-section-space: clamp(72px, 16vw, 104px);
     }
 
     .homepage-start h2 {
