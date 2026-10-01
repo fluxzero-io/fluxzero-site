@@ -15,15 +15,8 @@ const comparisonRows = [
     {
         label: "Agent builds",
         values: [
-            { status: "Product + technical stack", kind: 'owned' },
+            { status: "Product behavior + technical stack", kind: 'owned' },
             { status: "Product behavior", kind: 'included' },
-        ],
-    },
-    {
-        label: "What you own",
-        values: [
-            { status: "Product + tech stack", kind: 'owned' },
-            { status: "Product", kind: 'included' },
         ],
     },
     {
@@ -36,7 +29,7 @@ const comparisonRows = [
     {
         label: "Adding a feature",
         values: [
-            { status: "Builds the feature across services and infrastructure", kind: 'owned' },
+            { status: "Changes across the entire stack", kind: 'owned' },
             { status: "Just adds the feature", kind: 'included' },
         ],
     },
@@ -57,15 +50,15 @@ const comparisonRows = [
     {
         label: "Path to scale",
         values: [
-            { status: "Requires rearchitecting or replatforming", kind: 'owned' },
+            { status: "Refactor or start over", kind: 'owned' },
             { status: "Product doesn’t need to change", kind: 'included' },
         ],
     },
 ];
 
 const comparisonOptions = [
-    { name: 'Component cloud', sub: 'Supabase, Vercel, Railway, Lovable & others', index: 0 },
-    { name: 'The product cloud', sub: 'Fluxzero', index: 1, featured: true },
+    { name: 'Infrastructure cloud', sub: 'Supabase, Vercel, Railway, Lovable & others', index: 0 },
+    { name: 'Product cloud', sub: 'Fluxzero', index: 1, featured: true },
 ];
 
 const homepageFaqs = [
@@ -216,7 +209,7 @@ const homepageFaqSchema = {
 <section class="comparison comparison-v4 rv section-stack" id="platform-comparison" aria-labelledby="comparison-title">
     <div class="section-intro comparison-v4__heading">
         <h2 class="h2-two-line" id="comparison-title">Other clouds run infrastructure.<br><span>Fluxzero runs your product.</span></h2>
-        <p>Infrastructure clouds leave you responsible for the tech stack.<br>With Fluxzero, your only responsibility is the product.</p>
+        <p>Other clouds leave your agent responsible for the tech stack.<br>With Fluxzero, its only responsibility is your product.</p>
     </div>
 
     <div class="comparison-desktop section-grid" role="table" aria-label="Comparison of application cloud approaches">
