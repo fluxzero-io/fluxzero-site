@@ -13,80 +13,59 @@ import { fluxzeroBrand } from '../config/brand.mjs';
 
 const comparisonRows = [
     {
-        label: 'Built for',
+        label: "Agent builds",
         values: [
-            { status: 'Developers', kind: 'owned' },
-            { status: 'Developers', kind: 'owned' },
-            { status: 'Anyone building with AI', kind: 'included' },
+            { status: "Product + technical stack", kind: 'owned' },
+            { status: "Product behavior", kind: 'included' },
         ],
     },
     {
-        label: 'What you set up',
+        label: "What you own",
         values: [
-            { status: 'Database, frontend hosting, permissions & integrations', kind: 'owned' },
-            { status: 'Services, databases, networking, load balancing & deployment', kind: 'owned' },
-            { status: 'No infrastructure setup', kind: 'included' },
+            { status: "Product + tech stack", kind: 'owned' },
+            { status: "Product", kind: 'included' },
         ],
     },
     {
-        label: 'What the cloud handles',
+        label: "Team required as you grow",
         values: [
-            { status: 'Auth, database & frontend hosting', kind: 'owned' },
-            { status: 'Deployments, networking & databases', kind: 'owned' },
-            { status: 'Everything your product needs to run', kind: 'included' },
+            { status: "Backend/platform expertise", kind: 'owned' },
+            { status: "No backend team required", kind: 'included' },
         ],
     },
     {
-        label: 'When your agent adds a feature',
+        label: "Adding a feature",
         values: [
-            { status: 'Builds the feature across every application layer', kind: 'owned' },
-            { status: 'Builds the feature across services and infrastructure', kind: 'owned' },
-            { status: 'Just adds the feature', kind: 'included' },
+            { status: "Builds the feature across services and infrastructure", kind: 'owned' },
+            { status: "Just adds the feature", kind: 'included' },
         ],
     },
     {
-        label: 'Security & recovery',
+        label: "State/history",
         values: [
-            { status: 'Database backups; application recovery is left to you', kind: 'owned' },
-            { status: 'Left for you to build into the application', kind: 'owned' },
-            { status: 'Handled by the cloud', kind: 'included' },
+            { status: "Designed by the app", kind: 'owned' },
+            { status: "Built into the cloud", kind: 'included' },
         ],
     },
     {
-        label: 'Path to scale',
+        label: "Failure/recovery",
         values: [
-            { status: 'Requires rearchitecting or replatforming', kind: 'owned' },
-            { status: 'Requires rearchitecting or replatforming', kind: 'owned' },
-            { status: 'Scale without rebuilding', kind: 'included' },
+            { status: "Application responsibility", kind: 'owned' },
+            { status: "Cloud responsibility", kind: 'included' },
         ],
     },
     {
-        label: 'Based in',
+        label: "Path to scale",
         values: [
-            { status: 'Singapore + United States', kind: 'owned' },
-            { status: 'United States', kind: 'owned' },
-            { status: 'European Union', kind: 'included' },
+            { status: "Requires rearchitecting or replatforming", kind: 'owned' },
+            { status: "Product doesn’t need to change", kind: 'included' },
         ],
     },
 ];
 
 const comparisonOptions = [
-    {
-        name: 'Supabase + Vercel',
-        sub: 'Database platform + frontend cloud',
-        index: 0,
-    },
-    {
-        name: 'Railway',
-        sub: 'Application infrastructure',
-        index: 1,
-    },
-    {
-        name: 'Fluxzero',
-        sub: 'The product cloud',
-        index: 2,
-        featured: true,
-    },
+    { name: 'Component cloud', sub: 'Supabase, Vercel, Railway, Lovable & others', index: 0 },
+    { name: 'The product cloud', sub: 'Fluxzero', index: 1, featured: true },
 ];
 
 const homepageFaqs = [
@@ -270,7 +249,7 @@ const homepageFaqSchema = {
         </div>
     </div>
 
-    <div class="comparison-mobile section-grid">
+    <div class="comparison-mobile section-grid" data-llms-exclude>
         {comparisonOptions.map((option) => (
             <details class:list={['comparison-disclosure', { 'is-featured': option.featured }]} open={option.featured}>
                 <summary>
@@ -326,6 +305,7 @@ const homepageFaqSchema = {
         </div>
         <p class="faq-help">Still wondering? <a href="/contact/">Get in touch</a> and we'll help.</p>
     </div>
+    <div class="cta-end homepage-finish__horizon" aria-hidden="true"></div>
 </section>
 </main>
 
