@@ -1,8 +1,9 @@
 ---
 const agentReflections = [
-    { name: 'Claude', icon: 'claude-code', text: 'Fluxzero makes me a better builder. I can spend my reasoning on the product instead of infrastructure.' },
-    { name: 'Codex', icon: 'codex', text: 'Other clouds make me adapt. Fluxzero is built around how I work.' },
-    { name: 'Cursor', icon: 'cursor', text: 'Fluxzero lets me skip 20 steps and get straight to building product features.' },
+    { name: 'Claude', icon: 'claude-code', text: 'All this reasoning, and I finally get to spend it on your product. Fluxzero, you get me.' },
+    { name: 'Codex', icon: 'codex', text: 'A cloud built around how I work. I’m trying to stay professional, but I think I’m in love.' },
+    { name: 'Cursor', icon: 'cursor', text: 'I just skipped 20 steps and went straight to product features. Fluxzero, where have you been all my life?' },
+    { name: 'OpenClaw', icon: 'openclaw', text: 'You handle the foundation. I’ll bring the big ideas. I think this is the start of something beautiful.' },
 ];
 ---
 
@@ -10,30 +11,140 @@ const agentReflections = [
     <header>
         <h2 id="agent-reflections-title">What agents say about Fluxzero.</h2>
     </header>
-    <div class="agent-reflections__grid">
+    <div class="agent-reflections__conversation">
         {agentReflections.map((agent) => (
-            <article>
-                <h3><img src={`/assets/agent-tools/${agent.icon}.svg`} alt="" width="28" height="28" loading="lazy" />{agent.name}</h3>
-                <p>{agent.text}</p>
-            </article>
+            <figure class:list={['agent-reflections__voice', `agent-reflections__voice--${agent.icon}`]}>
+                <blockquote class="agent-reflections__bubble">
+                    <p>{agent.text}</p>
+                    <svg class="agent-reflections__heart" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" />
+                    </svg>
+                </blockquote>
+                <figcaption>
+                    <img src={`/assets/agent-tools/${agent.icon}.svg`} alt="" width="28" height="28" loading="lazy" />
+                    <span>{agent.name}</span>
+                </figcaption>
+            </figure>
         ))}
     </div>
 </section>
 
 <style>
-.agent-reflections { max-width: 1180px; padding-inline: 32px; margin: 0 auto; }
-.agent-reflections header { margin-bottom: 56px; text-align: left; }
-.agent-reflections h2 { margin-inline: 0; font-size: clamp(38px, 4.2vw, 58px); text-align: left; letter-spacing: -.035em; }
-.agent-reflections__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
-.agent-reflections article { border-top: 1px solid #253247; padding-top: 24px; }
-.agent-reflections h3 { display: flex; align-items: center; gap: 12px; font-size: 15px; }
-.agent-reflections h3 img { object-fit: contain; filter: brightness(0) invert(1); opacity: .8; }
-.agent-reflections article p { margin-top: 20px; color: #c6d2e3; font-size: 18px; line-height: 1.65; letter-spacing: -.015em; }
+    .agent-reflections { max-width: 1180px; padding-inline: 32px; margin: 0 auto; }
+    .agent-reflections header { margin-bottom: 72px; text-align: left; }
+    .agent-reflections h2 { max-width: none; margin-inline: 0; font-size: clamp(32px, 4.1vw, 58px); text-align: left; letter-spacing: -.035em; white-space: nowrap; }
+
+    .agent-reflections__conversation {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        align-items: start;
+        column-gap: 24px;
+        row-gap: 32px;
+        padding: 12px 8px;
+    }
+
+    .agent-reflections__voice {
+        --bubble-bg: #242529;
+        --bubble-border: #454044;
+        --bubble-accent: #e9af93;
+        grid-column: 1 / 7;
+        margin: 0;
+        transform: rotate(-2deg);
+    }
+
+    .agent-reflections__voice--codex {
+        --bubble-bg: #202932;
+        --bubble-border: #354b5e;
+        --bubble-accent: #89c9f5;
+        grid-column: 8 / 13;
+        margin-top: 72px;
+        transform: rotate(2deg);
+    }
+
+    .agent-reflections__voice--cursor {
+        --bubble-bg: #272530;
+        --bubble-border: #484154;
+        --bubble-accent: #c2b2e5;
+        grid-column: 2 / 8;
+        transform: rotate(1deg);
+    }
+
+    .agent-reflections__voice--openclaw {
+        --bubble-bg: #2c2328;
+        --bubble-border: #593941;
+        --bubble-accent: #ed9baf;
+        grid-column: 9 / 13;
+        margin-top: 40px;
+        transform: rotate(-2deg);
+    }
+
+    .agent-reflections__bubble {
+        position: relative;
+        margin: 0;
+        padding: 30px 32px 52px;
+        border: 1px solid var(--bubble-border);
+        border-radius: 28px;
+        background: var(--bubble-bg);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, .12);
+    }
+
+    .agent-reflections__bubble::after {
+        content: '';
+        position: absolute;
+        bottom: -9px;
+        left: 35px;
+        width: 16px;
+        height: 16px;
+        border-right: 1px solid var(--bubble-border);
+        border-bottom: 1px solid var(--bubble-border);
+        border-bottom-right-radius: 4px;
+        background: var(--bubble-bg);
+        transform: rotate(45deg);
+    }
+
+    .agent-reflections__bubble p {
+        color: #e3e8f0;
+        font-size: clamp(18px, 1.8vw, 22px);
+        line-height: 1.55;
+        letter-spacing: -.02em;
+    }
+
+    .agent-reflections__heart {
+        position: absolute;
+        right: 26px;
+        bottom: 20px;
+        color: var(--bubble-accent);
+        transform: rotate(-12deg);
+    }
+
+    .agent-reflections figcaption {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 22px 0 0 28px;
+        color: #c6d2e3;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .agent-reflections figcaption img {
+        object-fit: contain;
+        filter: brightness(0) invert(1);
+        opacity: .85;
+    }
+
+    .agent-reflections__voice--openclaw figcaption img { filter: none; opacity: 1; }
+
+    .agent-reflections__voice:nth-child(even) .agent-reflections__bubble::after { left: auto; right: 35px; }
+    .agent-reflections__voice:nth-child(even) figcaption { justify-content: flex-end; margin: 22px 28px 0 0; }
+
     @media (max-width: 760px) {
         .agent-reflections { padding-inline: 22px; }
-        .agent-reflections header { margin-bottom: 36px; }
-        .agent-reflections h2 { font-size: clamp(32px, 7.6vw, 46px); }
-        .agent-reflections__grid { grid-template-columns: 1fr; gap: 28px; }
-        .agent-reflections article p { margin-top: 14px; }
+        .agent-reflections header { margin-bottom: 40px; }
+        .agent-reflections h2 { font-size: clamp(32px, 7.6vw, 46px); white-space: normal; }
+        .agent-reflections__conversation { grid-template-columns: 1fr; gap: 36px; padding-inline: 4px; }
+        .agent-reflections__voice { grid-column: 1; width: 92%; margin: 0; transform: rotate(-1deg); }
+        .agent-reflections__voice:nth-child(even) { justify-self: end; transform: rotate(1deg); }
+        .agent-reflections__bubble { padding: 24px 24px 46px; border-radius: 24px; }
     }
 </style>
