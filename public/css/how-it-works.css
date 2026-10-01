@@ -10,12 +10,23 @@ body.how-it-works-page {
 
 .how-it-works-page .agent4-hero__copy > p {
     max-width: 800px;
+    margin-top: 40px;
+}
+
+.how-it-works-page .agent4-hero__actions {
+    margin-top: 44px;
 }
 
 @media (min-width: 761px) {
     .how-it-works-page .agent4-hero,
     .how-it-works-page .agent4-hero__inner {
         min-height: clamp(780px, 72svh, 920px);
+    }
+
+    .how-it-works-page .agent4-hero__inner {
+        align-items: flex-start;
+        padding-top: clamp(130px, 14svh, 185px);
+        padding-bottom: 220px;
     }
 }
 
