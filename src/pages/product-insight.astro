@@ -10,23 +10,9 @@ import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 import DashboardExample from '../components/monitoring/DashboardExample.astro';
 import 'boxicons/css/boxicons.min.css';
-const sections = [
-    {id:'audit-trail',view:'audit',label:'01 · Audit trail',first:'Every action',second:'leaves a trail.',
-        copy:'Find exactly what happened in your product, for example, why a reservation was cancelled or a payment never arrived. Your agent can look back at the original actions and data to find the answer.',
-        notes:[['Product language','Your agent sees what your product was doing, with the original data attached.'],['Everything in one history','From web traffic to scheduled work and errors, the history is already there to investigate.'],['Search and filter','Your agent can find the relevant moment without asking you to retrace your steps.']]},
-    {id:'traces',view:'trace',label:'02 · Traces',first:'Follow the action.',second:'See exactly what it set in motion.',
-        copy:'A problem can start somewhere entirely different from where you notice it. Your agent can follow exactly how one action leads to the next, all the way to the outcome.',
-        notes:[['The whole chain','Your agent can follow a problem back to the action that started it.'],['Across applications','The history stays connected as work moves between parts of your product.'],['Timing included','Your agent can see exactly where time was spent, including time spent waiting.']]},
-    {id:'issues',view:'issues',label:'03 · Issues',first:'Your product’s issues.',second:'Your agent’s work queue.',
-        copy:'Every product comes with a shared work queue for investigating and resolving failures. Your agent gets the evidence behind each issue, so it can work on the cause instead of asking you to explain the symptoms.',
-        notes:[['Recognize recurring problems','Your agent can tell a recurring problem from a one-off failure.'],['Keep the evidence','Each occurrence gives your agent the context to investigate what went wrong.'],['Track what needs attention','You and your agent share a clear view of what still needs fixing.']]},
-    {id:'documents',view:'documents',label:'04 · Documents',first:'See the data',second:'behind your product.',
-        copy:'Your data stays within reach. You or your agent can find exactly what your product has stored and export it whenever you need it elsewhere.',
-        notes:[['Browse collections','Explore the different kinds of data your product works with.'],['Inspect the details','Check the actual data behind something your product shows you.'],['Search directly','Find the records you need without writing SQL or building a separate administration screen.']]},
-    {id:'insights',view:'insights',label:'05 · Insights',first:'Slowdowns and errors.',second:'Visible at a glance.',
-        copy:'Your agent can see which part of your product is slow or failing, without waiting for you to describe the problem. The overview points straight to where it should investigate.',
-        notes:[['Spot the bottlenecks','Your agent can find what is making people wait.'],['Compare the workload','See which parts of your product are busiest.'],['Focus on trouble','Your agent can focus on the parts that need attention.']]},
-] as const;
+import { productInsightSections as sections } from '../data/product-insight';
+import AgentEvidence from '../components/monitoring/AgentEvidence.astro';
+
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +28,7 @@ const sections = [
         <header class="cloud-proof-hero cloud-proof-next-hero monitoring-hero">
             <span class="monitoring-sun" aria-hidden="true"></span>
             <div class="v4-shell cloud-proof-shell">
-                <p class="cloud-proof-hero__back"><a href="/how-it-works/#layers-title" data-browser-back><i class="bx bx-left-arrow-alt" aria-hidden="true"></i> Back</a></p>
+                <p class="cloud-proof-hero__back"><a href="/how-it-works/#product-insight" data-browser-back><i class="bx bx-left-arrow-alt" aria-hidden="true"></i> Back</a></p>
                 <p class="cloud-proof-next__eyebrow">Product insight</p>
                 <h1>Deep insight.<br /><span>Built in from day one.</span></h1>
                 <p class="cloud-proof-hero__lead">Fluxzero gives your agent all the evidence it needs to understand production.</p>
@@ -72,29 +58,7 @@ const sections = [
                     <p>Your agent gets more than an error message. It can follow the original request through your product and inspect the state at the moment things went wrong.</p>
                     <p>That history is already connected to the issue and the application version involved. Your agent can investigate what changed without first piecing together evidence from separate systems.</p>
                 </header>
-                <div class="monitoring-agent-example">
-                    <div>
-                        <h3>From production evidence<br />to a verified fix.</h3>
-                        <p>Your agent can investigate the failure as it happened, instead of guessing from the state your product is in now.</p>
-                        <p>It can turn that evidence into a failing test, then use the test to verify its fix. The same test helps prevent the problem from returning.</p>
-                    </div>
-                    <figure class="monitoring-context-card">
-                        <figcaption>Payment confirmation fails <span>Failure report</span></figcaption>
-                        <dl class="monitoring-context-card__facts">
-                            <div><dt>First seen in</dt><dd>Payments v1.8.4</dd></div>
-                            <div><dt>Occurrences</dt><dd>37</dd></div>
-                            <div><dt>Affected model</dt><dd>reservation-1042</dd></div>
-                        </dl>
-                        <h4>What happened</h4>
-                        <pre><code>{`POST /api/reservations
-  → ReserveTicket
-    → StartPayment
-      → PaymentProviderTimeout`}</code></pre>
-                        <dl class="monitoring-context-card__facts monitoring-context-card__state">
-                            <div><dt>State at failure</dt><dd>Awaiting payment</dd></div>
-                        </dl>
-                    </figure>
-                </div>
+                <AgentEvidence />
             </div>
         </section>
         <section class="cloud-proof-next-conclusion" aria-labelledby="monitoring-conclusion-title">

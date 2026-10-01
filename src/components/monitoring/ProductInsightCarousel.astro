@@ -1,0 +1,275 @@
+---
+import { productInsightSections } from '../../data/product-insight';
+import DashboardExample from './DashboardExample.astro';
+import AgentEvidence from './AgentEvidence.astro';
+
+const slides = [
+    ...productInsightSections.map(section => ({
+        ...section,
+        name: section.label.split(' · ')[1],
+    })),
+    {
+        id: 'working-with-ai', view: 'agent', name: 'Working with AI',
+        first: 'A treasure trove', second: 'for your agent.',
+        copy: 'Your agent gets more than an error message. It can follow the original request through your product and inspect the state at the moment things went wrong.',
+    },
+] as const;
+---
+
+<section class="cloud-proof-section cloud-proof-next-section insight-section" id="product-insight" aria-labelledby="product-insight-title">
+    <div class="v4-shell cloud-proof-shell">
+        <header class="cloud-proof-copy" data-reveal>
+            <p class="cloud-proof-next__number">12 · Product insight</p>
+            <h2 id="product-insight-title">Deep insight.<br /><span>Built in from day one.</span></h2>
+            <p>Fluxzero gives your agent all the evidence it needs to understand production. Every product starts with this depth of insight, without extra tools or setup.</p>
+        </header>
+
+        <div class="insight-carousel" data-insight-carousel role="region" aria-roledescription="carousel" aria-label="Product insight examples">
+            <div class="insight-carousel__toolbar" data-llms-exclude>
+                <div class="insight-carousel__picker" role="group" aria-label="Choose an insight example">
+                    {slides.map((slide, index) => (
+                        <button type="button" data-insight-picker={index} aria-pressed={index === 0 ? 'true' : 'false'} aria-controls={`insight-${slide.id}`}>
+                            {slide.name}
+                        </button>
+                    ))}
+                </div>
+                <div class="insight-carousel__navigation">
+                    <span class="insight-carousel__position" data-insight-position aria-live="polite" aria-atomic="true">01 / 06</span>
+                    <button type="button" data-insight-previous aria-label="Previous insight example" aria-controls="insight-slides" disabled><span aria-hidden="true">←</span></button>
+                    <button type="button" data-insight-next aria-label="Next insight example" aria-controls="insight-slides"><span aria-hidden="true">→</span></button>
+                </div>
+            </div>
+
+            <div class="insight-carousel__track" id="insight-slides" data-insight-track>
+                {slides.map((slide, index) => (
+                    <article class="insight-carousel__slide" id={`insight-${slide.id}`} data-insight-slide aria-labelledby={`insight-${slide.id}-title`}>
+                        <header class="insight-carousel__copy">
+                            <p class="insight-carousel__label">{String(index + 1).padStart(2, '0')} · {slide.name}</p>
+                            <h3 id={`insight-${slide.id}-title`}>{slide.first}{' '}<span>{slide.second}</span></h3>
+                            <p>{slide.copy}</p>
+                        </header>
+                        {slide.view === 'agent'
+                            ? <AgentEvidence headingLevel="h4" />
+                            : <DashboardExample view={slide.view} />}
+                    </article>
+                ))}
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .insight-section {
+        --monitoring-line: rgba(134, 181, 220, .18);
+    }
+
+    .insight-carousel {
+        margin-top: 52px;
+    }
+
+    .insight-carousel__toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 34px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--proof-line);
+    }
+
+    .insight-carousel__picker,
+    .insight-carousel__navigation {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .insight-carousel__picker {
+        flex-wrap: wrap;
+    }
+
+    .insight-carousel button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 10px 15px;
+        border: 1px solid var(--proof-line);
+        border-radius: 999px;
+        background: rgba(13, 25, 39, .65);
+        color: #a9b8ca;
+        font: 500 13px/1.4 var(--font-body);
+        cursor: pointer;
+        transition: background .18s, border-color .18s, color .18s;
+    }
+
+    .insight-carousel button:hover:not(:disabled),
+    .insight-carousel button[aria-pressed="true"] {
+        border-color: rgba(114, 184, 244, .65);
+        background: rgba(69, 142, 205, .15);
+        color: #cbe8ff;
+    }
+
+    .insight-carousel button:focus-visible {
+        outline: 2px solid var(--proof-blue);
+        outline-offset: 4px;
+    }
+
+    .insight-carousel button:disabled {
+        opacity: .3;
+        cursor: default;
+    }
+
+    .insight-carousel__navigation button {
+        width: 44px;
+        padding: 0;
+        font-size: 21px;
+    }
+
+    .insight-carousel__position {
+        margin-right: 8px;
+        color: #9aacc0;
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    .insight-carousel__track {
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 100%;
+        align-items: start;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-snap-type: x mandatory;
+        overscroll-behavior-x: contain;
+        scrollbar-width: none;
+    }
+
+    .insight-carousel__track::-webkit-scrollbar {
+        display: none;
+    }
+
+    .insight-carousel__slide {
+        min-width: 0;
+        scroll-snap-align: start;
+    }
+
+    .insight-carousel__copy {
+        margin-bottom: 32px;
+    }
+
+    .insight-carousel__label {
+        margin: 0 0 16px;
+        color: var(--proof-blue);
+        font-size: 11px;
+        font-weight: 650;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+    }
+
+    .insight-carousel__copy h3 {
+        max-width: 900px;
+        color: #eef6ff;
+        font-family: var(--font-display);
+        font-size: clamp(28px, 3vw, 38px);
+        line-height: 1.15;
+        letter-spacing: -.025em;
+    }
+
+    .insight-carousel__copy h3 span {
+        color: var(--proof-blue);
+    }
+
+    .insight-carousel__copy > p:last-child {
+        max-width: 830px;
+        margin-top: 18px;
+        color: #a9b8ca;
+        font-size: 17px;
+        line-height: 1.75;
+    }
+
+    .insight-carousel :global(.monitoring-agent-example__title) {
+        margin: 0 0 16px;
+        color: #eef6ff;
+        font-size: 30px;
+        line-height: 1.2;
+        font-weight: 700;
+        letter-spacing: -.03em;
+    }
+
+    @media (max-width: 600px) {
+        .insight-carousel { margin-top: 36px; }
+        .insight-carousel__toolbar { gap: 16px; }
+        .insight-carousel__navigation { margin-left: auto; }
+        .insight-carousel__copy > p:last-child { font-size: 16px; }
+    }
+</style>
+
+<script>
+    document.querySelectorAll<HTMLElement>('[data-insight-carousel]').forEach(carousel => {
+        const track = carousel.querySelector<HTMLElement>('[data-insight-track]')!;
+        const slides = [...carousel.querySelectorAll<HTMLElement>('[data-insight-slide]')];
+        const pickers = [...carousel.querySelectorAll<HTMLButtonElement>('[data-insight-picker]')];
+        const previous = carousel.querySelector<HTMLButtonElement>('[data-insight-previous]')!;
+        const next = carousel.querySelector<HTMLButtonElement>('[data-insight-next]')!;
+        const position = carousel.querySelector<HTMLElement>('[data-insight-position]')!;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        let active = 0;
+        let scrollFrame = 0;
+
+        const fitHeight = () => {
+            track.style.height = `${slides[active].offsetHeight}px`;
+        };
+
+        const update = (index: number) => {
+            active = index;
+            pickers.forEach((button, i) => button.setAttribute('aria-pressed', String(i === active)));
+            slides.forEach((slide, i) => { slide.inert = i !== active; });
+            previous.disabled = active === 0;
+            next.disabled = active === slides.length - 1;
+            position.textContent = `${String(active + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+            fitHeight();
+        };
+
+        const goTo = (index: number) => {
+            const target = Math.max(0, Math.min(slides.length - 1, index));
+            update(target);
+            track.scrollTo({ left: target * track.clientWidth, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
+        };
+
+        pickers.forEach((button, index) => {
+            button.addEventListener('click', () => goTo(index));
+            button.addEventListener('keydown', event => {
+                let target = index;
+                if (event.key === 'ArrowRight') target = (index + 1) % slides.length;
+                else if (event.key === 'ArrowLeft') target = (index + slides.length - 1) % slides.length;
+                else if (event.key === 'Home') target = 0;
+                else if (event.key === 'End') target = slides.length - 1;
+                else return;
+                event.preventDefault();
+                pickers[target].focus();
+                goTo(target);
+            });
+        });
+
+        previous.addEventListener('click', () => goTo(active - 1));
+        next.addEventListener('click', () => goTo(active + 1));
+        track.addEventListener('scroll', () => {
+            cancelAnimationFrame(scrollFrame);
+            scrollFrame = requestAnimationFrame(() => {
+                const index = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth)));
+                if (index !== active) update(index);
+            });
+        }, { passive: true });
+
+        const resizeObserver = new ResizeObserver(fitHeight);
+        slides.forEach(slide => resizeObserver.observe(slide));
+        window.addEventListener('resize', () => {
+            track.scrollTo({ left: active * track.clientWidth, behavior: 'instant' });
+            fitHeight();
+        });
+        update(0);
+    });
+</script>
