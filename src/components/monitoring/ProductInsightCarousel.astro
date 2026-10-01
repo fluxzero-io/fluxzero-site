@@ -21,7 +21,6 @@ const slides = [
         <header class="cloud-proof-copy" data-reveal>
             <p class="cloud-proof-next__number">06 · Product insight</p>
             <h2 id="product-insight-title">Deep insight.<br /><span>Built in from day one.</span></h2>
-            <p>Fluxzero gives your agent all the evidence it needs to understand production. Every product starts with this depth of insight, without extra tools or setup.</p>
         </header>
 
         <div class="insight-carousel" data-insight-carousel role="region" aria-roledescription="carousel" aria-label="Product insight examples">
@@ -32,10 +31,6 @@ const slides = [
                             {slide.name}
                         </button>
                     ))}
-                </div>
-                <div class="insight-carousel__navigation">
-                    <button type="button" data-insight-previous aria-label="Previous insight example" aria-controls="insight-slides" disabled><span aria-hidden="true">←</span></button>
-                    <button type="button" data-insight-next aria-label="Next insight example" aria-controls="insight-slides"><span aria-hidden="true">→</span></button>
                 </div>
             </div>
 
@@ -76,14 +71,10 @@ const slides = [
         border-bottom: 1px solid var(--proof-line);
     }
 
-    .insight-carousel__picker,
-    .insight-carousel__navigation {
+    .insight-carousel__picker {
         display: flex;
         align-items: center;
         gap: 8px;
-    }
-
-    .insight-carousel__picker {
         flex-wrap: wrap;
     }
 
@@ -102,7 +93,7 @@ const slides = [
         transition: background .18s, border-color .18s, color .18s;
     }
 
-    .insight-carousel button:hover:not(:disabled),
+    .insight-carousel button:hover,
     .insight-carousel button[aria-pressed="true"] {
         border-color: rgba(114, 184, 244, .65);
         background: rgba(69, 142, 205, .15);
@@ -112,17 +103,6 @@ const slides = [
     .insight-carousel button:focus-visible {
         outline: 2px solid var(--proof-blue);
         outline-offset: 4px;
-    }
-
-    .insight-carousel button:disabled {
-        opacity: .3;
-        cursor: default;
-    }
-
-    .insight-carousel__navigation button {
-        width: 44px;
-        padding: 0;
-        font-size: 21px;
     }
 
     .insight-carousel__track {
@@ -183,7 +163,6 @@ const slides = [
     @media (max-width: 600px) {
         .insight-carousel { margin-top: 36px; }
         .insight-carousel__toolbar { gap: 16px; }
-        .insight-carousel__navigation { margin-left: auto; }
         .insight-carousel__copy > p:last-child { font-size: 16px; }
     }
 </style>
@@ -193,8 +172,6 @@ const slides = [
         const track = carousel.querySelector<HTMLElement>('[data-insight-track]')!;
         const slides = [...carousel.querySelectorAll<HTMLElement>('[data-insight-slide]')];
         const pickers = [...carousel.querySelectorAll<HTMLButtonElement>('[data-insight-picker]')];
-        const previous = carousel.querySelector<HTMLButtonElement>('[data-insight-previous]')!;
-        const next = carousel.querySelector<HTMLButtonElement>('[data-insight-next]')!;
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
         let active = 0;
         let scrollFrame = 0;
@@ -207,8 +184,6 @@ const slides = [
             active = index;
             pickers.forEach((button, i) => button.setAttribute('aria-pressed', String(i === active)));
             slides.forEach((slide, i) => { slide.inert = i !== active; });
-            previous.disabled = active === 0;
-            next.disabled = active === slides.length - 1;
             fitHeight();
         };
 
@@ -233,8 +208,6 @@ const slides = [
             });
         });
 
-        previous.addEventListener('click', () => goTo(active - 1));
-        next.addEventListener('click', () => goTo(active + 1));
         track.addEventListener('scroll', () => {
             cancelAnimationFrame(scrollFrame);
             scrollFrame = requestAnimationFrame(() => {
