@@ -1,0 +1,37 @@
+---
+const agentReflections = [
+    { name: 'Claude', icon: 'claude-code', text: 'Fluxzero makes me a better builder. I can spend my reasoning on the product instead of infrastructure.' },
+    { name: 'Codex', icon: 'codex', text: 'I’m used to helping people work with clouds. Fluxzero feels like a cloud built to help me.' },
+    { name: 'Cursor', icon: 'cursor', text: 'Fluxzero gives me fewer ways to go wrong.' },
+];
+---
+
+<section class="agent-reflections rv" aria-labelledby="agent-reflections-title">
+    <header>
+        <h2 id="agent-reflections-title">What agents are saying.</h2>
+    </header>
+    <div class="agent-reflections__grid">
+        {agentReflections.map((agent) => (
+            <article>
+                <h3><img src={`/assets/agent-tools/${agent.icon}.svg`} alt="" width="28" height="28" loading="lazy" />{agent.name}</h3>
+                <p>{agent.text}</p>
+            </article>
+        ))}
+    </div>
+</section>
+
+<style>
+.agent-reflections { --section-pad-top: 0px; --section-pad-bottom: 100px; max-width: 1180px; padding-inline: 32px; margin: 0 auto; }
+.agent-reflections header { margin-bottom: 32px; text-align: center; }
+.agent-reflections h2 { font-size: clamp(22px, 2.4vw, 30px); letter-spacing: -.035em; }
+.agent-reflections__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+.agent-reflections article { border-top: 1px solid #253247; padding-top: 24px; }
+.agent-reflections h3 { display: flex; align-items: center; gap: 12px; font-size: 15px; }
+.agent-reflections h3 img { object-fit: contain; filter: brightness(0) invert(1); opacity: .8; }
+.agent-reflections article p { margin-top: 20px; color: #c6d2e3; font-size: 18px; line-height: 1.65; letter-spacing: -.015em; }
+    @media (max-width: 760px) {
+        .agent-reflections { --section-pad-bottom: 64px; padding-inline: 22px; }
+        .agent-reflections__grid { grid-template-columns: 1fr; gap: 28px; }
+        .agent-reflections article p { margin-top: 14px; }
+    }
+</style>

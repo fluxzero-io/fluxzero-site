@@ -1,0 +1,127 @@
+/* The agent-first homepage reuses the shared marketing shell and cloud comparison. */
+.agent-cloud-home .hero h1 {
+    max-width: 1000px;
+}
+
+.agent-cloud-home .hero-ctas .btn-s {
+    gap: 8px;
+}
+
+.agent-cloud-home #get-started {
+    scroll-margin-top: 80px;
+}
+
+.agent-cloud-home .homepage-start {
+    max-width: 904px;
+    --section-pad-top: clamp(96px, 8vw, 128px);
+    --section-pad-bottom: clamp(112px, 10vw, 156px);
+}
+
+.homepage-start .section-intro {
+    margin-bottom: 0;
+    text-align: center;
+}
+
+.homepage-start .eyebrow {
+    margin-bottom: 22px;
+    color: #83b9ff;
+    font-size: 12px;
+}
+
+.homepage-start h2 {
+    font-size: clamp(38px, 4.6vw, 56px);
+    line-height: 1.08;
+    letter-spacing: -.045em;
+}
+
+.agent-cloud-home .homepage-finish {
+    max-width: 964px;
+    --section-pad-top: clamp(48px, 5vw, 72px);
+    --section-pad-bottom: clamp(80px, 7vw, 112px);
+}
+
+.homepage-finish__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.homepage-finish__actions > .btn-p,
+.homepage-finish__actions > .btn-s {
+    min-width: 150px;
+    min-height: 48px;
+    justify-content: center;
+    gap: 10px;
+}
+
+.homepage-finish__chevron {
+    transition: transform 180ms ease;
+}
+
+[data-toggle-faq][aria-expanded="true"] .homepage-finish__chevron {
+    transform: rotate(180deg);
+}
+
+.homepage-faq {
+    padding-top: 64px;
+}
+
+.homepage-faq[hidden] {
+    display: none;
+}
+
+.homepage-faq .faq-q {
+    list-style: none;
+}
+
+.homepage-faq .faq-q::-webkit-details-marker {
+    display: none;
+}
+
+.homepage-faq .faq-item[open] .faq-a {
+    display: block;
+}
+
+.homepage-faq .faq-item[open] .faq-arrow {
+    transform: rotate(45deg);
+}
+
+.homepage-faq .faq-item:first-child {
+    border-top: 0;
+}
+
+.homepage-faq .faq-item:last-child {
+    border-bottom: 0;
+}
+
+.homepage-faq .faq-item {
+    overflow: hidden;
+}
+
+.homepage-finish button:focus-visible,
+.homepage-faq summary:focus-visible {
+    outline: 2px solid #69c7ff;
+    outline-offset: 4px;
+}
+
+@media (max-width: 760px) {
+    .agent-cloud-home .homepage-start {
+        --section-pad-bottom: 80px;
+    }
+
+    .homepage-start h2 {
+        font-size: clamp(30px, 7.6vw, 44px);
+    }
+
+    .homepage-faq {
+        padding-top: 48px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .homepage-finish__chevron {
+        transition: none;
+    }
+}

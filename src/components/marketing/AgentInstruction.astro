@@ -1,0 +1,45 @@
+---
+import '../../../public/css/start-building-v4.css';
+
+interface Props {
+    instructionSource?: boolean;
+}
+
+const { instructionSource = false } = Astro.props;
+const agentPrompt = 'Build my app with Fluxzero. Start at plugins.fluxzero.io';
+const compatibleAgents = [
+    { name: 'Claude Code', icon: '/assets/agent-tools/claude-code.svg', href: 'https://claude.com/product/claude-code' },
+    { name: 'Codex', icon: '/assets/agent-tools/codex.svg', href: 'https://openai.com/codex/' },
+    { name: 'Cursor', icon: '/assets/agent-tools/cursor.svg', href: 'https://cursor.com/' },
+    { name: 'Gemini CLI', icon: '/assets/agent-tools/gemini.svg', href: 'https://github.com/google-gemini/gemini-cli' },
+    { name: 'GitHub Copilot', icon: '/assets/agent-tools/github-copilot.svg', href: 'https://github.com/features/copilot' },
+];
+---
+
+<article class="agent-instruction-card" data-prompt-card>
+    <pre class="agent-instruction-card__prompt" data-llms-instruction={instructionSource || undefined}><code data-agent-prompt>{agentPrompt}</code></pre>
+    <button class="onboarding-copy" type="button" data-copy-prompt aria-label="Copy instruction" title="Copy instruction">
+        <svg class="onboarding-copy__copy" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"/></svg>
+        <svg class="onboarding-copy__check" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+    </button>
+    <p class="agent-instruction-card__status" role="status" aria-live="polite" data-copy-status></p>
+</article>
+
+<div class="compatible-agents" aria-labelledby="compatible-agents-title">
+    <p id="compatible-agents-title">Works with</p>
+    <ul aria-label="Coding agents supported by the Fluxzero plugin">
+        {compatibleAgents.map((agent) => (
+            <li>
+                <a
+                    class="compatible-agent"
+                    href={agent.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title={agent.name}
+                >
+                    <img src={agent.icon} alt={agent.name} width="24" height="24">
+                </a>
+            </li>
+        ))}
+    </ul>
+</div>
