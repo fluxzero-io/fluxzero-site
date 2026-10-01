@@ -8,6 +8,17 @@ body.how-it-works-page {
     mask-image: linear-gradient(to bottom, #000 calc(100% - var(--section-blend)), transparent);
 }
 
+.how-it-works-page .agent4-hero__copy > p {
+    max-width: 800px;
+}
+
+@media (min-width: 761px) {
+    .how-it-works-page .agent4-hero,
+    .how-it-works-page .agent4-hero__inner {
+        min-height: clamp(780px, 72svh, 920px);
+    }
+}
+
 .how-it-works-page main > :is(.agent4-canvas-section, .cloud-proof-section, .cloud-proof-next-conclusion) {
     isolation: isolate;
     border-top-color: transparent;

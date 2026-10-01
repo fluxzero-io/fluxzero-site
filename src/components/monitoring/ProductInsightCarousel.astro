@@ -19,7 +19,7 @@ const slides = [
 <section class="cloud-proof-section cloud-proof-next-section insight-section" id="product-insight" aria-labelledby="product-insight-title">
     <div class="v4-shell cloud-proof-shell">
         <header class="cloud-proof-copy" data-reveal>
-            <p class="cloud-proof-next__number">12 · Product insight</p>
+            <p class="cloud-proof-next__number">06 · Product insight</p>
             <h2 id="product-insight-title">Deep insight.<br /><span>Built in from day one.</span></h2>
             <p>Fluxzero gives your agent all the evidence it needs to understand production. Every product starts with this depth of insight, without extra tools or setup.</p>
         </header>
@@ -34,17 +34,15 @@ const slides = [
                     ))}
                 </div>
                 <div class="insight-carousel__navigation">
-                    <span class="insight-carousel__position" data-insight-position aria-live="polite" aria-atomic="true">01 / 06</span>
                     <button type="button" data-insight-previous aria-label="Previous insight example" aria-controls="insight-slides" disabled><span aria-hidden="true">←</span></button>
                     <button type="button" data-insight-next aria-label="Next insight example" aria-controls="insight-slides"><span aria-hidden="true">→</span></button>
                 </div>
             </div>
 
             <div class="insight-carousel__track" id="insight-slides" data-insight-track>
-                {slides.map((slide, index) => (
+                {slides.map(slide => (
                     <article class="insight-carousel__slide" id={`insight-${slide.id}`} data-insight-slide aria-labelledby={`insight-${slide.id}-title`}>
                         <header class="insight-carousel__copy">
-                            <p class="insight-carousel__label">{String(index + 1).padStart(2, '0')} · {slide.name}</p>
                             <h3 id={`insight-${slide.id}-title`}>{slide.first}{' '}<span>{slide.second}</span></h3>
                             <p>{slide.copy}</p>
                         </header>
@@ -127,14 +125,6 @@ const slides = [
         font-size: 21px;
     }
 
-    .insight-carousel__position {
-        margin-right: 8px;
-        color: #9aacc0;
-        font-size: 12px;
-        font-variant-numeric: tabular-nums;
-        white-space: nowrap;
-    }
-
     .insight-carousel__track {
         display: grid;
         grid-auto-flow: column;
@@ -158,15 +148,6 @@ const slides = [
 
     .insight-carousel__copy {
         margin-bottom: 32px;
-    }
-
-    .insight-carousel__label {
-        margin: 0 0 16px;
-        color: var(--proof-blue);
-        font-size: 11px;
-        font-weight: 650;
-        letter-spacing: .12em;
-        text-transform: uppercase;
     }
 
     .insight-carousel__copy h3 {
@@ -214,7 +195,6 @@ const slides = [
         const pickers = [...carousel.querySelectorAll<HTMLButtonElement>('[data-insight-picker]')];
         const previous = carousel.querySelector<HTMLButtonElement>('[data-insight-previous]')!;
         const next = carousel.querySelector<HTMLButtonElement>('[data-insight-next]')!;
-        const position = carousel.querySelector<HTMLElement>('[data-insight-position]')!;
         const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
         let active = 0;
         let scrollFrame = 0;
@@ -229,7 +209,6 @@ const slides = [
             slides.forEach((slide, i) => { slide.inert = i !== active; });
             previous.disabled = active === 0;
             next.disabled = active === slides.length - 1;
-            position.textContent = `${String(active + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
             fitHeight();
         };
 

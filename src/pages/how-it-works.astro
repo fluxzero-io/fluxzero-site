@@ -15,12 +15,6 @@ import FoundationSections from '../components/marketing/FoundationSections.astro
 import ProductInsightCarousel from '../components/monitoring/ProductInsightCarousel.astro';
 import 'boxicons/css/boxicons.min.css';
 
-const cloudLayers = [
-    { name: 'Model', icon: 'bx-cube', items: ['State', 'history', 'relationships', 'search'] },
-    { name: 'Interaction', icon: 'bx-transfer-alt', items: ['Commands', 'events', 'queries', 'HTTP & WebSocket', 'schedules'] },
-    { name: 'Policy', icon: 'bx-shield-quarter', items: ['Validation', 'authorization', 'invariants', 'data protection'] },
-    { name: 'Cloud', icon: 'bx-layer', items: ['Cross-app routing', 'ordering', 'concurrency', 'recovery', 'observability', 'scale'] },
-];
 ---
 
 <!DOCTYPE html>
@@ -41,7 +35,7 @@ const cloudLayers = [
         <div class="v4-shell agent4-hero__inner">
             <div class="agent4-hero__copy">
                 <h1 id="agent4-title" data-reveal>AI lets anyone build products.<br><span>Time for the cloud to catch up.</span></h1>
-                <p data-reveal data-reveal-delay="1">Fluxzero is the cloud for a new generation of builders.<br>You decide what to build. Your agent builds it. Fluxzero makes it run.</p>
+                <p data-reveal data-reveal-delay="1">Enterprises expect critical systems to keep their promises under pressure. That standard matters long before a product reaches enterprise size. With Fluxzero, it is built into every product from day zero.</p>
                 <div class="v4-actions agent4-hero__actions" data-reveal data-reveal-delay="2">
                     <a class="v4-button v4-button--primary" href="/get-started/">Get started <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
                     <a class="v4-button v4-button--secondary" href="/docs/">Read the technical docs</a>
@@ -50,27 +44,9 @@ const cloudLayers = [
         </div>
     </section>
 
-    <section class="agent4-layers agent4-canvas-section" aria-labelledby="layers-title">
-        <div class="v4-shell agent4-layers__layout">
-            <header class="agent4-layers__copy" data-reveal>
-                <h2 id="layers-title">Everything your product<br><span>needs to run.</span></h2>
-                <p>Enterprises expect critical systems to keep their promises under pressure. That standard matters long before a product reaches enterprise size. With Fluxzero, it is built into every product from day zero.</p>
-            </header>
-            <div class="agent4-layer-list" data-reveal data-reveal-delay="1">
-                {cloudLayers.map((layer) => (
-                    <article>
-                        <i class={`bx ${layer.icon}`} aria-hidden="true"></i>
-                        <h3>{layer.name}</h3>
-                        <p>{layer.items.join(' / ')}</p>
-                    </article>
-                ))}
-            </div>
-        </div>
-    </section>
-
-    <FoundationSections insightHref="#product-insight" />
-
-    <ProductInsightCarousel />
+    <FoundationSections>
+        <ProductInsightCarousel slot="auditability" />
+    </FoundationSections>
 
     <section class="cloud-proof-next-conclusion" aria-labelledby="monitoring-conclusion-title">
         <div class="v4-shell cloud-proof-shell">
