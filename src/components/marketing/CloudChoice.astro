@@ -1,14 +1,14 @@
 ---
 const choiceOptions = [
     {
-        title: 'Fluxzero',
-        icon: 'bx-check-circle',
-        copy: 'For builders who want to focus on product features and expect the technology underneath to just work.',
+        title: 'Other clouds',
+        featured: false,
+        copy: 'For engineering teams that want full control over how their infrastructure is designed and operated, from service topology to capacity planning and failure recovery.',
     },
     {
-        title: 'A component cloud',
-        icon: 'bx-circle',
-        copy: 'For engineering teams that want full control over how their infrastructure is designed and operated, from service topology to capacity planning and failure recovery.',
+        title: 'Fluxzero',
+        featured: true,
+        copy: 'For builders who want to focus on product features and expect the technology underneath to just work.',
     },
 ];
 ---
@@ -18,9 +18,9 @@ const choiceOptions = [
         <h2 id="decision-title">When to choose <span>Fluxzero.</span></h2>
     </header>
     <div class="cloud-choice__options">
-        {choiceOptions.map((option, index) => (
-            <article>
-                <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" />{index === 0 && <path d="m10 16 4 4 8-8" />}</svg>
+        {choiceOptions.map((option) => (
+            <article class:list={{ 'is-featured': option.featured }}>
+                <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="12" />{option.featured && <path d="m10 16 4 4 8-8" />}</svg>
                 <div>
                     <h3>{option.title}</h3>
                     <p>{option.copy}</p>
@@ -37,10 +37,10 @@ const choiceOptions = [
     .cloud-choice__options { display: grid; margin: 0 auto; grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .cloud-choice__options article { display: grid; min-height: 145px; padding: 0 54px 0 0; grid-template-columns: 34px minmax(0, 1fr); align-items: start; gap: 18px; }
     .cloud-choice__options article + article { padding-left: 54px; padding-right: 0; border-left: 1px solid rgba(124, 151, 179, .28); }
-    .cloud-choice__options svg { width: 30px; height: 30px; fill: none; stroke: #83bff4; stroke-width: 2; }
-    .cloud-choice__options article:last-child svg { stroke: #73869b; }
-    .cloud-choice h3 { color: #bcdfff; font-family: var(--font-body); font-size: 22px; font-weight: 650; }
-    .cloud-choice article:last-child h3 { color: #d0d8e2; }
+    .cloud-choice__options svg { width: 30px; height: 30px; fill: none; stroke: #73869b; stroke-width: 2; }
+    .cloud-choice__options .is-featured svg { stroke: #83bff4; }
+    .cloud-choice h3 { color: #d0d8e2; font-family: var(--font-body); font-size: 22px; font-weight: 650; }
+    .cloud-choice .is-featured h3 { color: #bcdfff; }
     .cloud-choice__options p { margin-top: 13px; color: #9aa9bb; font-size: 16px; line-height: 1.58; }
     @media (max-width: 760px) {
         .cloud-choice h2 { font-size: clamp(32px, 7.6vw, 46px); }
