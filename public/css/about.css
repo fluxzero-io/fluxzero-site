@@ -69,15 +69,21 @@ body.about-page::before {
 }
 
 .about-actions {
-    margin-top: 36px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: clamp(56px, 6vw, 80px);
 }
 
-.about-actions .v4-button {
-    min-height: 50px;
-    gap: 12px;
-    border-radius: 999px;
-    font-size: 14px;
-    font-weight: 600;
+.about-actions .btn-p,
+.about-actions .btn-s {
+    min-width: 150px;
+    justify-content: center;
+}
+
+.about-actions .btn-s {
+    gap: 8px;
 }
 
 @media (max-width: 760px) {
