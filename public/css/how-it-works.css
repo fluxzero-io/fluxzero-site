@@ -1,0 +1,40 @@
+body.how-it-works-page {
+    --section-base: #030507;
+    --section-blend: clamp(80px, 12vw, 160px);
+    background: var(--section-base);
+}
+
+.how-it-works-page .agent4-hero__backdrop {
+    mask-image: linear-gradient(to bottom, #000 calc(100% - var(--section-blend)), transparent);
+}
+
+.how-it-works-page main > :is(.agent4-canvas-section, .cloud-proof-section, .cloud-proof-next-conclusion) {
+    isolation: isolate;
+    border-top-color: transparent;
+}
+
+/* Blend only the backgrounds; keep text, diagrams and controls above the fade. */
+.how-it-works-page main > :is(.agent4-canvas-section, .cloud-proof-section, .cloud-proof-next-conclusion)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        to bottom,
+        var(--section-base),
+        transparent var(--section-blend),
+        transparent calc(100% - var(--section-blend)),
+        var(--section-base)
+    );
+}
+
+.how-it-works-page main > :is(.agent4-canvas-section, .cloud-proof-section, .cloud-proof-next-conclusion) > .v4-shell {
+    position: relative;
+    z-index: 1;
+}
+
+/* Keep the closing glow and curved horizon intact. */
+.how-it-works-page main > .cloud-proof-next-conclusion::after {
+    background: linear-gradient(to bottom, var(--section-base), transparent var(--section-blend));
+}
