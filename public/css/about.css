@@ -60,20 +60,28 @@ body.about-page::before {
 }
 
 .about-team {
-    max-width: 740px;
+    max-width: 820px;
     margin-top: clamp(64px, 6vw, 88px);
-    color: var(--text-secondary);
-    font-size: 18px;
-    line-height: 1.8;
+    color: #b6c0ce;
+    font-size: clamp(20px, 2vw, 24px);
+    line-height: 1.6;
     text-wrap: pretty;
+}
+
+.about-actions {
+    margin-top: 36px;
+}
+
+.about-actions .v4-button {
+    min-height: 50px;
+    gap: 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 @media (max-width: 760px) {
     .about-main {
         padding: 132px 24px 88px;
-    }
-
-    .about-team {
-        font-size: 16px;
     }
 }
