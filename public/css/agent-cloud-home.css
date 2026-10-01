@@ -43,9 +43,9 @@
 
 .agent-cloud-home .comparison-v4__heading > h2,
 .agent-cloud-home .comparison-v4__heading > p {
-    margin-left: 0;
-    margin-right: 0;
-    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
 }
 
 .agent-cloud-home .comparison-v4__actions {
