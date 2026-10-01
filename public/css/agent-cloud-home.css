@@ -70,15 +70,6 @@
     font-size: 13px;
 }
 
-.agent-cloud-home .homepage-finish {
-    isolation: isolate;
-    overflow: hidden;
-    max-width: none;
-    padding-inline: 0;
-    --section-pad-top: clamp(48px, 5vw, 72px);
-    --section-pad-bottom: clamp(170px, 16vw, 224px);
-}
-
 .homepage-finish__actions {
     display: flex;
     align-items: center;
@@ -107,6 +98,7 @@
 .homepage-faq {
     padding-inline: clamp(16px, 3vw, 32px);
     padding-top: 64px;
+    text-align: left;
 }
 
 .homepage-faq[hidden] {
