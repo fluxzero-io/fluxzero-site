@@ -1,0 +1,124 @@
+---
+interface Props {
+    kind: 'runtime' | 'data' | 'trace' | 'access';
+}
+const { kind } = Astro.props;
+---
+
+<div class:list={['foundation-diagram', `foundation-diagram--${kind}`]} aria-hidden="true">
+    <svg viewBox="0 0 520 210" fill="none" focusable="false">
+        {kind === 'runtime' && <>
+            <ellipse class="orbit" cx="258" cy="109" rx="166" ry="66" />
+            <ellipse class="orbit" cx="258" cy="109" rx="108" ry="43" />
+            <path class="wire" d="M86 109H236M280 109H326Q342 109 342 93V61Q342 49 358 49H389M280 109H326Q342 109 342 125V155Q342 169 358 169H389" />
+            <path class="signal" pathLength="100" d="M86 109H236M280 109H326Q342 109 342 93V61Q342 49 358 49H389" />
+            <path class="signal delayed" pathLength="100" d="M280 109H326Q342 109 342 125V155Q342 169 358 169H389" />
+            <rect class="node" x="38" y="85" width="48" height="48" rx="14" />
+            <use class="icon" href="#pricing-icon-domain" x="50" y="97" width="24" height="24" />
+            <rect class="hub-halo" x="214" y="65" width="88" height="88" rx="26" />
+            <rect class="hub" x="226" y="77" width="64" height="64" rx="19" />
+            <use class="icon bright" href="#pricing-icon-routing" x="242" y="93" width="32" height="32" />
+            {[21, 141].map(y => <g>
+                <rect class="node" x="389" y={y} width="90" height="56" rx="10" />
+                <path class="wire" d={`M389 ${y + 16}H479`} />
+                <circle class="status" cx="400" cy={y + 8} r="2.5" />
+                <path class="app-line" d={`M401 ${y + 29}H435M401 ${y + 39}H459`} />
+            </g>)}
+            <text x="62" y="157" text-anchor="middle">REQUEST</text>
+            <text x="258" y="173" text-anchor="middle">RUNTIME</text>
+        </>}
+
+        {kind === 'data' && <>
+            <path class="wire" d="M42 55H138Q163 55 183 80L212 109M42 109H212M42 163H138Q163 163 183 138L212 109M296 109H330Q350 109 364 94L398 55M296 109H398M296 109H330Q350 109 364 124L398 163" />
+            <path class="signal" pathLength="100" d="M42 55H138Q163 55 183 80L212 109M296 109H330Q350 109 364 94L398 55" />
+            <path class="signal delayed" pathLength="100" d="M42 163H138Q163 163 183 138L212 109M296 109H398" />
+            <path class="signal warm" pathLength="100" d="M42 109H212M296 109H330Q350 109 364 124L398 163" />
+            {[39, 93, 147].map((y, i) => <g>
+                <rect class="message" x={42 + i * 12} y={y} width="52" height="32" rx="7" />
+                <path class="app-line" d={`M${54 + i * 12} ${y + 12}h27M${54 + i * 12} ${y + 20}h16`} />
+                <rect class="node" x="398" y={y} width="82" height="32" rx="7" />
+                <circle class="status" cx="412" cy={y + 16} r="3" />
+                <path class="app-line" d={`M426 ${y + 16}h39`} />
+            </g>)}
+            <ellipse class="hub-halo" cx="254" cy="109" rx="66" ry="70" />
+            <path class="hub" d="M212 72V146C212 171 296 171 296 146V72Z" />
+            <path class="storage-ring" d="M212 98C212 123 296 123 296 98M212 122C212 147 296 147 296 122" />
+            <ellipse class="hub" cx="254" cy="72" rx="42" ry="16" />
+            <ellipse class="storage-core" cx="254" cy="72" rx="23" ry="7" />
+        </>}
+
+        {kind === 'trace' && <>
+            <rect class="trace-panel" x="34" y="15" width="452" height="184" rx="14" />
+            <path class="trace-grid" d="M170 30V184M242 30V184M314 30V184M386 30V184M458 30V184" />
+            <path class="wire" d="M53 56V171M53 97H64M53 134H64M53 171H64" />
+            <circle class="status" cx="53" cy="46" r="4" />
+            <text x="67" y="50">Request</text>
+            <text x="67" y="101">Handler</text>
+            <text x="67" y="138">State</text>
+            <text x="67" y="175">Response</text>
+            <rect class="trace-bar" x="170" y="36" width="286" height="20" rx="5" />
+            <rect class="trace-bar secondary" x="202" y="87" width="183" height="20" rx="5" />
+            <rect class="trace-bar tertiary" x="256" y="124" width="98" height="20" rx="5" />
+            <rect class="trace-bar" x="394" y="161" width="62" height="20" rx="5" />
+            <path class="trace-link" d="M202 56V80M256 107V117M354 144V154H394" />
+            <g class="trace-scan">
+                <path d="M170 26V189" />
+                <circle cx="170" cy="26" r="3" />
+            </g>
+        </>}
+
+        {kind === 'access' && <>
+            <ellipse class="orbit" cx="260" cy="107" rx="205" ry="88" />
+            <rect class="boundary" x="46" y="39" width="180" height="140" rx="24" />
+            <rect class="boundary" x="294" y="39" width="180" height="140" rx="24" />
+            <path class="wire" d="M159 109H216M304 109H361" />
+            <path class="signal" pathLength="100" d="M159 109H216M304 109H361" />
+            {[107, 361].map(x => <g>
+                <rect class="node" x={x} y="83" width="52" height="52" rx="14" />
+                <use class="icon" href="#pricing-icon-hardware" x={x + 13} y="96" width="26" height="26" />
+                <circle class="status" cx={x + 45} cy="88" r="4" />
+            </g>)}
+            <text x="136" y="162" text-anchor="middle">ISOLATED APP</text>
+            <text x="384" y="162" text-anchor="middle">ISOLATED APP</text>
+            <circle class="hub-halo" cx="260" cy="104" r="60" />
+            <path class="hub shield" d="M260 54L300 70V104C300 128 281 148 260 159C239 148 220 128 220 104V70Z" />
+            <path class="shield-check" d="M244 104L255 115L278 90" />
+        </>}
+    </svg>
+</div>
+
+<style>
+    .foundation-diagram { position: relative; margin: 18px -12px 22px; color: var(--foundation-accent, #79bdff); }
+    .foundation-diagram::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, color-mix(in srgb, currentColor 10%, transparent), transparent 66%); }
+    svg { position: relative; display: block; width: 100%; height: auto; overflow: visible; }
+    text { fill: #a1adbb; font: 10px ui-monospace, monospace; letter-spacing: .06em; }
+    .wire { stroke: currentColor; stroke-opacity: .27; stroke-width: 1; }
+    .orbit { stroke: currentColor; stroke-opacity: .12; }
+    .node { fill: #131c27; stroke: currentColor; stroke-opacity: .45; }
+    .hub { fill: #192e43; stroke: currentColor; stroke-opacity: .85; stroke-width: 1.25; }
+    .hub-halo { fill: currentColor; fill-opacity: .035; stroke: currentColor; stroke-opacity: .14; }
+    .icon { stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .bright { color: #c4e4ff; }
+    .status { fill: #8ee1cc; filter: drop-shadow(0 0 4px #8ee1cc66); }
+    .app-line { stroke: currentColor; stroke-opacity: .45; stroke-width: 2; stroke-linecap: round; }
+    .signal { stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 4 96; filter: drop-shadow(0 0 4px currentColor); animation: signal-travel 5s linear infinite; }
+    .delayed { animation-delay: -2.5s; }
+    .warm { color: #e7b888; animation-delay: -1.4s; }
+    .message { fill: #192a2b; stroke: currentColor; stroke-opacity: .6; }
+    .foundation-diagram--data .hub { fill: #182f30; }
+    .storage-ring { stroke: currentColor; stroke-opacity: .5; }
+    .storage-core { fill: currentColor; fill-opacity: .2; }
+    .trace-panel { fill: #101820; stroke: currentColor; stroke-opacity: .2; }
+    .trace-grid { stroke: currentColor; stroke-opacity: .08; }
+    .trace-bar { fill: #75bfff; fill-opacity: .25; stroke: #75bfff; stroke-opacity: .65; }
+    .trace-bar.secondary { fill: #ab9ce9; stroke: #ab9ce9; }
+    .trace-bar.tertiary { fill: #7edcca; stroke: #7edcca; }
+    .trace-link { stroke: currentColor; stroke-opacity: .4; stroke-dasharray: 2 3; }
+    .trace-scan { stroke: #c4e4ff; fill: #c4e4ff; opacity: .6; animation: trace-scan 7s ease-in-out infinite; }
+    .boundary { fill: currentColor; fill-opacity: .035; stroke: currentColor; stroke-opacity: .3; stroke-dasharray: 3 5; }
+    .shield { fill: #19302f; }
+    .shield-check { stroke: #aeefd8; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    @keyframes signal-travel { to { stroke-dashoffset: -100; } }
+    @keyframes trace-scan { 0%, 12% { transform: translateX(0); opacity: 0; } 22%, 80% { opacity: .6; } 95%, 100% { transform: translateX(286px); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .signal, .trace-scan { animation: none; } .trace-scan { display: none; } }
+</style>

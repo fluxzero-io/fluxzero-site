@@ -1727,368 +1727,68 @@
         }
 
         .pricing-v2-included-grid {
-            position: relative;
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
-            isolation: isolate;
+            gap: 20px;
         }
 
         .pricing-v2-included-group {
+            --foundation-accent: #79bdff;
             position: relative;
-            display: flex;
-            flex-direction: column;
-            min-height: 360px;
-            padding: 26px 24px 24px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.07);
+            padding: 28px;
+            border-radius: 18px;
+            border: 1px solid rgba(150, 185, 220, .16);
             background:
-                linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.012)),
-                rgba(8, 10, 14, 0.52);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.045),
-                0 18px 44px rgba(0, 0, 0, 0.18);
+                radial-gradient(ellipse at 60% 0%, color-mix(in srgb, var(--foundation-accent) 9%, transparent), transparent 65%),
+                #10151c;
+            box-shadow: inset 0 1px 0 #ffffff05, 0 16px 40px #0002;
+            transition: border-color .3s ease, box-shadow .3s ease;
             overflow: hidden;
         }
 
-        .pricing-v2-included-group::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at var(--glow-x, 82%) var(--glow-y, 10%), rgba(0, 179, 255, var(--glow-a, 0.045)), transparent 38%),
-                radial-gradient(circle at var(--glow-x2, 72%) var(--glow-y2, 2%), rgba(125, 232, 218, var(--glow-b, 0.026)), transparent 34%);
-            pointer-events: none;
-        }
-
-        .pricing-v2-included-group:nth-child(1) {
-            --glow-x: 140%;
-            --glow-y: -36%;
-            --glow-a: 0.055;
-            --glow-x2: 118%;
-            --glow-y2: -18%;
-            --glow-b: 0.032;
-        }
-
-        .pricing-v2-included-group:nth-child(2) {
-            --glow-x: 72%;
-            --glow-y: 0%;
-            --glow-a: 0.105;
-            --glow-x2: 58%;
-            --glow-y2: -8%;
-            --glow-b: 0.052;
-        }
-
-        .pricing-v2-included-group:nth-child(3) {
-            --glow-x: 132%;
-            --glow-y: -46%;
-            --glow-a: 0.025;
-            --glow-b: 0.014;
-        }
-
-        .pricing-v2-included-group:nth-child(4) {
-            --glow-x: 104%;
-            --glow-y: -26%;
-            --glow-a: 0.035;
-            --glow-b: 0.018;
-        }
+        .pricing-v2-included-group.foundation-data { --foundation-accent: #7edcca; }
+        .pricing-v2-included-group.foundation-trace { --foundation-accent: #a7b6ed; }
+        .pricing-v2-included-group.foundation-access { --foundation-accent: #8ad9ba; }
 
         .pricing-v2-included-group h3 {
-            position: relative;
-            color: rgba(244, 247, 255, 0.94);
-            font-size: 18px;
+            color: #f4f7ff;
+            font-size: 23px;
             font-weight: 700;
-            line-height: 1.18;
-            letter-spacing: -0.02em;
+            line-height: 1.2;
+            letter-spacing: -.025em;
         }
 
         .pricing-v2-included-group .pricing-v2-list {
-            position: relative;
-            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px 20px;
+            padding-top: 22px;
+            margin: 0;
+            border-top: 1px solid rgba(150, 185, 220, .12);
         }
 
-        .pricing-v2-included-visual {
-            position: relative;
-            width: 100%;
-            height: 136px;
-            margin-top: auto;
-            padding: 16px 4px 4px;
-            overflow: hidden;
+        .pricing-v2-included-group .pricing-v2-list li {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
-        .pricing-v2-included-node,
-        .pricing-v2-included-bar,
-        .pricing-v2-included-dot,
-        .pricing-v2-included-segment,
-        .pricing-v2-included-shield,
-        .pricing-v2-included-ring {
-            position: absolute;
-            display: block;
-            transform: scale(0.9);
-            transform-origin: center;
+        .foundation-access .pricing-v2-list li:last-child { grid-column: 1 / -1; }
+
+        .pricing-v2-included-group .pricing-v2-feature-icon {
+            color: var(--foundation-accent);
         }
 
-        .pricing-v2-included-node {
-            width: 34px;
-            height: 24px;
-            border-radius: 8px;
-            border: 1px solid rgba(125, 232, 218, 0.24);
-            background: rgba(125, 232, 218, 0.045);
-            box-shadow: 0 0 14px rgba(85, 216, 196, 0.055);
-            z-index: 2;
+        @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+            .pricing-v2-included-group:hover {
+                border-color: color-mix(in srgb, var(--foundation-accent) 45%, transparent);
+                box-shadow: inset 0 1px 0 #ffffff08, 0 16px 40px #0003;
+            }
         }
 
-        .pricing-v2-included-bar {
-            height: 1px;
-            border-radius: 999px;
-            background: linear-gradient(90deg, transparent, rgba(125, 232, 218, 0.34), transparent);
-            animation: pricingIncludedPulse 3.6s ease-in-out infinite;
-        }
-
-        .pricing-v2-included-dot {
-            width: 30px;
-            height: 4px;
-            border-radius: 999px;
-            background: linear-gradient(90deg, transparent, rgba(0, 179, 255, 0.5), rgba(221, 247, 255, 0.5));
-            box-shadow:
-                0 0 11px rgba(0, 179, 255, 0.16),
-                0 0 20px rgba(0, 179, 255, 0.055);
-            opacity: 0;
-            transform: translateY(-1.5px) scale(0.9);
-            animation: pricingIncludedFlow 5.4s linear infinite;
-            z-index: 1;
-        }
-
-        .pricing-v2-included-hosting .pricing-v2-included-node {
-            width: 48px;
-            height: 32px;
-            background-clip: padding-box;
-        }
-
-        .pricing-v2-included-hosting .pricing-v2-included-node:nth-child(1) {
-            left: 8px;
-            top: 52px;
-            border-color: rgba(255, 194, 120, 0.24);
-            background:
-                linear-gradient(rgba(255, 194, 120, 0.06), rgba(255, 194, 120, 0.06)),
-                #0d1116;
-            box-shadow: 0 0 14px rgba(255, 194, 120, 0.045);
-        }
-
-        .pricing-v2-included-hosting .pricing-v2-included-segment {
-            left: 42%;
-            top: 44px;
-            width: 46px;
-            height: 48px;
-            border-radius: 16px;
-            border: 1px solid rgba(125, 232, 218, 0.28);
-            background:
-                linear-gradient(rgba(125, 232, 218, 0.12) 1px, transparent 1px),
-                rgba(125, 232, 218, 0.045);
-            background-size: 100% 12px;
-            box-shadow: 0 0 16px rgba(85, 216, 196, 0.06);
-        }
-
-        .pricing-v2-included-hosting .pricing-v2-included-node:nth-child(3),
-        .pricing-v2-included-hosting .pricing-v2-included-node:nth-child(4) {
-            border-color: rgba(111, 188, 255, 0.26);
-            background:
-                linear-gradient(rgba(111, 188, 255, 0.075), rgba(111, 188, 255, 0.075)),
-                #0d1116;
-            box-shadow: 0 0 14px rgba(111, 188, 255, 0.055);
-        }
-
-        .pricing-v2-included-hosting .pricing-v2-included-node:nth-child(3) { right: 56px; top: 28px; }
-        .pricing-v2-included-hosting .pricing-v2-included-node:nth-child(4) { right: 14px; top: 78px; }
-        .pricing-v2-included-hosting .pricing-v2-included-bar:nth-child(5) { left: 56px; right: calc(58% - 8px); top: 68px; }
-        .pricing-v2-included-hosting .pricing-v2-included-bar:nth-child(6) { left: calc(42% + 46px); right: 124px; top: 52px; transform: rotate(-14deg) scale(0.9); transform-origin: left center; opacity: 0.28; }
-        .pricing-v2-included-hosting .pricing-v2-included-bar:nth-child(7) { left: calc(42% + 46px); right: 82px; top: 86px; transform: rotate(4deg) scale(0.9); transform-origin: left center; opacity: 0.28; }
-        .pricing-v2-included-hosting .pricing-v2-included-dot { animation-duration: 3.4s; }
-        .pricing-v2-included-hosting .pricing-v2-included-dot:nth-child(8) { left: 34px; top: 67px; animation-name: pricingIncludedRuntimeIn; }
-        .pricing-v2-included-hosting .pricing-v2-included-dot:nth-child(9) { left: calc(42% + 28px); top: 51px; animation-name: pricingIncludedRuntimeOutA; animation-delay: -0.9s; }
-        .pricing-v2-included-hosting .pricing-v2-included-dot:nth-child(10) { left: calc(42% + 28px); top: 85px; animation-name: pricingIncludedRuntimeOutB; animation-delay: -1.8s; background: linear-gradient(90deg, transparent, rgba(111, 188, 255, 0.38), rgba(221, 247, 255, 0.42)); }
-
-        .pricing-v2-included-data .pricing-v2-included-node {
-            width: 52px;
-            height: 12px;
-            border-radius: 999px;
-        }
-        .pricing-v2-included-data .pricing-v2-included-bar {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(125, 232, 218, 0.2), transparent);
-        }
-        .pricing-v2-included-data .pricing-v2-included-dot {
-            background: linear-gradient(90deg, transparent, rgba(0, 179, 255, 0.62), rgba(221, 247, 255, 0.62));
-            box-shadow:
-                0 0 12px rgba(0, 179, 255, 0.2),
-                0 0 24px rgba(0, 179, 255, 0.07);
-        }
-        .pricing-v2-included-data .pricing-v2-included-node:nth-child(1) { left: 4px; top: 38px; }
-        .pricing-v2-included-data .pricing-v2-included-node:nth-child(2) { left: 4px; top: 62px; }
-        .pricing-v2-included-data .pricing-v2-included-node:nth-child(3) { left: 4px; top: 86px; }
-        .pricing-v2-included-data .pricing-v2-included-bar:nth-child(4) { left: 76px; right: 18px; top: 44px; animation-delay: -0.9s; }
-        .pricing-v2-included-data .pricing-v2-included-bar:nth-child(5) { left: 76px; right: 48px; top: 68px; animation-delay: -1.8s; }
-        .pricing-v2-included-data .pricing-v2-included-bar:nth-child(6) { left: 76px; right: 30px; top: 92px; animation-delay: -2.7s; }
-        .pricing-v2-included-data .pricing-v2-included-dot:nth-child(7) { left: 76px; top: 43px; animation-delay: -0.6s; animation-name: pricingIncludedDataFlow; }
-        .pricing-v2-included-data .pricing-v2-included-dot:nth-child(8) { left: auto; right: 30px; top: 67px; animation-delay: -2s; animation-name: pricingIncludedDataFlowReverse; background: linear-gradient(270deg, transparent, rgba(255, 169, 92, 0.56), rgba(255, 220, 190, 0.56)); box-shadow: 0 0 12px rgba(255, 169, 92, 0.16), 0 0 24px rgba(255, 169, 92, 0.05); }
-        .pricing-v2-included-data .pricing-v2-included-dot:nth-child(9) { left: 76px; top: 91px; animation-delay: -3.2s; animation-name: pricingIncludedDataFlow; }
-
-        .pricing-v2-included-scope {
-            position: absolute;
-            inset: 24px 0 4px;
-            width: 100%;
-            height: 92px;
-            overflow: visible;
-            transform: scale(0.9);
-            transform-origin: center;
-        }
-
-        .pricing-v2-included-scope-grid {
-            fill: none;
-            stroke: rgba(255, 255, 255, 0.038);
-            stroke-width: 1;
-        }
-
-        .pricing-v2-included-scope-line {
-            fill: none;
-            stroke: rgba(125, 232, 218, 0.48);
-            stroke-width: 1.45;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-            filter: drop-shadow(0 0 7px rgba(85, 216, 196, 0.1));
-            opacity: 0.72;
-        }
-
-        .pricing-v2-included-scope-baseline {
-            fill: none;
-            stroke: rgba(125, 232, 218, 0.14);
-            stroke-width: 1;
-            stroke-linecap: round;
-        }
-
-        .pricing-v2-included-shield {
-            left: auto;
-            right: 58px;
-            top: 36px;
-            width: 48px;
-            height: 56px;
-            border-radius: 18px 18px 22px 22px;
-            border: 1px solid rgba(125, 232, 218, 0.38);
-            background: rgba(125, 232, 218, 0.072);
-            box-shadow: 0 0 18px rgba(85, 216, 196, 0.075);
-            clip-path: polygon(50% 0, 92% 14%, 82% 74%, 50% 100%, 18% 74%, 8% 14%);
-        }
-
-        .pricing-v2-included-ring {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            border: 1px solid rgba(125, 232, 218, 0.28);
-            animation: pricingIncludedPulse 3.2s ease-in-out infinite;
-        }
-
-        .pricing-v2-included-access .pricing-v2-included-ring:nth-child(2) { right: 250px; top: 42px; }
-        .pricing-v2-included-access .pricing-v2-included-ring:nth-child(3) { right: 220px; top: 74px; animation-delay: -1.1s; }
-        .pricing-v2-included-access .pricing-v2-included-ring:nth-child(4) { right: 184px; top: 48px; animation-delay: -2.2s; }
-
-        .pricing-v2-included-access .pricing-v2-included-dot {
-            left: -58px;
-            animation-name: pricingIncludedProtectFlow;
-        }
-
-        .pricing-v2-included-access .pricing-v2-included-dot:nth-child(5) { top: 48px; animation-delay: -0.4s; background: linear-gradient(90deg, transparent, rgba(77, 225, 196, 0.3), rgba(221, 247, 255, 0.3)); }
-        .pricing-v2-included-access .pricing-v2-included-dot:nth-child(6) { top: 72px; animation-delay: -2.1s; background: linear-gradient(90deg, transparent, rgba(0, 179, 255, 0.3), rgba(221, 247, 255, 0.3)); }
-
-        .pricing-v2-included-blocked {
-            position: absolute;
-            left: -58px;
-            top: 96px;
-            width: 30px;
-            height: 4px;
-            border-radius: 999px;
-            background: linear-gradient(90deg, transparent, rgba(255, 92, 92, 0.52), rgba(255, 190, 190, 0.52));
-            box-shadow: 0 0 12px rgba(255, 92, 92, 0.16);
-            opacity: 0;
-            animation: pricingIncludedBlocked 4.8s linear infinite;
-        }
-
-        .pricing-v2-included-access .pricing-v2-included-shield::after {
-            content: "";
-            position: absolute;
-            inset: -4px;
-            background: rgba(255, 92, 92, 0.12);
-            opacity: 0;
-            animation: pricingIncludedShieldBlock 4.8s linear infinite;
-        }
-
-        @keyframes pricingIncludedPulse {
-            0%, 100% { opacity: 0.34; transform: scaleX(0.92); }
-            50% { opacity: 1; transform: scaleX(1); }
-        }
-
-        @keyframes pricingIncludedFlow {
-            0% { opacity: 0; left: -64px; }
-            9%, 88% { opacity: 0.48; }
-            100% { opacity: 0; left: calc(100% + 64px); }
-        }
-
-        @keyframes pricingIncludedRuntimeFlow {
-            0% { opacity: 0; left: 16px; }
-            12%, 86% { opacity: 0.46; }
-            100% { opacity: 0; left: calc(100% - 42px); }
-        }
-
-        @keyframes pricingIncludedRuntimeIn {
-            0% { opacity: 0; left: 34px; }
-            12%, 82% { opacity: 0.46; }
-            100% { opacity: 0; left: 42%; }
-        }
-
-        @keyframes pricingIncludedRuntimeOutA {
-            0% { opacity: 0; left: calc(42% + 28px); }
-            12%, 82% { opacity: 0.42; }
-            100% { opacity: 0; left: calc(100% - 104px); }
-        }
-
-        @keyframes pricingIncludedRuntimeOutB {
-            0% { opacity: 0; left: calc(42% + 28px); }
-            12%, 82% { opacity: 0.42; }
-            100% { opacity: 0; left: calc(100% - 62px); }
-        }
-
-        @keyframes pricingIncludedDataFlow {
-            0% { opacity: 0; left: 76px; }
-            12%, 82% { opacity: 0.42; }
-            100% { opacity: 0; left: calc(100% + 44px); }
-        }
-
-        @keyframes pricingIncludedDataFlowReverse {
-            0% { opacity: 0; right: 30px; }
-            12%, 82% { opacity: 0.46; }
-            100% { opacity: 0; right: calc(100% - 76px); }
-        }
-
-        @keyframes pricingIncludedProtectFlow {
-            0% { opacity: 0; left: -58px; }
-            12%, 82% { opacity: 0.42; }
-            100% { opacity: 0; left: calc(100% + 42px); }
-        }
-
-        @keyframes pricingIncludedScope {
-            0%, 4% { opacity: 0; }
-            10%, 88% { opacity: 0.72; }
-            100% { opacity: 0; }
-        }
-
-        @keyframes pricingIncludedBlocked {
-            0% { opacity: 0; left: -58px; }
-            18%, 66% { opacity: 0.58; }
-            80%, 100% { opacity: 0; left: calc(100% - 104px); }
-        }
-
-        @keyframes pricingIncludedShieldBlock {
-            0%, 72%, 100% { opacity: 0; }
-            80%, 88% { opacity: 1; }
+        @media (max-width: 480px) {
+            .pricing-v2-included-group { padding: 22px; }
+            .pricing-v2-included-group .pricing-v2-list { grid-template-columns: 1fr; gap: 12px; }
         }
 
         .pricing-v2-faq {

@@ -5,6 +5,7 @@ import BrandHead from '../BrandHead.astro';
 import MarketingFooter from './MarketingFooter.astro';
 import MarketingHeader from './MarketingHeader.astro';
 import PricingPlanCard from './PricingPlanCard.astro';
+import PricingFoundationDiagram from './PricingFoundationDiagram.astro';
 const {catalog} = Astro.props;
 const offers = [...catalog.offers].sort((a, b) => Number(!!a.plan.details.basePlanId) - Number(!!b.plan.details.basePlanId));
 const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
@@ -199,91 +200,44 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
         </div>
 
         <div class="pricing-v2-included-grid">
-            <article class="pricing-v2-included-group">
+            <article class="pricing-v2-included-group foundation-runtime">
                 <h3>Hosting & runtime</h3>
+                <PricingFoundationDiagram kind="runtime" />
                 <ul class="pricing-v2-list">
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-terminal"></use></svg>App and frontend hosting</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-domain"></use></svg>Secure web gateways</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-routing"></use></svg>Automatic load balancing</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-scale"></use></svg>App and frontend scaling</li>
                 </ul>
-                <div class="pricing-v2-included-visual pricing-v2-included-hosting" aria-hidden="true">
-                    <span class="pricing-v2-included-node"></span>
-                    <span class="pricing-v2-included-segment"></span>
-                    <span class="pricing-v2-included-node"></span>
-                    <span class="pricing-v2-included-node"></span>
-                    <span class="pricing-v2-included-bar"></span>
-                    <span class="pricing-v2-included-bar"></span>
-                    <span class="pricing-v2-included-bar"></span>
-                    <span class="pricing-v2-included-dot"></span>
-                    <span class="pricing-v2-included-dot"></span>
-                    <span class="pricing-v2-included-dot"></span>
-                </div>
             </article>
-            <article class="pricing-v2-included-group">
+            <article class="pricing-v2-included-group foundation-data">
                 <h3>Data & messaging</h3>
+                <PricingFoundationDiagram kind="data" />
                 <ul class="pricing-v2-list">
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-storage"></use></svg>Data stores</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-search"></use></svg>Search</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-logs"></use></svg>Durable message logs</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-sso"></use></svg>Seamless inter-app communication</li>
                 </ul>
-                <div class="pricing-v2-included-visual pricing-v2-included-data" aria-hidden="true">
-                    <span class="pricing-v2-included-node"></span>
-                    <span class="pricing-v2-included-node"></span>
-                    <span class="pricing-v2-included-node"></span>
-                    <span class="pricing-v2-included-bar"></span>
-                    <span class="pricing-v2-included-bar"></span>
-                    <span class="pricing-v2-included-bar"></span>
-                    <span class="pricing-v2-included-dot"></span>
-                    <span class="pricing-v2-included-dot"></span>
-                    <span class="pricing-v2-included-dot"></span>
-                </div>
             </article>
-            <article class="pricing-v2-included-group">
+            <article class="pricing-v2-included-group foundation-trace">
                 <h3>Visibility</h3>
+                <PricingFoundationDiagram kind="trace" />
                 <ul class="pricing-v2-list">
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-audit"></use></svg>Searchable audit trails</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-logs"></use></svg>Request traces</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>Contextual errors</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-uptime"></use></svg>Full visibility into your apps</li>
                 </ul>
-                <div class="pricing-v2-included-visual pricing-v2-included-visibility" aria-hidden="true">
-                    <svg class="pricing-v2-included-scope" viewBox="0 0 320 76" preserveAspectRatio="none">
-                        <defs>
-                            <linearGradient id="pricing-included-scope-tail" x1="0" y1="0" x2="1" y2="0">
-                                <stop offset="0%" stop-color="black"></stop>
-                                <stop offset="26%" stop-color="white" stop-opacity="0.2"></stop>
-                                <stop offset="100%" stop-color="white"></stop>
-                            </linearGradient>
-                            <mask id="pricing-included-scope-mask" maskUnits="userSpaceOnUse">
-                                <rect x="-176" y="0" width="176" height="76" fill="url(#pricing-included-scope-tail)">
-                                    <animate attributeName="x" values="-176;320" dur="4.8s" repeatCount="indefinite" calcMode="linear"></animate>
-                                </rect>
-                            </mask>
-                        </defs>
-                        <path class="pricing-v2-included-scope-grid" d="M0 20H320M0 38H320M0 56H320M54 8V70M124 8V70M194 8V70M264 8V70"></path>
-                        <path class="pricing-v2-included-scope-baseline" d="M0 42H320"></path>
-                        <path class="pricing-v2-included-scope-line" mask="url(#pricing-included-scope-mask)" d="M0 42H118L126 42L132 32L140 52L148 42H156L164 16L176 66L186 30L196 52L204 38L212 42H320"></path>
-                    </svg>
-                </div>
             </article>
-            <article class="pricing-v2-included-group">
+            <article class="pricing-v2-included-group foundation-access">
                 <h3>Access & isolation</h3>
+                <PricingFoundationDiagram kind="access" />
                 <ul class="pricing-v2-list">
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-users"></use></svg>Auth</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-sla"></use></svg>Role-based access</li>
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-hardware"></use></svg>Fully isolated app components</li>
                 </ul>
-                <div class="pricing-v2-included-visual pricing-v2-included-access" aria-hidden="true">
-                    <span class="pricing-v2-included-shield"></span>
-                    <span class="pricing-v2-included-ring"></span>
-                    <span class="pricing-v2-included-ring"></span>
-                    <span class="pricing-v2-included-ring"></span>
-                    <span class="pricing-v2-included-dot"></span>
-                    <span class="pricing-v2-included-dot"></span>
-                    <span class="pricing-v2-included-blocked"></span>
-                </div>
             </article>
         </div>
     </section>
