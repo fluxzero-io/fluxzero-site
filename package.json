@@ -9,6 +9,8 @@
   },
   "scripts": {
     "dev": "astro sync && pnpm sync:docs && astro dev",
+    "dev:website-stub": "node scripts/dev-website.mjs stub 4321",
+    "dev:website-live-idp": "node scripts/dev-website.mjs live 4321",
     "start": "pnpm dev",
     "build": "astro sync && pnpm sync:docs && astro build && node scripts/inline-marketing-css.mjs && node scripts/protect-homepage-styles.mjs && node scripts/generate-llms.mjs && node scripts/sitemap-dates.mjs && node scripts/check-discovery.mjs && node scripts/check-links.mjs && node scripts/check-pricing-build.mjs",
     "preview": "wrangler dev --env preview",
@@ -21,6 +23,7 @@
     "check:discovery": "node scripts/check-discovery.mjs",
     "test:seo": "node --test src/utils/docs-description.test.mjs scripts/inline-marketing-css.test.mjs scripts/protect-homepage-styles.test.mjs",
     "test:pricing": "node --test src/utils/capacity-pricing.test.mjs",
+    "test:website-oidc": "node --test scripts/website-oidc-stub.test.mjs scripts/website-account-controls.test.mjs src/config/website-oidc.test.mjs",
     "test:pricing-build": "node scripts/test-capacity-build.mjs"
   },
   "config": {
@@ -47,6 +50,7 @@
     "marked": "^16.3.0",
     "mermaid": "^11.9.0",
     "nouislider": "^15.8.1",
+    "oidc-client-ts": "3.5.0",
     "parallax-js": "^3.1.0",
     "rellax": "^1.12.1",
     "semver": "^7.8.5",
