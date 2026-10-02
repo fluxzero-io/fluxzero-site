@@ -1773,8 +1773,6 @@
             line-height: 1.6;
         }
 
-        .foundation-access .pricing-v2-list li:last-child { grid-column: 1 / -1; }
-
         .pricing-v2-included-group .pricing-v2-feature-icon {
             color: var(--foundation-accent);
         }
