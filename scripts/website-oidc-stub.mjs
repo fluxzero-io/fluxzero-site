@@ -31,10 +31,13 @@ function withQuery(redirectUri, values) {
     return url.href;
 }
 
-function authorizationReturn(value, issuer) {
+function authorizationReturn(value, issuer, transactions) {
     if (!value || !value.startsWith('/oauth2/auth?') || value.includes('\\')) return undefined;
     const target = new URL(value, issuer);
-    return target.origin === issuer && target.pathname === '/oauth2/auth' ? target.href : undefined;
+    const id = target.searchParams.get('transaction');
+    return target.origin === issuer && target.pathname === '/oauth2/auth'
+        && [...target.searchParams.keys()].length === 1 && id
+        && transactions.get(id)?.expiresAt > Date.now() ? target.href : undefined;
 }
 
 function hasSession(cookieHeader) {
@@ -72,6 +75,7 @@ export async function startWebsiteOidcStub({
     const jwk = publicKey.export({ format: 'jwk' });
     const kid = randomBytes(12).toString('base64url');
     const codes = new Map();
+    const transactions = new Map();
     let lastSilentCheck = 'No request yet';
     let issuer;
 
@@ -125,6 +129,15 @@ export async function startWebsiteOidcStub({
         }
 
         if (request.method === 'GET' && url.pathname === '/oauth2/auth') {
+            if (url.searchParams.has('transaction')) {
+                const continuation = authorizationReturn(`${url.pathname}${url.search}`, issuer, transactions);
+                if (!continuation) {
+                    redirect(response, '/login?error=authorization_unavailable');
+                    return;
+                }
+                redirect(response, transactions.get(url.searchParams.get('transaction')).authorization);
+                return;
+            }
             const params = url.searchParams;
             const state = params.get('state');
             const nonce = params.get('nonce');
@@ -150,7 +163,9 @@ export async function startWebsiteOidcStub({
                 if (params.get('prompt') === 'none') {
                     redirect(response, withQuery(requestedRedirectUri, { error: 'login_required', state }));
                 } else {
-                    redirect(response, `/login?returnTo=${encodeURIComponent(`${url.pathname}${url.search}`)}`);
+                    const id = randomBytes(16).toString('hex');
+                    transactions.set(id, { authorization: `${url.pathname}${url.search}`, expiresAt: Date.now() + 300_000 });
+                    redirect(response, `/login?returnTo=${encodeURIComponent(`/oauth2/auth?transaction=${id}`)}`);
                 }
                 return;
             }
@@ -208,7 +223,7 @@ export async function startWebsiteOidcStub({
         }
 
         if (request.method === 'GET' && ['/login', '/register'].includes(url.pathname)) {
-            const returnTo = authorizationReturn(url.searchParams.get('returnTo'), issuer);
+            const returnTo = authorizationReturn(url.searchParams.get('returnTo'), issuer, transactions);
             if (!returnTo) {
                 json(response, 400, { error: 'invalid_return' });
                 return;

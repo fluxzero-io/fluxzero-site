@@ -118,23 +118,29 @@ test('website stub supports login, registration, profile and RP logout without e
         assert.equal(login.status, 302);
         const loginUrl = new URL(login.headers.get('location'), stub.issuer);
         assert.equal(loginUrl.pathname, '/login');
-        assert.equal(loginUrl.searchParams.get('returnTo'), authorization);
+        const continuation = loginUrl.searchParams.get('returnTo');
+        assert.match(continuation, /^\/oauth2\/auth\?transaction=[a-f0-9]{32}$/);
+
+        const unboundLogin = await request(`/login?returnTo=${encodeURIComponent(authorization)}`);
+        assert.equal(unboundLogin.status, 400);
 
         const themedLoginUrl = new URL('/login', stub.issuer);
-        themedLoginUrl.searchParams.set('returnTo', authorization);
+        themedLoginUrl.searchParams.set('returnTo', continuation);
         themedLoginUrl.searchParams.set('theme', 'dark');
         const themedLogin = await request(`${themedLoginUrl.pathname}${themedLoginUrl.search}`);
         assert.equal(themedLogin.status, 302);
-        assert.equal(themedLogin.headers.get('location'), `${stub.issuer}${authorization}`);
+        assert.equal(themedLogin.headers.get('location'), `${stub.issuer}${continuation}`);
 
         const registrationUrl = new URL('/register', stub.issuer);
-        registrationUrl.searchParams.set('returnTo', authorization);
+        registrationUrl.searchParams.set('returnTo', continuation);
         registrationUrl.searchParams.set('theme', 'light');
         const registration = await request(`${registrationUrl.pathname}${registrationUrl.search}`);
         assert.equal(registration.status, 302);
-        assert.equal(registration.headers.get('location'), `${stub.issuer}${authorization}`);
+        assert.equal(registration.headers.get('location'), `${stub.issuer}${continuation}`);
         const cookie = registration.headers.get('set-cookie').split(';')[0];
 
+        const resumed = await request(continuation, { headers: { Cookie: cookie } });
+        assert.equal(resumed.headers.get('location'), authorization);
         const callback = new URL((await request(authorization, { headers: { Cookie: cookie } })).headers.get('location'));
         assert.equal(callback.origin + callback.pathname, redirectUri);
         assert.equal(callback.searchParams.get('state'), 'website-return-state');
