@@ -1,10 +1,6 @@
 ---
-import LegacyPricing from '../components/marketing/LegacyPricing.astro';
-import CapacityPricing from '../components/marketing/CapacityPricing.astro';
+import PricingPage from '../components/marketing/PricingPage.astro';
 import {loadPricingCatalog} from '../utils/capacity-pricing.mjs';
-const model = import.meta.env.PRICING_MODEL || 'legacy';
-if (!['legacy', 'capacity'].includes(model)) throw new Error('Unknown PRICING_MODEL');
-const capacity = model === 'capacity';
-const catalog = capacity ? await loadPricingCatalog(import.meta.env.PRICING_CATALOG_URL) : null;
+const catalog = await loadPricingCatalog(import.meta.env.PRICING_CATALOG_URL || 'https://api.dashboard.fluxzero.io/api/public/pricing');
 ---
-{capacity ? <CapacityPricing catalog={catalog} /> : <LegacyPricing />}
+<PricingPage catalog={catalog} />

@@ -112,7 +112,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FLUXZERO_SDK_DOCS_SOURCE: .cache/fluxzero-sdk-java/docs/developer
-          PRICING_MODEL: ${{ vars.PRICING_MODEL || 'legacy' }}
           PRICING_CATALOG_URL: ${{ vars.PRICING_CATALOG_URL }}
           PUBLIC_WEBSITE_OIDC_ENABLED: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
           PUBLIC_WEBSITE_OIDC_ISSUER: https://login.fluxzero.io

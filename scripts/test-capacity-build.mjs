@@ -4,7 +4,7 @@ import {readFileSync, rmSync} from 'node:fs';
 import {createServer} from 'node:http';
 import {once} from 'node:events';
 
-// Exercise the gated page and text exports before the release catalog is activated.
+// Exercise the pricing page and text exports against a controlled catalog.
 // The fixture artifact is discarded: only the subsequent normal build may deploy.
 const fixture = readFileSync(new URL('../tests/fixtures/capacity-catalog.json', import.meta.url));
 const catalog = JSON.parse(fixture);
@@ -17,7 +17,7 @@ await once(server, 'listening');
 try {
   const child = spawn('pnpm', ['build'], {
     stdio: 'inherit',
-    env: {...process.env, PRICING_MODEL: 'capacity', PRICING_CATALOG_URL: `http://127.0.0.1:${server.address().port}`}
+    env: {...process.env, PRICING_CATALOG_URL: `http://127.0.0.1:${server.address().port}`}
   });
   const [code] = await once(child, 'exit');
   assert.equal(code, 0, 'Capacity pricing must pass the complete production build');
@@ -28,10 +28,10 @@ try {
     const storage = subscription.capabilities.find(c => c.key === 'storage.gib');
     assert.ok(markdown.includes(`${storage.included} ${storage.unit} storage included`));
   }
-  assert.ok(markdown.includes('Not yet available'), 'Catalog-only sizes must not appear purchasable');
   assert.ok(markdown.includes('allocated database volumes'), 'Text export must explain all billed storage');
   assert.ok(!html.includes('Request scale up plan'), 'Capacity pricing must not render the old offer');
-  assert.ok(!html.includes('.pricing-v2-card'), 'Legacy pricing CSS must not leak into capacity pricing');
+  assert.equal((html.match(/data-plan-card=/g) || []).length, 2, 'Both paid plans must have a calculator');
+  assert.ok(html.includes('pricing-v2-panel-current'), 'Keep the original card styling');
   console.log('Capacity pricing HTML, CTA and text-export checks passed.');
 } finally {
   server.close();

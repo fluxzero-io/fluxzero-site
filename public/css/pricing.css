@@ -1565,7 +1565,7 @@
             border-top: 0;
         }
 
-        .scale-summary-row strong {
+        .scale-summary-row dd {
             color: rgba(244, 247, 255, 0.84);
             font-size: 13px;
             white-space: nowrap;
@@ -1579,7 +1579,7 @@
             font-weight: 800;
         }
 
-        .scale-total-row strong {
+        .scale-total-row dd {
             color: #D9F5FF;
             font-family: var(--font-display);
             font-size: 28px;
@@ -2296,3 +2296,35 @@
             }
 
         }
+
+/* The original plan cards, now presented together with one calculator per paid plan. */
+.pricing-v2-panel-current {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    align-items: stretch;
+}
+.pricing-v2-panel-current .pricing-v2-flip-inner { height: 100%; }
+.pricing-v2-panel-current .is-featured .pricing-v2-flip-face {
+    border-color: rgba(0, 179, 255, 0.32);
+    background: radial-gradient(circle at 50% 0%, rgba(0, 179, 255, 0.11), transparent 46%), #0b1119;
+}
+.pricing-v2-panel-current .pricing-v2-flip-face--back { background-color: #0d1016; }
+.pricing-v2-panel-current .pricing-v2-card-action-secondary.scale-calc-trigger { margin-top: auto; padding: 0 15px; }
+.pricing-v2-panel-current .pricing-v2-flip-face--front .pricing-v2-list { margin-bottom: 28px; }
+.pricing-v2-plans > .pricing-v2-billing-note { margin-top: 24px; }
+.scale-ha-choice { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 11px; }
+.scale-ha-choice input { accent-color: #00b3ff; }
+.scale-ha-choice:has(input:disabled) { opacity: .55; }
+.scale-calculator-note { margin-top: 16px; }
+.scale-calculator-error { color: #ffb2a9; font-size: 12px; }
+.scale-calculator-error:empty { display: none; }
+.scale-calculator-add:disabled { opacity: .5; cursor: not-allowed; }
+@media (max-width: 1120px) {
+    .pricing-v2-panel-current { grid-template-columns: 1fr; max-width: 620px; margin: 0 auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .pricing-v2-flip-inner { transition: none; }
+}
+
+.scale-summary dd { margin: 0; }

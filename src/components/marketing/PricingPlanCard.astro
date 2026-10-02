@@ -1,0 +1,89 @@
+---
+import {availableSizes, capability, productFor, highAvailabilityLabel} from '../../utils/capacity-pricing.mjs';
+const {offer, catalog} = Astro.props;
+const plan = offer.subscription;
+const policy = plan.capacityPolicy;
+const pro = !!offer.plan.details.basePlanId;
+const storage = capability(plan, 'storage.gib');
+const seats = capability(plan, 'seats.count');
+const domains = capability(plan, 'domains.custom.count');
+const money = value => new Intl.NumberFormat('en-GB', {style: 'currency', currency: plan.currency, maximumFractionDigits: 2}).format(Number(value));
+const sizeName = (type, size) => productFor(catalog, type, size).details.description.replace(/ (cluster|application)$/, '');
+const maximumSize = type => sizeName(type, availableSizes(catalog, plan, type).at(-1));
+const features = [
+    ['cluster', 'Starter cluster included'],
+    ['task', 'Starter app included'],
+    ['storage', `${storage.included} ${storage.unit} storage included`],
+    ['users', `${seats.included} ${Number(seats.included) === 1 ? 'seat' : 'seats'} included`],
+    ['domain', domains.maximum == null && !domains.hardLimit ? 'Unlimited custom domains' : `${domains.maximum ?? domains.included} custom domain`],
+    ['scale', policy.maximumClusters == null ? 'Add clusters and apps as you grow' : 'One cluster and one app'],
+    ['scale', maximumSize('cluster') === maximumSize('application') ? `Upgrade either up to ${maximumSize('cluster')}` : `Clusters up to ${maximumSize('cluster')}, apps up to ${maximumSize('application')}`],
+    ...(policy.highAvailability ? [['uptime', `${highAvailabilityLabel(policy).replace(" (Pro)", "")} optional`]] : []),
+    ...(policy.backups ? [['backup', 'Manual and automated backups']] : []),
+    ...(policy.pointInTimeRecoveryDays ? [['backup', `${policy.pointInTimeRecoveryDays}-day point-in-time recovery`]] : []),
+    ['audit', 'Audit trail & insights'],
+    ['support', policy.ticketSupport ? 'Ticket support' : 'Community support'],
+];
+---
+<article class:list={['pricing-v2-card', 'pricing-v2-flip-card', {'is-featured': !pro}]} data-plan-card={offer.plan.planId} aria-label={`${plan.displayName} plan`}>
+    <div class="pricing-v2-flip-inner">
+        <div class="pricing-v2-flip-face pricing-v2-flip-face--front">
+            <div class="pricing-v2-card-top">
+                <span class="pricing-v2-label">{pro ? 'Grow' : 'Launch'}</span>
+                <h2>{plan.displayName}</h2>
+                <div class="pricing-v2-price">
+                    <span class="pricing-v2-currency">€</span>
+                    <strong>{Number(plan.amount).toLocaleString('en-GB')}</strong>
+                    <span class="pricing-v2-term">per month</span>
+                </div>
+                <p class="pricing-v2-card-summary">{pro ? 'For products gaining traction.' : 'Start running in production.'}</p>
+                <a href={`https://dashboard.fluxzero.io/?plan=${encodeURIComponent(offer.plan.planId)}`} class:list={['pricing-v2-card-action', {'is-primary': !pro}]}>Choose {plan.displayName}</a>
+            </div>
+            <ul class="pricing-v2-list">
+                {features.map(([icon, text]) => <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href={`#pricing-icon-${icon}`}></use></svg>{text}</li>)}
+            </ul>
+            <button class="pricing-v2-card-action pricing-v2-card-action-secondary scale-calc-trigger" type="button" aria-expanded="false" aria-controls={`calculator-${offer.plan.planId}`}>
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/></svg>
+                Calculate extra capacity
+            </button>
+        </div>
+        <div class="pricing-v2-flip-face pricing-v2-flip-face--back" aria-hidden="true" inert>
+            <div class="scale-calculator" id={`calculator-${offer.plan.planId}`} data-plan-calculator>
+                <div class="scale-calculator-head">
+                    <button class="scale-calculator-back" type="button">← Back</button>
+                    <h3>{plan.displayName} calculator</h3>
+                </div>
+                <div class="scale-price-list">
+                    <div class="scale-price-rows" data-scale-rows></div>
+                    <div class="scale-row scale-row--storage">
+                        <div class="scale-row-main">
+                            <label class="scale-row-type scale-row-type--storage" for={`storage-${offer.plan.planId}`}>Storage</label>
+                            <input id={`storage-${offer.plan.planId}`} class="scale-storage-input" type="number" min="0" step="1" value={storage.included} inputmode="numeric" data-scale-storage-gb>
+                            <span class="scale-storage-unit">{storage.unit}</span>
+                        </div>
+                        <strong class="scale-row-price" data-scale-storage-extra>{money(0)}</strong>
+                        <input class="scale-row-range" type="range" min={storage.included} max="10000" step="50" value={storage.included} aria-label={`${plan.displayName} storage in ${storage.unit}`} data-scale-storage-range>
+                    </div>
+                    <div class="scale-row">
+                        <div class="scale-row-main">
+                            <label class="scale-row-type" for={`seats-${offer.plan.planId}`}>Seats</label>
+                            <input id={`seats-${offer.plan.planId}`} class="scale-storage-input" type="number" min={seats.included} step="1" value={seats.included} data-scale-seats>
+                        </div>
+                        <strong class="scale-row-price" data-scale-seat-extra>{money(0)}</strong>
+                    </div>
+                    <dl class="scale-summary" aria-live="polite" aria-atomic="true">
+                        <div class="scale-summary-row"><dt>{plan.displayName} plan</dt><dd>{money(plan.amount)}</dd></div>
+                        <div class="scale-summary-row"><dt>Extra capacity, storage & seats</dt><dd data-scale-extra-total>{money(0)}</dd></div>
+                        <div class="scale-total-row"><dt>Monthly estimate</dt><dd data-scale-total>{money(plan.amount)}</dd></div>
+                    </dl>
+                </div>
+                <div class="scale-add-actions">
+                    {policy.maximumApplications == null && <button class="scale-calculator-add scale-calculator-add--app" type="button" data-add-scale-row="application">+ Add app</button>}
+                    {policy.maximumClusters == null && <button class="scale-calculator-add scale-calculator-add--cluster" type="button" data-add-scale-row="cluster">+ Add cluster</button>}
+                </div>
+                <p class="scale-calculator-note">Includes your first Starter cluster and app. Storage estimate assumes 30 days; actual usage is billed afterwards. Prices exclude VAT.</p>
+                <p class="scale-calculator-error" role="alert" data-calculator-error></p>
+            </div>
+        </div>
+    </div>
+</article>
