@@ -17,7 +17,7 @@ function renderAccountControl({ issuer, clientId, siteOrigin, page, surface = 'm
         dispatch(name) { this.listeners.get(name)?.(); }
     }
     const profile = new Anchor();
-    const menu = { hidden: true };
+    const menu = { hidden: false };
     const control = new Element();
     control.dataset = { oidcIssuer: issuer, oidcClientId: clientId, oidcSiteOrigin: siteOrigin };
     control.hasAttribute = () => true;
@@ -76,7 +76,7 @@ test('docs Profile passes the Starlight theme preference to the IDP', () => {
     }
 });
 
-test('the localhost stub works without a custom host and a different origin remains hidden', () => {
+test('the localhost stub works while other origins retain the menu without OIDC', () => {
     const stub = renderAccountControl({
         issuer: 'http://localhost:4390', clientId: 'fluxzero-website-local',
         siteOrigin: 'http://localhost:4321', page: 'http://localhost:4321/docs/',
@@ -89,6 +89,13 @@ test('the localhost stub works without a custom host and a different origin rema
         siteOrigin: 'http://site.fluxzero.localhost:4321', page: 'http://localhost:4321/',
     });
     assert.equal(preview.control.disabled, true);
-    assert.equal(preview.menu.hidden, true);
+    assert.equal(preview.menu.hidden, false);
     assert.equal(new URL(preview.profile.href).search, '');
+    const docsPreview = renderAccountControl({
+        issuer: 'https://login.fluxzero.io', clientId: 'fluxzero-website',
+        siteOrigin: 'https://fluxzero.io', page: 'http://localhost:4321/docs/', surface: 'docs',
+    });
+    assert.equal(docsPreview.control.disabled, true);
+    assert.notEqual(docsPreview.control.hidden, true);
+    assert.equal(docsPreview.menu.hidden, false);
 });
