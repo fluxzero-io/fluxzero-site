@@ -8,7 +8,7 @@ const component = readFileSync(resolve(import.meta.dirname, '../src/components/W
 const inlineScript = component.match(/<script is:inline>([\s\S]*?)<\/script>/)?.[1];
 assert.ok(inlineScript, 'account prepaint script must exist');
 
-function renderAccountControl({ issuer, clientId, siteOrigin, page }) {
+function renderAccountControl({ issuer, clientId, siteOrigin, page, surface = 'marketing', themePreference }) {
     class Element {}
     class Anchor extends Element {
         listeners = new Map();
@@ -22,10 +22,11 @@ function renderAccountControl({ issuer, clientId, siteOrigin, page }) {
     control.dataset = { oidcIssuer: issuer, oidcClientId: clientId, oidcSiteOrigin: siteOrigin };
     control.hasAttribute = () => true;
     control.removeAttribute = () => { control.disabled = true; };
-    control.classList = { contains: () => false };
+    control.classList = { contains: (name) => name === 'website-account-controls--docs' && surface === 'docs' };
     control.querySelector = (selector) => ({ '[data-oidc-profile]': profile,
         '.website-account-menu': menu })[selector];
     const location = new URL(page);
+    let storedTheme = themePreference;
     runInNewContext(inlineScript, {
         document: { currentScript: { previousElementSibling: control } },
         HTMLElement: Element,
@@ -33,10 +34,11 @@ function renderAccountControl({ issuer, clientId, siteOrigin, page }) {
         URL,
         location,
         sessionStorage: { getItem: () => null },
+        localStorage: { getItem: () => storedTheme },
         Date,
         JSON,
     });
-    return { profile, menu, control, location };
+    return { profile, menu, control, location, setThemePreference: (value) => { storedTheme = value; } };
 }
 
 test('Profile carries the exact website page and public client to the IDP', () => {
@@ -51,11 +53,27 @@ test('Profile carries the exact website page and public client to the IDP', () =
     assert.equal(target.origin + target.pathname, 'https://login.fluxzero.io/account');
     assert.equal(target.searchParams.get('app_client'), 'fluxzero-website');
     assert.equal(target.searchParams.get('app_return'), page);
+    assert.equal(target.searchParams.get('theme'), 'dark');
     assert.equal(account.menu.hidden, false);
 
     account.location.href = 'https://fluxzero.io/docs/get-started/?lang=en#install';
     account.profile.dispatch('click');
     assert.equal(new URL(account.profile.href).searchParams.get('app_return'), account.location.href);
+    assert.equal(new URL(account.profile.href).searchParams.get('theme'), 'dark');
+});
+
+test('docs Profile passes the Starlight theme preference to the IDP', () => {
+    for (const [preference, expected] of [['light', 'light'], ['dark', 'dark'], ['', 'system']]) {
+        const account = renderAccountControl({
+            issuer: 'https://login.fluxzero.io', clientId: 'fluxzero-website',
+            siteOrigin: 'https://fluxzero.io', page: 'https://fluxzero.io/docs/fluxzero-2/',
+            surface: 'docs', themePreference: preference,
+        });
+        assert.equal(new URL(account.profile.href).searchParams.get('theme'), expected);
+        account.setThemePreference('light');
+        account.profile.dispatch('click');
+        assert.equal(new URL(account.profile.href).searchParams.get('theme'), 'light');
+    }
 });
 
 test('the localhost stub works without a custom host and a different origin remains hidden', () => {
