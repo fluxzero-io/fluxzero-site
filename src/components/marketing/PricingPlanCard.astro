@@ -1,5 +1,5 @@
 ---
-import {availableSizes, capability, productFor, highAvailabilityLabel} from '../../utils/capacity-pricing.mjs';
+import {availableSizes, capability, productFor} from '../../utils/capacity-pricing.mjs';
 const {offer, catalog} = Astro.props;
 const plan = offer.subscription;
 const policy = plan.capacityPolicy;
@@ -7,25 +7,36 @@ const pro = !!offer.plan.details.basePlanId;
 const storage = capability(plan, 'storage.gib');
 const seats = capability(plan, 'seats.count');
 const domains = capability(plan, 'domains.custom.count');
+const users = capability(plan, 'identity.users');
+const basePlan = pro ? catalog.offers.find(item => item.plan.planId === offer.plan.details.basePlanId).subscription : plan;
+const extraSeats = Number(seats.included) - Number(capability(basePlan, 'seats.count').included);
 const money = value => new Intl.NumberFormat('en-GB', {style: 'currency', currency: plan.currency, maximumFractionDigits: 2}).format(Number(value));
 const sizeName = (type, size) => productFor(catalog, type, size).details.description.replace(/ (cluster|application)$/, '');
 const maximumSize = type => sizeName(type, availableSizes(catalog, plan, type).at(-1));
-const features = [
-    ['cluster', 'Starter cluster included'],
-    ['task', 'Starter app included'],
-    ['storage', `${storage.included} ${storage.unit} storage included`],
-    ['users', `${seats.included} ${Number(seats.included) === 1 ? 'seat' : 'seats'} included`],
-    ['domain', domains.maximum == null && !domains.hardLimit ? 'Unlimited custom domains' : `${domains.maximum ?? domains.included} custom domain`],
-    ['scale', policy.maximumClusters == null ? 'Add clusters and apps as you grow' : 'One cluster and one app'],
-    ['scale', maximumSize('cluster') === maximumSize('application') ? `Upgrade either up to ${maximumSize('cluster')}` : `Clusters up to ${maximumSize('cluster')}, apps up to ${maximumSize('application')}`],
-    ...(policy.highAvailability ? [['uptime', `${highAvailabilityLabel(policy).replace(" (Pro)", "")} optional`]] : []),
-    ...(policy.backups ? [['backup', 'Manual and automated backups']] : []),
+const features = pro ? [
+    ['users', `${extraSeats} extra dashboard seats included`],
+    ['domain', 'Unlimited custom domains'],
+    ['users', `Unlimited users, ${Number(users.included).toLocaleString('en-GB')} included`],
+    ['scale', 'Additional clusters and apps available'],
+    ['scale', `Clusters up to ${maximumSize('cluster')}, apps up to ${maximumSize('application')}`],
+    ['uptime', 'High-availability clusters'],
     ...(policy.pointInTimeRecoveryDays ? [['backup', `${policy.pointInTimeRecoveryDays}-day point-in-time recovery`]] : []),
+    ['support', 'Pro support'],
+] : [
+    ['cluster', 'Free starter cluster included'],
+    ['task', 'Free starter app included'],
+    ['storage', `${storage.included} ${storage.unit} storage included`],
+    ['users', `${seats.included} dashboard ${Number(seats.included) === 1 ? 'seat' : 'seats'} included`],
+    ['domain', domains.maximum == null && !domains.hardLimit ? 'Unlimited custom domains' : `${domains.maximum ?? domains.included} custom domain`],
+    ['users', `${Number(users.included).toLocaleString('en-GB')} users included`],
+    ['backup', 'Manual and automated backups'],
+    ['scale', `Max ${policy.maximumClusters} cluster & ${policy.maximumApplications} app`],
+    ['scale', `Upgrade cluster and app sizes up to ${maximumSize('cluster')}`],
     ['audit', 'Audit trail & insights'],
-    ['support', policy.ticketSupport ? 'Ticket support' : 'Community support'],
+    ['support', 'Community support'],
 ];
 ---
-<article class:list={['pricing-v2-card', 'pricing-v2-flip-card', {'is-featured': !pro}]} data-plan-card={offer.plan.planId} aria-label={`${plan.displayName} plan`}>
+<article class:list={['pricing-v2-card', 'pricing-v2-flip-card', {'is-featured': pro}]} data-plan-card={offer.plan.planId} aria-label={`${plan.displayName} plan`}>
     <div class="pricing-v2-flip-inner">
         <div class="pricing-v2-flip-face pricing-v2-flip-face--front">
             <div class="pricing-v2-card-top">
@@ -36,9 +47,10 @@ const features = [
                     <strong>{Number(plan.amount).toLocaleString('en-GB')}</strong>
                     <span class="pricing-v2-term">per month</span>
                 </div>
-                <p class="pricing-v2-card-summary">{pro ? 'For products gaining traction.' : 'Start running in production.'}</p>
-                <a href={`https://dashboard.fluxzero.io/?plan=${encodeURIComponent(offer.plan.planId)}`} class:list={['pricing-v2-card-action', {'is-primary': !pro}]}>Choose {plan.displayName}</a>
+                <p class="pricing-v2-card-summary">{pro ? 'For extra clusters or capacity.' : 'Launch your product to real users.'}</p>
+                <a href={`https://dashboard.fluxzero.io/?plan=${encodeURIComponent(offer.plan.planId)}`} class:list={['pricing-v2-card-action', {'is-primary': pro}]}>Choose {plan.displayName}</a>
             </div>
+            {pro && <p class="pricing-v2-inherits">Everything in Starter, plus:</p>}
             <ul class="pricing-v2-list">
                 {features.map(([icon, text]) => <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href={`#pricing-icon-${icon}`}></use></svg>{text}</li>)}
             </ul>
@@ -74,14 +86,13 @@ const features = [
                     <dl class="scale-summary" aria-live="polite" aria-atomic="true">
                         <div class="scale-summary-row"><dt>{plan.displayName} plan</dt><dd>{money(plan.amount)}</dd></div>
                         <div class="scale-summary-row"><dt>Extra capacity, storage & seats</dt><dd data-scale-extra-total>{money(0)}</dd></div>
-                        <div class="scale-total-row"><dt>Monthly estimate</dt><dd data-scale-total>{money(plan.amount)}</dd></div>
+                        <div class="scale-total-row"><dt>Monthly</dt><dd data-scale-total>{money(plan.amount)}</dd></div>
                     </dl>
                 </div>
                 <div class="scale-add-actions">
                     {policy.maximumApplications == null && <button class="scale-calculator-add scale-calculator-add--app" type="button" data-add-scale-row="application">+ Add app</button>}
                     {policy.maximumClusters == null && <button class="scale-calculator-add scale-calculator-add--cluster" type="button" data-add-scale-row="cluster">+ Add cluster</button>}
                 </div>
-                <p class="scale-calculator-note">Includes your first Starter cluster and app. Storage estimate assumes 30 days; actual usage is billed afterwards. Prices exclude VAT.</p>
                 <p class="scale-calculator-error" role="alert" data-calculator-error></p>
             </div>
         </div>

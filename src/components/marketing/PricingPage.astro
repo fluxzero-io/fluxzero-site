@@ -143,26 +143,52 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
     </section>
 
     <section class="pricing-v2-plans" aria-label="Pricing plans">
+        <article class="pricing-v2-card pricing-v2-free" aria-label="Free plan">
+            <div class="pricing-v2-card-top">
+                <span class="pricing-v2-label">Build</span>
+                <h2>Free</h2>
+                <div class="pricing-v2-price">
+                    <span class="pricing-v2-currency">€</span>
+                    <strong>0</strong>
+                </div>
+            </div>
+            <ul class="pricing-v2-list">
+                <li><img class="pricing-v2-brand-icon" src="/assets/openai-logo.svg" alt="" aria-hidden="true">Use Claude Code, Codex or other agent</li>
+                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-terminal"></use></svg><strong>Local Fluxzero environment</strong></li>
+                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-search"></use></svg>Devboard for local preview</li>
+                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-logs"></use></svg>Local logs and insights</li>
+            </ul>
+            <div class="pricing-v2-free-action">
+                <p class="pricing-v2-card-summary">Build your entire app before you pay.</p>
+                <a href="/get-started/" class="pricing-v2-card-action">Get started</a>
+            </div>
+        </article>
         <div class="pricing-v2-panel pricing-v2-panel-current">
+            {offers.map(offer => <PricingPlanCard offer={offer} catalog={catalog} />)}
                 <article class="pricing-v2-card">
                     <div class="pricing-v2-card-top">
-                        <span class="pricing-v2-label">Build</span>
-                        <h2>Free</h2>
-                        <div class="pricing-v2-price">
-                            <span class="pricing-v2-currency">€</span>
-                            <strong>0</strong>
+                        <span class="pricing-v2-label">Customize</span>
+                        <h2>Enterprise</h2>
+                        <div class="pricing-v2-price pricing-v2-price-custom">
+                            <strong>Custom</strong>
+                            <span class="pricing-v2-term">pricing</span>
                         </div>
-                        <p class="pricing-v2-card-summary">Build your entire app before you pay.</p>
-                        <a href="/get-started/" class="pricing-v2-card-action">Get started</a>
+                        <p class="pricing-v2-card-summary">Dedicated setup for larger teams.</p>
+                        <a href="/contact/" class="pricing-v2-card-action">Contact us</a>
                     </div>
                     <ul class="pricing-v2-list">
-                        <li><img class="pricing-v2-brand-icon" src="/assets/openai-logo.svg" alt="" aria-hidden="true">Use Claude Code, Codex or other agent</li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-terminal"></use></svg><strong>Local runtime</strong></li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-logs"></use></svg>Local logs</li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>Community support</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-cluster"></use></svg><strong>Custom workloads</strong></li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-scale"></use></svg>Additional sizes</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-storage"></use></svg>Custom storage</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-backup"></use></svg>Custom backup policy</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-sla"></use></svg>Custom SLAs</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-slack"></use></svg>Private Slack channel</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-hardware"></use></svg>Unshared hardware optional</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-domain"></use></svg>Unlimited domains</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-audit"></use></svg>Audit trail &amp; insights</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>24/7 support</li>
                     </ul>
                 </article>
-            {offers.map(offer => <PricingPlanCard offer={offer} catalog={catalog} />)}
         </div>
         <p class="pricing-v2-billing-note">Prices exclude VAT. Additional capacity is charged when you add it; storage above the included allowance is billed afterwards.</p>
     </section>
@@ -370,7 +396,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                 </h3>
                 <div class="pricing-v2-faq-a">
                     <p>Pro supports additional clusters and apps, larger sizes, and optional high availability on clusters from Medium.</p>
-                    <p>Pro also includes backups and nine-day point-in-time recovery. Contact us for requirements beyond the published plans.</p>
+                    <p>Starter includes manual and automated backups; Pro adds nine-day point-in-time recovery. Contact us for requirements beyond the published plans.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
@@ -381,8 +407,8 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                     </button>
                 </h3>
                 <div class="pricing-v2-faq-a">
-                    <p>Extra or larger clusters and apps can be added with Pro. These are measured during the month and billed at the end of the month.</p>
-                    <p>If your data volume exceeds included storage, additional storage is billed at the catalog rate per GiB per day. The calculator uses one shared allowance across allocated database volumes, logs and metrics, plus measured object and backup storage.</p>
+                    <p>Starter lets you upgrade your cluster and app up to Medium. Pro lets you add more clusters and apps or choose larger sizes. Capacity is charged when you add or upgrade it, after available credits.</p>
+                    <p>If your data volume exceeds included storage, additional storage is billed afterwards at the catalog rate per GiB per day. The calculator estimates storage over 30 days, using one shared allowance across allocated database volumes, logs and metrics, plus measured object and backup storage.</p>
                     <p>Our fair use limits are designed to cover typical application traffic for most products. If your application generates unusually high public network traffic, we may temporarily limit traffic, request changes, or move you to a suitable plan.</p>
                 </div>
             </div>

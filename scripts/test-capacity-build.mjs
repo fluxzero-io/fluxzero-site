@@ -25,9 +25,12 @@ try {
   const markdown = readFileSync('dist/llms.txt', 'utf8');
   for (const {plan, subscription} of catalog.offers) {
     assert.ok(html.includes(`?plan=${plan.planId}`), 'Each CTA must select its published Dashboard plan');
-    const storage = subscription.capabilities.find(c => c.key === 'storage.gib');
-    assert.ok(markdown.includes(`${storage.included} ${storage.unit} storage included`));
+    if (!plan.details.basePlanId) {
+      const storage = subscription.capabilities.find(c => c.key === 'storage.gib');
+      assert.ok(markdown.includes(`${storage.included} ${storage.unit} storage included`));
+    }
   }
+  assert.ok(markdown.includes('Everything in Starter, plus:'), 'Pro must explain its inherited benefits');
   assert.ok(markdown.includes('allocated database volumes'), 'Text export must explain all billed storage');
   assert.ok(!html.includes('Request scale up plan'), 'Capacity pricing must not render the old offer');
   assert.equal((html.match(/data-plan-card=/g) || []).length, 2, 'Both paid plans must have a calculator');

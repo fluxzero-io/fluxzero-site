@@ -2298,6 +2298,22 @@
         }
 
 /* The original plan cards, now presented together with one calculator per paid plan. */
+.pricing-v2-free {
+    display: grid;
+    grid-template-columns: 1.05fr 1.35fr .8fr;
+    gap: 36px;
+    align-items: center;
+    min-height: 0;
+    margin-bottom: 28px;
+}
+.pricing-v2-free h2 { margin-top: 14px; }
+.pricing-v2-free .pricing-v2-price { min-height: 46px; margin-top: 14px; }
+.pricing-v2-free .pricing-v2-list,
+.pricing-v2-free .pricing-v2-card-summary { margin-top: 0; }
+.pricing-v2-free-action { text-align: center; }
+.pricing-v2-free .pricing-v2-card-action { margin-top: 18px; }
+.pricing-v2-inherits { margin-top: 30px; color: var(--text-secondary); font-size: 14px; font-weight: 600; }
+.pricing-v2-inherits + .pricing-v2-list { margin-top: 16px; }
 .pricing-v2-panel-current {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2313,15 +2329,21 @@
 .pricing-v2-panel-current .pricing-v2-card-action-secondary.scale-calc-trigger { margin-top: auto; padding: 0 15px; }
 .pricing-v2-panel-current .pricing-v2-flip-face--front .pricing-v2-list { margin-bottom: 28px; }
 .pricing-v2-plans > .pricing-v2-billing-note { margin-top: 24px; }
-.scale-ha-choice { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 11px; }
+.scale-ha-option { grid-column: 1 / -1; position: relative; display: flex; align-items: center; gap: 6px; }
+.scale-ha-choice { display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 11px; }
 .scale-ha-choice input { accent-color: #00b3ff; }
 .scale-ha-choice:has(input:disabled) { opacity: .55; }
-.scale-calculator-note { margin-top: 16px; }
+.scale-info { flex: none; color: var(--text-secondary); }
+.scale-info summary { display: grid; place-items: center; width: 16px; height: 16px; border: 1px solid currentColor; border-radius: 50%; font-size: 11px; font-weight: 600; cursor: pointer; list-style: none; }
+.scale-info summary::-webkit-details-marker { display: none; }
+.scale-info summary:focus-visible { outline: 2px solid #69c7ff; outline-offset: 3px; }
+.scale-info p { position: absolute; top: calc(100% + 8px); right: 0; z-index: 2; width: min(280px, 100%); padding: 12px 14px; margin: 0; border: 1px solid rgba(111, 188, 255, .25); border-radius: 8px; background: #17202c; color: #d9e6f5; box-shadow: 0 8px 24px #0006; font-size: 12px; line-height: 1.6; }
 .scale-calculator-error { color: #ffb2a9; font-size: 12px; }
 .scale-calculator-error:empty { display: none; }
 .scale-calculator-add:disabled { opacity: .5; cursor: not-allowed; }
 @media (max-width: 1120px) {
     .pricing-v2-panel-current { grid-template-columns: 1fr; max-width: 620px; margin: 0 auto; }
+    .pricing-v2-free { grid-template-columns: 1fr; max-width: 620px; margin-inline: auto; gap: 28px; }
 }
 @media (prefers-reduced-motion: reduce) {
     .pricing-v2-flip-inner { transition: none; }

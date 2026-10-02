@@ -1,4 +1,4 @@
-import {availableSizes, capability, productFor, estimateCapacity, allowsHighAvailability, highAvailabilityLabel} from '../utils/capacity-pricing.mjs';
+import {availableSizes, capability, productFor, estimateCapacity, allowsHighAvailability} from '../utils/capacity-pricing.mjs';
 
 type Resource = 'cluster' | 'application';
 type Row = {type: Resource; size: string; ha: boolean};
@@ -9,6 +9,7 @@ if (data) {
         const planId = card.dataset.planCard!;
         const plan = catalog.offers.find((offer: any) => offer.plan.planId === planId).subscription;
         const policy = plan.capacityPolicy;
+        const pro = !!catalog.offers.find((offer: any) => offer.plan.planId === planId).plan.details.basePlanId;
         const calculator = card.querySelector<HTMLElement>('[data-plan-calculator]')!;
         const front = card.querySelector<HTMLElement>('.pricing-v2-flip-face--front')!;
         const back = card.querySelector<HTMLElement>('.pricing-v2-flip-face--back')!;
@@ -75,7 +76,8 @@ if (data) {
                 main.className = 'scale-row-main';
                 const badge = document.createElement('span');
                 badge.className = `scale-row-type scale-row-type--${typeName}`;
-                badge.textContent = `${typeName} ${count}`;
+                const resourceLabel = pro ? `${typeName} ${count}` : typeName;
+                badge.textContent = resourceLabel;
                 const sizeBadge = document.createElement('span');
                 sizeBadge.className = 'scale-row-size';
                 sizeBadge.textContent = name(item.type, item.size);
@@ -101,18 +103,32 @@ if (data) {
                 range.className = 'scale-row-range'; range.type = 'range';
                 range.min = '0'; range.max = String(allowed.length - 1); range.step = '1';
                 range.value = String(allowed.indexOf(item.size));
-                range.setAttribute('aria-label', `${plan.displayName} ${typeName} ${count} size`);
+                range.setAttribute('aria-label', `${plan.displayName} ${resourceLabel} size`);
                 range.setAttribute('aria-valuetext', name(item.type, item.size));
                 row.append(main, actions, range);
                 let ha: HTMLInputElement | undefined;
                 if (item.type === 'cluster' && policy.highAvailability) {
+                    const option = document.createElement('div'); option.className = 'scale-ha-option';
                     const label = document.createElement('label'); label.className = 'scale-ha-choice';
                     ha = document.createElement('input'); ha.type = 'checkbox'; ha.checked = item.ha;
                     ha.setAttribute('aria-label', `${plan.displayName} cluster ${count} high availability`);
                     ha.disabled = !allowsHighAvailability(policy, item.size);
                     ha.addEventListener('change', () => { item.ha = ha!.checked; updateTotals(); });
-                    label.append(ha, document.createTextNode(highAvailabilityLabel(policy)));
-                    row.append(label);
+                    label.append(ha, document.createTextNode('High availability enabled (Medium+)'));
+                    const info = document.createElement('details'); info.className = 'scale-info';
+                    const summary = document.createElement('summary'); summary.textContent = 'i';
+                    summary.setAttribute('aria-label', `About high availability for cluster ${count}`);
+                    const explanation = document.createElement('p');
+                    const surcharge = Math.round((Number(policy.highAvailabilityPriceMultiplier) - 1) * 100);
+                    explanation.textContent = `Adds redundant database and network components. Available for Medium and larger clusters. Adds ${surcharge}% to the cluster price before your included credit is deducted. Replica storage is billed separately.`;
+                    info.append(summary, explanation);
+                    info.addEventListener('keydown', event => {
+                        if (event.key === 'Escape' && info.open) {
+                            info.open = false; summary.focus(); event.stopPropagation();
+                        }
+                    });
+                    option.append(label, info);
+                    row.append(option);
                 }
                 range.addEventListener('input', () => {
                     item.size = allowed[Number(range.value)];
