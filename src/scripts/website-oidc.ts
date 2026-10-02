@@ -1,4 +1,4 @@
-import { InMemoryWebStorage, OidcClient, UserManager, WebStorageStateStore, type User } from 'oidc-client-ts';
+import { InMemoryWebStorage, UserManager, WebStorageStateStore, type User } from 'oidc-client-ts';
 
 type OidcElement = HTMLElement & {
     dataset: DOMStringMap & {
@@ -59,16 +59,6 @@ function managerFor(element: OidcElement): UserManager {
 
 function currentPage(): string {
     return `${window.location.pathname}${window.location.search}${window.location.hash}`;
-}
-
-function currentTheme(control: OidcElement): 'dark' | 'light' | 'system' {
-    if (!control.classList.contains('website-account-controls--docs')) return 'dark';
-    try {
-        const preference = localStorage.getItem('starlight-theme');
-        return preference === 'dark' || preference === 'light' ? preference : 'system';
-    } catch {
-        return 'system';
-    }
 }
 
 function authorizationNonce(): string {
@@ -147,20 +137,12 @@ export function initWebsiteOidc(): void {
         const resource = configured.dataset.oidcResource;
         const request = async () => {
             if (action.hasAttribute('data-oidc-login') || action.hasAttribute('data-oidc-create')) {
-                const client = new OidcClient(manager.settings, manager.metadataService);
-                const signin = await client.createSigninRequest({
-                    request_type: 'si:r', state: { returnTo }, nonce: authorizationNonce(),
+                // The IDP must create the authorization transaction before showing login or registration.
+                // Its login page keeps that transaction when the visitor selects Create account.
+                await manager.signinRedirect({
+                    state: { returnTo }, nonce: authorizationNonce(),
                     ...(resource ? { resource } : {}),
                 });
-                const authorization = new URL(signin.url);
-                const issuer = new URL(configured.dataset.oidcIssuer!);
-                if (authorization.origin !== issuer.origin || authorization.pathname !== '/oauth2/auth') {
-                    throw new Error('Unexpected authorization endpoint for website sign-in');
-                }
-                const destination = new URL(action.hasAttribute('data-oidc-create') ? '/register' : '/login', issuer);
-                destination.searchParams.set('returnTo', `${authorization.pathname}${authorization.search}`);
-                destination.searchParams.set('theme', currentTheme(control));
-                window.location.assign(destination.href);
             } else if (action.hasAttribute('data-oidc-logout')) {
                 if (!currentUser) await check();
                 if (currentUser) await manager.signoutRedirect({ state: { returnTo } });
