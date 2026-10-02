@@ -13,7 +13,7 @@ catalog data fails the build; test fixtures are never a production fallback.
 
 Amounts and capacity limits in the cards and calculators share the catalog
 snapshot loaded at build time. Free and Enterprise are editorial offers. Plan
-feature descriptions are editorial copy, including Starter backups and identity
+feature descriptions are editorial copy, including identity
 user allowances; these must be reconciled with activated entitlements before
 publication. A catalog change requires a rebuild. Dashboard checkout always
 returns a fresh quote. Plan links select an offer without making a purchase.

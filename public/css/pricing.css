@@ -2300,7 +2300,7 @@
 /* The original plan cards, now presented together with one calculator per paid plan. */
 .pricing-v2-free {
     display: grid;
-    grid-template-columns: 1.05fr 1.35fr .8fr;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.35fr) minmax(max-content, .9fr);
     gap: 36px;
     align-items: center;
     min-height: 0;
@@ -2341,6 +2341,9 @@
 .scale-calculator-error { color: #ffb2a9; font-size: 12px; }
 .scale-calculator-error:empty { display: none; }
 .scale-calculator-add:disabled { opacity: .5; cursor: not-allowed; }
+@media (min-width: 1121px) {
+    .pricing-v2-free-action .pricing-v2-card-summary { white-space: nowrap; }
+}
 @media (max-width: 1120px) {
     .pricing-v2-panel-current { grid-template-columns: 1fr; max-width: 620px; margin: 0 auto; }
     .pricing-v2-free { grid-template-columns: 1fr; max-width: 620px; margin-inline: auto; gap: 28px; }

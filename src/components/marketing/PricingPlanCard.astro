@@ -21,7 +21,7 @@ const features = pro ? [
     ['scale', `Clusters up to ${maximumSize('cluster')}, apps up to ${maximumSize('application')}`],
     ['uptime', 'High-availability clusters'],
     ...(policy.pointInTimeRecoveryDays ? [['backup', `${policy.pointInTimeRecoveryDays}-day point-in-time recovery`]] : []),
-    ['support', 'Pro support'],
+    ['support', 'Fluxzero support'],
 ] : [
     ['cluster', 'Free starter cluster included'],
     ['task', 'Free starter app included'],
@@ -29,9 +29,7 @@ const features = pro ? [
     ['users', `${seats.included} dashboard ${Number(seats.included) === 1 ? 'seat' : 'seats'} included`],
     ['domain', domains.maximum == null && !domains.hardLimit ? 'Unlimited custom domains' : `${domains.maximum ?? domains.included} custom domain`],
     ['users', `${Number(users.included).toLocaleString('en-GB')} users included`],
-    ['backup', 'Manual and automated backups'],
-    ['scale', `Max ${policy.maximumClusters} cluster & ${policy.maximumApplications} app`],
-    ['scale', `Upgrade cluster and app sizes up to ${maximumSize('cluster')}`],
+    ['scale', `Max ${policy.maximumClusters} cluster & ${policy.maximumApplications} app up to ${maximumSize('cluster')}`],
     ['audit', 'Audit trail & insights'],
     ['support', 'Community support'],
 ];
