@@ -119,7 +119,7 @@ export async function startWebsiteOidcStub({
                 token_endpoint_auth_methods_supported: ['none'],
                 code_challenge_methods_supported: ['S256'],
                 scopes_supported: ['openid', 'profile'],
-                prompt_values_supported: ['none', 'login'],
+                prompt_values_supported: ['none', 'login', 'create'],
             }, cors);
             return;
         }
@@ -143,11 +143,15 @@ export async function startWebsiteOidcStub({
             const nonce = params.get('nonce');
             const challenge = params.get('code_challenge');
             const requestedRedirectUri = params.get('redirect_uri');
+            const prompt = params.get('prompt');
+            const theme = params.get('theme');
             const scopes = new Set((params.get('scope') || '').split(' ').filter(Boolean));
             if (params.get('client_id') !== clientId || ![silentRedirectUri, interactiveRedirectUri].includes(requestedRedirectUri)
                 || params.get('response_type') !== 'code' || !state
                 || params.get('code_challenge_method') !== 'S256' || !challenge
-                || params.has('resource') || params.has('audience')
+                || params.has('resource') || params.has('audience') || params.has('returnTo')
+                || prompt !== null && !['none', 'login', 'create'].includes(prompt)
+                || theme !== null && !['dark', 'light', 'system'].includes(theme)
                 || !/^[A-Za-z0-9_-]{43,128}$/.test(challenge)) {
                 lastSilentCheck = 'Invalid authorization request';
                 json(response, 400, { error: 'invalid_request' });
@@ -158,14 +162,20 @@ export async function startWebsiteOidcStub({
                 redirect(response, withQuery(requestedRedirectUri, { error: 'consent_required', state }));
                 return;
             }
-            if (!hasSession(request.headers.cookie)) {
+            if (!hasSession(request.headers.cookie) || prompt === 'create') {
                 lastSilentCheck = 'No session';
-                if (params.get('prompt') === 'none') {
+                if (prompt === 'none') {
                     redirect(response, withQuery(requestedRedirectUri, { error: 'login_required', state }));
                 } else {
                     const id = randomBytes(16).toString('hex');
-                    transactions.set(id, { authorization: `${url.pathname}${url.search}`, expiresAt: Date.now() + 300_000 });
-                    redirect(response, `/login?returnTo=${encodeURIComponent(`/oauth2/auth?transaction=${id}`)}`);
+                    const resumed = new URL(url);
+                    if (prompt === 'create') resumed.searchParams.delete('prompt');
+                    transactions.set(id, { authorization: `${resumed.pathname}${resumed.search}`, theme,
+                        expiresAt: Date.now() + 300_000 });
+                    const entry = new URL(prompt === 'create' ? '/register' : '/login', issuer);
+                    entry.searchParams.set('returnTo', `/oauth2/auth?transaction=${id}`);
+                    if (theme) entry.searchParams.set('theme', theme);
+                    redirect(response, `${entry.pathname}${entry.search}`);
                 }
                 return;
             }
@@ -226,6 +236,11 @@ export async function startWebsiteOidcStub({
             const returnTo = authorizationReturn(url.searchParams.get('returnTo'), issuer, transactions);
             if (!returnTo) {
                 json(response, 400, { error: 'invalid_return' });
+                return;
+            }
+            const transaction = transactions.get(new URL(returnTo).searchParams.get('transaction'));
+            if (url.searchParams.has('theme') && url.searchParams.get('theme') !== transaction.theme) {
+                json(response, 400, { error: 'invalid_request' });
                 return;
             }
             redirect(response, returnTo, `${SESSION_COOKIE}=${SESSION_VALUE}; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600`);

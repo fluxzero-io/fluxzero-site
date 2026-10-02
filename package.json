@@ -23,7 +23,7 @@
     "check:discovery": "node scripts/check-discovery.mjs",
     "test:seo": "node --test src/utils/docs-description.test.mjs scripts/inline-marketing-css.test.mjs scripts/protect-homepage-styles.test.mjs",
     "test:pricing": "node --test src/utils/capacity-pricing.test.mjs",
-    "test:website-oidc": "node --test scripts/website-oidc-stub.test.mjs scripts/website-account-controls.test.mjs scripts/website-oidc-lifecycle.test.mjs src/config/website-oidc.test.mjs",
+    "test:website-oidc": "node --test scripts/website-oidc-stub.test.mjs scripts/website-account-controls.test.mjs scripts/website-oidc-lifecycle.test.mjs scripts/website-oidc-navigation.test.mjs src/config/website-oidc.test.mjs",
     "test:pricing-build": "node scripts/test-capacity-build.mjs"
   },
   "config": {

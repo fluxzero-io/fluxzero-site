@@ -52,6 +52,10 @@ The local feedback provider defaults to in-memory storage. Testing the deployed 
 
 The marketing header always has a Dashboard link. The profile icon appears on marketing and docs pages only when website OIDC is enabled for that origin. Before a session is confirmed it remains a neutral outline; a confirmed session makes it filled and blue. The Dashboard link keeps the same styling regardless of session state. The user's name is inside the menu. A per-tab visual hint, valid for up to 12 hours, restores the signed-in style before the next silent check completes; an expired or revoked IDP session can still briefly show the old style until that check clears it. The hint contains no tokens. An absent session or failed silent check leaves the site usable without a visible error. The website checks the IDP session with Authorization Code + PKCE and `prompt=none` in a hidden iframe. On Chrome-prerendered pages, this check starts only after activation so the callback retains its tab-bound state and PKCE verifier. Login and Create account start interactive flows and return to the same website page; Profile opens the IDP account page with the website client ID and exact current page for a validated return link. Logout uses the IDP end-session endpoint. Tokens are kept in memory. With OIDC disabled, the marketing header shows only Dashboard and docs have no account control.
 
+Create account uses the standard [`prompt=create` registration request](https://openid.net/specs/openid-connect-prompt-create-1_0.html) when the issuer advertises `create` in discovery's `prompt_values_supported`. The existing OIDC library still creates state, nonce and PKCE and retains the exact website page for the callback. If discovery omits this capability, Create account starts the normal authorization flow and the visitor selects account creation on the IDP login page. This allows the website change to ship before IDP I274 is deployed; no additional client identifier or rollout flag is required. The capability is cached for the current page by the OIDC library, so reload an already open website page after an IDP rollout. A registration error is not silently retried as login.
+
+Login, Create account and Profile carry `theme=dark|light|system`: marketing uses `dark`, while docs use the current Starlight preference (including `system` for Auto). Login and Create account pass this through `/oauth2/auth`; the IDP owns the bound registration/login continuation. The website never constructs a registration `returnTo` itself. Client registration, exact callbacks, CORS, same-site cookies and registration policy still apply; discovery describes protocol support, not permission to create accounts.
+
 The **website-only stub** is the default local demo and needs no custom host name:
 
 ```bash
@@ -98,7 +102,7 @@ Run commands from the repository root.
 | `pnpm dev` | Sync content and SDK docs, then start Astro at `localhost:4321` |
 | `pnpm dev:website-stub` | Start Astro and the website-only local OIDC stub |
 | `pnpm dev:website-live-idp` | Start Astro for a separately running local IDP |
-| `pnpm test:website-oidc` | Check website OIDC configuration and the local stub's code+PKCE flow |
+| `pnpm test:website-oidc` | Check configuration, Chrome prerender lifecycle, account actions and real OIDC-library code+PKCE callbacks against the local stub |
 | `pnpm build` | Create the production Worker and static assets in `dist/` |
 | `pnpm preview` | Serve the existing production build locally with Wrangler |
 | `pnpm sync:docs` | Refresh the generated docs from `fluxzero-sdk-java` |
