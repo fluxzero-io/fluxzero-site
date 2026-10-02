@@ -70,6 +70,10 @@
     font-size: 13px;
 }
 
+.agent-cloud-home .homepage-finish {
+    padding-bottom: clamp(260px, 32vw, 480px);
+}
+
 .homepage-finish__actions {
     display: flex;
     align-items: center;
