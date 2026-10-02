@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="100%" stop-color="#B8860B"/>
+    </linearGradient>
+  </defs>
+  <!-- Cup body -->
+  <path d="M8 4h16v2c0 6-3 11-8 13-5-2-8-7-8-13V4z" fill="url(#g)"/>
+  <!-- Left handle -->
+  <path d="M8 6H5c0 4 1.5 6 3 7V6z" fill="url(#g)" opacity="0.85"/>
+  <!-- Right handle -->
+  <path d="M24 6h3c0 4-1.5 6-3 7V6z" fill="url(#g)" opacity="0.85"/>
+  <!-- Stem -->
+  <rect x="14" y="19" width="4" height="4" rx="0.5" fill="url(#g)"/>
+  <!-- Base -->
+  <rect x="10" y="23" width="12" height="3" rx="1.5" fill="url(#g)"/>
+  <!-- Shine -->
+  <path d="M12 7h2v6h-2z" fill="#FFF5CC" opacity="0.4" rx="1"/>
+</svg>

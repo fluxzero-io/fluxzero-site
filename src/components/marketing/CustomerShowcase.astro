@@ -1,0 +1,232 @@
+---
+const customers = [
+    { id: 'unknown', name: 'Unknown University', logo: '/assets/customers/unknown-university.png' },
+    { id: 'portbase', name: 'Portbase', logo: '/assets/fluxzero/portbase-dark.svg', story: "Fluxzero powers the information flow through Europe's largest port." },
+    { id: 'flowmaps', name: 'Flowmaps', logo: '/assets/fluxzero/flowmaps-dark.svg', story: 'Processing energy data from 10% of all Dutch commercial buildings.' },
+    { id: 'megathon', name: 'Megathon', story: "Europe's largest AI hackathon, built and run on Fluxzero." },
+    { id: 'staffyou', name: 'Staffyou', logo: '/assets/customers/staffyou.svg' },
+];
+---
+
+<section class="customer-proof rv" id="customers" aria-labelledby="customers-title">
+    <header class="customer-proof__intro">
+        <p class="eyebrow">Built to scale</p>
+        <h2 id="customers-title">Start small.<br><span>Scale without starting over.</span></h2>
+        <p class="customer-proof__description">The same application model already powers mission-critical systems<br class="desktop-break"> with high throughput and complex business logic.</p>
+    </header>
+
+    <customer-showcase>
+        <div class="customer-ring" aria-label="Teams building with Fluxzero">
+            {customers.map((customer) => (
+                <figure class:list={['customer-ring__item', `customer-ring__item--${customer.id}`]} data-customer={customer.story ? customer.id : undefined} data-active={customer.id === 'portbase' ? '' : undefined}>
+                    {customer.story ? (
+                        <button type="button" class="customer-ring__logo" aria-label={`Show ${customer.name} story`} aria-pressed={customer.id === 'portbase' ? 'true' : 'false'} aria-controls={`customer-story-${customer.id}`}>
+                            {customer.logo ? <img src={customer.logo} alt={customer.name} loading="lazy" width="200" height="56" /> : (
+                                <span class="customer-ring__megathon" role="img" aria-label="Megathon">
+                                    <img src="/assets/customers/megathon-mark.svg" alt="" width="32" height="32" loading="lazy" />
+                                    <span>MEGATHON</span>
+                                </span>
+                            )}
+                            <span class="customer-ring__timer" aria-hidden="true"><span></span></span>
+                        </button>
+                    ) : (
+                        <div class="customer-ring__logo"><img src={customer.logo} alt={customer.name} loading="lazy" width="200" height="56" /></div>
+                    )}
+                    {customer.story && <figcaption class="customer-ring__story" id={`customer-story-${customer.id}`}><span class="customer-ring__story-label">{customer.name}</span><p>{customer.story}</p></figcaption>}
+                </figure>
+            ))}
+        </div>
+    </customer-showcase>
+</section>
+
+<style>
+    @font-face {
+        font-family: 'Megathon Russo';
+        src: url('/assets/customers/russo-one.woff2') format('woff2');
+        font-weight: 400;
+        font-style: normal;
+        font-display: swap;
+    }
+
+    .customer-proof { max-width: 1280px; scroll-margin-top: 100px; }
+    .customer-proof__intro { text-align: center; }
+    .customer-proof__intro .eyebrow { color: #83b9ff; margin: 0 0 22px; }
+    .customer-proof__intro h2 { width: 100%; max-width: none; margin: 0 auto 28px; font-size: clamp(36px, 4.3vw, 58px); letter-spacing: -.035em; line-height: 1.08; }
+    .customer-proof__intro h2 span { color: #a8cbe6; }
+    .customer-proof__description { margin: 0; font-size: 19px; line-height: 1.7; color: #a8b3c3; }
+
+    customer-showcase { --progress: 0; display: block; margin-top: 84px; }
+    .customer-ring {
+        position: relative;
+        display: grid;
+        grid-template-columns: .85fr 1fr 1.08fr 1fr .85fr;
+        align-items: end;
+        gap: clamp(20px, 3vw, 42px);
+        padding: 230px 16px 34px;
+        isolation: isolate;
+    }
+    .customer-ring__item { --story-accent: 123, 190, 225; --story-anchor: 50%; min-width: 0; margin: 0; }
+    .customer-ring__logo {
+        position: relative;
+        display: flex;
+        width: 100%;
+        height: 90px;
+        padding: 8px 0 26px;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        transform: perspective(650px) rotateY(var(--yaw, 0deg)) translateY(var(--lift, 0px)) scale(var(--scale, 1));
+        transition: transform 700ms ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+    button.customer-ring__logo { cursor: pointer; }
+    .customer-ring__logo > img, .customer-ring__megathon {
+        width: 100%;
+        max-height: 52px;
+        height: auto;
+        object-fit: contain;
+        filter: grayscale(1);
+        opacity: .42;
+        transition: filter 700ms ease, opacity 700ms ease;
+    }
+    .customer-ring__logo:focus-visible { outline: 2px solid #83b9ff; outline-offset: 10px; }
+    .customer-ring__item--unknown { --yaw: 34deg; --lift: -27px; --scale: .88; }
+    .customer-ring__item--portbase { --yaw: 16deg; --lift: -7px; --scale: .98; --story-accent: 243, 118, 71; --story-anchor: 15%; }
+    .customer-ring__item--megathon { --yaw: -16deg; --lift: -7px; --scale: .98; --story-accent: 212, 167, 44; --story-anchor: 85%; }
+    .customer-ring__item--staffyou { --yaw: -34deg; --lift: -27px; --scale: .88; }
+    .customer-ring__item--unknown .customer-ring__logo { mask-image: linear-gradient(90deg, transparent, #000 80%); }
+    .customer-ring__item--staffyou .customer-ring__logo { mask-image: linear-gradient(270deg, transparent, #000 80%); }
+    .customer-ring__item--staffyou img { max-width: 130px; filter: grayscale(1) brightness(0) invert(1); }
+    .customer-ring__megathon { display: flex; align-items: center; justify-content: center; gap: 9px; color: #d4a72c; font: 400 clamp(16px, 1.7vw, 23px)/1 'Megathon Russo', sans-serif; letter-spacing: .02em; white-space: nowrap; }
+    .customer-ring__megathon img { width: 28px; height: 28px; flex: 0 0 auto; }
+    .customer-ring__item[data-active] { z-index: 1; }
+    .customer-ring__item[data-active] .customer-ring__logo { --yaw: 0deg; --scale: 1.05; }
+    .customer-ring__item[data-active] .customer-ring__logo > img,
+    .customer-ring__item[data-active] .customer-ring__megathon { filter: grayscale(0); opacity: 1; }
+    .customer-ring__story {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        width: min(780px, calc(100% - 48px));
+        min-height: 170px;
+        padding: 28px 44px 32px;
+        border: 1px solid rgba(var(--story-accent), .2);
+        border-radius: 22px;
+        background: radial-gradient(ellipse at 50% 0, rgba(var(--story-accent), .09), transparent 75%), linear-gradient(180deg, #ffffff05, #ffffff01), #1e2024;
+        box-shadow: 0 16px 48px #0000001a, inset 0 1px #ffffff05;
+        text-align: center;
+        opacity: 0;
+        transform: translate(-50%, 9px);
+        transition: opacity 400ms ease, transform 400ms ease;
+        pointer-events: none;
+    }
+    .customer-ring__story-label { display: inline-flex; align-items: center; gap: 8px; color: rgba(var(--story-accent), .95); font-size: 11px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
+    .customer-ring__story-label::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px rgba(var(--story-accent), .3); }
+    .customer-ring__story p { max-width: 650px; margin: 0; font-size: 23px; line-height: 1.5; font-weight: 450; letter-spacing: -.015em; color: #e4eaf2; text-wrap: balance; }
+    .customer-ring__story::after { content: ''; position: absolute; top: 100%; left: var(--story-anchor); height: 32px; width: 1px; background: linear-gradient(rgba(var(--story-accent), .35), transparent); }
+    .customer-ring__item[data-active] .customer-ring__story { opacity: 1; transform: translate(-50%, 0); }
+    .customer-ring__timer { position: absolute; bottom: 0; left: 25%; width: 50%; height: 2px; background: #a9c6df1a; opacity: 0; overflow: hidden; border-radius: 2px; transition: opacity 400ms ease; }
+    .customer-ring__timer > span { display: block; height: 100%; background: rgb(var(--story-accent)); transform: scaleX(var(--progress)); transform-origin: left; }
+    [data-active] .customer-ring__timer { opacity: 1; }
+
+    @media (max-width: 700px) {
+        .customer-proof { padding-inline: 20px; overflow: clip; }
+        .customer-proof__description { font-size: 17px; }
+        .customer-proof__description .desktop-break { display: none; }
+        customer-showcase { margin-top: 64px; }
+        .customer-ring { width: calc(100% + 148px); margin-left: -74px; gap: 16px; padding-inline: 0; padding-top: 242px; }
+        .customer-ring__logo { height: 74px; padding-bottom: 22px; }
+        .customer-ring__story { width: calc(100% - 148px); min-height: 185px; padding: 24px; border-radius: 18px; }
+        .customer-ring__story p { font-size: 19px; }
+        .customer-ring__megathon { font-size: clamp(10px, 2.4vw, 17px); gap: 3px; }
+        .customer-ring__megathon img { width: 18px; height: 18px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .customer-ring__logo, .customer-ring__logo > img, .customer-ring__megathon, .customer-ring__story { transition: none; }
+        .customer-ring__timer { display: none; }
+    }
+</style>
+
+<script>
+    class CustomerShowcase extends HTMLElement {
+        private cleanup?: () => void;
+
+        connectedCallback() {
+            const items = Array.from(this.querySelectorAll<HTMLElement>('[data-customer]'));
+            if (items.length < 2) return;
+            const abort = new AbortController();
+            const { signal } = abort;
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+            const duration = 6000;
+            let active = 0;
+            let elapsed = 0;
+            let lastTime = 0;
+            let frame = 0;
+            let inView = false;
+            let hovering = false;
+            let focused = false;
+
+            const select = (index: number) => {
+                active = (index + items.length) % items.length;
+                elapsed = 0;
+                this.style.setProperty('--progress', '0');
+                items.forEach((item, i) => {
+                    item.toggleAttribute('data-active', i === active);
+                    item.querySelector('button')?.setAttribute('aria-pressed', String(i === active));
+                    item.querySelector('figcaption')?.setAttribute('aria-hidden', String(i !== active));
+                });
+            };
+            const shouldRun = () => inView && !hovering && !focused && !document.hidden && !reducedMotion.matches;
+            const tick = (time: number) => {
+                frame = 0;
+                if (!shouldRun()) return;
+                elapsed += time - lastTime;
+                lastTime = time;
+                if (elapsed >= duration) select(active + 1);
+                this.style.setProperty('--progress', String(elapsed / duration));
+                frame = requestAnimationFrame(tick);
+            };
+            const sync = () => {
+                cancelAnimationFrame(frame);
+                frame = 0;
+                if (shouldRun()) {
+                    lastTime = performance.now();
+                    frame = requestAnimationFrame(tick);
+                }
+            };
+
+            items.forEach((item, index) => {
+                const button = item.querySelector('button');
+                button?.addEventListener('click', () => { select(index); sync(); }, { signal });
+                button?.addEventListener('keydown', (event) => {
+                    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+                    event.preventDefault();
+                    select(event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : active + (event.key === 'ArrowRight' ? 1 : -1));
+                    items[active].querySelector('button')?.focus();
+                    sync();
+                }, { signal });
+            });
+            this.addEventListener('pointerenter', (event) => { if (event.pointerType === 'mouse') { hovering = true; sync(); } }, { signal });
+            this.addEventListener('pointerleave', () => { hovering = false; sync(); }, { signal });
+            this.addEventListener('focusin', () => { focused = true; sync(); }, { signal });
+            this.addEventListener('focusout', (event) => { focused = event.relatedTarget instanceof Node && this.contains(event.relatedTarget); sync(); }, { signal });
+            document.addEventListener('visibilitychange', sync, { signal });
+            reducedMotion.addEventListener('change', sync, { signal });
+            const observer = new IntersectionObserver(([entry]) => { inView = entry.isIntersecting; sync(); }, { threshold: .4 });
+            observer.observe(this);
+            select(0);
+            this.cleanup = () => { abort.abort(); observer.disconnect(); cancelAnimationFrame(frame); };
+        }
+
+        disconnectedCallback() { this.cleanup?.(); }
+    }
+
+    if (!customElements.get('customer-showcase')) customElements.define('customer-showcase', CustomerShowcase);
+</script>
