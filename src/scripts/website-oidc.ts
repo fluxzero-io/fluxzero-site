@@ -61,6 +61,16 @@ function currentPage(): string {
     return `${window.location.pathname}${window.location.search}${window.location.hash}`;
 }
 
+function currentTheme(control: HTMLElement): 'dark' | 'light' | 'system' {
+    if (!control.classList.contains('website-account-controls--docs')) return 'dark';
+    try {
+        const preference = localStorage.getItem('starlight-theme');
+        return preference === 'light' || preference === 'dark' ? preference : 'system';
+    } catch {
+        return 'system';
+    }
+}
+
 function authorizationNonce(): string {
     const bytes = crypto.getRandomValues(new Uint8Array(32));
     return btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -110,17 +120,11 @@ export function initWebsiteOidc(): void {
         const name = user ? displayName(user) : undefined;
 
         controls.forEach((control) => {
-            const dashboard = control.querySelector<HTMLAnchorElement>('[data-website-dashboard]');
             const identity = control.querySelector<HTMLElement>('[data-oidc-identity]');
             const nameElement = control.querySelector<HTMLElement>('[data-oidc-name]');
             const signedIn = control.querySelector<HTMLElement>('[data-oidc-signed-in]');
             const signedOut = control.querySelector<HTMLElement>('[data-oidc-signed-out]');
             const trigger = control.querySelector<HTMLElement>('.website-account-trigger');
-            if (dashboard) {
-                if (user) dashboard.dataset.oidcState = 'signed-in';
-                else dashboard.removeAttribute('data-oidc-state');
-                dashboard.setAttribute('aria-label', user ? 'Dashboard, signed in' : 'Dashboard');
-            }
             if (identity) identity.hidden = !user;
             if (signedIn) signedIn.hidden = !user;
             if (signedOut) signedOut.hidden = !!user;
@@ -145,10 +149,19 @@ export function initWebsiteOidc(): void {
         const resource = configured.dataset.oidcResource;
         const request = async () => {
             if (action.hasAttribute('data-oidc-login') || action.hasAttribute('data-oidc-create')) {
-                // The IDP must create the authorization transaction before showing login or registration.
-                // Its login page keeps that transaction when the visitor selects Create account.
+                const theme = currentTheme(control);
+                let prompt: 'create' | undefined;
+                if (action.hasAttribute('data-oidc-create')) {
+                    const metadata = await manager.metadataService.getMetadata() as { prompt_values_supported?: unknown };
+                    if (Array.isArray(metadata.prompt_values_supported) && metadata.prompt_values_supported.includes('create')) {
+                        prompt = 'create';
+                    }
+                }
+                // Older IDPs keep the login-page signup entry until they advertise prompt=create.
                 await manager.signinRedirect({
                     state: { returnTo }, nonce: authorizationNonce(),
+                    ...(prompt ? { prompt } : {}),
+                    extraQueryParams: { theme },
                     ...(resource ? { resource } : {}),
                 });
             } else if (action.hasAttribute('data-oidc-logout')) {
