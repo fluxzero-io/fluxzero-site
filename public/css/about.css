@@ -43,10 +43,6 @@ body.about-page::before {
     text-wrap: pretty;
 }
 
-.about-belief p + p {
-    margin-top: 24px;
-}
-
 .about-lead,
 .about-possibility {
     color: var(--text);
