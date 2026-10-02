@@ -19,61 +19,22 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 <body class="v4-page about-page">
 <MarketingHeader active="about" />
 <main class="about-main">
-    <section class="about-hero" aria-labelledby="mission-title">
-        <div class="about-kicker"><span class="about-kicker__dot" aria-hidden="true"></span> Our story <span class="about-kicker__line" aria-hidden="true"></span></div>
-        <div class="about-aperture" aria-hidden="true">
-            <svg viewBox="0 0 660 800" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="aperture-edge" x1="155" y1="100" x2="450" y2="690" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#ecfbff" /><stop offset=".28" stop-color="#a2e2ff" /><stop offset=".6" stop-color="#389cfa" /><stop offset="1" stop-color="#0c2444" />
-                    </linearGradient>
-                    <linearGradient id="aperture-inner" x1="280" y1="165" x2="425" y2="670" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#123e64" /><stop offset=".43" stop-color="#081222" /><stop offset="1" stop-color="#080a0f" />
-                    </linearGradient>
-                    <radialGradient id="aperture-aura"><stop stop-color="#317cdb" stop-opacity=".35" /><stop offset="1" stop-color="#317cdb" stop-opacity="0" /></radialGradient>
-                    <filter id="aperture-blur" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="23" /></filter>
-                    <filter id="aperture-soft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5" /></filter>
-                </defs>
-                <ellipse cx="355" cy="415" rx="300" ry="355" fill="url(#aperture-aura)" />
-                <g transform="rotate(23 345 405)">
-                    <rect x="158" y="102" width="350" height="590" rx="175" stroke="#4caaff" stroke-width="18" opacity=".42" filter="url(#aperture-blur)" />
-                    <rect x="149" y="94" width="372" height="610" rx="186" stroke="#699ed3" stroke-opacity=".14" />
-                    <rect x="129" y="74" width="412" height="650" rx="206" stroke="#699ed3" stroke-opacity=".07" />
-                    <rect x="168" y="112" width="332" height="570" rx="166" fill="url(#aperture-inner)" stroke="url(#aperture-edge)" stroke-width="24" />
-                    <rect x="181" y="125" width="306" height="544" rx="153" stroke="#c3eeff" stroke-opacity=".34" stroke-width="1.5" />
-                    <path d="M172 278c0-91 73-166 164-166 43 0 82 16 111 44" stroke="#dbf7ff" stroke-width="7" stroke-linecap="round" filter="url(#aperture-soft)" />
-                    <path d="M172 278c0-91 73-166 164-166 43 0 82 16 111 44" stroke="#effbff" stroke-opacity=".9" stroke-width="2" stroke-linecap="round" />
-                </g>
-            </svg>
-        </div>
-        <h1 id="mission-title">
-            <span>Great ideas deserve</span>
-            <span>to become</span>
-            <span class="about-hero__accent">real products.</span>
-        </h1>
-        <div class="about-hero__footnote" aria-hidden="true"><span>A foundation for every builder.</span><span>↓</span></div>
-    </section>
+    <article class="about-statement" aria-labelledby="mission-title">
+        <h1 id="mission-title">Great ideas deserve<br> to become real products.</h1>
 
-    <section class="about-manifesto" aria-label="What we believe">
-        <h2 class="about-section-label"><span aria-hidden="true">01</span> The belief</h2>
         <div class="about-belief">
-            <p class="about-lead">We believe turning ideas into software should be <em>effortless, at any scale.</em></p>
+            <p>We believe turning ideas into software should be effortless, at any scale.</p>
             <p>With AI, the potential of software is unlimited,<br class="about-belief__break"> yet much of it remains locked behind complexity.</p>
-            <p class="about-possibility">Imagine a world where all that potential is finally <em>set free.</em></p>
+            <p>Imagine a world where all that potential is finally set free.</p>
         </div>
-    </section>
 
-    <section class="about-foundation" aria-label="The team behind Fluxzero">
-        <h2 class="about-section-label"><span aria-hidden="true">02</span> The foundation</h2>
-        <div class="about-foundation__body">
-            <p class="about-team">We’re a European engineering team with years of experience building and running systems that <em>could not afford to fail.</em></p>
-            <p class="about-promise">On Fluxzero, that same foundation is available to <span>every builder.</span></p>
-            <div class="about-actions">
-                <a class="btn-p" href="/#get-started">Start building <span aria-hidden="true">→</span></a>
-                <a class="btn-s" href="/contact/">Talk to us <span aria-hidden="true">→</span></a>
-            </div>
+        <p class="about-team">We’re a European engineering team with years of experience building and running systems that could not afford to fail. On Fluxzero, that same foundation is available to every builder.</p>
+
+        <div class="about-actions">
+            <a class="btn-p" href="/#get-started">Start building <span aria-hidden="true">→</span></a>
+            <a class="btn-s" href="/contact/">Talk to us <span aria-hidden="true">→</span></a>
         </div>
-    </section>
+    </article>
 </main>
 <MarketingFooter />
 
