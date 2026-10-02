@@ -61,6 +61,34 @@ const accountEnabled = oidc.enabled;
             if (control.classList.contains('website-account-controls--docs')) control.hidden = true;
             return;
         }
+        const profile = control.querySelector('[data-oidc-profile]');
+        const currentTheme = () => {
+            if (!control.classList.contains('website-account-controls--docs')) return 'dark';
+            try {
+                const preference = localStorage.getItem('starlight-theme');
+                return preference === 'light' || preference === 'dark' ? preference : 'system';
+            } catch {
+                return 'system';
+            }
+        };
+        const updateProfileHref = () => {
+            if (!(profile instanceof HTMLAnchorElement)) return;
+            const { oidcIssuer, oidcClientId } = control.dataset;
+            if (!oidcIssuer || !oidcClientId) return;
+            try {
+                const account = new URL('/account', oidcIssuer);
+                account.searchParams.set('app_client', oidcClientId);
+                account.searchParams.set('app_return', location.href);
+                account.searchParams.set('theme', currentTheme());
+                profile.href = account.href;
+            } catch {
+                // The ordinary account page remains available without a return link.
+            }
+        };
+        updateProfileHref();
+        profile?.addEventListener('pointerdown', updateProfileHref);
+        profile?.addEventListener('focus', updateProfileHref);
+        profile?.addEventListener('click', updateProfileHref);
         if (menu) menu.hidden = false;
         try {
             const cached = JSON.parse(sessionStorage.getItem('fluxzero.website.oidc.presence.v1') || 'null');

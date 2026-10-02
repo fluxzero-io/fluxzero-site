@@ -114,7 +114,10 @@ jobs:
           FLUXZERO_SDK_DOCS_SOURCE: .cache/fluxzero-sdk-java/docs/developer
           PRICING_MODEL: ${{ vars.PRICING_MODEL || 'legacy' }}
           PRICING_CATALOG_URL: ${{ vars.PRICING_CATALOG_URL }}
-          PUBLIC_WEBSITE_OIDC_ENABLED: 'false'
+          PUBLIC_WEBSITE_OIDC_ENABLED: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
+          PUBLIC_WEBSITE_OIDC_ISSUER: https://login.fluxzero.io
+          PUBLIC_WEBSITE_OIDC_CLIENT_ID: fluxzero-website
+          PUBLIC_WEBSITE_OIDC_SITE_ORIGIN: https://fluxzero.io
 
       - name: Deploy to Cloudflare
         if: steps.sdk-docs.outputs.changed == 'true'

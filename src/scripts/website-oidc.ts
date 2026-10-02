@@ -61,6 +61,16 @@ function currentPage(): string {
     return `${window.location.pathname}${window.location.search}${window.location.hash}`;
 }
 
+function currentTheme(control: OidcElement): 'dark' | 'light' | 'system' {
+    if (!control.classList.contains('website-account-controls--docs')) return 'dark';
+    try {
+        const preference = localStorage.getItem('starlight-theme');
+        return preference === 'dark' || preference === 'light' ? preference : 'system';
+    } catch {
+        return 'system';
+    }
+}
+
 function authorizationNonce(): string {
     const bytes = crypto.getRandomValues(new Uint8Array(32));
     return btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -136,9 +146,7 @@ export function initWebsiteOidc(): void {
         const returnTo = currentPage();
         const resource = configured.dataset.oidcResource;
         const request = async () => {
-            if (action.hasAttribute('data-oidc-login')) {
-                await manager.signinRedirect({ state: { returnTo }, nonce: authorizationNonce(), ...(resource ? { resource } : {}) });
-            } else if (action.hasAttribute('data-oidc-create')) {
+            if (action.hasAttribute('data-oidc-login') || action.hasAttribute('data-oidc-create')) {
                 const client = new OidcClient(manager.settings, manager.metadataService);
                 const signin = await client.createSigninRequest({
                     request_type: 'si:r', state: { returnTo }, nonce: authorizationNonce(),
@@ -147,11 +155,12 @@ export function initWebsiteOidc(): void {
                 const authorization = new URL(signin.url);
                 const issuer = new URL(configured.dataset.oidcIssuer!);
                 if (authorization.origin !== issuer.origin || authorization.pathname !== '/oauth2/auth') {
-                    throw new Error('Unexpected authorization endpoint for account creation');
+                    throw new Error('Unexpected authorization endpoint for website sign-in');
                 }
-                const registration = new URL('/register', issuer);
-                registration.searchParams.set('returnTo', `${authorization.pathname}${authorization.search}`);
-                window.location.assign(registration.href);
+                const destination = new URL(action.hasAttribute('data-oidc-create') ? '/register' : '/login', issuer);
+                destination.searchParams.set('returnTo', `${authorization.pathname}${authorization.search}`);
+                destination.searchParams.set('theme', currentTheme(control));
+                window.location.assign(destination.href);
             } else if (action.hasAttribute('data-oidc-logout')) {
                 if (!currentUser) await check();
                 if (currentUser) await manager.signoutRedirect({ state: { returnTo } });

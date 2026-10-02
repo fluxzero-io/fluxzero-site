@@ -120,8 +120,16 @@ test('website stub supports login, registration, profile and RP logout without e
         assert.equal(loginUrl.pathname, '/login');
         assert.equal(loginUrl.searchParams.get('returnTo'), authorization);
 
+        const themedLoginUrl = new URL('/login', stub.issuer);
+        themedLoginUrl.searchParams.set('returnTo', authorization);
+        themedLoginUrl.searchParams.set('theme', 'dark');
+        const themedLogin = await request(`${themedLoginUrl.pathname}${themedLoginUrl.search}`);
+        assert.equal(themedLogin.status, 302);
+        assert.equal(themedLogin.headers.get('location'), `${stub.issuer}${authorization}`);
+
         const registrationUrl = new URL('/register', stub.issuer);
         registrationUrl.searchParams.set('returnTo', authorization);
+        registrationUrl.searchParams.set('theme', 'light');
         const registration = await request(`${registrationUrl.pathname}${registrationUrl.search}`);
         assert.equal(registration.status, 302);
         assert.equal(registration.headers.get('location'), `${stub.issuer}${authorization}`);
