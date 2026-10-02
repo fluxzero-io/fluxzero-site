@@ -1,8 +1,8 @@
 ---
 import '../styles/marketing-fonts.css';
-import displayFont from '../../public/fonts/google-sans-flex/GoogleSansFlex-Black-latin.woff2?url';
-import bodyFont from '../../public/fonts/inter/InterVariable-latin.woff2?url';
-import { marketingPages, normalizePath } from '../../scripts/core-pages.mjs';
+import displayFont from '../../public/fonts/poppins/Poppins-600-latin.woff2?url';
+import bodyFont from '../../public/fonts/poppins/Poppins-400-latin.woff2?url';
+import { marketingPages, unlistedPages, normalizePath } from '../../scripts/core-pages.mjs';
 import { fluxzeroBrand, fluxzeroLogoCssUrl } from '../config/brand.mjs';
 
 interface Props {
@@ -29,6 +29,7 @@ const imageUrl = new URL(image, siteUrl).toString();
 <link rel="preload" href={displayFont} as="font" type="font/woff2" crossorigin>
 <link rel="preload" href={bodyFont} as="font" type="font/woff2" crossorigin>
 <title>{title}</title>
+{unlistedPages.includes(normalizePath(Astro.url.pathname)) && <meta name="robots" content="noindex, follow">}
 {description && <meta name="description" content={description}>}
 <link rel="canonical" href={pageUrl}>
 {markdownPath && <link rel="alternate" type="text/markdown" href={markdownPath} title="Markdown version of this page">}

@@ -1,30 +1,48 @@
 ---
-interface Props {view:'trace'|'audit'|'logs'|'issues'|'documents'|'insights';}
-const {view}=Astro.props;
+interface Props {view:'trace'|'audit'|'logs'|'issues'|'documents'|'insights'; sharedHeight?: boolean;}
+const {view, sharedHeight = false}=Astro.props;
 const titles={trace:'Traces',audit:'Audit trail',logs:'Logs',issues:'Issues',documents:'Documents',insights:'Insights'};
 ---
 <figure class="monitoring-example">
   <div class="monitoring-example__frame" data-view={view}>
-    <iframe title={`${titles[view]} — interactive ticketing demo`} data-monitoring-frame
+    <iframe title={`${titles[view]} — interactive ticketing demo`} data-monitoring-frame data-shared-height={sharedHeight || undefined}
       data-source={`/monitoring-demo/index.html?view=${view}`} sandbox="allow-scripts allow-same-origin" allow="clipboard-write" referrerpolicy="no-referrer"></iframe>
     <noscript><p>Enable JavaScript to explore this interactive example.</p></noscript>
   </div>
 
 </figure>
 <script>
+ const loadFrame = (frame: HTMLIFrameElement) => {
+   if (!frame.dataset.source) return;
+   frame.src = frame.dataset.source;
+   delete frame.dataset.source;
+ };
  const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{
    if(!entry.isIntersecting)return;
-   const frame=entry.target as HTMLIFrameElement;
-   if(frame.dataset.source)frame.src=frame.dataset.source;
-   observer.unobserve(frame);
+   if (entry.target instanceof HTMLIFrameElement) loadFrame(entry.target);
+   else entry.target.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]').forEach(loadFrame);
+   observer.unobserve(entry.target);
  }),{rootMargin:'120px'});
+ const groupHeights = new WeakMap<HTMLElement, { width: number; height: number }>();
  window.addEventListener('message',event=>{
    if(event.origin!==location.origin || event.data?.type!=='monitoring-height')return;
    const frame=[...document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]')].find(frame=>frame.contentWindow===event.source);
    const height=Number(event.data.height);
-   if(frame && Number.isFinite(height) && height>=100 && height<=2400) {
+   if(!frame || !Number.isFinite(height) || height<100 || height>2400)return;
+   const group = frame.hasAttribute('data-shared-height') ? frame.closest<HTMLElement>('[data-monitoring-group]') : null;
+   if (!group) {
      (frame.parentElement as HTMLElement).style.height=`${Math.ceil(height)}px`;
+     return;
    }
+   const previous = groupHeights.get(group);
+   // Reserve every demo's full height; filtering or switching tabs never shrinks the group.
+   const nextHeight = Math.max(Math.ceil(height), previous?.width === group.clientWidth ? previous.height : 0);
+   groupHeights.set(group, {width: group.clientWidth, height: nextHeight});
+   group.style.setProperty('--monitoring-height', `${nextHeight}px`);
  });
- document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]').forEach(frame=>observer.observe(frame));
+ document.querySelectorAll<HTMLIFrameElement>('[data-monitoring-frame]').forEach(frame=>{
+   // Load the whole carousel together before rotation, so hidden tabs can report their height.
+   const group = frame.hasAttribute('data-shared-height') ? frame.closest('[data-monitoring-group]') : null;
+   observer.observe(group ?? frame);
+ });
 </script>

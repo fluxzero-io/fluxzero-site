@@ -13,9 +13,9 @@
     --border-strong: rgba(118, 184, 255, 0.3);
     --surface: rgba(8, 14, 23, 0.74);
     --surface-strong: rgba(10, 20, 34, 0.92);
-    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
-    --font-display: 'Google Sans Flex', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+    --font-body: 'Poppins', -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+    --font-display: 'Poppins', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --font-mono: var(--font-body);
     --max-w: 1260px;
 }
 
@@ -87,9 +87,9 @@ h1,
 h2,
 h3 {
     font-family: var(--font-display);
-    font-weight: 900;
-    letter-spacing: -0.04em;
-    line-height: 1.03;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.12;
     text-wrap: balance;
 }
 
@@ -274,7 +274,7 @@ h3 {
     padding: 0 0.035em 0.09em 0;
     color: var(--text);
     font-size: clamp(60px, 7.6vw, 112px);
-    line-height: 0.99;
+    line-height: 1.12;
 }
 
 .v4-hero h1 span {
@@ -1086,8 +1086,8 @@ h3 {
     color: #70b9ff;
     font-family: var(--font-body);
     font-size: clamp(24px, 2.7vw, 34px);
-    font-weight: 400;
-    letter-spacing: -0.03em;
+    font-weight: 600;
+    letter-spacing: -0.025em;
 }
 
 .agent-capability-grid article > p:nth-of-type(2) {
@@ -1444,7 +1444,7 @@ h3 {
     .v4-hero h1 {
         width: 100%;
         font-size: clamp(48px, 14.7vw, 68px);
-        line-height: 1.02;
+        line-height: 1.12;
     }
 
     .v4-hero h1 br {

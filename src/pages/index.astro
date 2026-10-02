@@ -92,7 +92,7 @@ const homepageFaqs = [
             'You and your coding agent build the product behavior. Fluxzero takes responsibility for the technical foundation underneath your product, including security, reliable message delivery, recovery, auditability, and scale.',
             'The same hardened foundation supports high-throughput enterprise workloads.',
         ],
-        link: { href: '/technical-foundation', label: 'See how Fluxzero keeps your product running' },
+        link: { href: '/how-it-works/', label: 'See how Fluxzero keeps your product running' },
     },
     {
         question: 'My agent can generate a backend. Why should it use Fluxzero?',
@@ -222,7 +222,7 @@ const homepageFaqSchema = {
         <p class="eyebrow">To get started</p>
         <h2 id="get-started-title">Copy this into your agent.</h2>
     </header>
-    <AgentInstruction />
+    <AgentInstruction instructionSource />
 </section>
 
 <AgentReflections />
@@ -231,7 +231,7 @@ const homepageFaqSchema = {
 
 <section class="comparison comparison-v4 rv section-stack" id="platform-comparison" aria-labelledby="comparison-title">
     <div class="section-intro comparison-v4__heading">
-        <h2 class="h2-two-line" id="comparison-title">Other clouds run infrastructure.<br><span>Fluxzero runs your product.</span></h2>
+        <h2 id="comparison-title">A cloud that works for your agent.</h2>
     </div>
 
     <div class="comparison-desktop section-grid" role="table" aria-label="Comparison of application cloud approaches">
@@ -294,7 +294,7 @@ const homepageFaqSchema = {
     </div>
 
     <div class="comparison-v4__actions">
-        <a class="btn-s" href="/how-it-works/">Explore how Fluxzero works →</a>
+        <a class="btn-s" href="/how-it-works/">See how Fluxzero works →</a>
     </div>
 </section>
 
@@ -302,13 +302,13 @@ const homepageFaqSchema = {
 
 <section class="cta-end homepage-finish rv" aria-labelledby="cta-end-title">
     <div class="section-intro">
-        <h2 id="cta-end-title">
-            <span class="cta-title-main">Launch what used to require</span>
-            <span class="cta-title-accent">an entire engineering team.</span>
-        </h2>
+        <h2 class="homepage-finish__title" id="cta-end-title">Why are you still here?</h2>
+    </div>
+    <div class="homepage-finish__prompt" data-llms-exclude>
+        <AgentInstruction showAgents={false} />
     </div>
     <div class="cta-btns homepage-finish__actions">
-        <a href="#get-started" class="btn-p">Get started <span aria-hidden="true">↑</span></a>
+        <a href="/pricing/" class="btn-p">Pricing <span aria-hidden="true">→</span></a>
         <button class="btn-s" type="button" aria-expanded="false" aria-controls="faq" data-toggle-faq>FAQ <span class="homepage-finish__chevron" aria-hidden="true">↓</span></button>
     </div>
     <div class="faq homepage-faq" id="faq" aria-labelledby="faq-title" data-llms-include hidden>
@@ -333,15 +333,53 @@ const homepageFaqSchema = {
 
 <MarketingFooter />
 <script src="/js/home.js?v=20260904-2" defer></script>
-<script src="/js/start-building-v4.js?v=20260904-6" defer></script>
+<script src="/js/start-building-v4.js?v=20261002-1" defer></script>
 <script>
     const faqToggle = document.querySelector<HTMLButtonElement>('[data-toggle-faq]');
     const faqPanel = document.querySelector<HTMLElement>('#faq');
+    const reduceFaqMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let faqAnimation: Animation | null = null;
+
     faqToggle?.addEventListener('click', () => {
         if (!faqPanel) return;
         const expanded = faqToggle.getAttribute('aria-expanded') !== 'true';
         faqToggle.setAttribute('aria-expanded', String(expanded));
-        faqPanel.hidden = !expanded;
+        faqPanel.inert = !expanded;
+
+        const currentStyle = getComputedStyle(faqPanel);
+        const start = {
+            height: `${faqPanel.getBoundingClientRect().height}px`,
+            paddingTop: faqPanel.hidden ? '0px' : currentStyle.paddingTop,
+            opacity: faqPanel.hidden ? '0' : currentStyle.opacity,
+            transform: faqPanel.hidden ? 'translateY(-16px)' : currentStyle.transform,
+        };
+        faqAnimation?.cancel();
+        faqAnimation = null;
+
+        if (reduceFaqMotion.matches) {
+            faqPanel.hidden = !expanded;
+            faqPanel.classList.remove('is-transitioning');
+            return;
+        }
+
+        faqPanel.hidden = false;
+        faqPanel.classList.add('is-transitioning');
+        const animation = faqPanel.animate([start, {
+            height: expanded ? `${faqPanel.scrollHeight}px` : '0px',
+            paddingTop: expanded ? getComputedStyle(faqPanel).paddingTop : '0px',
+            opacity: expanded ? '1' : '0',
+            transform: expanded ? 'translateY(0)' : 'translateY(-16px)',
+        }], {
+            duration: expanded ? 460 : 300,
+            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+        });
+        faqAnimation = animation;
+        animation.onfinish = () => {
+            if (faqAnimation !== animation) return;
+            faqPanel.hidden = !expanded;
+            faqPanel.classList.remove('is-transitioning');
+            faqAnimation = null;
+        };
     });
 </script>
 </body>

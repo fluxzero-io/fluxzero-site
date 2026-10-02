@@ -1,6 +1,7 @@
 ---
 import '../../public/css/v4.css';
 import '../../public/css/marketing-shell.css';
+import '../../public/css/marketing-forms.css';
 import '../../public/css/partners.css';
 import BrandHead from '../components/BrandHead.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
@@ -20,33 +21,43 @@ import MarketingFooter from '../components/marketing/MarketingFooter.astro';
     <main id="main" class="partners-main">
         <div class="partners-layout">
             <header class="partners-intro">
-                <p class="partners-eyebrow">For agencies &amp; builders</p>
                 <h1>More projects.<br><span>Less to manage.</span></h1>
-                <p class="partners-lead">Take on more client projects. Fluxzero runs and maintains the technical foundation, so your team can focus on the product.</p>
-                <p class="partners-lead">As a partner, you work directly with the Fluxzero team. We help you get started, answer your questions and guide you as you build.</p>
+                <div class="partners-reasons">
+                    <h2>Why partners choose Fluxzero:</h2>
+                    <ol>
+                        <li>Turn demos into reliable products with minimal effort.</li>
+                        <li>Ship more with less maintenance.</li>
+                        <li>See what went wrong and fix it faster.</li>
+                    </ol>
+                </div>
+                <div class="partners-benefits">
+                    <h2>As a Fluxzero partner</h2>
+                    <p class="partners-lead">You work directly with the Fluxzero team. We help you get started, answer your questions and guide you as you build. We can also refer clients to you.</p>
+                    <p class="partners-lead">Get in touch to discuss commercial terms.</p>
+                </div>
             </header>
 
-            <section class="partners-contact" aria-labelledby="contact-title">
-                <h2 id="contact-title">Become a partner.</h2>
-                <form action="https://getform.io/f/bejeorxa" id="contactForm" method="POST" novalidate>
+            <section class="partners-contact marketing-form-panel contact-form-wrap" aria-labelledby="contact-title">
+                <form action="https://getform.io/f/bejeorxa" id="contactForm" class="contact-form" method="POST" novalidate>
+                    <div class="contact-form-head">
+                        <h2 id="contact-title">Become a partner.</h2>
+                    </div>
                     <input type="hidden" name="_gotcha">
                     <input type="hidden" name="source" value="Partners">
-                    <div class="partners-fields">
-                        <div class="partners-field">
-                            <label for="fn">Name</label>
-                            <input name="name" type="text" id="fn" autocomplete="name" required>
-                        </div>
-                        <div class="partners-field">
-                            <label for="email">Work email</label>
-                            <input name="email" type="email" id="email" autocomplete="email" required>
-                        </div>
+                    <div class="contact-field">
+                        <label for="fn">Name</label>
+                        <input name="name" type="text" id="fn" autocomplete="name" required>
                     </div>
-                    <div class="partners-field">
+                    <div class="contact-field">
+                        <label for="email">Work email</label>
+                        <input name="email" type="email" id="email" autocomplete="email" required>
+                    </div>
+                    <div class="contact-field">
                         <label for="message">Tell us about your projects</label>
                         <textarea name="message" id="message" rows="4" required></textarea>
                     </div>
-                    <button type="submit" id="submitButton" class="v4-button v4-button--primary" data-confirmation="true"><span data-button-label>Send message</span></button>
-                    <p id="formStatus" class="partners-status" role="status" aria-live="polite" data-success-message="Thanks! We'll be in touch."></p>
+                    <button type="submit" id="submitButton" class="btn-p contact-submit" data-confirmation="true"><span data-button-label>Send message</span></button>
+                    <p id="formStatus" class="form-status partners-status" role="status" aria-live="polite" data-success-message="Thanks! We'll be in touch."></p>
                 </form>
             </section>
         </div>

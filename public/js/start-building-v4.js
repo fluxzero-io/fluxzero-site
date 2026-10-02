@@ -59,10 +59,10 @@ function fallbackCopy(text) {
     return copied;
 }
 
-function initPromptCopy() {
-    const prompt = document.querySelector('[data-agent-prompt]');
-    const button = document.querySelector('[data-copy-prompt]');
-    const status = document.querySelector('[data-copy-status]');
+function initPromptCopy(card) {
+    const prompt = card.querySelector('[data-agent-prompt]');
+    const button = card.querySelector('[data-copy-prompt]');
+    const status = card.querySelector('[data-copy-status]');
     if (!prompt || !button || !status) return;
 
     let resetTimer = 0;
@@ -99,4 +99,4 @@ function initPromptCopy() {
 }
 
 initPreviewSession();
-initPromptCopy();
+document.querySelectorAll('[data-prompt-card]').forEach(initPromptCopy);

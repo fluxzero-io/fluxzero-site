@@ -4,6 +4,27 @@ import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import remarkDocsLinks from './remark-docs-links.mjs';
+import { siteUrl, siteLinkAliases } from './core-pages.mjs';
+
+test('shared documentation links follow the current site destinations without changing external links or code', async () => {
+  const children = [
+    { type: 'link', url: '/get-started' },
+    { type: 'definition', url: `${siteUrl}/get-started/?from=docs#old-section` },
+    { type: 'link', url: '/technical-foundation/#customer-isolation' },
+    { type: 'mdxJsxTextElement', name: 'a', attributes: [{ name: 'href', value: '/get-started' }] },
+    { type: 'link', url: 'https://example.com/get-started/' },
+    { type: 'link', url: '/docs/getting-started/introduction/' },
+    { type: 'code', value: '[example](/get-started)' },
+  ];
+  await remarkDocsLinks({ siteUrl, linkAliases: siteLinkAliases })({ type: 'root', children }, { path: '/docs/example.mdx' });
+  assert.equal(children[0].url, '/#get-started');
+  assert.equal(children[1].url, '/?from=docs#get-started');
+  assert.equal(children[2].url, '/how-it-works/#customer-isolation');
+  assert.equal(children[3].attributes[0].value, '/#get-started');
+  assert.equal(children[4].url, 'https://example.com/get-started/');
+  assert.equal(children[5].url, '/docs/getting-started/introduction/');
+  assert.equal(children[6].value, '[example](/get-started)');
+});
 
 test('publishes source links and references by slug, preserving fragments and queries', async (t) => {
   const dir = await mkdtemp(path.join(os.tmpdir(), 'docs-links-'));

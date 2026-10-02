@@ -237,17 +237,17 @@ function accessibleName(node) {
     return image ? normalizeInline(getAttribute(image, 'alt')) : '';
 }
 
-function renderChildrenInline(node, pageUrl, headingOffset, codeBlocks) {
+function renderChildrenInline(node, pageUrl, headingOffset, codeBlocks, excludeInstructions) {
     return normalizeInline(
         joinRenderedParts(
-            (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks)),
+            (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks, excludeInstructions)),
         ),
     );
 }
 
-function renderNode(node, pageUrl, headingOffset, codeBlocks) {
+function renderNode(node, pageUrl, headingOffset, codeBlocks, excludeInstructions) {
     if (node.nodeName === '#text') return node.value ?? '';
-    if (shouldSkip(node)) return '';
+    if (shouldSkip(node) || (excludeInstructions && getAttribute(node, 'data-llms-instruction') !== undefined)) return '';
 
     const tagName = node.tagName;
     const role = getAttribute(node, 'role');
@@ -268,7 +268,7 @@ function renderNode(node, pageUrl, headingOffset, codeBlocks) {
         const renderedLabel = hasTextLabel
             ? normalizeInline(
                 joinRenderedParts(
-                    (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks)),
+                    (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks, excludeInstructions)),
                 ),
             )
             : '';
@@ -280,14 +280,14 @@ function renderNode(node, pageUrl, headingOffset, codeBlocks) {
     if (tagName === 'strong' || tagName === 'b') {
         const value = normalizeInline(
             joinRenderedParts(
-                (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks)),
+                (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks, excludeInstructions)),
             ),
         );
         return value ? `**${value}**` : '';
     }
 
     if (tagName === 'small') {
-        const value = renderChildrenInline(node, pageUrl, headingOffset, codeBlocks);
+        const value = renderChildrenInline(node, pageUrl, headingOffset, codeBlocks, excludeInstructions);
         return value ? ` ${value}` : '';
     }
 
@@ -313,7 +313,7 @@ function renderNode(node, pageUrl, headingOffset, codeBlocks) {
     }
 
     if (tagName === 'sup') {
-        const value = renderChildrenInline(node, pageUrl, headingOffset, codeBlocks);
+        const value = renderChildrenInline(node, pageUrl, headingOffset, codeBlocks, excludeInstructions);
         if (!value) return '';
         return value.includes('](') ? ` ${value}` : ` [${value}]`;
     }
@@ -345,7 +345,7 @@ function renderNode(node, pageUrl, headingOffset, codeBlocks) {
                 if (entry) entries.push(entry);
                 entry = { term: normalizeInline(textContent(child)), values: [] };
             } else if (child.tagName === 'dd') {
-                const value = renderChildrenInline(child, pageUrl, headingOffset, codeBlocks);
+                const value = renderChildrenInline(child, pageUrl, headingOffset, codeBlocks, excludeInstructions);
                 if (!entry) entry = { term: '', values: [] };
                 if (value) entry.values.push(value);
             }
@@ -361,7 +361,7 @@ function renderNode(node, pageUrl, headingOffset, codeBlocks) {
     }
 
     const children = joinRenderedParts(
-        (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks)),
+        (node.childNodes ?? []).map((child) => renderNode(child, pageUrl, headingOffset, codeBlocks, excludeInstructions)),
     );
     const value = normalizeInline(children);
 
@@ -400,14 +400,14 @@ function documentMetadata(document, path) {
     };
 }
 
-export function renderPageContent(document, pageUrl) {
+export function renderPageContent(document, pageUrl, { excludeInstructions = false } = {}) {
     const main =
         findElement(document, (node) => node.tagName === 'main') ??
         findElement(document, (node) => node.tagName === 'body');
     if (!main) throw new Error(`No <main> or <body> element found in ${pageUrl}`);
 
     const codeBlocks = [];
-    return cleanMarkdown(renderNode(main, pageUrl, 1, codeBlocks))
+    return cleanMarkdown(renderNode(main, pageUrl, 1, codeBlocks, excludeInstructions))
         .replace(/\0(\d+)\0/g, (_, index) => codeBlocks[Number(index)]);
 }
 
@@ -422,6 +422,7 @@ async function readPage(page) {
         instruction: rawTextContent(findElement(document, node => getAttribute(node, 'data-llms-instruction') !== undefined) ?? {}).trim(),
         summary: extractSummary(document),
         content: renderPageContent(document, metadata.url),
+        inlineContent: renderPageContent(document, metadata.url, { excludeInstructions: true }),
     };
 }
 
@@ -447,7 +448,7 @@ export function renderMarkdownPage(page) {
 export function renderShortIndex(builtPages, docs) {
     const homepage = builtPages[0];
     const link = page => `- [${page.title}](${page.url}index.md): ${page.description}`;
-    const primaryPaths = ['/', '/how-it-works/', '/technical-foundation/', '/product-code/', '/product-insight/', '/pricing/'];
+    const primaryPaths = ['/', '/how-it-works/', '/product-code/', '/product-insight/', '/pricing/'];
     const primary = primaryPaths.map(path => builtPages.find(page => new URL(page.url).pathname === path)).filter(Boolean);
     const start = builtPages.find(page => page.instruction);
     const optional = builtPages.filter(page => !primary.includes(page) && page !== start);
@@ -458,7 +459,7 @@ export function renderShortIndex(builtPages, docs) {
 export function renderLlms(builtPages, docs) {
     const content = builtPages
         .filter(page => inlineMarketingPages.includes(new URL(page.url).pathname))
-        .map(page => `# ${page.title}\n\nSource: ${page.url}\n\n${page.content}`)
+        .map(page => `# ${page.title}\n\nSource: ${page.url}\n\n${page.inlineContent ?? page.content}`)
         .join('\n\n---\n\n') + '\n';
     return `${renderShortIndex(builtPages, docs).trimEnd()}\n\n---\n\n${content}`;
 }

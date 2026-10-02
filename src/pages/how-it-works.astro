@@ -12,6 +12,7 @@ import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 import FoundationSections from '../components/marketing/FoundationSections.astro';
+import PerformanceStats from '../components/marketing/PerformanceStats.astro';
 import ProductInsightCarousel from '../components/monitoring/ProductInsightCarousel.astro';
 import 'boxicons/css/boxicons.min.css';
 
@@ -34,15 +35,17 @@ import 'boxicons/css/boxicons.min.css';
         <Image class="agent4-hero__backdrop" src={heroBackdrop} widths={[640, 1280, 1920]} sizes="100vw" format="webp" quality={85} alt="" aria-hidden="true" loading="eager" fetchpriority="high" />
         <div class="v4-shell agent4-hero__inner">
             <div class="agent4-hero__copy">
-                <h1 id="agent4-title" data-reveal>AI lets anyone build products.<br><span>Time for the cloud to catch up.</span></h1>
-                <p data-reveal data-reveal-delay="1">Enterprises expect critical systems to keep their promises under pressure. That standard matters long before a product reaches enterprise size. With Fluxzero, it is built into every product from day zero.</p>
+                <h1 id="agent4-title" data-reveal>A cloud that <span>takes care of itself.</span></h1>
+                <p data-reveal data-reveal-delay="1">Enterprises expect critical systems to keep their promises under pressure.<br class="agent4-hero__desktop-break"> That standard matters long before a product reaches enterprise size.</p>
                 <div class="v4-actions agent4-hero__actions" data-reveal data-reveal-delay="2">
-                    <a class="v4-button v4-button--primary" href="/get-started/">Get started <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
-                    <a class="v4-button v4-button--secondary" href="/docs/">Read the technical docs</a>
+                    <a class="v4-button v4-button--primary" href="/#get-started">Get started <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
+                    <a class="v4-button v4-button--secondary" href="/docs/">Read the docs</a>
                 </div>
             </div>
         </div>
     </section>
+
+    <PerformanceStats />
 
     <FoundationSections>
         <ProductInsightCarousel slot="auditability" />
@@ -53,7 +56,7 @@ import 'boxicons/css/boxicons.min.css';
             <p class="cloud-proof-next__eyebrow">Built into every product</p>
             <h2 id="monitoring-conclusion-title">Less to manage.<br /><span>More to see.</span></h2>
             <div class="cloud-proof-next__actions">
-                <a class="v4-button v4-button--primary" href="/get-started/">Start building <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
+                <a class="v4-button v4-button--primary" href="/#get-started">Get started <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
                 <a class="v4-button v4-button--secondary" href="/product-code/">Explore the product code <i class="bx bx-right-arrow-alt" aria-hidden="true"></i></a>
             </div>
         </div>

@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { parse, serialize } from 'parse5';
 import { corePages, inlineMarketingPages, retiredPages, unlistedPages, restrictedLinkSources, siteUrl, normalizePath } from './core-pages.mjs';
 import { inspectLinks } from './check-links.mjs';
+import { renderPageContent } from './generate-llms.mjs';
 
 const attr = (node, name) => node.attrs?.find(a => a.name === name)?.value;
 function elements(node, predicate, result = []) {
@@ -13,6 +14,9 @@ function elements(node, predicate, result = []) {
 }
 export function inspectPage(html, path) {
     const doc = parse(html);
+    const inlineContent = elements(doc, n => attr(n, 'data-llms-instruction') !== undefined).length
+        ? renderPageContent(doc, siteUrl + path, { excludeInstructions: true })
+        : undefined;
     const canonical = elements(doc, n => n.tagName === 'link' && attr(n, 'rel') === 'canonical').map(n => attr(n, 'href'));
     const noindex = elements(doc, n => n.tagName === 'meta' && /^(robots|googlebot|bingbot)$/i.test(attr(n, 'name') ?? '') && /\b(noindex|none)\b/i.test(attr(n, 'content') ?? '')).length > 0;
     const links = elements(doc, n => n.tagName === 'a' && attr(n, 'href')).flatMap(n => {
@@ -26,7 +30,7 @@ export function inspectPage(html, path) {
         footer.parentNode.childNodes = footer.parentNode.childNodes.filter(n => n !== footer);
     }
     const nonFooterLinks = inspectLinks(serialize(doc), path).links.filter(url => url.origin === siteUrl).map(url => normalizePath(url.pathname));
-    return { canonical, noindex, links, allLinks, nonFooterLinks };
+    return { canonical, noindex, links, allLinks, nonFooterLinks, inlineContent };
 }
 export function validateDiscovery({ pages, sitemap, llms, markdown, robots }, required = corePages, unlisted = unlistedPages) {
     const failures = [];
@@ -37,7 +41,11 @@ export function validateDiscovery({ pages, sitemap, llms, markdown, robots }, re
         if (![`${siteUrl}${path}`, `${siteUrl}${path}index.md`].some(url => llms.includes(`](${url})`))) failures.push(`${path}: absent from llms.txt index`);
         const text = markdown.get(path);
         if (!text?.includes(`\nSource: ${siteUrl}${path}\n`)) failures.push(`${path}: missing page Markdown`);
-        if (inlineMarketingPages.includes(path) && (!text?.trim() || !llms.includes(text.trimEnd()))) failures.push(`${path}: incomplete content in llms.txt`);
+        const inlineText = page.inlineContent === undefined ? text : text?.replace(
+            /(\nSource: [^\n]+\n)[\s\S]*$/,
+            (_, source) => `${source}\n${page.inlineContent}\n`,
+        );
+        if (inlineMarketingPages.includes(path) && (!inlineText?.trim() || !llms.includes(inlineText.trimEnd()))) failures.push(`${path}: incomplete content in llms.txt`);
         if (page.canonical.length !== 1 || page.canonical[0] !== siteUrl + path) failures.push(`${path}: incorrect canonical`);
         if (page.noindex) failures.push(`${path}: noindex`);
         if (![...pages].some(([from, data]) => from !== path && data.links.includes(path))) failures.push(`${path}: no incoming internal link`);

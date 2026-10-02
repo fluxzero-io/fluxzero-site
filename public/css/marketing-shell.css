@@ -1,3 +1,32 @@
+:root {
+    --marketing-bg: #1e1e22;
+    --marketing-footer-sunset-height: clamp(200px, 22vw, 280px);
+}
+
+html:has(.marketing-footer) {
+    background: var(--marketing-bg);
+}
+
+body:not(.v4-home):has(> .marketing-footer) {
+    --section-base: var(--marketing-bg);
+    background: var(--marketing-bg);
+}
+
+body:not(.v4-home):has(> .marketing-footer)::before {
+    content: none;
+}
+
+button,
+input,
+select,
+textarea,
+pre,
+code,
+kbd,
+samp {
+    font-family: var(--font-body);
+}
+
 .nav-shell {
     position: fixed;
     top: 0;
@@ -60,7 +89,7 @@
     background-clip: text;
     font-family: var(--font-display);
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
     line-height: 1;
     letter-spacing: -0.002em;
     white-space: nowrap;
@@ -305,23 +334,70 @@
     border-radius: 0 0 8px 8px;
 }
 
-footer {
+.marketing-footer {
     position: relative;
-    max-width: var(--max-w);
-    margin: 0 auto;
-    padding: 38px 32px 42px;
-    border-top: 1px solid rgba(221, 247, 255, 0.055);
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--marketing-bg);
 }
 
-footer::before {
+.marketing-footer__sunset {
+    position: relative;
+    height: var(--marketing-footer-sunset-height);
+    overflow: hidden;
+    isolation: isolate;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 45%);
+    mask-image: linear-gradient(to bottom, transparent, #000 45%);
+    pointer-events: none;
+}
+
+.marketing-footer__sunset::before {
     content: "";
     position: absolute;
-    left: 32px;
-    right: 32px;
-    top: -1px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(0, 179, 255, 0.16), transparent);
+    z-index: -2;
+    left: 50%;
+    bottom: 38px;
+    width: min(560px, 76vw);
+    height: 190px;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at 50% 84%, rgba(255, 254, 225, 0.78) 0%, rgba(255, 221, 128, 0.54) 26%, rgba(255, 167, 65, 0.28) 54%, transparent 100%);
+    filter: blur(34px);
+    opacity: 0.68;
     pointer-events: none;
+}
+
+.marketing-footer__sunset::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    left: 50%;
+    bottom: -430px;
+    width: min(1860px, 190vw);
+    height: 540px;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: linear-gradient(180deg, #060709 0, #0d0e11 44px, var(--marketing-bg) 110px, var(--marketing-bg) 100%);
+    box-shadow:
+        inset 0 2px 18px rgba(255, 255, 255, 0.62),
+        0 -10px 58px 3px rgba(255, 250, 218, 0.3),
+        0 -18px 78px rgba(0, 179, 255, 0.045),
+        0 -18px 104px 8px rgba(255, 181, 64, 0.32);
+    pointer-events: none;
+}
+
+.marketing-footer .ft {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 38px 32px 42px;
+}
+
+@media (min-width: 861px) {
+    .marketing-footer__sunset::after {
+        width: max(1860px, 142vw);
+    }
 }
 
 .ft {
@@ -494,8 +570,18 @@ footer::before {
         top: calc(100% + 8px);
     }
 
-    footer {
+    .marketing-footer .ft {
         padding: 24px 16px 32px;
+    }
+
+    .marketing-footer__sunset::before {
+        bottom: -6px;
+        opacity: 0.58;
+    }
+
+    .marketing-footer__sunset::after {
+        bottom: -482px;
+        background: linear-gradient(180deg, #060709 0, #121317 26px, var(--marketing-bg) 58px, var(--marketing-bg) 100%);
     }
 
     .ft {

@@ -23,7 +23,7 @@ const slides = [
             <h2 id="product-insight-title">Deep insight.<br /><span>Built in from day one.</span></h2>
         </header>
 
-        <div class="insight-carousel" data-insight-carousel role="region" aria-roledescription="carousel" aria-label="Product insight examples">
+        <product-insight-carousel class="insight-carousel" data-insight-carousel data-monitoring-group role="region" aria-roledescription="carousel" aria-label="Product insight examples">
             <div class="insight-carousel__toolbar" data-llms-exclude>
                 <div class="insight-carousel__picker" role="group" aria-label="Choose an insight example">
                     {slides.map((slide, index) => (
@@ -43,11 +43,11 @@ const slides = [
                         </header>
                         {slide.view === 'agent'
                             ? <AgentEvidence headingLevel="h4" />
-                            : <DashboardExample view={slide.view} />}
+                            : <DashboardExample view={slide.view} sharedHeight />}
                     </article>
                 ))}
             </div>
-        </div>
+        </product-insight-carousel>
     </div>
 </section>
 
@@ -57,7 +57,10 @@ const slides = [
     }
 
     .insight-carousel {
+        display: block;
         margin-top: 52px;
+        --insight-progress: 0;
+        --insight-frame-height: max(880px, var(--monitoring-height, 0px));
     }
 
     .insight-carousel__toolbar {
@@ -79,6 +82,7 @@ const slides = [
     }
 
     .insight-carousel button {
+        position: relative;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -103,6 +107,64 @@ const slides = [
     .insight-carousel button:focus-visible {
         outline: 2px solid var(--proof-blue);
         outline-offset: 4px;
+    }
+
+    .insight-carousel__picker button::before,
+    .insight-carousel__picker button::after {
+        content: '';
+        position: absolute;
+        right: 15px;
+        bottom: -8px;
+        left: 15px;
+        height: 2px;
+        border-radius: 2px;
+        opacity: 0;
+        background: rgba(134, 181, 220, .15);
+        pointer-events: none;
+    }
+
+    .insight-carousel__picker button::after {
+        background: #87c4f3;
+        transform: scaleX(var(--insight-progress));
+        transform-origin: left;
+    }
+
+    .insight-carousel__picker button[aria-pressed="true"]::before,
+    .insight-carousel__picker button[aria-pressed="true"]::after {
+        opacity: .7;
+    }
+
+    /* The shared grid row reserves the tallest slide, including its copy. */
+    .insight-carousel :global(.monitoring-example__frame) {
+        height: var(--insight-frame-height);
+    }
+
+    .insight-carousel :global(.monitoring-agent-example) {
+        min-height: calc(var(--insight-frame-height) + 2px);
+        padding: clamp(24px, 4vw, 44px);
+        border: 1px solid #263e53;
+        border-radius: 14px;
+        background: #0b1523;
+        box-shadow: 0 16px 70px #0003;
+    }
+
+    .insight-carousel :global(.monitoring-context-card) {
+        border-color: #2f4564;
+        background: #12233b;
+    }
+
+    .insight-carousel :global(.monitoring-context-card figcaption) {
+        border-color: #2f4564;
+        background: #152843;
+    }
+
+    .insight-carousel :global(.monitoring-context-card__facts) {
+        border-color: #2f4564;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .insight-carousel__picker button::before,
+        .insight-carousel__picker button::after { display: none; }
     }
 
     .insight-carousel__track {
@@ -168,60 +230,141 @@ const slides = [
 </style>
 
 <script>
-    document.querySelectorAll<HTMLElement>('[data-insight-carousel]').forEach(carousel => {
-        const track = carousel.querySelector<HTMLElement>('[data-insight-track]')!;
-        const slides = [...carousel.querySelectorAll<HTMLElement>('[data-insight-slide]')];
-        const pickers = [...carousel.querySelectorAll<HTMLButtonElement>('[data-insight-picker]')];
-        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-        let active = 0;
-        let scrollFrame = 0;
+    class ProductInsightCarousel extends HTMLElement {
+        private cleanup?: () => void;
 
-        const fitHeight = () => {
-            track.style.height = `${slides[active].offsetHeight}px`;
-        };
+        connectedCallback() {
+            const track = this.querySelector<HTMLElement>('[data-insight-track]')!;
+            const slides = [...this.querySelectorAll<HTMLElement>('[data-insight-slide]')];
+            const pickers = [...this.querySelectorAll<HTMLButtonElement>('[data-insight-picker]')];
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+            const abort = new AbortController();
+            const { signal } = abort;
+            const duration = 8000;
+            let active = 0;
+            let scrollTarget: number | null = null;
+            let scrollFrame = 0;
+            let timerFrame = 0;
+            let elapsed = 0;
+            let lastTime = 0;
+            let inView = false;
+            let hovering = false;
+            let focused = false;
 
-        const update = (index: number) => {
-            active = index;
-            pickers.forEach((button, i) => button.setAttribute('aria-pressed', String(i === active)));
-            slides.forEach((slide, i) => { slide.inert = i !== active; });
-            fitHeight();
-        };
+            const resetProgress = () => {
+                elapsed = 0;
+                lastTime = performance.now();
+                this.style.setProperty('--insight-progress', '0');
+            };
+            const update = (index: number) => {
+                active = index;
+                pickers.forEach((button, i) => button.setAttribute('aria-pressed', String(i === active)));
+                slides.forEach((slide, i) => { slide.inert = i !== active; });
+                resetProgress();
+            };
+            const goTo = (index: number) => {
+                const target = (index + slides.length) % slides.length;
+                scrollTarget = target;
+                update(target);
+                track.scrollTo({ left: target * track.clientWidth, behavior: 'instant' });
+                if (!reducedMotion.matches) {
+                    slides[target].getAnimations().forEach(animation => animation.cancel());
+                    slides[target].animate([{ opacity: .2 }, { opacity: 1 }], { duration: 240, easing: 'ease-out' });
+                }
+            };
+            const shouldRun = () => inView && !hovering && !focused && !document.hidden && !reducedMotion.matches;
+            const tick = (time: number) => {
+                timerFrame = 0;
+                if (!shouldRun()) return;
+                elapsed += time - lastTime;
+                lastTime = time;
+                if (elapsed >= duration) goTo(active + 1);
+                this.style.setProperty('--insight-progress', String(elapsed / duration));
+                timerFrame = requestAnimationFrame(tick);
+            };
+            const sync = () => {
+                cancelAnimationFrame(timerFrame);
+                if (shouldRun()) {
+                    lastTime = performance.now();
+                    timerFrame = requestAnimationFrame(tick);
+                }
+            };
 
-        const goTo = (index: number) => {
-            const target = Math.max(0, Math.min(slides.length - 1, index));
-            update(target);
-            track.scrollTo({ left: target * track.clientWidth, behavior: reducedMotion.matches ? 'instant' : 'smooth' });
-        };
-
-        pickers.forEach((button, index) => {
-            button.addEventListener('click', () => goTo(index));
-            button.addEventListener('keydown', event => {
-                let target = index;
-                if (event.key === 'ArrowRight') target = (index + 1) % slides.length;
-                else if (event.key === 'ArrowLeft') target = (index + slides.length - 1) % slides.length;
-                else if (event.key === 'Home') target = 0;
-                else if (event.key === 'End') target = slides.length - 1;
-                else return;
-                event.preventDefault();
-                pickers[target].focus();
-                goTo(target);
+            pickers.forEach((button, index) => {
+                button.addEventListener('click', () => goTo(index), { signal });
+                button.addEventListener('keydown', event => {
+                    let target = index;
+                    if (event.key === 'ArrowRight') target = (index + 1) % slides.length;
+                    else if (event.key === 'ArrowLeft') target = (index + slides.length - 1) % slides.length;
+                    else if (event.key === 'Home') target = 0;
+                    else if (event.key === 'End') target = slides.length - 1;
+                    else return;
+                    event.preventDefault();
+                    pickers[target].focus();
+                    goTo(target);
+                }, { signal });
             });
-        });
 
-        track.addEventListener('scroll', () => {
-            cancelAnimationFrame(scrollFrame);
-            scrollFrame = requestAnimationFrame(() => {
-                const index = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth)));
-                if (index !== active) update(index);
+            track.addEventListener('pointerdown', () => { scrollTarget = null; }, { signal });
+            track.addEventListener('wheel', () => { scrollTarget = null; }, { passive: true, signal });
+            track.addEventListener('scroll', () => {
+                cancelAnimationFrame(scrollFrame);
+                scrollFrame = requestAnimationFrame(() => {
+                    if (scrollTarget !== null) {
+                        if (Math.abs(track.scrollLeft - scrollTarget * track.clientWidth) < 2) scrollTarget = null;
+                        return;
+                    }
+                    const index = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / track.clientWidth)));
+                    if (index !== active) update(index);
+                });
+            }, { passive: true, signal });
+
+            this.addEventListener('pointerenter', event => {
+                if (event.pointerType === 'mouse') { hovering = true; sync(); }
+            }, { signal });
+            this.addEventListener('pointerleave', () => { hovering = false; sync(); }, { signal });
+            this.addEventListener('focusin', () => { focused = true; sync(); }, { signal });
+            this.addEventListener('focusout', event => {
+                focused = event.relatedTarget instanceof Node && this.contains(event.relatedTarget);
+                sync();
+            }, { signal });
+            // Focus inside an embedded demo does not bubble to the parent document.
+            window.addEventListener('blur', () => {
+                focused = this.contains(document.activeElement);
+                sync();
+            }, { signal });
+            window.addEventListener('focus', () => {
+                focused = this.contains(document.activeElement);
+                sync();
+            }, { signal });
+            document.addEventListener('visibilitychange', sync, { signal });
+            reducedMotion.addEventListener('change', sync, { signal });
+
+            const visibilityObserver = new IntersectionObserver(([entry]) => {
+                inView = entry.isIntersecting && entry.intersectionRatio >= .25;
+                sync();
+            }, { threshold: [0, .25], rootMargin: '-72px 0px 0px' });
+            visibilityObserver.observe(this);
+            let width = track.clientWidth;
+            const resizeObserver = new ResizeObserver(() => {
+                if (track.clientWidth === width) return;
+                width = track.clientWidth;
+                scrollTarget = null;
+                track.scrollTo({ left: active * width, behavior: 'instant' });
             });
-        }, { passive: true });
+            resizeObserver.observe(track);
+            update(0);
+            this.cleanup = () => {
+                abort.abort();
+                visibilityObserver.disconnect();
+                resizeObserver.disconnect();
+                cancelAnimationFrame(timerFrame);
+                cancelAnimationFrame(scrollFrame);
+            };
+        }
 
-        const resizeObserver = new ResizeObserver(fitHeight);
-        slides.forEach(slide => resizeObserver.observe(slide));
-        window.addEventListener('resize', () => {
-            track.scrollTo({ left: active * track.clientWidth, behavior: 'instant' });
-            fitHeight();
-        });
-        update(0);
-    });
+        disconnectedCallback() { this.cleanup?.(); }
+    }
+
+    if (!customElements.get('product-insight-carousel')) customElements.define('product-insight-carousel', ProductInsightCarousel);
 </script>

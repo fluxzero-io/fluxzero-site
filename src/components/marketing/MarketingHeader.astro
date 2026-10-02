@@ -25,7 +25,7 @@ const howItWorksClass = `nav-link nav-link-agents${active === 'how-it-works' ? '
     <div class="nav-main">
         <div class="nav-main-links">
             <a href="/pricing/" data-astro-prefetch="viewport" class={pricingClass} aria-current={active === 'pricing' ? 'page' : undefined}>Pricing</a>
-            <a href="/about/" data-astro-prefetch="viewport" class={aboutClass} aria-current={active === 'about' ? 'page' : undefined}>Our story</a>
+            <a href="/about/" data-astro-prefetch="viewport" class={aboutClass} aria-current={active === 'about' ? 'page' : undefined}>About</a>
             <a href="/how-it-works/" data-astro-prefetch="viewport" class={howItWorksClass} aria-current={active === 'how-it-works' ? 'page' : undefined}>How it works</a>
             <a href="/docs/" class="nav-link nav-link-docs">Docs</a>
         </div>
@@ -33,7 +33,7 @@ const howItWorksClass = `nav-link nav-link-agents${active === 'how-it-works' ? '
 
     {launchAccess.authenticationEnabled ? (
         <div class="nav-actions" data-account-nav data-preview-enabled={isDevelopmentPreview ? 'true' : 'false'}>
-            <a href="/get-started/" class="nav-cta" data-nav-sign-in>Sign in</a>
+            <a href={websiteOidc.dashboardUrl} class="nav-cta" data-nav-sign-in>Sign in</a>
 
             <div class="nav-authenticated" data-nav-authenticated hidden>
                 <a href={websiteOidc.dashboardUrl} class="nav-cta">Dashboard</a>

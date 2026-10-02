@@ -12,7 +12,7 @@
     background:
         radial-gradient(circle at 83% 40%, rgba(247, 202, 132, 0.11), transparent 21%),
         radial-gradient(ellipse 70% 78% at 76% 48%, rgba(63, 139, 210, 0.11), transparent 65%),
-        linear-gradient(180deg, #07111c 0%, #03070b 74%, #030507 100%);
+        linear-gradient(180deg, #111214 0%, var(--marketing-bg) 100%);
 }
 
 .cloud-proof-next-page .cloud-proof-hero__sun {
@@ -67,13 +67,13 @@
 .cloud-proof-next-section:nth-of-type(even) {
     background:
         radial-gradient(circle at 88% 26%, rgba(42, 109, 171, 0.045), transparent 30%),
-        #05090e;
+        var(--marketing-bg);
 }
 
 .cloud-proof-next-section:nth-of-type(odd) {
     background:
         radial-gradient(circle at 12% 78%, rgba(42, 109, 171, 0.04), transparent 29%),
-        #030507;
+        var(--marketing-bg);
 }
 
 .cloud-proof-next-section .cloud-proof-copy {
@@ -749,12 +749,9 @@
     margin: 68px 0 0;
     padding: 46px;
     overflow: hidden;
-    border: 1px solid rgba(105, 176, 239, 0.2);
+    border: 1px solid transparent;
     border-radius: 28px;
-    background:
-        radial-gradient(circle at 62% 44%, rgba(54, 133, 204, 0.13), transparent 47%),
-        rgba(5, 13, 22, 0.84);
-    box-shadow: inset 0 0 70px rgba(31, 97, 156, 0.055);
+    background: transparent;
 }
 
 .cloud-proof-next__audit-diagram {
@@ -937,9 +934,7 @@
     padding: 34px 50px;
     grid-template-columns: minmax(200px, 1fr) 190px minmax(240px, 1fr);
     align-items: center;
-    border-top: 1px solid var(--proof-line);
-    border-bottom: 1px solid var(--proof-line);
-    background: rgba(5, 12, 20, 0.62);
+    background: transparent;
 }
 
 .cloud-proof-next__shape > div {
@@ -1293,7 +1288,7 @@
 .cloud-proof-next-compounding {
     background:
         radial-gradient(ellipse 75% 65% at 50% 72%, rgba(44, 132, 211, 0.13), transparent 66%),
-        #04080d !important;
+        var(--marketing-bg) !important;
 }
 
 .cloud-proof-next__foundation {
@@ -1388,25 +1383,8 @@
 .cloud-proof-next-conclusion {
     position: relative;
     overflow: hidden;
-    padding: 170px 0 180px;
-    border-top: 1px solid rgba(161, 190, 221, 0.14);
-    background:
-        radial-gradient(ellipse 65% 70% at 50% 66%, rgba(40, 126, 203, 0.22), transparent 67%),
-        linear-gradient(180deg, #050a10, #030507);
-}
-
-.cloud-proof-next-conclusion::before {
-    content: '';
-    position: absolute;
-    bottom: -420px;
-    left: 50%;
-    width: min(1250px, 120vw);
-    height: 650px;
-    border: 1px solid rgba(116, 184, 242, 0.28);
-    border-radius: 50% 50% 0 0;
-    background: linear-gradient(180deg, rgba(15, 34, 53, 0.8), #020406 40%);
-    box-shadow: 0 -22px 80px rgba(61, 146, 220, 0.13);
-    transform: translateX(-50%);
+    padding: 170px 0 64px;
+    background: var(--marketing-bg);
 }
 
 .cloud-proof-next-conclusion .cloud-proof-shell {
@@ -1419,7 +1397,7 @@
     margin: 0 auto;
     font-family: var(--font-display);
     font-size: clamp(48px, 5.5vw, 76px);
-    line-height: 1.01;
+    line-height: 1.12;
 }
 
 .cloud-proof-next-conclusion h2 span {
@@ -1885,7 +1863,7 @@
     }
 
     .cloud-proof-next-conclusion {
-        padding: 112px 0 126px;
+        padding: 112px 0 48px;
     }
 
     .cloud-proof-next-conclusion > .cloud-proof-shell > p:not(.cloud-proof-next__eyebrow) {

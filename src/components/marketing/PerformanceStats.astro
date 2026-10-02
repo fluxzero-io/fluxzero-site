@@ -1,0 +1,120 @@
+<section class="performance-proof" id="proven-foundation" aria-label="Performance and application code">
+    <div class="performance-stats">
+        <dl class="performance-stat">
+            <dt>GB / min data throughput</dt>
+            <dd class="performance-stat__number">100<span>+</span></dd>
+            <dd class="performance-stat__context">Or about 700k tweets per sec, nearly 5 times X.com's record.<sup><a href="#tweet-throughput-note" aria-label="How this estimate was calculated">*</a></sup></dd>
+        </dl>
+        <dl class="performance-stat">
+            <dt>Requests / sec</dt>
+            <dd class="performance-stat__number">1<span>M+</span></dd>
+            <dd class="performance-stat__context">Completed requests, end-to-end across applications.</dd>
+        </dl>
+        <dl class="performance-stat">
+            <dt>Less code</dt>
+            <dd class="performance-stat__number"><small>up to</small> 99<span>%</span></dd>
+            <dd class="performance-stat__context">Across legacy migrations with the same behavior.</dd>
+        </dl>
+    </div>
+    <p class="performance-source" id="tweet-throughput-note">
+        * Estimate based on a <a href="https://www.research-collection.ethz.ch/bitstreams/77b38ad3-f165-4bda-9fca-6a1d13913836/download" target="_blank" rel="noreferrer">2.3 kB average serialized tweet size</a> and <a href="https://blog.x.com/engineering/en_us/a/2013/new-tweets-per-second-record-and-how" target="_blank" rel="noreferrer">X.com’s published record of 143,199 tweets per second</a>.
+    </p>
+</section>
+
+<style>
+    .performance-proof {
+        position: relative;
+        width: min(1120px, calc(100% - 64px));
+        margin: 48px auto 60px;
+        scroll-margin-top: 110px;
+    }
+    .performance-stats {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        border: 1px solid #ebf8ff1a;
+        border-radius: 28px;
+        overflow: hidden;
+        background:
+            radial-gradient(ellipse at 50% 0%, #74d6ff12, transparent 55%),
+            linear-gradient(180deg, #ffffff08, #ffffff02),
+            #0b0e12;
+        box-shadow: inset 0 1px 0 #ffffff12, 0 22px 54px #0004;
+    }
+    .performance-stats::before {
+        content: '';
+        position: absolute;
+        inset: 40% 0 0;
+        background-image: linear-gradient(#ddf7ff08 1px, transparent 1px), linear-gradient(90deg, #ddf7ff08 1px, transparent 1px);
+        background-size: 28px 28px;
+        mask-image: linear-gradient(transparent, #000);
+        pointer-events: none;
+    }
+    .performance-stat {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 30px 36px;
+        margin: 0;
+        text-align: center;
+    }
+    .performance-stat + .performance-stat { border-left: 1px solid #ebf8ff14; }
+    .performance-stat dt {
+        order: 2;
+        min-height: 3em;
+        color: #a7b4c8;
+        font-size: 13px;
+        letter-spacing: .12em;
+        line-height: 1.5;
+        text-transform: uppercase;
+        text-wrap: balance;
+    }
+    .performance-stat__number {
+        order: 1;
+        margin: 0 0 20px;
+        color: #f4f7ff;
+        font-family: var(--font-display);
+        font-size: clamp(40px, 4vw, 56px);
+        font-weight: 600;
+        line-height: 1.1;
+        letter-spacing: -.045em;
+    }
+    .performance-stat__number span {
+        color: transparent;
+        background: linear-gradient(100deg, #d9f5ff, #2f7fba);
+        background-clip: text;
+        -webkit-background-clip: text;
+    }
+    .performance-stat__number small {
+        display: inline-block;
+        margin-right: 5px;
+        color: #a7b4c8;
+        font-family: var(--font-body);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .1em;
+        vertical-align: .5em;
+        text-transform: uppercase;
+    }
+    .performance-stat__context {
+        order: 3;
+        max-width: 260px;
+        margin: 18px 0 0;
+        color: #a7b4c8;
+        font-size: 15px;
+        line-height: 1.6;
+        text-wrap: pretty;
+    }
+    .performance-stat__context sup { margin-left: 3px; }
+    .performance-proof a { color: #add4f2; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #add4f255; }
+    .performance-source { margin: 20px auto 0; max-width: 960px; color: #778497; text-align: center; font-size: 11px; line-height: 1.65; }
+    @media (max-width: 700px) {
+        .performance-proof { width: calc(100% - 40px); margin-top: 24px; }
+        .performance-stats { grid-template-columns: 1fr; border-radius: 20px; }
+        .performance-stat { padding: 32px 24px; }
+        .performance-stat + .performance-stat { border-left: 0; border-top: 1px solid #ebf8ff14; }
+        .performance-stat dt { min-height: 0; }
+        .performance-stat__context { max-width: 300px; margin-top: 12px; }
+    }
+</style>

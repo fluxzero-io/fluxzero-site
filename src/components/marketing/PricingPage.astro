@@ -138,15 +138,13 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
 
 <main class="pricing-v2">
     <section class="pricing-v2-hero" aria-labelledby="pricing-title">
-        <div class="pricing-v2-kicker">Fluxzero pricing</div>
-        <h1 id="pricing-title">Choose your plan</h1>
-        <p>Build your entire app for free, then launch it. Scale your product as you grow, without changing foundations.</p>
+        <h1 id="pricing-title">Start running on Fluxzero today.</h1>
+        <p>No surprises or hidden fees. Cancel any time.</p>
     </section>
 
     <section class="pricing-v2-plans" aria-label="Pricing plans">
         <article class="pricing-v2-card pricing-v2-free" aria-label="Free plan">
             <div class="pricing-v2-card-top">
-                <span class="pricing-v2-label">Build</span>
                 <h2>Free</h2>
                 <div class="pricing-v2-price">
                     <span class="pricing-v2-currency">€</span>
@@ -160,15 +158,14 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                 <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-logs"></use></svg>Local logs and insights</li>
             </ul>
             <div class="pricing-v2-free-action">
-                <p class="pricing-v2-card-summary">Build your entire app before launch.</p>
-                <a href="/get-started/" class="pricing-v2-card-action">Start building</a>
+                <p class="pricing-v2-card-summary">Build your entire app locally.</p>
+                <a href="/#get-started" class="pricing-v2-card-action">Start building</a>
             </div>
         </article>
         <div class="pricing-v2-panel pricing-v2-panel-current">
             {offers.map(offer => <PricingPlanCard offer={offer} catalog={catalog} />)}
                 <article class="pricing-v2-card">
                     <div class="pricing-v2-card-top">
-                        <span class="pricing-v2-label">Customize</span>
                         <h2>Enterprise</h2>
                         <div class="pricing-v2-price pricing-v2-price-custom">
                             <strong>Custom</strong>
@@ -190,12 +187,11 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                     </ul>
                 </article>
         </div>
-        <p class="pricing-v2-billing-note">Prices exclude VAT. Additional capacity is charged when you add it; storage above the included allowance is billed afterwards.</p>
     </section>
 
     <section class="pricing-v2-included" aria-labelledby="pricing-included-title">
         <div class="pricing-v2-included-head">
-            <h2 id="pricing-included-title">Included in every plan</h2>
+            <h2 id="pricing-included-title">Included in every plan.</h2>
             <p>The same reliable foundation, with the capacity you need.</p>
         </div>
 

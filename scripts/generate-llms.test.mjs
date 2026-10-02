@@ -72,34 +72,36 @@ test('compact proposal uses selected HTML copy and metadata deterministically', 
 
 test('compact index includes the visible hero and exact building instruction outside Optional', async () => {
     const { renderShortIndex } = await import('./generate-llms.mjs');
-    const home={title:'Home',hero:'The European cloud for AI-built apps',description:'Description',summary:'Summary',url:'https://fluxzero.io/'};
-    const start={title:'Start building',instruction:'Build my app with Fluxzero. Start at plugins.fluxzero.io',description:'Get started',url:'https://fluxzero.io/get-started/'};
-    const result=renderShortIndex([home,start],[]);
+    const home={title:'Home',hero:'The European cloud for AI-built apps',description:'Description',summary:'Summary',url:'https://fluxzero.io/',instruction:'Build my app with Fluxzero. Start at plugins.fluxzero.io'};
+    const result=renderShortIndex([home],[]);
     assert.ok(result.includes('> '+home.hero));
-    assert.ok(result.includes(start.instruction));
-    assert.ok(result.indexOf(start.instruction)<result.indexOf('## Optional'));
-    assert.ok(!result.split('## Optional')[1].includes(start.url));
+    assert.ok(result.includes(home.instruction));
+    assert.ok(result.indexOf(home.instruction)<result.indexOf('## Optional'));
+    assert.ok(!result.split('## Optional')[1].includes(home.url));
 });
 
 test('llms includes the instruction once while page Markdown retains setup and contact content', async () => {
     const { renderShortIndex, renderLlms, renderMarkdownPage } = await import('./generate-llms.mjs');
-    const home = { title: 'Home', hero: 'Hero', description: 'Description', summary: 'Summary', url: 'https://fluxzero.io/', content: '## Home\n\nProduct overview.' };
-    const start = { title: 'Start building with Fluxzero', description: 'Setup', url: 'https://fluxzero.io/get-started/', instruction: 'Build my app with Fluxzero. Start at plugins.fluxzero.io' };
-    start.content = `## Start building with Fluxzero\n\n${start.instruction}\n\nSupported agents.`;
+    const home = { title: 'Home', hero: 'Hero', description: 'Description', summary: 'Summary', url: 'https://fluxzero.io/', instruction: 'Build my app with Fluxzero. Start at plugins.fluxzero.io' };
+    const document = parse(`<main><h1>Home</h1><p>Product overview.</p><section><h2>Start building</h2><pre data-llms-instruction><code>${home.instruction}</code></pre><p>Supported agents.</p></section></main>`);
+    home.content = renderPageContent(document, home.url);
+    home.inlineContent = renderPageContent(document, home.url, { excludeInstructions: true });
     const contact = { title: 'Contact', description: 'Contact details', url: 'https://fluxzero.io/contact/', content: '## Contact\n\nFull name\n\nEmail address\n\nSend' };
-    const pages = [home, start, contact];
+    const pages = [home, contact];
     const llms = renderLlms(pages, []);
 
-    assert.equal(llms.split(start.instruction).length - 1, 1);
-    assert.equal(llms.split(start.url + 'index.md').length - 1, 1);
-    assert.ok(llms.indexOf(start.instruction) < llms.indexOf('## Read in this order'));
+    assert.equal(llms.split(home.instruction).length - 1, 1);
+    assert.ok(llms.includes(`## [Start building](${home.url}index.md)`));
+    assert.ok(llms.indexOf(home.instruction) < llms.indexOf('## Read in this order'));
     assert.ok(llms.startsWith(renderShortIndex(pages, []).trimEnd()));
     assert.ok(llms.includes(`[Contact](${contact.url}index.md)`));
     assert.ok(!llms.includes('Full name'));
-    assert.ok(!llms.includes('Source: ' + start.url));
+    assert.ok(llms.includes('Source: ' + home.url));
     assert.ok(!llms.includes('Source: ' + contact.url));
     assert.ok(!llms.includes('/llms-full.txt'));
-    assert.ok(llms.includes(home.content));
+    assert.ok(llms.includes(home.inlineContent));
+    assert.ok(renderMarkdownPage(home).includes(home.instruction));
+    assert.ok(renderPageContent(document, home.url).includes(home.instruction));
     for (const page of pages) assert.ok(renderMarkdownPage(page).includes(`Source: ${page.url}\n\n${page.content}`));
 });
 

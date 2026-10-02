@@ -3,7 +3,7 @@ const choiceOptions = [
     {
         title: 'Other clouds',
         featured: false,
-        copy: 'For builders who want to design and operate the technical foundation underneath their product.',
+        copy: 'For builders who want to design and maintain the technical foundation underneath their product.',
     },
     {
         title: 'Fluxzero',
@@ -32,14 +32,14 @@ const choiceOptions = [
 
 <style>
     .cloud-choice { max-width: 1180px; }
-    .cloud-choice h2 { margin-inline: 0; font-size: clamp(46px, 4.2vw, 58px); line-height: 1.06; text-align: left; }
+    .cloud-choice h2 { margin-inline: 0; font-size: clamp(46px, 4.2vw, 58px); line-height: 1.12; text-align: left; }
     .cloud-choice h2 span { color: #83bff4; }
     .cloud-choice__options { display: grid; margin: 0 auto; grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .cloud-choice__options article { display: grid; min-height: 145px; padding: 0 54px 0 0; grid-template-columns: 34px minmax(0, 1fr); align-items: start; gap: 18px; }
     .cloud-choice__options article + article { padding-left: 54px; padding-right: 0; border-left: 1px solid rgba(124, 151, 179, .28); }
     .cloud-choice__options svg { width: 30px; height: 30px; fill: none; stroke: #73869b; stroke-width: 2; }
     .cloud-choice__options .is-featured svg { stroke: #83bff4; }
-    .cloud-choice h3 { color: #d0d8e2; font-family: var(--font-body); font-size: 22px; font-weight: 650; }
+    .cloud-choice h3 { color: #d0d8e2; font-family: var(--font-body); font-size: 22px; font-weight: 600; }
     .cloud-choice .is-featured h3 { color: #bcdfff; }
     .cloud-choice__options p { margin-top: 13px; color: #9aa9bb; font-size: 16px; line-height: 1.58; }
     @media (max-width: 760px) {

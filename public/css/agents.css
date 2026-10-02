@@ -126,7 +126,7 @@ html::-webkit-scrollbar {
 .agent4-hero h1 {
     padding-right: 0.06em;
     font-size: clamp(58px, 4.7vw, 70px);
-    line-height: 1.02;
+    line-height: 1.12;
 }
 
 .agent4-hero__copy > p {
@@ -218,7 +218,7 @@ html::-webkit-scrollbar {
 .agent4-bottleneck__copy h2 {
     max-width: 540px;
     font-size: clamp(42px, 3.6vw, 52px);
-    line-height: 1.06;
+    line-height: 1.12;
 }
 
 .agent4-bottleneck__copy p {
@@ -343,7 +343,7 @@ html::-webkit-scrollbar {
 .agent4-boundary__copy h2 {
     max-width: 490px;
     font-size: clamp(46px, 4.1vw, 58px);
-    line-height: 1.06;
+    line-height: 1.12;
 }
 
 .agent4-boundary__note {
@@ -542,7 +542,7 @@ html::-webkit-scrollbar {
 
 .agent4-context__copy h2 {
     font-size: clamp(48px, 4.5vw, 62px);
-    line-height: 1.05;
+    line-height: 1.12;
 }
 
 .agent4-context__copy p {
@@ -632,7 +632,7 @@ html::-webkit-scrollbar {
 
 .agent4-layers__copy h2 {
     font-size: clamp(48px, 4.4vw, 60px);
-    line-height: 1.06;
+    line-height: 1.12;
 }
 
 .agent4-layers__copy > p {
@@ -733,7 +733,7 @@ html::-webkit-scrollbar {
 
 .agent4-code__copy h2 {
     font-size: clamp(48px, 4.2vw, 60px);
-    line-height: 1.06;
+    line-height: 1.12;
 }
 
 .agent4-code__copy p {
@@ -916,7 +916,7 @@ html::-webkit-scrollbar {
 
 .agent4-comparison__heading h2 {
     font-size: clamp(46px, 4.2vw, 58px);
-    line-height: 1.06;
+    line-height: 1.12;
 }
 
 .agent4-comparison__heading p {
@@ -1042,7 +1042,7 @@ html::-webkit-scrollbar {
 
 .agent4-compounding__copy h2 {
     font-size: clamp(48px, 4.2vw, 58px);
-    line-height: 1.06;
+    line-height: 1.12;
 }
 
 .agent4-compounding__copy p {
@@ -1213,7 +1213,7 @@ html::-webkit-scrollbar {
 
 .agent4-decision__heading h2 {
     font-size: clamp(46px, 4.2vw, 58px);
-    line-height: 1.06;
+    line-height: 1.12;
 }
 
 .agent4-decision__heading p {
@@ -1258,7 +1258,7 @@ html::-webkit-scrollbar {
     color: #bcdfff;
     font-family: var(--font-body);
     font-size: 22px;
-    font-weight: 650;
+    font-weight: 600;
 }
 
 .agent4-decision__options article:last-child h3 {
@@ -1296,16 +1296,12 @@ html::-webkit-scrollbar {
 .agent4-final h2 {
     max-width: 940px;
     font-size: clamp(48px, 4.5vw, 62px);
-    line-height: 1.06;
+    line-height: 1.12;
     text-align: center;
 }
 
 .agent4-final .v4-actions {
     margin-top: 36px;
-}
-
-.agent4-page footer {
-    padding-top: 30px;
 }
 
 @media (max-width: 1080px) {

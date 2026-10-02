@@ -1,0 +1,148 @@
+@import './marketing-buttons.css';
+
+.marketing-form-panel {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(244, 247, 255, 0.09);
+    border-radius: 24px;
+    background:
+        radial-gradient(circle at 50% -10%, rgba(255, 150, 76, 0.12), transparent 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.016)),
+        rgba(9, 12, 17, 0.78);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        0 24px 80px rgba(0, 0, 0, 0.26);
+}
+
+.marketing-form-panel::before {
+    content: "";
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    top: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 179, 255, 0.36), transparent);
+    pointer-events: none;
+}
+
+.contact-form-wrap {
+    padding: clamp(24px, 4vw, 38px);
+}
+
+.contact-form {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    font-size: 15px;
+}
+
+.contact-form-head {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.contact-form h2 {
+    width: 100%;
+    margin: 0;
+    text-align: left;
+    font-size: 24px;
+    letter-spacing: -0.02em;
+}
+
+.contact-form-head p {
+    max-width: 440px;
+    color: var(--text-tertiary);
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.contact-field {
+    display: grid;
+    gap: 8px;
+}
+
+.contact-field label {
+    color: rgba(244, 247, 255, 0.82);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.contact-field input,
+.contact-field textarea {
+    width: 100%;
+    border: 1px solid rgba(244, 247, 255, 0.11);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.045);
+    color: var(--text);
+    font: inherit;
+    outline: none;
+    transition: border-color 0.14s ease, background-color 0.14s ease, box-shadow 0.14s ease;
+}
+
+.contact-field input {
+    min-height: 48px;
+    padding: 0 14px;
+}
+
+.contact-field textarea {
+    min-height: 152px;
+    resize: vertical;
+    padding: 13px 14px;
+    line-height: 1.55;
+}
+
+.contact-field input:focus,
+.contact-field textarea:focus {
+    border-color: rgba(0, 179, 255, 0.42);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 3px rgba(0, 179, 255, 0.08);
+}
+
+.contact-field input::placeholder,
+.contact-field textarea::placeholder {
+    color: rgba(167, 180, 200, 0.46);
+}
+
+.contact-submit {
+    justify-self: end;
+    justify-content: center;
+    min-width: 120px;
+    border: 0;
+    line-height: normal;
+}
+
+.contact-submit:disabled {
+    cursor: wait;
+    filter: grayscale(0.2);
+    opacity: 0.72;
+    transform: none;
+}
+
+.form-status {
+    min-height: 22px;
+    color: var(--text-tertiary);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.form-status[data-state="success"] {
+    color: var(--green);
+}
+
+.form-status[data-state="error"] {
+    color: #ff9a82;
+}
+
+@media (max-width: 520px) {
+    .marketing-form-panel { border-radius: 18px; }
+    .contact-form-wrap { padding: 22px; }
+    .contact-submit { justify-self: stretch; width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .contact-field input,
+    .contact-field textarea,
+    .contact-submit { transition: none; }
+    .contact-submit:hover { transform: none; }
+}

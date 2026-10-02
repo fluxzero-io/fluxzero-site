@@ -1,5 +1,6 @@
 .product-code-page {
     --product-code-font-size: 13.5px;
+    --product-code-font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
     --code-panel: #1e1f22;
     --code-border: rgba(133, 178, 220, 0.22);
     --code-blue: #6aa6ef;
@@ -18,7 +19,7 @@
     isolation: isolate;
     background:
         radial-gradient(ellipse at 100% 25%, rgba(145, 108, 63, 0.075), transparent 48%),
-        linear-gradient(180deg, #090e14 0%, #05080c 66%, #030507 100%);
+        linear-gradient(180deg, #111214 0%, var(--marketing-bg) 100%);
 }
 
 .product-code-hero .product-code-hero__layout {
@@ -107,7 +108,7 @@
     border-radius: 0.3em;
     background: rgba(16, 35, 52, 0.72);
     color: #b7d9f5;
-    font-family: var(--font-mono);
+    font-family: var(--product-code-font-family);
     font-size: 0.84em;
 }
 
@@ -299,7 +300,7 @@
     padding: 22px 62px 25px 23px;
     overflow: auto;
     color: var(--code-text);
-    font-family: var(--font-mono);
+    font-family: var(--product-code-font-family);
     font-size: var(--product-code-font-size);
     line-height: 1.62;
     tab-size: 4;

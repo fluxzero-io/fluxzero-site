@@ -7,12 +7,13 @@ import starlightLinksValidator from 'starlight-links-validator'
 import cloudflare from '@astrojs/cloudflare';
 import { fluxzeroBrand } from './src/config/brand.mjs';
 import remarkDocsLinks from './scripts/remark-docs-links.mjs';
+import { siteUrl, siteLinkAliases } from './scripts/core-pages.mjs';
 
 // https://astro.build/config
 export default defineConfig({
     site: 'https://fluxzero.io',
     prefetch: { defaultStrategy: 'hover' },
-    markdown: { remarkPlugins: [remarkDocsLinks] },
+    markdown: { remarkPlugins: [[remarkDocsLinks, { siteUrl, linkAliases: siteLinkAliases }]] },
     vite: {
         plugins: [tailwindcss()],
         css: {
@@ -58,7 +59,7 @@ export default defineConfig({
         },
         "/start-building": {
             status: 308,
-            destination: "/get-started"
+            destination: "/#get-started"
         },
         "/docs": {
             status: 302,

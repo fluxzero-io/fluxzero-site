@@ -3,9 +3,10 @@ import '../../../public/css/start-building-v4.css';
 
 interface Props {
     instructionSource?: boolean;
+    showAgents?: boolean;
 }
 
-const { instructionSource = false } = Astro.props;
+const { instructionSource = false, showAgents = true } = Astro.props;
 const agentPrompt = 'Build my app with Fluxzero. Start at plugins.fluxzero.io';
 const compatibleAgents = [
     { name: 'Claude Code', icon: '/assets/agent-tools/claude-code.svg', href: 'https://claude.com/product/claude-code' },
@@ -25,7 +26,7 @@ const compatibleAgents = [
     <p class="agent-instruction-card__status" role="status" aria-live="polite" data-copy-status></p>
 </article>
 
-<div class="compatible-agents" aria-labelledby="compatible-agents-title">
+{showAgents && <div class="compatible-agents" aria-labelledby="compatible-agents-title">
     <p id="compatible-agents-title">Works with</p>
     <ul aria-label="Coding agents supported by the Fluxzero plugin">
         {compatibleAgents.map((agent) => (
@@ -42,4 +43,4 @@ const compatibleAgents = [
             </li>
         ))}
     </ul>
-</div>
+</div>}

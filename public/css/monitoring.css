@@ -18,12 +18,12 @@
 .monitoring-notes dt {font-size:14px;font-weight:600;color:#dce9f5;margin-bottom:8px;}
 .monitoring-notes dd {margin:0;font-size:14px;line-height:1.7;color:#a9bacb;}
 .monitoring-agent-example {display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;border-top:1px solid var(--monitoring-line);padding:40px 0 0;}
-.monitoring-agent-example h3 {font-size:30px;line-height:1.2;font-weight:700;letter-spacing:-.03em;color:#eef6ff;margin:0 0 16px;}
+.monitoring-agent-example h3 {font-size:30px;line-height:1.2;font-weight: 600;letter-spacing: -0.025em;color:#eef6ff;margin:0 0 16px;}
 .monitoring-agent-example p {font-size:16px;line-height:1.8;color:#acbfd2;max-width:440px;}
 .monitoring-agent-example figure {margin:0;border:1px solid #344458;background:#1e222a;border-radius:12px;overflow:hidden;}
 .monitoring-agent-example figcaption {display:flex;justify-content:space-between;gap:14px;padding:16px 20px;background:#20252e;color:#d9e5f1;font-size:13px;border-bottom:1px solid #344458;}
 .monitoring-agent-example figcaption span {font-size:11px;color:#aabdd1;}
-.monitoring-agent-example pre {margin:0;padding:24px 20px;color:#b7d5a7;font:14px/1.9 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;}
+.monitoring-agent-example pre {margin:0;padding:24px 20px;color:#b7d5a7;font:400 14px/1.9 var(--font-body);white-space:pre-wrap;overflow-wrap:anywhere;}
 @media(max-width:800px){
  .monitoring-notes{gap:20px;}
  .monitoring-agent-example{grid-template-columns:1fr;gap:22px;}
@@ -66,7 +66,7 @@
 .monitoring-example__frame[data-view="insights"]{height:630px}
 
 .monitoring-context-card__facts{display:flex;flex-wrap:wrap;gap:18px 28px;margin:0;padding:22px 20px;border-bottom:1px solid #344458;}
-.monitoring-context-card__facts dt,.monitoring-context-card h4{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:#aabdd1;}
+.monitoring-context-card__facts dt,.monitoring-context-card h4{font-size:11px;font-weight: 600;letter-spacing:.06em;text-transform:uppercase;color:#aabdd1;}
 .monitoring-context-card__facts dd{margin:6px 0 0;color:#eef6ff;font-size:14px;overflow-wrap:anywhere;}
 .monitoring-context-card h4{margin:22px 20px 0;}
 .monitoring-agent-example .monitoring-context-card pre{padding-top:10px;padding-bottom:22px;font-size:13px;}

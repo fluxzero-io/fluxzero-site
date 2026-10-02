@@ -10,6 +10,7 @@
 
 .agent-cloud-home .hero h1 {
     max-width: 1000px;
+    letter-spacing: -0.035em;
 }
 
 .agent-cloud-home .hero-ctas .btn-s {
@@ -37,8 +38,8 @@
 
 .homepage-start h2 {
     font-size: clamp(38px, 4.6vw, 56px);
-    line-height: 1.08;
-    letter-spacing: -.045em;
+    line-height: 1.12;
+    letter-spacing: -0.025em;
 }
 
 .agent-cloud-home .comparison-v4__heading > h2,
@@ -71,7 +72,28 @@
 }
 
 .agent-cloud-home .homepage-finish {
-    padding-bottom: clamp(260px, 32vw, 480px);
+    padding-bottom: calc(clamp(260px, 32vw, 480px) - var(--marketing-footer-sunset-height));
+}
+
+.agent-cloud-home .homepage-finish > .section-intro,
+.agent-cloud-home .homepage-finish > .cta-btns {
+    transform: none;
+}
+
+.agent-cloud-home .homepage-finish__title {
+    max-width: 1120px;
+    font-size: clamp(36px, 5.2vw, 64px);
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+}
+
+.homepage-finish__prompt {
+    position: relative;
+    z-index: 1;
+    max-width: 840px;
+    margin-inline: auto;
+    text-align: left;
 }
 
 .homepage-finish__actions {
@@ -107,6 +129,19 @@
 
 .homepage-faq[hidden] {
     display: none;
+}
+
+.homepage-faq.is-transitioning {
+    overflow: clip;
+}
+
+.agent-cloud-home .homepage-faq .faq-heading {
+    font-size: clamp(24px, 2.6vw, 34px);
+    line-height: 1.2;
+}
+
+.homepage-faq .faq-heading::after {
+    width: 72px;
 }
 
 .homepage-faq .faq-q {
@@ -154,6 +189,12 @@
 
     .homepage-faq {
         padding-top: 48px;
+    }
+}
+
+@media (max-width: 600px) {
+    .agent-cloud-home .homepage-finish__title {
+        font-size: clamp(29px, 9vw, 40px);
     }
 }
 

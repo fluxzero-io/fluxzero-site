@@ -6,6 +6,8 @@ body.about-page {
 body.about-page::before { content: none; }
 
 .about-main {
+    position: relative;
+    isolation: isolate;
     display: flex;
     align-items: center;
     max-width: 940px;
@@ -14,16 +16,43 @@ body.about-page::before { content: none; }
     padding: clamp(160px, 16vh, 210px) 40px clamp(120px, 12vh, 160px);
 }
 
+.about-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    z-index: -1;
+    width: 100vw;
+    height: 640px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    background: url('/assets/fluxzero/about-stars.svg') center top / 1600px 640px repeat-x;
+    opacity: 1;
+    mask-image: linear-gradient(to bottom, #000 10%, rgba(0, 0, 0, 0.65) 40%, transparent 90%);
+}
+
+.about-main::after {
+    content: '';
+    position: absolute;
+    top: clamp(76px, calc(9vh - 12px), 104px);
+    right: 12px;
+    z-index: -1;
+    width: 100px;
+    height: 100px;
+    pointer-events: none;
+    background: url('/assets/fluxzero/north-star.svg') center / contain no-repeat;
+}
+
 .about-statement { width: 100%; }
 
 .about-statement h1 {
     color: #f0f0f2;
-    font-family: var(--font-body);
+    font-family: var(--font-display);
     font-size: clamp(38px, 4.5vw, 62px);
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1.12;
-    letter-spacing: -.045em;
-    text-wrap: initial;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
 }
 
 .about-belief,
@@ -51,11 +80,18 @@ body.about-page::before { content: none; }
 .about-actions .btn-s { min-width: 150px; justify-content: center; }
 .about-actions .btn-s { gap: 8px; }
 
+@media (max-width: 900px) {
+    .about-statement__break,
+    .about-belief__break { display: none; }
+    .about-belief p,
+    .about-team { text-wrap: balance; }
+}
+
 @media (max-width: 600px) {
     .about-main { padding: 144px 24px 100px; }
+    .about-main::after { top: 74px; right: 6px; width: 80px; height: 80px; }
     .about-statement h1 { font-size: clamp(34px, 7.5vw, 44px); }
     .about-belief { margin-top: 48px; }
-    .about-belief__break { display: none; }
     .about-team { margin-top: 48px; }
     .about-actions { margin-top: 56px; }
     .about-actions .btn-p,

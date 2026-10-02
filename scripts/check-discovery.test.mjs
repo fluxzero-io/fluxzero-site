@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { inspectPage, validateDiscovery } from './check-discovery.mjs';
 import { lastChanged } from './sitemap-dates.mjs';
+import { retiredPages } from './core-pages.mjs';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -51,6 +52,21 @@ test('accepts Markdown index links', () => {
     f.llms = f.llms.replace(`](${site}/)`, `](${site}/index.md)`).replace(`](${site}/proof/)`, `](${site}/proof/index.md)`);
     assert.deepEqual(check(f), []);
 });
+test('accepts the homepage instruction in the opening while retaining its full standalone Markdown', async () => {
+    const { renderPageContent, renderLlms, renderMarkdownPage } = await import('./generate-llms.mjs');
+    const { parse } = await import('parse5');
+    const instruction = 'Build my app with Fluxzero. Start at plugins.fluxzero.io';
+    const html = `<link rel="canonical" href="${site}/"><main><h1>Home</h1><p>Overview.</p><pre data-llms-instruction>${instruction}</pre><a href="/proof/">Proof</a></main>`;
+    const doc = parse(html);
+    const home = {title:'Home',url:site+'/',description:'Overview',summary:'',instruction,content:renderPageContent(doc,site+'/'),inlineContent:renderPageContent(doc,site+'/',{excludeInstructions:true})};
+    const f = fixture();
+    f.pages.set('/',inspectPage(html,'/'));
+    f.markdown.set('/',renderMarkdownPage(home));
+    f.llms=renderLlms([home],[]) + `\n[Proof](${site}/proof/)`;
+    assert.deepEqual(check(f),[]);
+    f.llms=f.llms.replace('Overview.','Missing.');
+    assert.ok(check(f).some(message=>message.includes('incomplete content')));
+});
 test('ignores external and nofollow links',()=>assert.deepEqual(inspectPage('<a href="https://other.example/proof/">x</a><a rel="nofollow" href="/proof/">x</a>','/').links,[]));
 test('lastmod stays at source change even after unrelated commits',async()=>{
     const dir=await mkdtemp(join(tmpdir(),'sitemap-date-'));
@@ -73,14 +89,15 @@ test('IndexNow submits only after the correct release and removal are live',asyn
         calls.push({url,options});
         if(url.endsWith('indexnow-key.txt')) return new Response('ownership-key');
         if(url.endsWith('llms.txt')) return new Response('full release');
-        if(url.includes('makeitreal')) return new Response('',{status:404});
+        if(retiredPages.includes(new URL(url).pathname)) return new Response('',{status:404});
         return new Response('',{status:202});
     };
-    await submitIndexNow({fetch:send,read});
+    await submitIndexNow({fetch:send,read,attempts:1});
     assert.equal(calls.at(-1).options.method,'POST');
     const payload=JSON.parse(calls.at(-1).options.body);
     assert.ok(payload.urlList.includes(site+'/product-code/'));
     assert.ok(payload.urlList.includes(site+'/makeitreal/'));
+    assert.ok(payload.urlList.includes(site+'/get-started/'));
     const postCount=calls.filter(c=>c.options?.method==='POST').length;
     await assert.rejects(submitIndexNow({read,attempts:1,fetch:async(url,options)=>url.endsWith('llms.txt')?new Response('old release'):send(url,options)}),/does not match/);
     assert.equal(calls.filter(c=>c.options?.method==='POST').length,postCount);
@@ -96,7 +113,7 @@ test('IndexNow waits for deployed assets before notifying', async () => {
         fetch: async (url, options) => {
             if (url.endsWith('indexnow-key.txt')) return new Response(++checks < 3 ? 'old 404' : 'key');
             if (url.endsWith('llms.txt')) return new Response('release');
-            if (url.includes('makeitreal')) return new Response('', {status:404});
+            if (retiredPages.includes(new URL(url).pathname)) return new Response('', {status:404});
             assert.equal(options.method, 'POST');
             posts++;
             return new Response('', {status:202});
