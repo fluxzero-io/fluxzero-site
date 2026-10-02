@@ -32,7 +32,7 @@ test('website stub completes silent code+PKCE and requires a local session', asy
     try {
         const discovery = await (await request('/.well-known/openid-configuration')).json();
         assert.equal(discovery.issuer, stub.issuer);
-        assert.deepEqual(discovery.prompt_values_supported, ['none', 'login']);
+        assert.deepEqual(discovery.prompt_values_supported, ['none', 'login', 'create']);
         assert.equal(discovery.end_session_endpoint, `${stub.issuer}/oauth2/sessions/logout`);
 
         const anonymous = await request(authorizationPath());
@@ -112,12 +112,14 @@ test('website stub supports login, registration, profile and RP logout without e
         client_id: stub.clientId, redirect_uri: redirectUri, response_type: 'code',
         scope: 'openid profile', state: 'website-return-state', nonce: 'website-nonce',
         code_challenge_method: 'S256', code_challenge: challenge,
+        theme: 'light',
     })}`;
     try {
         const login = await request(authorization);
         assert.equal(login.status, 302);
         const loginUrl = new URL(login.headers.get('location'), stub.issuer);
         assert.equal(loginUrl.pathname, '/login');
+        assert.equal(loginUrl.searchParams.get('theme'), 'light');
         const continuation = loginUrl.searchParams.get('returnTo');
         assert.match(continuation, /^\/oauth2\/auth\?transaction=[a-f0-9]{32}$/);
 
@@ -127,6 +129,8 @@ test('website stub supports login, registration, profile and RP logout without e
         const themedLoginUrl = new URL('/login', stub.issuer);
         themedLoginUrl.searchParams.set('returnTo', continuation);
         themedLoginUrl.searchParams.set('theme', 'dark');
+        assert.equal((await request(`${themedLoginUrl.pathname}${themedLoginUrl.search}`)).status, 400);
+        themedLoginUrl.searchParams.set('theme', 'light');
         const themedLogin = await request(`${themedLoginUrl.pathname}${themedLoginUrl.search}`);
         assert.equal(themedLogin.status, 302);
         assert.equal(themedLogin.headers.get('location'), `${stub.issuer}${continuation}`);
@@ -169,4 +173,35 @@ test('website stub supports login, registration, profile and RP logout without e
     } finally {
         await stub.close();
     }
+});
+
+test('registration rejects unbound entry, invalid hints and continuation replacement', async () => {
+    const stub = await startWebsiteOidcStub({ port: 0 });
+    const request = (url) => fetch(url, { redirect: 'manual' });
+    const authorization = new URL('/oauth2/auth', stub.issuer);
+    authorization.search = new URLSearchParams({
+        client_id: stub.clientId, redirect_uri: `${stub.websiteOrigin}/oidc/callback/`,
+        response_type: 'code', scope: 'openid profile', state: 'return-state', nonce: 'nonce',
+        code_challenge_method: 'S256', code_challenge: randomBytes(32).toString('base64url'),
+        prompt: 'create', theme: 'dark',
+    }).toString();
+    try {
+        for (const [name, value] of [['prompt', 'create none'], ['prompt', 'signup'],
+            ['theme', 'unknown'], ['returnTo', '/register']]) {
+            const invalid = new URL(authorization);
+            invalid.searchParams.set(name, value);
+            assert.equal((await request(invalid)).status, 400);
+        }
+        const entry = new URL((await request(authorization)).headers.get('location'), stub.issuer);
+        assert.equal(entry.pathname, '/register');
+        const continuation = new URL(entry.searchParams.get('returnTo'), stub.issuer);
+        continuation.searchParams.set('theme', 'light');
+        const replaced = await request(continuation);
+        assert.equal(replaced.headers.get('location'), '/login?error=authorization_unavailable');
+        entry.searchParams.set('theme', 'light');
+        assert.equal((await request(entry)).status, 400);
+        const unbound = new URL('/register', stub.issuer);
+        unbound.searchParams.set('returnTo', `${authorization.pathname}${authorization.search}`);
+        assert.equal((await request(unbound)).status, 400);
+    } finally { await stub.close(); }
 });
