@@ -86,6 +86,14 @@ export function initWebsiteOidc(): void {
     const configured = controls.find((element) => element.hasAttribute('data-website-oidc'));
     if (!configured) return;
 
+    // Chrome swaps prerendered sessionStorage on activation and defers cross-origin iframes.
+    // Start OIDC only afterwards so its callback can find the stored state and PKCE verifier.
+    const page = document as Document & { readonly prerendering?: boolean };
+    if (page.prerendering) {
+        page.addEventListener('prerenderingchange', initWebsiteOidc, { once: true });
+        return;
+    }
+
     let manager: UserManager;
     try {
         manager = managerFor(configured);
