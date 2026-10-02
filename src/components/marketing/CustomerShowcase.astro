@@ -55,17 +55,17 @@ const customers = [
     .customer-proof__intro h2 span { color: #a8cbe6; }
     .customer-proof__description { margin: 0; font-size: 19px; line-height: 1.7; color: #a8b3c3; }
 
-    customer-showcase { --progress: 0; display: block; margin-top: 84px; }
+    customer-showcase { --progress: 0; display: block; margin-top: 60px; }
     .customer-ring {
         position: relative;
         display: grid;
         grid-template-columns: .85fr 1fr 1.08fr 1fr .85fr;
         align-items: end;
         gap: clamp(20px, 3vw, 42px);
-        padding: 230px 16px 34px;
+        padding: 192px 16px 34px;
         isolation: isolate;
     }
-    .customer-ring__item { --story-accent: 123, 190, 225; --story-anchor: 50%; min-width: 0; margin: 0; }
+    .customer-ring__item { --story-accent: 123, 190, 225; min-width: 0; margin: 0; }
     .customer-ring__logo {
         position: relative;
         display: flex;
@@ -93,8 +93,8 @@ const customers = [
     }
     .customer-ring__logo:focus-visible { outline: 2px solid #83b9ff; outline-offset: 10px; }
     .customer-ring__item--unknown { --yaw: 34deg; --lift: -27px; --scale: .88; }
-    .customer-ring__item--portbase { --yaw: 16deg; --lift: -7px; --scale: .98; --story-accent: 243, 118, 71; --story-anchor: 15%; }
-    .customer-ring__item--megathon { --yaw: -16deg; --lift: -7px; --scale: .98; --story-accent: 212, 167, 44; --story-anchor: 85%; }
+    .customer-ring__item--portbase { --yaw: 16deg; --lift: -7px; --scale: .98; --story-accent: 243, 118, 71; }
+    .customer-ring__item--megathon { --yaw: -16deg; --lift: -7px; --scale: .98; --story-accent: 212, 167, 44; }
     .customer-ring__item--staffyou { --yaw: -34deg; --lift: -27px; --scale: .88; }
     .customer-ring__item--unknown .customer-ring__logo { mask-image: linear-gradient(90deg, transparent, #000 80%); }
     .customer-ring__item--staffyou .customer-ring__logo { mask-image: linear-gradient(270deg, transparent, #000 80%); }
@@ -113,10 +113,10 @@ const customers = [
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 16px;
+        gap: 12px;
         width: min(780px, calc(100% - 48px));
-        min-height: 170px;
-        padding: 28px 44px 32px;
+        min-height: 144px;
+        padding: 20px 44px 24px;
         border: 1px solid rgba(var(--story-accent), .2);
         border-radius: 22px;
         background: radial-gradient(ellipse at 50% 0, rgba(var(--story-accent), .09), transparent 75%), linear-gradient(180deg, #ffffff05, #ffffff01), #1e2024;
@@ -130,7 +130,6 @@ const customers = [
     .customer-ring__story-label { display: inline-flex; align-items: center; gap: 8px; color: rgba(var(--story-accent), .95); font-size: 11px; font-weight: 600; letter-spacing: .13em; text-transform: uppercase; }
     .customer-ring__story-label::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; box-shadow: 0 0 12px rgba(var(--story-accent), .3); }
     .customer-ring__story p { max-width: 650px; margin: 0; font-size: 23px; line-height: 1.5; font-weight: 450; letter-spacing: -.015em; color: #e4eaf2; text-wrap: balance; }
-    .customer-ring__story::after { content: ''; position: absolute; top: 100%; left: var(--story-anchor); height: 32px; width: 1px; background: linear-gradient(rgba(var(--story-accent), .35), transparent); }
     .customer-ring__item[data-active] .customer-ring__story { opacity: 1; transform: translate(-50%, 0); }
     .customer-ring__timer { position: absolute; bottom: 0; left: 25%; width: 50%; height: 2px; background: #a9c6df1a; opacity: 0; overflow: hidden; border-radius: 2px; transition: opacity 400ms ease; }
     .customer-ring__timer > span { display: block; height: 100%; background: rgb(var(--story-accent)); transform: scaleX(var(--progress)); transform-origin: left; }
@@ -140,10 +139,10 @@ const customers = [
         .customer-proof { padding-inline: 20px; overflow: clip; }
         .customer-proof__description { font-size: 17px; }
         .customer-proof__description .desktop-break { display: none; }
-        customer-showcase { margin-top: 64px; }
-        .customer-ring { width: calc(100% + 148px); margin-left: -74px; gap: 16px; padding-inline: 0; padding-top: 242px; }
+        customer-showcase { margin-top: 48px; }
+        .customer-ring { width: calc(100% + 148px); margin-left: -74px; gap: 16px; padding-inline: 0; padding-top: 208px; }
         .customer-ring__logo { height: 74px; padding-bottom: 22px; }
-        .customer-ring__story { width: calc(100% - 148px); min-height: 185px; padding: 24px; border-radius: 18px; }
+        .customer-ring__story { width: calc(100% - 148px); min-height: 165px; padding: 18px 24px; border-radius: 18px; }
         .customer-ring__story p { font-size: 19px; }
         .customer-ring__megathon { font-size: clamp(10px, 2.4vw, 17px); gap: 3px; }
         .customer-ring__megathon img { width: 18px; height: 18px; }
