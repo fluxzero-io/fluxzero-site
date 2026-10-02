@@ -110,17 +110,11 @@ export function initWebsiteOidc(): void {
         const name = user ? displayName(user) : undefined;
 
         controls.forEach((control) => {
-            const dashboard = control.querySelector<HTMLAnchorElement>('[data-website-dashboard]');
             const identity = control.querySelector<HTMLElement>('[data-oidc-identity]');
             const nameElement = control.querySelector<HTMLElement>('[data-oidc-name]');
             const signedIn = control.querySelector<HTMLElement>('[data-oidc-signed-in]');
             const signedOut = control.querySelector<HTMLElement>('[data-oidc-signed-out]');
             const trigger = control.querySelector<HTMLElement>('.website-account-trigger');
-            if (dashboard) {
-                if (user) dashboard.dataset.oidcState = 'signed-in';
-                else dashboard.removeAttribute('data-oidc-state');
-                dashboard.setAttribute('aria-label', user ? 'Dashboard, signed in' : 'Dashboard');
-            }
             if (identity) identity.hidden = !user;
             if (signedIn) signedIn.hidden = !user;
             if (signedOut) signedOut.hidden = !!user;
