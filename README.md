@@ -5,7 +5,7 @@
 Source code for the [Fluxzero website](https://fluxzero.io) and [documentation](https://fluxzero.io/docs).
 
 - The marketing site explains Fluxzero to people building products with AI.
-- The documentation under `/docs` separates the builder workflow from optional Developer Guides. Coding agents use the SDK’s dedicated agent documentation.
+- The documentation under `/docs` provides Building with Fluxzero (tutorials, how-to guides, explanation and reference), Developer Guides for SDK programming, and shared Tools & automation. Coding agents use the SDK’s dedicated agent documentation.
 - The application is deployed as a Cloudflare Worker.
 
 ## Requirements
@@ -36,7 +36,11 @@ pnpm dev
 
 The site is then available at <http://localhost:4321>.
 
-`pnpm dev` refreshes the Astro content, copies the current SDK documentation into the site, and starts Astro. The SDK-sourced files under `src/content/docs/docs/` are generated and ignored by Git; edit their source in `fluxzero-sdk-java` instead.
+`pnpm dev` refreshes the Astro content, copies the current SDK documentation into the site, and starts Astro. The SDK-sourced files under `src/content/docs/docs/` are generated and ignored by Git; edit their source in `fluxzero-sdk-java` instead. Builder and tooling pages currently use this same source pipeline. Sidebar organization lives in `astro.config.mjs`; tool schemas and full configuration remain owned by their linked component repositories. Update the human guide and its source links together when an interface changes.
+
+Developer Guides keep Overview, Core concepts and Fluxzero 2.0 at the top level for orientation. Tutorials, How-to guides and Reference group the remaining pages by reader need; explanation remains directly accessible rather than adding another sidebar layer. A how-to should solve a bounded task; catalogs of APIs, annotations, options and behavioral contracts belong in Reference, even when their titles start with a verb or they contain examples. Keep each page in one sidebar location and retain topic groups within longer sections. Add new developer pages explicitly to `astro.config.mjs`; the source directory and stable URL do not determine the documentation type. Keep the existing `/docs/guides` overview aligned with these entry points.
+
+Builder guides use native Starlight components for steps, cards and asides. Shared `AgentPrompt` (copyable prose) and `GuideFlow` (responsive ordered stages) components live in `src/components/docs/`, with scoped guide styles in `src/styles/docs-guides.css`. SDK MDX imports these through `~/components/docs/`; publish the website components before or together with documentation that imports them. Keep product wording in the SDK source, rather than embedding it in presentation components.
 
 Relative Markdown links to `.md` and `.mdx` source files are resolved to the target's frontmatter `slug` when rendered. Query strings and fragments are preserved. Missing targets or slugs fail the build, and the final link check validates the published routes.
 
