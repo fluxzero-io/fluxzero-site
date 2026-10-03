@@ -1,0 +1,75 @@
+/* Give documentation panels their own spacing, including across legacy anchor spans. */
+.sl-markdown-content .card-grid,
+.sl-markdown-content .starlight-aside,
+.sl-markdown-content > .sl-link-card,
+.sl-markdown-content > .card {
+  margin-block: 2rem;
+}
+
+/* An empty legacy anchor must not remove the normal gap before a paragraph. */
+.sl-markdown-content span[id]:empty + p {
+  margin-top: 1rem;
+}
+
+/* Editorial patterns used by the builder guides. */
+.sl-markdown-content .guide-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem .85rem;
+  margin-block: .75rem 1.25rem;
+  color: var(--sl-color-gray-2);
+  font-size: .8rem;
+}
+.sl-markdown-content .guide-context span + span::before {
+  content: '·'; margin-inline-end: .85rem; color: var(--sl-color-text-accent);
+}
+.sl-markdown-content .guide-result {
+  margin-block: 1rem;
+  padding: .85rem 1rem;
+  border-inline-start: 2px solid var(--sl-color-text-accent);
+  background: color-mix(in srgb, var(--sl-color-accent-low) 18%, var(--sl-color-bg));
+  border-radius: 0 .35rem .35rem 0;
+}
+.sl-markdown-content .guide-result > strong {
+  display: block; color: var(--sl-color-text-accent); font-size: .8rem; margin-bottom: .25rem;
+}
+.sl-markdown-content .guide-result > p { margin: 0; }
+.sl-markdown-content .guide-steps .sl-steps > li::before {
+  color: var(--sl-color-text-accent);
+  background: var(--sl-color-accent-low);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sl-color-text-accent) 30%, transparent);
+}
+.sl-markdown-content .guide-steps .sl-steps > li { padding-bottom: 1.5rem; }
+.sl-markdown-content .guide-steps .sl-steps > li:last-child { padding-bottom: 0; }
+.sl-markdown-content .guide-steps h2 { font-size: var(--sl-text-h3); }
+.sl-markdown-content .guide-roles {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem;
+  margin-block: 1.5rem;
+}
+.sl-markdown-content .guide-roles > .card,
+.sl-markdown-content .guide-cards .card {
+  margin: 0; padding: 1rem; border: 1px solid var(--sl-color-hairline-light);
+  background: var(--sl-color-bg); border-radius: .5rem; box-shadow: none;
+}
+.sl-markdown-content .guide-roles .title { font-size: 1rem; gap: .5rem; }
+.sl-markdown-content :is(.guide-roles, .guide-cards) .icon {
+  color: var(--sl-color-text-accent); border-color: transparent; background: var(--sl-color-accent-low);
+}
+.sl-markdown-content .guide-roles .body { font-size: .85rem; }
+@media (max-width: 65rem) {
+  .sl-markdown-content .guide-roles { grid-template-columns: 1fr; gap: .65rem; }
+}
+@media (max-width: 30rem) {
+  .sl-markdown-content .guide-context { display: block; }
+  .sl-markdown-content .guide-context span { display: block; }
+  .sl-markdown-content .guide-context span + span::before { content: none; }
+}
+
+/* Short route choices fit in one row when the reading column allows it. */
+.sl-markdown-content .guide-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 1rem;
+  margin-block: 2rem;
+}
+.sl-markdown-content .guide-options > .sl-link-card { margin: 0; }

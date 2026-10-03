@@ -1,0 +1,34 @@
+---
+interface Props {
+  label: string;
+  stages: { title: string; description: string }[];
+  caption?: string;
+}
+const { label, stages, caption } = Astro.props;
+---
+<figure class="not-content guide-flow" aria-label={label}>
+  <ol role="list">
+    {stages.map((stage, index) => <li>
+      <span class="flow-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+      <strong>{stage.title}</strong>
+      <p>{stage.description}</p>
+    </li>)}
+  </ol>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+<style>
+  .guide-flow { container-type: inline-size; margin: 1.5rem 0; }
+  ol { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.3rem; margin: 0; padding: 0; }
+  li { position: relative; padding: 1rem; border: 1px solid var(--sl-color-hairline-light); border-radius: .5rem; background: color-mix(in srgb, var(--sl-color-accent-low) 20%, var(--sl-color-bg)); }
+  li + li::before { content: '→'; position: absolute; left: -1.1rem; top: 1rem; color: var(--sl-color-text-accent); }
+  .flow-number { display: block; margin-bottom: .6rem; color: var(--sl-color-text-accent); font-size: .75rem; font-weight: 600; letter-spacing: .08em; }
+  strong { display: block; color: var(--sl-color-white); font-size: 1rem; line-height: 1.35; }
+  p { margin: .5rem 0 0; font-size: .85rem; line-height: 1.55; }
+  figcaption { margin: .75rem 0 0; font-size: .8rem; color: var(--sl-color-gray-2); }
+  @container (max-width: 34rem) {
+    ol { grid-template-columns: 1fr; gap: 1.25rem; }
+    li { padding: .85rem 1rem; }
+    li + li::before { content: '↓'; top: -1.25rem; left: 1rem; }
+    .flow-number { margin-bottom: .3rem; }
+  }
+</style>

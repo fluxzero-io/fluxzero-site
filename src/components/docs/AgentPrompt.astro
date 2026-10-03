@@ -1,0 +1,62 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+interface Props {
+  text: string;
+  label?: string;
+}
+const { text, label = 'Ask your agent' } = Astro.props;
+---
+<fluxzero-prompt class="not-content agent-prompt">
+  <div class="prompt-heading">
+    <span class="prompt-label"><Icon name="comment" size="1.1rem" />{label}</span>
+    <button type="button" aria-label="Copy prompt" hidden>
+      <span data-copy-label>Copy prompt</span>
+    </button>
+  </div>
+  <p data-prompt-text>{text}</p>
+  <span class="copy-status" role="status" aria-live="polite"></span>
+</fluxzero-prompt>
+<script>
+  class FluxzeroPrompt extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector<HTMLButtonElement>('button');
+      const label = this.querySelector<HTMLElement>('[data-copy-label]');
+      const status = this.querySelector<HTMLElement>('[role="status"]');
+      if (!button || !label || !status || !navigator.clipboard?.writeText || button.dataset.ready) return;
+      button.dataset.ready = 'true';
+      button.hidden = false;
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(this.querySelector('[data-prompt-text]')?.textContent ?? '');
+          label.textContent = 'Copied';
+          status.textContent = 'Prompt copied to clipboard.';
+        } catch {
+          label.textContent = 'Copy prompt';
+          status.textContent = 'Could not copy. Select the prompt text and copy it manually.';
+        }
+      });
+    }
+  }
+  if (!customElements.get('fluxzero-prompt')) customElements.define('fluxzero-prompt', FluxzeroPrompt);
+</script>
+<style>
+  .agent-prompt {
+    display: block;
+    margin-block: 1.25rem;
+    padding: 1.1rem 1.25rem 1.25rem;
+    border: 1px solid color-mix(in srgb, var(--sl-color-text-accent) 30%, var(--sl-color-hairline-light));
+    border-inline-start: 3px solid var(--sl-color-text-accent);
+    border-radius: .6rem;
+    background: color-mix(in srgb, var(--sl-color-accent-low) 32%, var(--sl-color-bg));
+    color: var(--sl-color-text);
+  }
+  .prompt-heading { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+  .prompt-label { display: inline-flex; align-items: center; gap: .5rem; color: var(--sl-color-text-accent); font-size: .8rem; font-weight: 600; }
+  button { display: inline-flex; align-items: center; gap: .4rem; font: inherit; font-size: .75rem; font-weight: 500; color: var(--sl-color-text); background: var(--sl-color-bg); border: 1px solid var(--sl-color-hairline-light); border-radius: .35rem; padding: .4rem .6rem; cursor: pointer; }
+  button[hidden] { display: none; }
+  button:hover { border-color: var(--sl-color-text-accent); }
+  button:focus-visible { outline: 2px solid var(--sl-color-text-accent); outline-offset: 3px; }
+  p { margin: .85rem 0 0; font-family: var(--sl-font); font-size: 1rem; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .copy-status { display: block; font-size: .8rem; margin-top: .5rem; }
+  .copy-status:empty { display: none; }
+</style>
