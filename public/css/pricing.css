@@ -2029,11 +2029,16 @@
     position: absolute;
     z-index: -1;
     top: var(--pricing-glow-top);
-    left: -520px;
-    width: calc(100% + 1040px);
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
     height: calc((var(--pricing-glow-center) - var(--pricing-glow-top)) * 2);
     pointer-events: none;
     background: radial-gradient(ellipse closest-side at 50% 50%, rgba(255, 230, 154, .18), rgba(255, 221, 128, .09) 32%, rgba(255, 196, 96, .025) 60%, transparent 94%);
+    /* Stretch the paint, not the element: oversized layers widen iOS pages. */
+    background-size: calc(100% + 1040px) 100%;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 .pricing-v2-panel-current > .pricing-v2-flip-card { background: none; }
 .pricing-v2-panel-current .pricing-v2-flip-inner { height: 100%; }

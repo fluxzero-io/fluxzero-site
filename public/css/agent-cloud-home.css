@@ -1,6 +1,13 @@
 /* The agent-first homepage reuses the shared marketing shell and cloud comparison. */
 .agent-cloud-home {
     --homepage-section-space: clamp(112px, 10.5vw, 160px);
+    background: var(--marketing-bg);
+}
+
+/* The hero supplies its own sky. A fixed viewport gradient behind the following
+   sections exposes a dark band when Safari changes its visible viewport. */
+.agent-cloud-home::before {
+    content: none;
 }
 
 .agent-cloud-home main > section:not(.hero):not(.homepage-finish) {
