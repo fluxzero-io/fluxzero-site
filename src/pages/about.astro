@@ -6,7 +6,10 @@ import '../../public/css/about.css';
 import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
+import aboutStars from '../../public/assets/fluxzero/about-stars.svg?raw';
 
+// Embed only the shapes: a nested SVG viewport shifts the pattern a second time.
+const starShapes = aboutStars.slice(aboutStars.indexOf('>') + 1, aboutStars.lastIndexOf('</svg>'));
 ---
 
 <!DOCTYPE html>
@@ -19,6 +22,18 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 <body class="v4-page about-page">
 <MarketingHeader active="about" />
 <main class="about-main">
+    <div class="about-stars" aria-hidden="true">
+        <svg width="100%" height="640" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="about-star-field" x="50%" width="1600" height="640"
+                         patternUnits="userSpaceOnUse" patternTransform="translate(-800 0)">
+                    <g fill="#dceaff" set:html={starShapes} />
+                </pattern>
+            </defs>
+            <rect width="100%" height="640" fill="url(#about-star-field)" />
+        </svg>
+        <span class="about-meteor"></span>
+    </div>
     <article class="about-statement" aria-labelledby="mission-title">
         <h1 id="mission-title">Great ideas deserve<br class="about-statement__break"> to become real products.</h1>
 
@@ -39,6 +54,8 @@ import MarketingHeader from '../components/marketing/MarketingHeader.astro';
 <MarketingFooter />
 
 <script>
+    import '../scripts/about-stars';
+
     async function initSystemStatus() {
         const link = document.querySelector('[data-status-link]');
         const dot = document.querySelector('[data-status-dot]');

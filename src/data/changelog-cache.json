@@ -1,7 +1,16 @@
 {
-  "lastUpdated": "2026-10-03T15:52:34.964Z",
-  "latestVersion": "2.10.0",
+  "lastUpdated": "2026-10-03T16:55:14.641Z",
+  "latestVersion": "2.10.1",
   "releases": [
+    {
+      "version": "2.10.1",
+      "date": "2026-10-03",
+      "body": "#### [2.10.1](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.10.0...2.10.1) (2026-10-03)\n\n##### Documentation\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>guides: renew agent-led building and developer documentation (#445) <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/1a6e474b28d1e7422b8e86729354dfe5e139f960\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Align onboarding with the product cloud and make builder journeys, tooling and developer tasks easier to find. Add consistent guide presentation while retaining existing page URLs and programming examples.</p>\n</div>\n</details></li>\n</ul>\n\n##### Chores\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>modeling: mark Aggregate for removal in SDK 3.0 (#446) <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/d99c9e9034b5aa5eff7d42db7532330168df9ca5\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Mark Aggregate as deprecated for removal in SDK 3.0 while retaining its existing behavior in 2.x. Direct new domain state to independent Models and require deliberate migration of existing Aggregate data.</p>\n<p>Align Javadoc, developer guides and agent documentation. Keep Member supported and non-deprecated, including within Stateful handlers.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.10.1",
+      "quarterKey": "2026-Q4",
+      "year": 2026,
+      "quarter": "Q4"
+    },
     {
       "version": "2.10.0",
       "date": "2026-10-03",
