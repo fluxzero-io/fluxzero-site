@@ -40,6 +40,11 @@ const howItWorksClass = `nav-link nav-link-agents${active === 'how-it-works' ? '
             <a href="/contact/" data-astro-prefetch class="nav-link nav-mobile-only" aria-current={Astro.url.pathname === '/contact/' ? 'page' : undefined}>Contact</a>
             <a href="/partners/" data-astro-prefetch class="nav-link nav-mobile-only" aria-current={Astro.url.pathname === '/partners/' ? 'page' : undefined}>Partners</a>
         </div>
+        {!launchAccess.authenticationEnabled && (
+            <div class="nav-mobile-account" role="group" aria-label="Account">
+                <WebsiteAccountControls surface="marketing" inMenu />
+            </div>
+        )}
         <div class="nav-mobile-resources">
             <a href="https://github.com/fluxzero-io" target="_blank" rel="noreferrer">GitHub</a>
             <a href="https://www.linkedin.com/company/fluxzero" target="_blank" rel="noreferrer">LinkedIn</a>

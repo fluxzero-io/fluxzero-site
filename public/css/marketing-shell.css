@@ -626,6 +626,7 @@ samp {
 }
 
 .nav-main-links .nav-mobile-only,
+.nav-mobile-account,
 .nav-mobile-resources { display: none; }
 
 @media (max-width: 380px) {
@@ -720,6 +721,30 @@ samp {
         margin: 24px 16px 0;
         padding-top: 16px;
         border-top: 1px solid rgba(255, 255, 255, .1);
+    }
+    .nav-mobile-account {
+        display: block;
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, .1);
+    }
+    .nav-shell .nav-mobile-account .website-account-menu { display: block; }
+    .nav-mobile-account .website-account-popover a,
+    .nav-mobile-account .website-account-popover button {
+        min-height: 48px;
+        padding: 0 16px;
+        border-radius: 8px;
+        color: var(--text-secondary);
+        font-size: 22px;
+    }
+    .nav-mobile-account .website-account-popover a:hover,
+    .nav-mobile-account .website-account-popover button:hover {
+        color: var(--text);
+        background: rgba(255, 255, 255, .05);
+    }
+    .nav-mobile-account .website-account-identity {
+        padding: 0 16px 12px;
+        border: 0;
     }
     .nav-mobile-resources a {
         display: flex;
