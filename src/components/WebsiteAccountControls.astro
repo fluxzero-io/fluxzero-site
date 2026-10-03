@@ -234,6 +234,7 @@ const accountEnabled = oidc.enabled;
         stroke-linecap: round;
         stroke-linejoin: round;
         flex: none;
+        transition: opacity 0.2s ease;
     }
 
     .website-account-trigger .profile-filled {
@@ -245,9 +246,13 @@ const accountEnabled = oidc.enabled;
 
     .website-account-trigger:hover .profile-filled,
     .website-account-trigger:focus-visible .profile-filled,
+    .website-account-trigger[data-oidc-state='signed-in'] .profile-filled,
     .website-account-menu[open] .profile-filled { opacity: 1; }
 
+    .website-account-trigger[data-oidc-state='signed-in']:hover svg { opacity: 0.7; }
+
     @media (prefers-reduced-motion: reduce) {
+        .website-account-trigger svg,
         .website-account-trigger .profile-filled { transition: none; }
     }
 
