@@ -3,9 +3,10 @@ import { websiteOidcConfig } from '../config/website-oidc.mjs';
 
 interface Props {
     surface: 'marketing' | 'docs';
+    inMenu?: boolean;
 }
 
-const { surface } = Astro.props;
+const { surface, inMenu = false } = Astro.props;
 const oidc = websiteOidcConfig(import.meta.env);
 const accountEnabled = oidc.enabled;
 ---
@@ -13,6 +14,7 @@ const accountEnabled = oidc.enabled;
 <div
     class:list={['website-account-controls', `website-account-controls--${surface}`]}
     data-website-account-controls
+    data-in-menu={inMenu || undefined}
     data-website-oidc={accountEnabled ? '' : undefined}
     data-oidc-issuer={accountEnabled ? oidc.issuer : undefined}
     data-oidc-client-id={accountEnabled ? oidc.clientId : undefined}
@@ -20,7 +22,7 @@ const accountEnabled = oidc.enabled;
     data-oidc-site-origin={accountEnabled ? oidc.siteOrigin : undefined}
 >
     {surface === 'marketing' && <a class="website-dashboard-link" href={oidc.dashboardUrl}>Dashboard</a>}
-    <details class="website-account-menu">
+    <details class="website-account-menu" open={inMenu}>
         <summary class="website-account-trigger" aria-label="Account" title="Account">
             <svg viewBox="0 0 24 24" aria-hidden="true">
                 <g class="profile-outline">
@@ -64,9 +66,9 @@ const accountEnabled = oidc.enabled;
             if (!control.classList.contains('website-account-controls--docs')) return 'dark';
             try {
                 const preference = localStorage.getItem('starlight-theme');
-                return preference === 'light' || preference === 'dark' ? preference : 'system';
+                return preference === 'auto' || preference === 'system' || preference === '' ? 'system' : preference === 'light' ? 'light' : 'dark';
             } catch {
-                return 'system';
+                return 'dark';
             }
         };
         const updateProfileHref = () => {
@@ -121,7 +123,7 @@ const accountEnabled = oidc.enabled;
 </script>
 
 <script>
-    const menus = document.querySelectorAll<HTMLDetailsElement>('.website-account-menu');
+    const menus = document.querySelectorAll<HTMLDetailsElement>('[data-website-account-controls]:not([data-in-menu]) .website-account-menu');
     document.addEventListener('pointerdown', (event) => {
         menus.forEach((menu) => {
             if (!menu.contains(event.target as Node)) menu.open = false;
@@ -144,6 +146,11 @@ const accountEnabled = oidc.enabled;
 </script>
 
 <style>
+    [data-in-menu] { width: 100%; }
+    [data-in-menu] .website-account-trigger { display: none; }
+    [data-in-menu] .website-account-menu { width: 100%; }
+    [data-in-menu] .website-account-popover { position: static; width: 100%; min-width: 0; padding: 0; border: 0; background: none; box-shadow: none; }
+
     .website-account-controls {
         --account-text: #eef2f7;
         --account-border: rgba(255, 255, 255, 0.12);
@@ -187,6 +194,10 @@ const accountEnabled = oidc.enabled;
         line-height: 1;
         text-decoration: none;
         transition: border-color 0.14s ease, background-color 0.14s ease, color 0.14s ease;
+    }
+
+    .website-account-controls--marketing .website-dashboard-link {
+        font-weight: 500;
     }
 
     .website-dashboard-link {

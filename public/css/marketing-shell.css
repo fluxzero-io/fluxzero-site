@@ -100,6 +100,10 @@ samp {
     min-height: 72px;
 }
 
+.nav-mobile-toggle {
+    display: none;
+}
+
 .nav-main {
     display: flex;
     align-items: center;
@@ -222,7 +226,7 @@ samp {
     background: rgba(255, 255, 255, 0.06);
     color: var(--text);
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 500;
     transition: border-color 0.14s ease, background-color 0.14s ease, color 0.14s ease, transform 0.14s ease;
 }
 
@@ -612,8 +616,125 @@ samp {
     }
 }
 
+.nav-main-links .nav-mobile-only,
+.nav-mobile-resources { display: none; }
+
 @media (max-width: 380px) {
     .nav-main-links .nav-link-about { display: none; }
+}
+
+@media (max-width: 600px) {
+    .nav-mobile-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 44px;
+        width: 44px;
+        height: 44px;
+        padding: 10px;
+        border: 0;
+        border-radius: 8px;
+        color: var(--text-secondary);
+        background: transparent;
+        cursor: pointer;
+    }
+    .nav-mobile-toggle svg {
+        width: 22px;
+        height: 22px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.6;
+        stroke-linecap: round;
+    }
+    .nav-mobile-toggle:hover,
+    .nav-mobile-toggle[aria-expanded="true"] {
+        color: var(--text);
+        background: rgba(255, 255, 255, .06);
+    }
+    .nav-mobile-toggle path {
+        transform-origin: 12px 12px;
+        transition: transform 180ms ease, opacity 180ms ease;
+    }
+    .nav-toggle-top { transform: translateY(-6px); }
+    .nav-toggle-bottom { transform: translateY(6px); }
+    .nav-mobile-toggle[aria-expanded="true"] .nav-toggle-top { transform: rotate(45deg); }
+    .nav-mobile-toggle[aria-expanded="true"] .nav-toggle-middle { opacity: 0; }
+    .nav-mobile-toggle[aria-expanded="true"] .nav-toggle-bottom { transform: rotate(-45deg); }
+    html:has(.nav-shell.is-menu-open),
+    body:has(.nav-shell.is-menu-open) { overflow: hidden; }
+    .nav-shell.is-menu-open {
+        display: grid;
+        grid-template-columns: auto auto 1fr;
+        grid-template-rows: 44px minmax(0, 1fr);
+        align-items: center;
+        height: 100dvh;
+        background: var(--marketing-bg);
+    }
+    .nav-shell.is-menu-open .nav-actions { grid-column: 3; grid-row: 1; }
+    .nav-mobile-toggle:focus-visible {
+        outline: 2px solid #69c7ff;
+        outline-offset: 2px;
+    }
+    .nav-shell .nav-actions { margin-left: auto; }
+    .nav-shell .website-account-menu,
+    .nav-shell .nav-profile { display: none; }
+    .nav-shell .nav-main {
+        display: none;
+        grid-column: 1 / -1;
+        grid-row: 2;
+        align-self: stretch;
+        min-height: 0;
+        padding: 32px 0 max(24px, env(safe-area-inset-bottom));
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+    .nav-shell.is-menu-open .nav-main { display: block; }
+    .nav-shell .nav-main-links {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+        width: 100%;
+    }
+    .nav-shell .nav-main-links .nav-link {
+        display: flex;
+        justify-content: flex-start;
+        min-height: 48px;
+        padding: 0 16px;
+        font-size: 22px;
+        border-radius: 8px;
+    }
+    .nav-mobile-resources {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 24px;
+        margin: 24px 16px 0;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, .1);
+    }
+    .nav-mobile-resources a {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        font-size: 15px;
+        color: var(--text-secondary);
+        text-decoration: none;
+    }
+    .nav-mobile-resources a:hover { color: var(--text); }
+    .nav-shell .nav-main-links .nav-link:hover,
+    .nav-shell .nav-main-links .nav-link[aria-current="page"] {
+        background: rgba(255, 255, 255, .05);
+    }
+}
+
+@media (min-width: 375px) and (max-width: 600px) {
+    .nav-logo-lockup {
+        display: block;
+        width: 120px;
+    }
+    .nav-logo-mark { display: none; }
+    /* Match the lowercase letter height and center of the wordmark. */
+    .nav-mobile-toggle svg { transform: translateY(2px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -622,6 +743,7 @@ samp {
     }
 
     .nav-profile-trigger,
+    .nav-mobile-toggle path,
     .nav-profile-menu a,
     .nav-profile-menu button {
         transition: none;

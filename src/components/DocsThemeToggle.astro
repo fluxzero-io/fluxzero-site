@@ -1,0 +1,21 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+---
+<button type="button" class="theme-cycle" data-theme-cycle data-preference="dark" aria-label="Theme: dark. Switch to light theme">
+    <span data-mode="dark"><Icon name="moon" /></span>
+    <span data-mode="light"><Icon name="sun" /></span>
+    <span data-mode="auto"><Icon name="laptop" /></span>
+</button>
+<script is:inline>
+    document.currentScript.previousElementSibling.addEventListener('click', () => window.StarlightThemeProvider.cycle());
+    window.StarlightThemeProvider.updatePickers();
+</script>
+<style>
+    .theme-cycle { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 0; background: transparent; color: var(--sl-color-text); cursor: pointer; }
+    .theme-cycle span { display: none; font-size: 20px; }
+    .theme-cycle[data-preference="dark"] [data-mode="dark"],
+    .theme-cycle[data-preference="light"] [data-mode="light"],
+    .theme-cycle[data-preference="auto"] [data-mode="auto"] { display: flex; }
+    .theme-cycle:hover { color: var(--sl-color-text-accent); }
+    .theme-cycle:focus-visible { outline: 2px solid var(--sl-color-text-accent); outline-offset: 2px; border-radius: 4px; }
+</style>

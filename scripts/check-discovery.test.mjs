@@ -124,13 +124,15 @@ test('IndexNow waits for deployed assets before notifying', async () => {
 });
 
 
-test('partners links stay limited to footers and Contact independently of indexing', () => {
+test('partners links allow navigation, footers and Contact independently of indexing', () => {
     const f = fixture();
     f.pages.set('/partners/', inspectPage('<h1>Partners</h1>', '/partners/'));
     f.pages.set('/contact/', inspectPage('<main><a href="/partners/">Partnerships</a></main>', '/contact/'));
     f.pages.set('/other/', inspectPage('<footer><a href="/partners/">Partners</a></footer>', '/other/'));
     f.sitemap.add('/partners/');
     f.llms += '[Partners](https://fluxzero.io/partners/)';
+    assert.deepEqual(check(f), []);
+    f.pages.set('/other/', inspectPage('<header><nav><a href="/partners/">Partners</a></nav></header>', '/other/'));
     assert.deepEqual(check(f), []);
     for (const element of ['header', 'main']) {
         f.pages.set('/other/', inspectPage(`<${element}><a href="/partners/">Partners</a></${element}>`, '/other/'));

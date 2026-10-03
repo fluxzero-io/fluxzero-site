@@ -1,4 +1,3 @@
-import { initFeedbackList } from './feedbackList.ts';
 import { initFeedbackHighlighter } from './feedbackHighlighter.ts';
 import { initFeedbackPopup } from './feedbackPopup.ts';
 import { getState, initFeedbackStore, refresh } from './feedbackStore.ts';
@@ -46,7 +45,6 @@ const initElement = (el: HTMLElement) => {
     root = el.parentElement;
   }
 
-  initFeedbackList({ slug, mount: el });
   initFeedbackHighlighter({ slug, root });
 
   if (!popupInitialized) {

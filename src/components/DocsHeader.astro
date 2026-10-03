@@ -32,9 +32,6 @@ const shouldRenderSearch =
 		<LanguageSelect />
 		<WebsiteAccountControls surface="docs" />
 	</div>
-	<div class="mobile-account md:sl-hidden print:hidden">
-		<WebsiteAccountControls surface="docs" />
-	</div>
 </div>
 
 <style>
@@ -58,14 +55,20 @@ const shouldRenderSearch =
 
 		.right-group,
 		.social-icons {
-			gap: 1rem;
+			gap: 12px;
 			align-items: center;
 		}
-		.social-icons::after {
-			content: '';
-			height: 2rem;
-			border-inline-end: 1px solid var(--sl-color-gray-5);
-		}
+        .social-icons :global(a) {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            margin: 0;
+            color: var(--sl-color-text);
+        }
+        .social-icons :global(svg) { width: 20px; height: 20px; }
 
 		@media (min-width: 50rem) {
 			:global(:root[data-has-sidebar]) {
@@ -96,23 +99,6 @@ const shouldRenderSearch =
 					auto;
 				align-content: center;
 			}
-		}
-	}
-</style>
-
-<style is:global>
-	@media (max-width: 49.99rem) {
-		.page > header.header {
-			padding-inline-end: calc(var(--sl-nav-gap) + var(--sl-nav-pad-x) + var(--sl-menu-button-size) + 2.75rem);
-		}
-		starlight-menu-button button {
-			inset-inline-end: calc(var(--sl-nav-pad-x) + 2.75rem);
-		}
-		.mobile-account {
-			position: fixed;
-			z-index: calc(var(--sl-z-index-navbar) + 1);
-			inset-block-start: calc((var(--sl-nav-height) - 40px) / 2);
-			inset-inline-end: var(--sl-nav-pad-x);
 		}
 	}
 </style>

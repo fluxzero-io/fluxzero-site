@@ -65,9 +65,9 @@ function currentTheme(control: HTMLElement): 'dark' | 'light' | 'system' {
     if (!control.classList.contains('website-account-controls--docs')) return 'dark';
     try {
         const preference = localStorage.getItem('starlight-theme');
-        return preference === 'light' || preference === 'dark' ? preference : 'system';
+        return preference === 'auto' || preference === 'system' || preference === '' ? 'system' : preference === 'light' ? 'light' : 'dark';
     } catch {
-        return 'system';
+        return 'dark';
     }
 }
 

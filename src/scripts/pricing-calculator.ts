@@ -114,13 +114,12 @@ if (data) {
                     ha.setAttribute('aria-label', `${plan.displayName} cluster ${count} high availability`);
                     ha.disabled = !allowsHighAvailability(policy, item.size);
                     ha.addEventListener('change', () => { item.ha = ha!.checked; updateTotals(); });
-                    label.append(ha, document.createTextNode('High availability enabled (Medium+)'));
+                    label.append(ha, document.createTextNode('High availability'));
                     const info = document.createElement('details'); info.className = 'scale-info';
                     const summary = document.createElement('summary'); summary.textContent = 'i';
                     summary.setAttribute('aria-label', `About high availability for cluster ${count}`);
                     const explanation = document.createElement('p');
-                    const surcharge = Math.round((Number(policy.highAvailabilityPriceMultiplier) - 1) * 100);
-                    explanation.textContent = `Adds redundant database and network components. Available for Medium and larger clusters. Adds ${surcharge}% to the cluster price before your included credit is deducted. Replica storage is billed separately.`;
+                    explanation.textContent = 'Adds redundant data and network components. Available for Medium and larger clusters. The extra cost is included in the estimate. Additional storage charges may apply.';
                     info.append(summary, explanation);
                     info.addEventListener('keydown', event => {
                         if (event.key === 'Escape' && info.open) {

@@ -30,7 +30,11 @@ export function inspectPage(html, path) {
         footer.parentNode.childNodes = footer.parentNode.childNodes.filter(n => n !== footer);
     }
     const nonFooterLinks = inspectLinks(serialize(doc), path).links.filter(url => url.origin === siteUrl).map(url => normalizePath(url.pathname));
-    return { canonical, noindex, links, allLinks, nonFooterLinks, inlineContent };
+    for (const nav of elements(doc, n => n.tagName === 'nav')) {
+        nav.parentNode.childNodes = nav.parentNode.childNodes.filter(n => n !== nav);
+    }
+    const nonNavigationLinks = inspectLinks(serialize(doc), path).links.filter(url => url.origin === siteUrl).map(url => normalizePath(url.pathname));
+    return { canonical, noindex, links, allLinks, nonFooterLinks, nonNavigationLinks, inlineContent };
 }
 export function validateDiscovery({ pages, sitemap, llms, markdown, robots }, required = corePages, unlisted = unlistedPages) {
     const failures = [];
@@ -59,7 +63,7 @@ export function validateDiscovery({ pages, sitemap, llms, markdown, robots }, re
         if ([...pages].some(([from, page]) => from !== path && page.allLinks.includes(path))) failures.push(`${path}: unlisted page has an incoming link`);
     }
     for (const [path, allowed] of Object.entries(restrictedLinkSources)) {
-        if ([...pages].some(([from, page]) => from !== path && !allowed.pages.includes(from) && (allowed.footer ? page.nonFooterLinks : page.allLinks).includes(path))) failures.push(`${path}: incoming link outside permitted locations`);
+        if ([...pages].some(([from, page]) => from !== path && !allowed.pages.includes(from) && (allowed.navigation ? page.nonNavigationLinks : allowed.footer ? page.nonFooterLinks : page.allLinks).includes(path))) failures.push(`${path}: incoming link outside permitted locations`);
     }
     if (llms.includes('/llms-full.txt')) failures.push('llms.txt links to its own alias');
     if (!robots.includes(`Sitemap: ${siteUrl}/sitemap-index.xml`)) failures.push('robots.txt does not advertise the sitemap');

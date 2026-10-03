@@ -1,0 +1,15 @@
+---
+import LanguageSelect from 'virtual:starlight/components/LanguageSelect';
+import SocialIcons from 'virtual:starlight/components/SocialIcons';
+import ThemeSelect from 'virtual:starlight/components/ThemeSelect';
+import WebsiteAccountControls from './WebsiteAccountControls.astro';
+---
+<div class="mobile-preferences">
+    <div class="preferences-row"><SocialIcons /><ThemeSelect /><LanguageSelect /></div>
+    <WebsiteAccountControls surface="docs" inMenu />
+</div>
+<style>
+    .mobile-preferences { border-top: 1px solid var(--sl-color-gray-6); padding: 16px 0; }
+    .preferences-row :global(a) { color: var(--sl-color-text); }
+    .preferences-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+</style>

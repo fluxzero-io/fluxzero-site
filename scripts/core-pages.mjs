@@ -10,6 +10,6 @@ export const corePages = [...marketingPages, ...documentationPages];
 export const retiredPages = ['/makeitreal/', '/get-started/'];
 export const unlistedPages = ['/technical-foundation/', '/oidc/callback/', '/oidc/silent-callback/', '/oidc/logout-callback/'];
 // Limit visible entry points independently of search indexing.
-export const restrictedLinkSources = { '/partners/': { footer: true, pages: ['/contact/'] } };
+export const restrictedLinkSources = { '/partners/': { footer: true, navigation: true, pages: ['/contact/'] } };
 export const htmlFile = path => `${path.replace(/^\//, '')}index.html`;
 export const normalizePath = path => path === '/' ? '/' : `${path.replace(/\/$/, '')}/`;

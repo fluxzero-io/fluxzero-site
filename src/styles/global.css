@@ -136,3 +136,12 @@
     text-wrap: balance;
   }
 }
+
+/* Keep the brand in exactly the same position as the marketing navigation. */
+:root { --sl-nav-height: 72px; --sl-nav-pad-x: 32px; }
+@media (max-width: 860px) {
+  :root { --sl-nav-height: 64px; --sl-nav-pad-x: 20px; }
+}
+@media (max-width: 600px) {
+  :root { --sl-nav-height: 65px; --sl-nav-pad-x: 12px; }
+}

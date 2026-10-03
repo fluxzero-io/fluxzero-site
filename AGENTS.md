@@ -23,6 +23,18 @@ This is an Astro site using pnpm as the package manager:
 - `pnpm preview` - Preview production build locally
 - `pnpm astro ...` - Run Astro CLI commands (e.g., `pnpm astro check`)
 
+## Iteration, Verification, and Commit Cadence
+
+During interactive website work, keep the feedback loop short. Use the existing dev server and hot reload to inspect changes directly.
+
+- Do not run a production build after every copy, styling, or layout adjustment, or merely because a chat turn ends. Verify the affected behavior in the dev preview and run focused checks only when needed.
+- Run the production build once for the completed batch before pushing or deploying site changes. Build earlier only when the user explicitly asks or the task specifically requires production output, such as build failures, generated exports, bundling, or deployment behavior. Documentation-only changes to instructions do not require a site build.
+- Defer generated-output checks, including `dist/llms.txt`, to that batch build unless the current task specifically concerns those outputs. Do not repeat an already successful build without a relevant change or unresolved failure.
+- Do not make a separate commit for every small adjustment. Keep related page refinements together and commit at a meaningful boundary: when switching to substantially different work, preparing a push, or when the user requests a checkpoint.
+- Interpret a task boundary broadly: an ongoing fine-tuning session across multiple existing pages is one task. Switching between Pricing, Home, About, or other pages, or between copy, spacing, colors, and interaction refinements, is not a new task or commit boundary. Introducing an entirely new page or starting a substantially different feature is a meaningful change of task.
+- It is normal to leave verified changes uncommitted between iterations. Finishing a chat response is not itself a reason to build, commit, or push.
+- Apply this cadence to website backlog bookkeeping too: group related refinements under one active item instead of creating a new todo and commit for each cosmetic edit. Keep the item `[~]` until the grouped website work is verified and committed; then move it to Done. Commit the corresponding backlog updates separately at that same meaningful boundary, without forcing an early website commit just to close the item. Do not push backlog changes without an explicit request.
+
 ## Product Context
 
 **Fluxzero** is the European cloud for AI-built apps.
@@ -78,7 +90,7 @@ The production build generates a self-contained `dist/llms.txt` with an introduc
 - Responsive variants must not cause duplicated machine-readable content. Keep at least one semantically complete variant, and prefer making the primary desktop HTML complete instead of extracting a separate mobile-only representation.
 - When a public page contains an authentication wall, ensure the generated text contains the useful post-auth content rather than only the login prompt. Use the generic `data-llms-exclude` and `data-llms-include` visibility controls only when normal HTML visibility would otherwise select the wrong content state.
 - When adding or removing a core public marketing page, review the discovery and inline page lists in `scripts/core-pages.mjs` so the generated index and content remain intentional.
-- After changing marketing copy or structure, run the production build and inspect the affected passage in `dist/llms.txt`. Verify that headings, labels, values, table cells, links, and post-auth content remain correctly associated and that repeated responsive content appears only once.
+- When running the batch production build before push or deployment, inspect passages in `dist/llms.txt` affected by marketing copy or structure changes. Verify that headings, labels, values, table cells, links, and post-auth content remain correctly associated and that repeated responsive content appears only once. Follow the iteration cadence above rather than building after each edit.
 
 ### Generated site data
 

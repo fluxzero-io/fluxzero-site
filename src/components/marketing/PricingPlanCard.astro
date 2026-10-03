@@ -44,7 +44,7 @@ const features = pro ? [
                     <strong>{Number(plan.amount).toLocaleString('en-GB')}</strong>
                     <span class="pricing-v2-term">per month</span>
                 </div>
-                <p class="pricing-v2-card-summary">{pro ? 'For extra clusters or capacity.' : 'Launch your product.'}</p>
+                <p class="pricing-v2-card-summary">{pro ? 'Room to grow.' : 'Launch your product.'}</p>
                 <a href={`https://dashboard.fluxzero.io/?plan=${encodeURIComponent(offer.plan.planId)}`} class:list={['pricing-v2-card-action', {'is-primary': pro}]}>Choose {plan.displayName}</a>
             </div>
             {pro && <p class="pricing-v2-inherits">Everything in Starter, plus:</p>}

@@ -1,0 +1,32 @@
+<script is:inline>
+    window.StarlightThemeProvider = (() => {
+        const system = window.matchMedia('(prefers-color-scheme: light)');
+        let preference = 'dark';
+        try {
+            const stored = localStorage.getItem('starlight-theme');
+            if (['dark', 'light', 'auto'].includes(stored)) preference = stored;
+            else if (stored === '' || stored === 'system') preference = 'auto';
+        } catch {}
+        const updatePickers = () => {
+            document.querySelectorAll('[data-theme-cycle]').forEach(button => {
+                const next = { dark: 'light', light: 'auto', auto: 'dark' }[preference];
+                button.dataset.preference = preference;
+                button.setAttribute('aria-label', `Theme: ${preference === 'auto' ? 'system' : preference}. Switch to ${next === 'auto' ? 'system' : next} theme`);
+                button.title = button.getAttribute('aria-label');
+            });
+        };
+        const apply = () => {
+            document.documentElement.dataset.theme = preference === 'auto' ? (system.matches ? 'light' : 'dark') : preference;
+            document.documentElement.dataset.themePreference = preference;
+            updatePickers();
+        };
+        const cycle = () => {
+            preference = { dark: 'light', light: 'auto', auto: 'dark' }[preference];
+            try { localStorage.setItem('starlight-theme', preference); } catch {}
+            apply();
+        };
+        system.addEventListener('change', () => { if (preference === 'auto') apply(); });
+        apply();
+        return { updatePickers, cycle };
+    })();
+</script>

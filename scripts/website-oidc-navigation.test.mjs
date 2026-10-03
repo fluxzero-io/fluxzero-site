@@ -120,7 +120,8 @@ test('account actions preserve the route and current theme and request signup on
     try {
         for (const [surface, preference, expected] of [
             ['marketing', 'light', 'dark'], ['docs', 'light', 'light'], ['docs', 'dark', 'dark'],
-            ['docs', null, 'system'], ['docs', 'invalid', 'system'],
+            ['docs', null, 'dark'], ['docs', 'invalid', 'dark'],
+            ['docs', 'auto', 'system'], ['docs', 'system', 'system'], ['docs', '', 'system'],
         ]) {
             const page = website(stub, { surface, preference });
             try {
@@ -144,8 +145,8 @@ test('account actions preserve the route and current theme and request signup on
                 }
             } finally { await page.close(); }
         }
-        assert.equal(states.size, 10);
-        assert.equal(nonces.size, 10);
+        assert.equal(states.size, 16);
+        assert.equal(nonces.size, 16);
     } finally { await stub.close(); }
 });
 

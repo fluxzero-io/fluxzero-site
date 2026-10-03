@@ -67,6 +67,7 @@ body.about-page::before { content: none; }
 
 .about-belief { margin-top: 64px; }
 .about-belief p { margin: 0; }
+.about-belief .about-belief__closing { margin-top: 1em; }
 .about-team { margin-top: 64px; color: #a6a8ae; }
 
 .about-actions {

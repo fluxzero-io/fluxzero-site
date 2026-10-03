@@ -22,12 +22,28 @@ const howItWorksClass = `nav-link nav-link-agents${active === 'how-it-works' ? '
         <span class="logo-mark nav-logo-mark" aria-hidden="true"></span>
     </a>
 
-    <div class="nav-main">
+    <button class="nav-mobile-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="marketing-navigation">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path class="nav-toggle-top" d="M4 12h16" />
+            <path class="nav-toggle-middle" d="M4 12h16" />
+            <path class="nav-toggle-bottom" d="M4 12h16" />
+        </svg>
+    </button>
+
+    <div class="nav-main" id="marketing-navigation">
         <div class="nav-main-links">
+            <a href="/" data-astro-prefetch class="nav-link nav-mobile-only" aria-current={Astro.url.pathname === "/" ? "page" : undefined}>Home</a>
             <a href="/pricing/" data-astro-prefetch="viewport" class={pricingClass} aria-current={active === 'pricing' ? 'page' : undefined}>Pricing</a>
             <a href="/about/" data-astro-prefetch="viewport" class={aboutClass} aria-current={active === 'about' ? 'page' : undefined}>About</a>
             <a href="/how-it-works/" data-astro-prefetch="viewport" class={howItWorksClass} aria-current={active === 'how-it-works' ? 'page' : undefined}>How it works</a>
             <a href="/docs/" class="nav-link nav-link-docs">Docs</a>
+            <a href="/contact/" data-astro-prefetch class="nav-link nav-mobile-only" aria-current={Astro.url.pathname === '/contact/' ? 'page' : undefined}>Contact</a>
+            <a href="/partners/" data-astro-prefetch class="nav-link nav-mobile-only" aria-current={Astro.url.pathname === '/partners/' ? 'page' : undefined}>Partners</a>
+        </div>
+        <div class="nav-mobile-resources">
+            <a href="https://github.com/fluxzero-io" target="_blank" rel="noreferrer">GitHub</a>
+            <a href="https://www.linkedin.com/company/fluxzero" target="_blank" rel="noreferrer">LinkedIn</a>
+            <a href="https://fluxzero.statuspage.io/" target="_blank" rel="noreferrer">System status</a>
         </div>
     </div>
 
@@ -67,4 +83,4 @@ const howItWorksClass = `nav-link nav-link-agents${active === 'how-it-works' ? '
     )}
 </nav>
 
-<script is:inline src="/js/marketing-header.js?v=20260903-1" defer></script>
+<script is:inline src="/js/marketing-header.js?v=20261003-1" defer></script>
