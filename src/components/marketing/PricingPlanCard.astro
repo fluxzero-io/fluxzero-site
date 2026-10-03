@@ -14,24 +14,24 @@ const money = value => new Intl.NumberFormat('en-GB', {style: 'currency', curren
 const sizeName = (type, size) => productFor(catalog, type, size).details.description.replace(/ (cluster|application)$/, '');
 const maximumSize = type => sizeName(type, availableSizes(catalog, plan, type).at(-1));
 const features = pro ? [
-    ['users', `${extraSeats} extra dashboard seats included`],
-    ['domain', 'Unlimited custom domains'],
-    ['users', `Unlimited users, ${Number(users.included).toLocaleString('en-GB')} included`],
-    ['scale', 'Additional clusters and apps available'],
-    ['scale', `Clusters up to ${maximumSize('cluster')}, apps up to ${maximumSize('application')}`],
-    ['uptime', 'High-availability clusters'],
-    ...(policy.pointInTimeRecoveryDays ? [['backup', `${policy.pointInTimeRecoveryDays}-day point-in-time recovery`]] : []),
-    ['support', 'Fluxzero support'],
+    `${extraSeats} extra dashboard seats included`,
+    'Unlimited custom domains',
+    `Unlimited users, ${Number(users.included).toLocaleString('en-GB')} included`,
+    'Additional clusters and apps available',
+    `Clusters up to ${maximumSize('cluster')}, apps up to ${maximumSize('application')}`,
+    'High-availability clusters',
+    ...(policy.pointInTimeRecoveryDays ? [`${policy.pointInTimeRecoveryDays}-day point-in-time recovery`] : []),
+    'Fluxzero support',
 ] : [
-    ['cluster', 'Free starter cluster included'],
-    ['task', 'Free starter app included'],
-    ['storage', `${storage.included} ${storage.unit} storage included`],
-    ['users', `${seats.included} dashboard ${Number(seats.included) === 1 ? 'seat' : 'seats'} included`],
-    ['domain', domains.maximum == null && !domains.hardLimit ? 'Unlimited custom domains' : `${domains.maximum ?? domains.included} custom domain`],
-    ['users', `${Number(users.included).toLocaleString('en-GB')} users included`],
-    ['scale', `Max ${policy.maximumClusters} cluster & ${policy.maximumApplications} app up to ${maximumSize('cluster')}`],
-    ['audit', 'Audit trail & insights'],
-    ['support', 'Community support'],
+    'Free starter cluster included',
+    'Free starter app included',
+    `${storage.included} ${storage.unit} storage included`,
+    `${seats.included} dashboard ${Number(seats.included) === 1 ? 'seat' : 'seats'} included`,
+    domains.maximum == null && !domains.hardLimit ? 'Unlimited custom domains' : `${domains.maximum ?? domains.included} custom domain`,
+    `${Number(users.included).toLocaleString('en-GB')} users included`,
+    `Max ${policy.maximumClusters} cluster & ${policy.maximumApplications} app up to ${maximumSize('cluster')}`,
+    'Audit trail & insights',
+    'Community support',
 ];
 ---
 <article class:list={['pricing-v2-card', 'pricing-v2-flip-card', {'is-featured': pro}]} data-plan-card={offer.plan.planId} aria-label={`${plan.displayName} plan`}>
@@ -49,7 +49,7 @@ const features = pro ? [
             </div>
             {pro && <p class="pricing-v2-inherits">Everything in Starter, plus:</p>}
             <ul class="pricing-v2-list">
-                {features.map(([icon, text]) => <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href={`#pricing-icon-${icon}`}></use></svg>{text}</li>)}
+                {features.map(text => <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg>{text}</li>)}
             </ul>
             <button class="pricing-v2-card-action pricing-v2-card-action-secondary scale-calc-trigger" type="button" aria-expanded="false" aria-controls={`calculator-${offer.plan.planId}`}>
                 <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.3 4.2A5.2 5.2 0 0 1 12 3.9l.9.9V2.2h1.2v4.7H9.4V5.7h2.7l-.9-.9a4 4 0 0 0-5.9.3 4.1 4.1 0 0 0-.8 1.7l-1.2-.2c.2-.9.5-1.7 1-2.4Zm7.4 7.6A5.2 5.2 0 0 1 4 12.1l-.9-.9v2.6H1.9V9.1h4.7v1.2H3.9l.9.9a4 4 0 0 0 5.9-.3 4.1 4.1 0 0 0 .8-1.7l1.2.2c-.2.9-.5 1.7-1 2.4Z"/></svg>

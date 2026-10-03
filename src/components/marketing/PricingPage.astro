@@ -24,6 +24,9 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
 <MarketingHeader active="pricing" />
 
 <svg class="pricing-v2-icon-defs" aria-hidden="true" width="0" height="0" focusable="false">
+    <symbol id="pricing-icon-check" viewBox="0 0 24 24">
+        <path d="m5 12 4 4L19 6"></path>
+    </symbol>
     <symbol id="pricing-icon-terminal" viewBox="0 0 24 24">
         <path d="m4 17 5-5-5-5"></path>
         <path d="M12 19h8"></path>
@@ -152,10 +155,10 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                 </div>
             </div>
             <ul class="pricing-v2-list">
-                <li><img class="pricing-v2-brand-icon" src="/assets/openai-logo.svg" alt="" aria-hidden="true">Use Claude Code, Codex or other agent</li>
-                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-terminal"></use></svg><strong>Local Fluxzero environment</strong></li>
-                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-search"></use></svg>Devboard for local preview</li>
-                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-logs"></use></svg>Local logs and insights</li>
+                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg>Use Claude Code, Codex or other agent</li>
+                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg><strong>Local Fluxzero environment</strong></li>
+                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg>Devboard for local preview</li>
+                <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg>Local logs and insights</li>
             </ul>
             <div class="pricing-v2-free-action">
                 <p class="pricing-v2-card-summary">Build your entire app locally.</p>
@@ -176,14 +179,14 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                     </div>
                     <p class="pricing-v2-inherits">Everything in Pro, plus:</p>
                     <ul class="pricing-v2-list">
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-cluster"></use></svg><strong>Custom workloads</strong></li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-scale"></use></svg>Additional sizes</li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-backup"></use></svg>Custom backup policy</li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-sla"></use></svg>Custom SLAs</li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-slack"></use></svg>Private Slack channel</li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-hardware"></use></svg>Unshared hardware optional</li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-sso"></use></svg>Single Sign-On</li>
-                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-support"></use></svg>24/7 support</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg><strong>Custom workloads</strong></li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg>Additional sizes</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg>Custom backup policy</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg>Custom SLAs</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg>Private Slack channel</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg>Unshared hardware optional</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg>Single Sign-On</li>
+                        <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-check"></use></svg>24/7 support</li>
                     </ul>
                 </article>
         </div>
