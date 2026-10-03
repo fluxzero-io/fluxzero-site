@@ -2031,7 +2031,7 @@
     transform: translateX(-50%);
     height: calc((var(--pricing-glow-center) - var(--pricing-glow-top)) * 2);
     pointer-events: none;
-    background: radial-gradient(ellipse closest-side at 50% 50%, rgba(255, 230, 154, .18), rgba(255, 221, 128, .09) 32%, rgba(255, 196, 96, .025) 60%, transparent 94%);
+    background: radial-gradient(ellipse closest-side at 50% 50%, rgba(255, 235, 158, .22), rgba(255, 209, 96, .13) 32%, rgba(255, 167, 65, .04) 60%, transparent 94%);
     /* Stretch the paint, not the element: oversized layers widen iOS pages. */
     background-size: calc(100% + 1040px) 100%;
     background-position: center;
