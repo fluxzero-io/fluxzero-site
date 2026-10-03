@@ -1794,30 +1794,16 @@
         }
 
         .pricing-v2-faq-head {
-            text-align: center;
+            padding: 28px 22px;
+            border-bottom: 1px solid var(--border);
         }
 
         .pricing-v2-faq h2 {
-            position: relative;
-            display: inline-block;
-            font-size: clamp(30px, 3vw, 42px);
-            line-height: var(--lh-heading);
+            margin: 0;
+            font-size: clamp(22px, 2.4vw, 28px);
+            line-height: 1.2;
             letter-spacing: -0.025em;
-            text-align: center;
-            margin-bottom: var(--stack-medium);
-        }
-
-        .pricing-v2-faq h2::after {
-            content: "";
-            position: absolute;
-            left: 50%;
-            bottom: -18px;
-            width: 112px;
-            height: 2px;
-            border-radius: 999px;
-            transform: translateX(-50%);
-            background: linear-gradient(90deg, transparent, rgba(0, 179, 255, 0.88), transparent);
-            box-shadow: 0 0 22px rgba(0, 179, 255, 0.24);
+            text-align: left;
         }
 
         .pricing-v2-faq-list {
@@ -1834,19 +1820,20 @@
         }
 
         .pricing-v2-faq-item {
+            scroll-margin-top: 96px;
             border-bottom: 1px solid var(--border);
         }
 
-        .pricing-v2-faq-item:first-child {
-            border-top: 1px solid var(--border);
+        .pricing-v2-faq-item:last-child {
+            border-bottom: 0;
         }
 
-        .pricing-v2-faq-question-heading {
-            margin: 0;
-            font: inherit;
+        .pricing-v2-faq-q::-webkit-details-marker {
+            display: none;
         }
 
         .pricing-v2-faq-q {
+            list-style: none;
             display: flex;
             width: 100%;
             align-items: center;
@@ -1881,7 +1868,7 @@
             transition: transform 0.2s;
         }
 
-        .pricing-v2-faq-item.open .pricing-v2-faq-arrow {
+        .pricing-v2-faq-item[open] .pricing-v2-faq-arrow {
             transform: rotate(45deg);
         }
 
@@ -1890,14 +1877,14 @@
             padding: 0 24px 26px;
         }
 
-        .pricing-v2-faq-item.open .pricing-v2-faq-a {
+        .pricing-v2-faq-item[open] .pricing-v2-faq-a {
             display: block;
         }
 
         .pricing-v2-faq-a p {
             color: var(--text-secondary);
-            font-size: var(--fs-body-secondary);
-            line-height: var(--lh-card);
+            font-size: 16px;
+            line-height: 1.65;
         }
 
         .pricing-v2-faq-a p + p {
@@ -2083,3 +2070,10 @@
 }
 
 .scale-summary dd { margin: 0; }
+
+@media (max-width: 760px) {
+    .pricing-v2-faq-a p { font-size: 15px; }
+    .pricing-v2-faq-q { padding: 20px 16px; }
+    .pricing-v2-faq-a { padding: 0 16px 16px; }
+    .pricing-v2-faq-head { padding: 28px 16px; }
+}

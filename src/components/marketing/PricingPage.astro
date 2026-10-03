@@ -162,7 +162,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
             </ul>
             <div class="pricing-v2-free-action">
                 <p class="pricing-v2-card-summary">Build your entire app locally.</p>
-                <a href="/#get-started" class="pricing-v2-card-action">Start building</a>
+                <a href="/#get-started" class="pricing-v2-card-action">Get started</a>
             </div>
         </article>
         <div class="pricing-v2-panel pricing-v2-panel-current">
@@ -242,129 +242,108 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
         </div>
     </section>
 
-    <section class="pricing-v2-faq" aria-labelledby="pricing-faq-title">
-        <div class="pricing-v2-faq-head">
-            <h2 id="pricing-faq-title">Frequently asked questions</h2>
-        </div>
-
+    <section class="pricing-v2-faq" id="faq" aria-labelledby="pricing-faq-title">
         <div class="pricing-v2-faq-list">
-            <div class="pricing-v2-faq-item">
-                <h3 class="pricing-v2-faq-question-heading">
-                    <button class="pricing-v2-faq-q">
+            <header class="pricing-v2-faq-head">
+                <h2 id="pricing-faq-title">Frequently asked questions</h2>
+            </header>
+            <details class="pricing-v2-faq-item" name="pricing-faq" id="faq-clusters-and-apps">
+                <summary class="pricing-v2-faq-q">
                         <span>What are clusters and apps?</span>
                         <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
-                    </button>
-                </h3>
+                    </summary>
                 <div class="pricing-v2-faq-a">
                     <p>A cluster is the managed environment your app runs on. An app is one running application inside that environment.</p>
-                    <p>Starter includes one cluster and one app, each upgradeable to Medium. Pro lets you add more clusters and apps and choose larger sizes.</p>
+                    <p>Paid plans include one starter cluster and one starter app. Starter lets you upgrade each to Medium. Pro also lets you add more clusters and apps and choose larger sizes.</p>
                 </div>
-            </div>
-            <div class="pricing-v2-faq-item">
-                <h3 class="pricing-v2-faq-question-heading">
-                    <button class="pricing-v2-faq-q">
+            </details>
+            <details class="pricing-v2-faq-item" name="pricing-faq" id="faq-billing">
+                <summary class="pricing-v2-faq-q">
                         <span>When will I be billed?</span>
                         <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
-                    </button>
-                </h3>
+                    </summary>
                 <div class="pricing-v2-faq-a">
                     <p>You can build locally for free. Billing starts when you activate a paid plan. Starter and Pro renew monthly from your first payment date.</p>
                     <p>Capacity purchases and upgrades are charged immediately for the remaining billing period, after available credits. Storage above the included allowance is measured during the month and billed afterwards.</p>
                 </div>
-            </div>
-            <div class="pricing-v2-faq-item">
-                <h3 class="pricing-v2-faq-question-heading">
-                    <button class="pricing-v2-faq-q">
+            </details>
+            <details class="pricing-v2-faq-item" name="pricing-faq" id="faq-tax">
+                <summary class="pricing-v2-faq-q">
                         <span>Is sales tax included?</span>
                         <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
-                    </button>
-                </h3>
+                    </summary>
                 <div class="pricing-v2-faq-a">
                     <p>Prices are shown excluding sales tax, VAT, and similar taxes unless stated otherwise. Any required tax may be added during billing based on your billing details and local rules.</p>
                 </div>
-            </div>
-            <div class="pricing-v2-faq-item">
-                <h3 class="pricing-v2-faq-question-heading">
-                    <button class="pricing-v2-faq-q">
-                        <span>What capacity is included, and can I cap my bill?</span>
+            </details>
+            <details class="pricing-v2-faq-item" name="pricing-faq" id="faq-included-capacity">
+                <summary class="pricing-v2-faq-q">
+                        <span>What is included, and what costs extra?</span>
                         <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
-                    </button>
-                </h3>
+                    </summary>
                 <div class="pricing-v2-faq-a">
-                    <p>Every paid plan includes fixed cluster, app, and storage capacity as shown on the plan card. That included capacity is part of the plan price.</p>
-                    <p>You decide which extra clusters, apps, storage, or options are added before they affect your bill. Fluxzero is designed to make usage visible before it becomes a surprise.</p>
+                    <p>Your monthly plan price includes one starter cluster, one starter app, and the storage allowance listed above.</p>
+                    <p>You pay extra for larger sizes, additional clusters or apps, and optional upgrades you choose. Storage beyond your included allowance is billed based on usage.</p>
                 </div>
-            </div>
-            <div class="pricing-v2-faq-item">
-                <h3 class="pricing-v2-faq-question-heading">
-                    <button class="pricing-v2-faq-q">
+            </details>
+            <details class="pricing-v2-faq-item" name="pricing-faq" id="faq-price-changes">
+                <summary class="pricing-v2-faq-q">
                         <span>Will prices change in the future?</span>
                         <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
-                    </button>
-                </h3>
+                    </summary>
                 <div class="pricing-v2-faq-a">
                     <p>Pricing may evolve as Fluxzero grows and the platform changes. If a price change affects an active paid plan, we will communicate it before it applies.</p>
                 </div>
-            </div>
-            <div class="pricing-v2-faq-item">
-                <h3 class="pricing-v2-faq-question-heading">
-                    <button class="pricing-v2-faq-q">
+            </details>
+            <details class="pricing-v2-faq-item" name="pricing-faq" id="faq-cancellation">
+                <summary class="pricing-v2-faq-q">
                         <span>What happens if I cancel my plan?</span>
                         <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
-                    </button>
-                </h3>
+                    </summary>
                 <div class="pricing-v2-faq-a">
-                    <p>Your app will stop running on the paid plan after cancellation takes effect.</p>
-                    <p>If you stop or pause paid capacity, we credit the unused time toward future payments. Pausing capacity does not pause your subscription: the plan fee and storage charges still apply.</p>
+                    <p>Your plan and apps stay active until the end of your current billing period. After that, your plan will not renew and your apps will stop running.</p>
+                    <p>Usage charges from the final period are billed as usual.</p>
                 </div>
-            </div>
-            <div class="pricing-v2-faq-item">
-                <h3 class="pricing-v2-faq-question-heading">
-                    <button class="pricing-v2-faq-q">
+            </details>
+            <details class="pricing-v2-faq-item" name="pricing-faq" id="faq-payment-failure">
+                <summary class="pricing-v2-faq-q">
                         <span>What happens if my payment fails?</span>
                         <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
-                    </button>
-                </h3>
+                    </summary>
                 <div class="pricing-v2-faq-a">
                     <p>We will notify you and give you time to fix the payment method. If payment remains unresolved, paid runtime access may be paused until billing is restored.</p>
                 </div>
-            </div>
-            <div class="pricing-v2-faq-item">
-                <h3 class="pricing-v2-faq-question-heading">
-                    <button class="pricing-v2-faq-q">
+            </details>
+            <details class="pricing-v2-faq-item" name="pricing-faq" id="faq-environments">
+                <summary class="pricing-v2-faq-q">
                         <span>What if I need development, test, or staging environments?</span>
                         <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
-                    </button>
-                </h3>
+                    </summary>
                 <div class="pricing-v2-faq-a">
                     <p>Additional clusters for development, test, staging, or preview environments can be added with Pro.</p>
                 </div>
-            </div>
-            <div class="pricing-v2-faq-item">
-                <h3 class="pricing-v2-faq-question-heading">
-                    <button class="pricing-v2-faq-q">
+            </details>
+            <details class="pricing-v2-faq-item" name="pricing-faq" id="faq-scale-and-availability">
+                <summary class="pricing-v2-faq-q">
                         <span>What if I need more scale or higher availability?</span>
                         <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
-                    </button>
-                </h3>
+                    </summary>
                 <div class="pricing-v2-faq-a">
                     <p>Starter supports one cluster and one app, each up to Medium. For additional clusters or apps, or larger sizes, you need Pro.</p>
                     <p>Pro also includes backups and nine-day point-in-time recovery, with optional high availability on clusters from Medium. Contact us for requirements beyond the published plans.</p>
                 </div>
-            </div>
-            <div class="pricing-v2-faq-item">
-                <h3 class="pricing-v2-faq-question-heading">
-                    <button class="pricing-v2-faq-q">
+            </details>
+            <details class="pricing-v2-faq-item" name="pricing-faq" id="faq-included-limits">
+                <summary class="pricing-v2-faq-q">
                         <span>What happens if I go over included limits?</span>
                         <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
-                    </button>
-                </h3>
+                    </summary>
                 <div class="pricing-v2-faq-a">
                     <p>Starter lets you upgrade your cluster and app up to Medium. Pro lets you add more clusters and apps or choose larger sizes. Capacity is charged when you add or upgrade it, after available credits.</p>
                     <p>If your data volume exceeds included storage, additional storage is billed afterwards at the catalog rate per GiB per day. The calculator estimates storage over 30 days, using one shared allowance across allocated database volumes, logs and metrics, plus measured object and backup storage.</p>
                     <p>Our fair use limits are designed to cover typical application traffic for most products. If your application generates unusually high public network traffic, we may temporarily limit traffic, request changes, or move you to a suitable plan.</p>
                 </div>
-            </div>
+            </details>
         </div>
 
         <p class="pricing-v2-faq-help">Still wondering? <a href="/contact/">Get in touch</a> and we'll help.</p>
@@ -377,22 +356,37 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
 <script type="application/json" id="capacity-catalog" set:html={serializedCatalog}></script>
 <script>
     import '../../scripts/pricing-calculator';
-    document.querySelectorAll<HTMLButtonElement>('.pricing-v2-faq-q').forEach((button, index) => {
-        const item = button.closest('.pricing-v2-faq-item')!;
-        const answer = item.querySelector<HTMLElement>('.pricing-v2-faq-a')!;
-        answer.id = `pricing-answer-${index}`;
-        button.setAttribute('aria-controls', answer.id);
-        button.setAttribute('aria-expanded', 'false');
-        button.addEventListener('click', () => {
-            const shouldOpen = !item.classList.contains('open');
-            item.closest('.pricing-v2-faq-list')?.querySelectorAll('.pricing-v2-faq-item.open').forEach(openItem => {
-                openItem.classList.remove('open');
-                openItem.querySelector('.pricing-v2-faq-q')?.setAttribute('aria-expanded', 'false');
+    const faqItems = Array.from(document.querySelectorAll<HTMLDetailsElement>('.pricing-v2-faq-item[id]'));
+    let faqScrollFrame = 0;
+
+    function applyFaqLocation(scroll = false) {
+        let hash = '';
+        try { hash = decodeURIComponent(window.location.hash.slice(1)); } catch { /* Ignore malformed fragments. */ }
+        const selected = faqItems.find(item => item.id === hash);
+        faqItems.forEach(item => { item.open = item === selected; });
+        cancelAnimationFrame(faqScrollFrame);
+        if (scroll && selected) {
+            faqScrollFrame = requestAnimationFrame(() => {
+                selected.scrollIntoView({ behavior: 'instant', block: 'start' });
             });
-            item.classList.toggle('open', shouldOpen);
-            button.setAttribute('aria-expanded', String(shouldOpen));
+        }
+    }
+
+    faqItems.forEach(item => {
+        item.querySelector('summary')?.addEventListener('click', event => {
+            event.preventDefault();
+            const url = new URL(window.location.href);
+            url.hash = item.open ? 'faq' : item.id;
+            if (url.href !== window.location.href) history.pushState(null, '', url);
+            applyFaqLocation();
         });
     });
+
+    // Keep shared links, refreshes and browser navigation in sync with the open question.
+    applyFaqLocation();
+    window.addEventListener('popstate', () => applyFaqLocation(true));
+    window.addEventListener('hashchange', () => applyFaqLocation(true));
+    window.addEventListener('pageshow', () => applyFaqLocation(true));
 </script>
 </body>
 </html>

@@ -1,7 +1,70 @@
 {
-  "lastUpdated": "2026-10-02T12:27:38.279Z",
-  "latestVersion": "2.9.1",
+  "lastUpdated": "2026-10-03T15:52:34.964Z",
+  "latestVersion": "2.10.0",
   "releases": [
+    {
+      "version": "2.10.0",
+      "date": "2026-10-03",
+      "body": "#### [2.10.0](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.9.5...2.10.0) (2026-10-03)\n\n##### Features\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>modeling: support current document values in historical graphs (#444) <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/7bf3dfa6374883dbeffc0ec89fa6bfb3c4a12349\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Use the current DOCUMENT-only value for the same canonical ID when its historical value is unavailable, including recreated identities, while preserving historical relationships and proven absence. Keep mutation reads strict.</p>\n<p>Expose immutable strict(boolean) views and an isStrict() getter, with a standalone application property and no defaults-version threshold. Preserve existing behavior with older Runtimes so either component can be upgraded first; the new historical reads become available when Runtime metadata support is deployed.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.10.0",
+      "quarterKey": "2026-Q4",
+      "year": 2026,
+      "quarter": "Q4"
+    },
+    {
+      "version": "2.9.5",
+      "date": "2026-10-03",
+      "body": "#### [2.9.5](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.9.4...2.9.5) (2026-10-03)\n\n##### Bug Fixes\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>proxy: default HTTP2 response headers to 16 KiB (#442) <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/1a98c8ee25be0d4aaa60d152704cb9d218ea052c\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Give HTTP2 a separate 16 KiB response-header ceiling so small HPACK buffers fit the shared pool. Apply it independently of the defaults date, retain an explicit override, and preserve HTTP1 and incoming header limits.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.9.5",
+      "quarterKey": "2026-Q4",
+      "year": 2026,
+      "quarter": "Q4"
+    },
+    {
+      "version": "2.9.4",
+      "date": "2026-10-03",
+      "body": "#### [2.9.4](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.9.3...2.9.4) (2026-10-03)\n\n##### Chores\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>remove Maven Central publishing (#440) <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/950ab60ea74e65fe4167190548f69762b55343f1\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Remove the retired Central publication path and its CI-only support. Keep signed Fluxzero Packages publication and the existing release gates intact.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.9.4",
+      "quarterKey": "2026-Q4",
+      "year": 2026,
+      "quarter": "Q4"
+    },
+    {
+      "version": "2.9.3",
+      "date": "2026-10-03",
+      "body": "#### [2.9.3](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.9.2...2.9.3) (2026-10-03)\n\n##### Bug Fixes\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>modeling: support context parameters in graph change handlers <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/ca5790109aab4f0e2fba3564265c4b3d0ac8ae9a\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Recognize one unqualified Graph alongside Message and Metadata in any order so complete changes reach all affected roots. Preserve ordinary selection for explicit payloads, qualified graphs, and multiple graphs.</p>\n</div>\n</details></li>\n</ul>\n\n##### Tests\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>modeling: isolate cold alias reads from cache refreshes <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/5f9e84b63f54df8dfea7cb567ca210976a733d9c\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Disable automatic model caching in the cold-read I/O contract so independent refresh work cannot affect the exact request count.</p>\n</div>\n</details></li>\n<li><details open class=\"commit-message-details\"><summary>scheduling: observe transport calls before acknowledgement waits <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/a839263de1b426c19f6ecb0d7b1ac810e4244c07\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Separate transport invocation from the future wait so blocked supplier setup cannot satisfy the acknowledgement boundary.</p>\n</div>\n</details></li>\n<li><details open class=\"commit-message-details\"><summary>publishing: await response cleanup before checking timeout removal <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/41d4edaacb6344c273c286f588f4bbff3e3d3333\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Drain the owned response worker after result completion so dependent cleanup has finished before inspecting the timer queue.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.9.3",
+      "quarterKey": "2026-Q4",
+      "year": 2026,
+      "quarter": "Q4"
+    },
+    {
+      "version": "2.9.2",
+      "date": "2026-10-03",
+      "body": "#### [2.9.2](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.9.1...2.9.2) (2026-10-03)\n\n##### Bug Fixes\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>modeling: retain unlimited snapshots and reconstruct cold predecessors <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/81696b75c15f68d2779143d242c8a2228e7c89c8\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Treat negative Model snapshot limits as unlimited while preserving zero, positive and Aggregate retention. Reconstruct historical predecessors lazily when a snapshot or bounded cache has no in-memory predecessor, keeping the original Graph boundary and explicit erasure semantics.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.9.2",
+      "quarterKey": "2026-Q4",
+      "year": 2026,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.292.16",
+      "date": "2026-10-03",
+      "body": "#### [1.292.16](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.292.15...1.292.16) (2026-10-03)\n\n##### Bug Fixes\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>proxy: default HTTP2 response headers to 16 KiB (#443) <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/5658b1037f6888f32f4e7645af827832eb70e115\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Give HTTP2 a separate 16 KiB response-header ceiling so small HPACK buffers fit the shared pool. Apply it independently of the defaults date, retain an explicit override, and preserve HTTP1 and incoming header limits.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.292.16",
+      "quarterKey": "2026-Q4",
+      "year": 2026,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.292.15",
+      "date": "2026-10-03",
+      "body": "#### [1.292.15](https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.292.14...1.292.15) (2026-10-03)\n\n##### Chores\n\n<ul>\n<li><details open class=\"commit-message-details\"><summary>remove Maven Central publishing from 1.x (#441) <span class=\"commit-link-wrap\">(<a class=\"commit-link\" href=\"https://github.com/fluxzero-io/fluxzero-sdk-java/commit/0de3737476024aba17d6ede6474cabe631a4c3d4\" target=\"_blank\" rel=\"noreferrer\">GitHub</a>)</span></summary>\n<div class=\"commit-message-body\">\n<p>Remove the retired Central publication path and its CI-only support. Keep signed Fluxzero Packages publication and the existing release gates intact.</p>\n</div>\n</details></li>\n</ul>",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.292.15",
+      "quarterKey": "2026-Q4",
+      "year": 2026,
+      "quarter": "Q4"
+    },
     {
       "version": "2.9.1",
       "date": "2026-10-01",

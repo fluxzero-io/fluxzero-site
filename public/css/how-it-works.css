@@ -99,3 +99,218 @@ body.how-it-works-page {
     position: relative;
     z-index: 1;
 }
+
+/* Diagram labels must remain readable at their actual rendered size. */
+.how-it-works-page {
+    --diagram-text: #dce9f5;
+    --diagram-muted: #afc1d3;
+}
+
+.how-it-works-page :is(.model-diagram__external strong, .ticket-sequence__buyer,
+    .ticket-sequence__ticket, .ticket-sequence__outcome, .privacy-diagram__record > span,
+    .secure-edge-diagram__internet strong, .secure-edge-diagram__cluster > div strong,
+    .lanes-diagram__lane > strong, .cloud-proof-next__shape strong,
+    .cloud-proof-next__history > div strong, .cloud-proof-next__existing-capabilities strong,
+    .cloud-proof-next__retroactive strong, .cloud-proof-next__operations li strong) {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.how-it-works-page :is(.model-diagram__instance small, .model-diagram__capabilities span,
+    .ticket-sequence__ticket small, .replay-diagram__fix span, .replay-diagram__return span,
+    .secure-edge-diagram__foundation small, .secure-edge-diagram__connection small,
+    .secure-edge-diagram__cluster > div small, .capacity-diagram__held span,
+    .cloud-proof-next__shape small, .cloud-proof-next__evolution-path span,
+    .cloud-proof-next__retroactive em, .cloud-proof-next__operations li small,
+    .cloud-proof-next__operations-clusters small) {
+    color: var(--diagram-muted);
+    font-size: 12px;
+    line-height: 1.6;
+    letter-spacing: normal;
+}
+
+.how-it-works-page :is(.model-diagram__cluster-label, .secure-edge-diagram__cluster > span,
+    .cloud-proof-next__history > div small, .cloud-proof-next__existing-capabilities > small,
+    .cloud-proof-next__retroactive > small, .cloud-proof-next__operations-lifecycle > strong,
+    .monitoring-context-card__facts dt, .monitoring-context-card h4, .monitoring-context-card figcaption span) {
+    font-size: 12px;
+    line-height: 1.5;
+    letter-spacing: .04em;
+}
+
+.how-it-works-page :is(.cloud-proof-next__existing-capabilities > small,
+    .cloud-proof-next__operations-lifecycle > strong) {
+    color: var(--diagram-muted);
+}
+
+.how-it-works-page .cloud-diagram figcaption:not(.sr-only) {
+    color: var(--diagram-muted);
+    font-size: 12px;
+    line-height: 1.5;
+    letter-spacing: normal;
+}
+
+.how-it-works-page .ticket-sequence li {
+    grid-template-columns: 30px minmax(112px, 1fr) 28px minmax(170px, 1.5fr) 28px minmax(132px, 1fr);
+}
+
+.how-it-works-page .ticket-sequence__number { font-size: 13px; }
+.how-it-works-page .ticket-sequence__ticket small { margin-top: 0; }
+.how-it-works-page .ticket-sequence__rejected .ticket-sequence__outcome { color: #efb3bb; }
+.how-it-works-page .replay-diagram .is-failed small { font-size: 12px; color: #efb3bb; }
+
+.how-it-works-page .privacy-diagram__record > span { color: var(--diagram-muted); }
+.how-it-works-page .privacy-diagram__record .is-protected { color: #b7ddfa; }
+.how-it-works-page .privacy-diagram__record .is-redacted { color: #abd9c3; }
+.how-it-works-page .privacy-diagram__action {
+    position: relative;
+    color: var(--diagram-text);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+    text-transform: none;
+    letter-spacing: normal;
+}
+.how-it-works-page .privacy-diagram__action i { font-size: 24px; }
+.how-it-works-page .privacy-diagram__action::before {
+    right: calc(100% + 8px);
+    width: 20px;
+    height: 2px;
+}
+.how-it-works-page .privacy-diagram__action::after {
+    left: calc(100% + 8px);
+    width: 20px;
+    height: 2px;
+}
+
+.how-it-works-page .secure-edge-diagram__connection strong {
+    font-size: 13px;
+    line-height: 1.5;
+    white-space: normal;
+}
+.how-it-works-page .secure-edge-diagram__connection small { text-transform: none; }
+.how-it-works-page .cloud-proof-next__history > div strong { white-space: normal; }
+.how-it-works-page .cloud-proof-next__evolution-path span { letter-spacing: normal; }
+.how-it-works-page .cloud-proof-next__retroactive em { color: #b0cbbb; }
+.how-it-works-page .cloud-proof-next__operations li { padding: 16px 14px; }
+
+@media (max-width: 720px) {
+    .how-it-works-page .lanes-diagram__lane {
+        grid-template-columns: 100px minmax(0, 1fr) 24px;
+    }
+    .how-it-works-page .ticket-sequence { padding: 24px 0; }
+    .how-it-works-page .ticket-sequence li {
+        padding: 12px;
+        grid-template-columns: 24px minmax(0, 1fr) 20px minmax(0, 1.2fr);
+        gap: 8px;
+    }
+    .how-it-works-page :is(.ticket-sequence__buyer, .ticket-sequence__ticket) {
+        flex-direction: column;
+        padding: 10px 6px;
+    }
+    .how-it-works-page .ticket-sequence__ticket small { flex-basis: auto; }
+    .how-it-works-page .cloud-proof-next__operations-columns { grid-template-columns: 1fr; }
+    .how-it-works-page .cloud-proof-next__history {
+        grid-template-columns: 1fr;
+        padding: 12px;
+        gap: 10px;
+    }
+    .how-it-works-page .cloud-proof-next__history-ellipsis { line-height: 1.5; }
+    .how-it-works-page .cloud-proof-next__evolution-path span {
+        width: min(260px, calc(100vw - 88px));
+        white-space: normal;
+        text-align: center;
+    }
+    .how-it-works-page .cloud-proof-next__existing-capabilities > div { grid-template-columns: 1fr; }
+    .how-it-works-page .cloud-proof-next__retroactive span { flex-direction: column; }
+    .how-it-works-page .cloud-proof-next__retroactive em { max-width: none; text-align: center; }
+}
+
+/* Give the security arrow its own track, separate from both text labels. */
+.how-it-works-page .secure-edge-diagram__connection {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 6px auto;
+    gap: 12px;
+    align-content: center;
+    min-height: 120px;
+}
+.how-it-works-page .secure-edge-diagram__connection > span {
+    position: relative;
+    inset: auto;
+    grid-column: 1;
+    grid-row: 2;
+    width: calc(100% - 10px);
+    height: 6px;
+    margin-left: 10px;
+    transform: none;
+}
+.how-it-works-page .secure-edge-diagram__connection strong,
+.how-it-works-page .secure-edge-diagram__connection small {
+    padding: 0 6px;
+    background: none;
+    transform: none;
+}
+.how-it-works-page .secure-edge-diagram__connection strong {
+    grid-column: 1;
+    grid-row: 1;
+    justify-content: center;
+}
+.how-it-works-page .secure-edge-diagram__connection small {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+@media (max-width: 720px) {
+    .how-it-works-page .secure-edge-diagram {
+        grid-template-rows: 104px 52px 202px 120px auto;
+    }
+    .how-it-works-page .secure-edge-diagram__connection {
+        height: 120px;
+        grid-template-columns: 6px minmax(0, 1fr);
+        grid-template-rows: 1fr 1fr;
+        gap: 4px 16px;
+        padding: 12px 0 12px 16px;
+        text-align: left;
+    }
+    .how-it-works-page .secure-edge-diagram__connection > span {
+        grid-column: 1;
+        grid-row: 1 / 3;
+        width: 6px;
+        height: 100%;
+        margin: 0;
+    }
+    .how-it-works-page .secure-edge-diagram__connection strong {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: end;
+        justify-content: flex-start;
+    }
+    .how-it-works-page .secure-edge-diagram__connection small {
+        grid-column: 2;
+        grid-row: 2;
+        align-self: start;
+    }
+}
+
+@media (min-width: 721px) and (max-width: 1000px) {
+    .how-it-works-page .secure-edge-diagram {
+        grid-template-columns: 90px 32px minmax(140px, 1fr) minmax(150px, 1fr) minmax(190px, 1.2fr);
+        padding-right: 28px;
+        padding-left: 28px;
+    }
+    .how-it-works-page .secure-edge-diagram__internet { width: 90px; height: 90px; }
+    .how-it-works-page .secure-edge-diagram__foundation { padding: 24px 12px; }
+    .how-it-works-page .secure-edge-diagram__cluster { padding: 36px 12px 16px; }
+    .how-it-works-page .secure-edge-diagram__cluster > div {
+        padding: 12px 10px;
+        grid-template-columns: 22px minmax(0, 1fr);
+        column-gap: 6px;
+    }
+}
+
+@media (max-width: 720px) {
+    .how-it-works-page .request-diagram { padding-bottom: 64px; }
+    .how-it-works-page .replay-diagram { padding-bottom: 124px; }
+    .how-it-works-page :is(.replay-diagram__fix, .replay-diagram__return) { bottom: 70px; }
+}

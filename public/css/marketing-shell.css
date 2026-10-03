@@ -132,6 +132,15 @@ samp {
     transition: color 0.14s ease, opacity 0.14s ease;
 }
 
+/* Reserve the label widths so a webfont swap cannot move the navigation. */
+@media (min-width: 601px) {
+    .nav-main-links .nav-link { justify-content: flex-start; flex-shrink: 0; }
+    .nav-link-pricing { min-width: 3.5em; }
+    .nav-link-about { min-width: 3.1em; }
+    .nav-link-agents { min-width: 6.3em; }
+    .nav-link-docs { min-width: 2.5em; }
+}
+
 .nav-link:hover,
 .nav-link.is-active,
 .nav-link[aria-current="page"] {

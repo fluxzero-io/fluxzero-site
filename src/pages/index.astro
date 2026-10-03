@@ -37,7 +37,7 @@ const comparisonRows = [
     {
         label: "Audit trail",
         values: [
-            { status: "TBD", kind: 'owned' },
+            { status: "Build it yourself", kind: 'owned' },
             { status: "Built into the cloud", kind: 'included' },
         ],
     },
@@ -78,81 +78,105 @@ const comparisonOptions = [
 
 const homepageFaqs = [
     {
+        id: 'faq-what-is-fluxzero',
         question: 'What is Fluxzero?',
         llmsSummary: true,
         answer: [
-            'Fluxzero is a cloud platform for applications built with AI. It hosts your frontend and backend, stores your data, and runs your application in production.',
-            'It is made for everyone building a product, not just engineers. Every product gets a reliable backend from day zero, so your agent can focus on the product instead of its tech stack.',
+            'Fluxzero is a cloud designed to work especially well with coding agents. It handles the data, security, reliability, and scale, so you and your agent can focus on what your product should do.',
+            'Once your product is live, you and your agent can see what happens, investigate problems, and keep improving it.',
         ],
     },
     {
-        question: 'Can I really launch serious software on Fluxzero?',
+        id: 'faq-generated-backend',
+        question: 'My agent can generate a backend. Why should it use Fluxzero?',
         answer: [
-            'Yes. Fluxzero is built for products where reliability matters: products with valuable data, complex workflows, permissions, integrations, and business rules.',
-            'You and your coding agent build the product behavior. Fluxzero takes responsibility for the technical foundation underneath your product, including security, reliable message delivery, recovery, auditability, and scale.',
-            'The same hardened foundation supports high-throughput enterprise workloads.',
+            'Other clouds give your agent infrastructure and services to turn into a reliable product. The backend it builds is still yours to secure, maintain, and scale. Fluxzero takes care of that foundation, so your agent can focus on product features.',
+            'Coding agents work better when they have less to think about. With the technical foundation taken care of, your agent can focus its attention and context on your product’s features, rules, and user experience.',
+        ],
+    },
+    {
+        id: 'faq-building',
+        question: 'What does building with Fluxzero look like?',
+        answer: [],
+        steps: [
+            'Describe your product. Copy the getting-started instruction into your coding agent and tell it what you want to build.',
+            'Try it locally. Run the app on your computer, check how it behaves, and refine it with your agent.',
+            'Publish it. When you are ready, deploy your product to Fluxzero.',
+        ],
+        links: [
+            { href: '/docs/getting-started/introduction/', label: 'Learn more in the docs' },
+            { href: 'https://dashboard.fluxzero.io/', label: 'Ready to deploy?' },
+        ],
+    },
+    {
+        id: 'faq-coding-experience',
+        question: 'Do I need coding experience?',
+        answer: [
+            'No. You describe what your product should do, and your coding agent writes the code. You try the result and refine it together.',
+            'Developers can also review, change, and extend the same application code alongside your agent.',
+        ],
+    },
+    {
+        id: 'faq-coding-agents',
+        question: 'Which coding agents can I use?',
+        answer: [
+            'You can use Claude Code, Codex, Cursor, Gemini CLI, or GitHub Copilot. Copy the getting-started instruction into your agent to give it the Fluxzero guidance and tools it needs to build your product.',
+        ],
+        link: { href: '/#get-started', label: 'Get the instruction for your agent' },
+    },
+    {
+        id: 'faq-products',
+        question: 'What kinds of products can I build?',
+        answer: [
+            'Fluxzero suits a wide range of applications: SaaS products, marketplaces, portals, internal tools, consumer apps, and AI-enabled software.',
+            'Infrastructure products that depend on running a specific underlying component, such as a database service built around a particular database engine, are not a good fit.',
+        ],
+    },
+    {
+        id: 'faq-existing-product',
+        question: 'Can I bring an existing product?',
+        answer: [
+            'Yes. Your existing product gives your agent a starting point: its features, design, and business rules. Your agent can adapt the backend to use Fluxzero and help migrate your data. How much needs to change depends on how your product is built today.',
+        ],
+        link: { href: '/contact/', label: 'Tell us about your product' },
+    },
+    {
+        id: 'faq-companies',
+        question: 'What kinds of companies run on Fluxzero?',
+        answer: [
+            'Fluxzero is used in production by single-founder companies, scale-ups, and enterprises with complex business logic and mission-critical workloads.',
         ],
         link: { href: '/how-it-works/', label: 'See how Fluxzero keeps your product running' },
     },
     {
-        question: 'My agent can generate a backend. Why should it use Fluxzero?',
-        answer: [
-            'An agent can generate a backend quickly. But building your product is a different job from building a hardened backend. Your agent is focused on the product. The backend it generates becomes a codebase you must keep secure, reliable, understandable, and ready to scale as the product evolves. Every shortcut taken to launch becomes something you own.',
-            'Fluxzero gives your product a hardened backend foundation built and operated by experienced backend engineers for demanding enterprise workloads. Because products run on a shared platform foundation, improvements to security, reliability, recovery, and scale compound and benefit every product, without adding infrastructure code to your application.',
-            'Your codebase stays focused on the product. As usage and complexity increase, you keep building on the same foundation instead of rebuilding or replatforming.',
-        ],
-    },
-    {
-        question: 'How is Fluxzero different from Supabase + Vercel, Railway, or other clouds?',
-        answer: [
-            'Those clouds give you infrastructure and services that still need to be selected, connected, secured, scaled, and operated. You or your agent remains responsible for turning them into one reliable product.',
-            'Fluxzero provides and operates that application foundation as one cloud, so you can focus on the product instead of operating the platform underneath it.',
-        ],
-    },
-    {
-        question: 'What does building with Fluxzero look like?',
-        answer: [
-            'Start by copying one instruction into your coding agent. Describe what you want to build, then refine it with your agent. When the product is ready, publish it on Fluxzero.',
-        ],
-        link: { href: '/product-code', label: 'See what your agent writes' },
-    },
-    {
-        question: 'What kinds of products can I build?',
-        answer: [
-            'Any application can run on Fluxzero, across product domains and workload sizes. That includes SaaS products, marketplaces, portals, internal tools, consumer apps, and AI-enabled software.',
-        ],
-    },
-    {
-        question: 'What kinds of companies run on Fluxzero?',
-        answer: [
-            'Fluxzero is trusted in production across product domains and workload sizes, from single-founder companies and scale-ups to enterprises such as the organization behind the digital infrastructure of Europe\'s largest port.',
-        ],
-    },
-    {
+        id: 'faq-growth',
         question: 'Will I outgrow Fluxzero or need to rebuild later?',
         answer: [
             'No. The same application works locally and at production scale. Individual workloads can receive more capacity as your product grows, without forcing the whole product onto a new architecture.',
         ],
     },
     {
-        question: 'Do I lose visibility by trusting my backend to Fluxzero?',
+        id: 'faq-product-insight',
+        question: 'How do I keep track of my product once it’s live?',
         answer: [
-            'No. Fluxzero is not a black box. It works more like an X-ray of your product: you can see its messages, web requests, application logs, errors, and the user or system behind each interaction.',
-            'Every interaction is part of a searchable audit trail. Correlation and tracing let you follow a single request across applications or zoom out to find patterns, performance issues, and failures across the whole product.',
+            'You and your agent can follow what happens in your product, investigate errors, and spot performance issues. A searchable history lets you trace an interaction back to the user or system behind it and see how it unfolded across your apps.',
         ],
-        link: { href: '/product-insight', label: 'Explore Product insight' },
+        link: { href: '/product-insight/', label: 'See how Fluxzero gives you full insight' },
     },
     {
+        id: 'faq-ownership',
         question: 'Do I own my code and data?',
         answer: [
             'Yes. Your application code and product data remain yours. Your data can be exported in a machine-readable format.',
         ],
     },
     {
+        id: 'faq-pricing',
         question: 'When do I start paying?',
         answer: [
             'Building and running locally is free. You start paying when you activate a plan to put your product online.',
         ],
+        link: { href: '/pricing/', label: 'See pricing' },
     },
 ];
 
@@ -164,7 +188,7 @@ const homepageFaqSchema = {
         name: faq.question,
         acceptedAnswer: {
             '@type': 'Answer',
-            text: faq.answer.join('\n\n'),
+            text: [...faq.answer, ...(faq.steps?.map((step, index) => `${index + 1}. ${step}`) ?? [])].join('\n\n'),
         },
     })),
 };
@@ -308,20 +332,22 @@ const homepageFaqSchema = {
         <AgentInstruction showAgents={false} />
     </div>
     <div class="cta-btns homepage-finish__actions">
-        <a href="/pricing/" class="btn-s">Pricing <span aria-hidden="true">→</span></a>
         <button class="btn-p" type="button" aria-expanded="false" aria-controls="faq" data-toggle-faq>FAQ <span class="homepage-finish__chevron" aria-hidden="true">↓</span></button>
+        <a href="/pricing/" class="btn-s">Pricing <span aria-hidden="true">→</span></a>
     </div>
     <div class="faq homepage-faq" id="faq" aria-labelledby="faq-title" data-llms-include hidden>
-        <header class="section-intro">
-            <h2 class="faq-heading h2-single" id="faq-title">Frequently asked questions</h2>
-        </header>
         <div class="faq-list">
+            <header class="homepage-faq__header">
+                <h2 class="faq-heading" id="faq-title">Frequently asked questions</h2>
+            </header>
             {homepageFaqs.map((faq) => (
-                <details class="faq-item">
+                <details class="faq-item" name="homepage-faq" id={faq.id}>
                     <summary class="faq-q"><span>{faq.question}</span><span class="faq-arrow" aria-hidden="true">+</span></summary>
                     <div class="faq-a">
                         {faq.answer.map((paragraph) => <p data-llms-summary={faq.llmsSummary || undefined}>{paragraph}</p>)}
+                        {faq.steps && <ol class="faq-steps" role="list">{faq.steps.map(step => <li>{step}</li>)}</ol>}
                         {faq.link && <p><a href={faq.link.href}>{faq.link.label} <span aria-hidden="true">→</span></a></p>}
+                        {faq.links && <p class="faq-links">{faq.links.map(link => <a href={link.href}>{link.label} <span aria-hidden="true">→</span></a>)}</p>}
                     </div>
                 </details>
             ))}
@@ -332,19 +358,28 @@ const homepageFaqSchema = {
 </main>
 
 <MarketingFooter />
-<script src="/js/home.js?v=20260904-2" defer></script>
+<script src="/js/home.js?v=20261003-1" defer></script>
 <script src="/js/start-building-v4.js?v=20261002-1" defer></script>
 <script>
     const faqToggle = document.querySelector<HTMLButtonElement>('[data-toggle-faq]');
     const faqPanel = document.querySelector<HTMLElement>('#faq');
     const reduceFaqMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let faqAnimation: Animation | null = null;
+    const faqItems = Array.from(document.querySelectorAll<HTMLDetailsElement>('#faq details[id]'));
+    let faqScrollFrame = 0;
 
-    faqToggle?.addEventListener('click', () => {
-        if (!faqPanel) return;
-        const expanded = faqToggle.getAttribute('aria-expanded') !== 'true';
+    function setFaqExpanded(expanded: boolean, animate: boolean) {
+        if (!faqToggle || !faqPanel) return;
         faqToggle.setAttribute('aria-expanded', String(expanded));
         faqPanel.inert = !expanded;
+
+        if (!animate || reduceFaqMotion.matches) {
+            faqAnimation?.cancel();
+            faqAnimation = null;
+            faqPanel.hidden = !expanded;
+            faqPanel.classList.remove('is-transitioning');
+            return;
+        }
 
         const currentStyle = getComputedStyle(faqPanel);
         const start = {
@@ -355,12 +390,6 @@ const homepageFaqSchema = {
         };
         faqAnimation?.cancel();
         faqAnimation = null;
-
-        if (reduceFaqMotion.matches) {
-            faqPanel.hidden = !expanded;
-            faqPanel.classList.remove('is-transitioning');
-            return;
-        }
 
         faqPanel.hidden = false;
         faqPanel.classList.add('is-transitioning');
@@ -380,7 +409,45 @@ const homepageFaqSchema = {
             faqPanel.classList.remove('is-transitioning');
             faqAnimation = null;
         };
+    }
+
+    function applyFaqLocation(animate = false, scroll = false) {
+        let hash = '';
+        try { hash = decodeURIComponent(window.location.hash.slice(1)); } catch { /* Ignore malformed fragments. */ }
+        const selected = faqItems.find(item => item.id === hash);
+        setFaqExpanded(hash === 'faq' || Boolean(selected), animate);
+        faqItems.forEach(item => { item.open = item === selected; });
+        cancelAnimationFrame(faqScrollFrame);
+        if (scroll && (selected || hash === 'faq')) {
+            faqScrollFrame = requestAnimationFrame(() => {
+                (selected ?? faqPanel)?.scrollIntoView({ behavior: 'instant', block: 'start' });
+            });
+        }
+    }
+
+    function navigateFaq(hash: string, animate = false) {
+        const url = new URL(window.location.href);
+        url.hash = hash;
+        if (url.href !== window.location.href) history.pushState(null, '', url);
+        applyFaqLocation(animate);
+    }
+
+    faqToggle?.addEventListener('click', () => {
+        navigateFaq(faqToggle.getAttribute('aria-expanded') === 'true' ? '' : 'faq', true);
     });
+    faqItems.forEach(item => {
+        item.querySelector('summary')?.addEventListener('click', event => {
+            event.preventDefault();
+            navigateFaq(item.open ? 'faq' : item.id);
+        });
+    });
+
+    // The URL is the only source of FAQ state, including reloads and shared links.
+    applyFaqLocation();
+    window.addEventListener('popstate', () => applyFaqLocation(false, true));
+    window.addEventListener('hashchange', () => applyFaqLocation(false, true));
+    window.addEventListener('pageshow', () => applyFaqLocation(false, true));
+
 </script>
 </body>
 </html>

@@ -39,6 +39,9 @@ export default defineConfig({
         }
     },
     redirects: {
+        "/technical-foundation": { status: 301, destination: "/how-it-works/" },
+        "/technical-foundation/index.html": { status: 301, destination: "/how-it-works/" },
+        "/technical-foundation/index.md": { status: 301, destination: "/how-it-works/index.md" },
         "/docs/fluxzero-2-overview": { status: 301, destination: "/docs/fluxzero-2/" },
         "/docs/building/devboard-walkthrough": { status: 301, destination: "/docs/building/local-development/" },
         "/monitoring": { status: 302, destination: "/product-insight/" },

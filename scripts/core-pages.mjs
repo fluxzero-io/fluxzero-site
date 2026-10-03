@@ -8,7 +8,7 @@ export const inlineMarketingPages = marketingPages.filter(path => !['/contact/',
 export const documentationPages = ['/docs/getting-started/introduction/', '/docs/getting-started/core-concepts/'];
 export const corePages = [...marketingPages, ...documentationPages];
 export const retiredPages = ['/makeitreal/', '/get-started/'];
-export const unlistedPages = ['/technical-foundation/', '/oidc/callback/', '/oidc/silent-callback/', '/oidc/logout-callback/'];
+export const unlistedPages = ['/oidc/callback/', '/oidc/silent-callback/', '/oidc/logout-callback/'];
 // Limit visible entry points independently of search indexing.
 export const restrictedLinkSources = { '/partners/': { footer: true, navigation: true, pages: ['/contact/'] } };
 export const htmlFile = path => `${path.replace(/^\//, '')}index.html`;

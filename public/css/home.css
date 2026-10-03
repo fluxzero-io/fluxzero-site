@@ -4965,11 +4965,6 @@ section:not(.hero):not(.cta-end) {
     border-top: 1px solid var(--border);
 }
 
-.faq-question-heading {
-    margin: 0;
-    font: inherit;
-}
-
 .faq-q {
     width: 100%;
     display: flex;
@@ -5000,7 +4995,7 @@ section:not(.hero):not(.cta-end) {
     margin-left: 24px;
 }
 
-.faq-item.open .faq-arrow {
+.faq-item[open] .faq-arrow {
     transform: rotate(45deg);
 }
 
@@ -5009,7 +5004,7 @@ section:not(.hero):not(.cta-end) {
     padding: 0 24px 26px;
 }
 
-.faq-item.open .faq-a {
+.faq-item[open] .faq-a {
     display: block;
 }
 

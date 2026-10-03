@@ -142,13 +142,57 @@
     overflow: clip;
 }
 
+.homepage-faq__header {
+    padding: 28px 22px;
+    border-bottom: 1px solid var(--border);
+}
+
 .agent-cloud-home .homepage-faq .faq-heading {
-    font-size: clamp(24px, 2.6vw, 34px);
+    margin: 0;
+    font-size: clamp(22px, 2.4vw, 28px);
     line-height: 1.2;
+    text-align: left;
 }
 
 .homepage-faq .faq-heading::after {
-    width: 72px;
+    display: none;
+}
+
+.homepage-faq .faq-steps {
+    margin: 0 0 20px;
+    padding: 0;
+    list-style: none;
+    counter-reset: faq-step;
+    color: var(--text-secondary);
+    font-size: var(--fs-body-secondary);
+    line-height: var(--lh-card);
+}
+
+.homepage-faq .faq-steps li {
+    display: grid;
+    grid-template-columns: 1.5em minmax(0, 1fr);
+    counter-increment: faq-step;
+}
+
+.homepage-faq .faq-a p,
+.homepage-faq .faq-steps {
+    font-size: 16px;
+    line-height: 1.65;
+}
+
+.homepage-faq .faq-steps li::before {
+    content: counter(faq-step) ".";
+    text-align: left;
+}
+
+.homepage-faq .faq-steps li + li {
+    margin-top: 12px;
+}
+
+.homepage-faq .faq-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
 }
 
 .homepage-faq .faq-q {
@@ -176,6 +220,7 @@
 }
 
 .homepage-faq .faq-item {
+    scroll-margin-top: 96px;
     overflow: hidden;
 }
 
@@ -186,6 +231,11 @@
 }
 
 @media (max-width: 760px) {
+    .homepage-faq .faq-a p,
+    .homepage-faq .faq-steps {
+        font-size: 15px;
+    }
+
     .agent-cloud-home {
         --homepage-section-space: clamp(72px, 16vw, 104px);
     }
