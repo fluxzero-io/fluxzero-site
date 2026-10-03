@@ -306,13 +306,13 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
             <div class="pricing-v2-faq-item">
                 <h3 class="pricing-v2-faq-question-heading">
                     <button class="pricing-v2-faq-q">
-                        <span>What happens if I cancel or pause my plan?</span>
+                        <span>What happens if I cancel my plan?</span>
                         <span class="pricing-v2-faq-arrow" aria-hidden="true">+</span>
                     </button>
                 </h3>
                 <div class="pricing-v2-faq-a">
-                    <p>Your app will stop running on the paid plan after cancellation takes effect. Stopping or pausing capacity credits unused prepaid time toward future payments. The fixed subscription continues while capacity is paused, and retained storage remains billable.</p>
-                    <p>If you need to pause while keeping data or configuration, contact support and we will help choose the safest option.</p>
+                    <p>Your app will stop running on the paid plan after cancellation takes effect.</p>
+                    <p>If you stop or pause paid capacity, we credit the unused time toward future payments. Pausing capacity does not pause your subscription: the plan fee and storage charges still apply.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
@@ -334,7 +334,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                     </button>
                 </h3>
                 <div class="pricing-v2-faq-a">
-                    <p>Additional clusters for development, test, staging, or preview environments can be added with Pro. We can help you choose the right size and setup.</p>
+                    <p>Additional clusters for development, test, staging, or preview environments can be added with Pro.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
@@ -345,8 +345,8 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                     </button>
                 </h3>
                 <div class="pricing-v2-faq-a">
-                    <p>Pro supports additional clusters and apps, larger sizes, and optional high availability on clusters from Medium.</p>
-                    <p>Pro includes backups and nine-day point-in-time recovery. Contact us for requirements beyond the published plans.</p>
+                    <p>Starter supports one cluster and one app, each up to Medium. For additional clusters or apps, or larger sizes, you need Pro.</p>
+                    <p>Pro also includes backups and nine-day point-in-time recovery, with optional high availability on clusters from Medium. Contact us for requirements beyond the published plans.</p>
                 </div>
             </div>
             <div class="pricing-v2-faq-item">
@@ -381,7 +381,13 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
         button.setAttribute('aria-controls', answer.id);
         button.setAttribute('aria-expanded', 'false');
         button.addEventListener('click', () => {
-            button.setAttribute('aria-expanded', String(item.classList.toggle('open')));
+            const shouldOpen = !item.classList.contains('open');
+            item.closest('.pricing-v2-faq-list')?.querySelectorAll('.pricing-v2-faq-item.open').forEach(openItem => {
+                openItem.classList.remove('open');
+                openItem.querySelector('.pricing-v2-faq-q')?.setAttribute('aria-expanded', 'false');
+            });
+            item.classList.toggle('open', shouldOpen);
+            button.setAttribute('aria-expanded', String(shouldOpen));
         });
     });
 </script>
