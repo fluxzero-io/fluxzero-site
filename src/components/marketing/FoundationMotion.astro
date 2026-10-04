@@ -1,0 +1,268 @@
+---
+import '../../../public/css/foundation-motion.css';
+---
+<script>
+    // A local scene clock stops outside the viewport. Static HTML remains complete
+    // with reduced motion; the stacked history stays static on mobile.
+    const compact = matchMedia('(max-width: 720px)');
+    const figures = document.querySelectorAll<HTMLElement>('.how-it-works-page :is(.ticket-sequence, .replay-diagram, .capacity-diagram, .lanes-diagram, .cloud-proof-next__evolution-diagram)');
+    const clamp = (n: number) => Math.min(1, Math.max(0, n));
+    const ramp = (t: number, start: number, duration = 250) => clamp((t - start) / duration);
+    const blue = '#72b8f4', amber = '#d8a158', green = '#93dfc1', red = '#e18a95';
+    const cleanups: (() => void)[] = [];
+
+    figures.forEach(figure => {
+        const media = matchMedia(figure.matches('.cloud-proof-next__evolution-diagram')
+            ? '(min-width: 769px) and (prefers-reduced-motion: no-preference)'
+            : '(prefers-reduced-motion: no-preference)');
+        const find = (selector: string) => figure.querySelector<HTMLElement>(selector)!;
+        const all = (selector: string) => [...figure.querySelectorAll<HTMLElement>(selector)];
+        const originals = new Map<HTMLElement, string | null>();
+        const style = (node: HTMLElement, values: Record<string, string | number>) => {
+            if (!originals.has(node)) originals.set(node, node.getAttribute('style'));
+            Object.assign(node.style, values);
+        };
+        const decorate = (parent: HTMLElement, className: string, html = '', tag = 'span') => {
+            const node = document.createElement(tag);
+            node.className = `motion-decoration ${className}`;
+            node.setAttribute('aria-hidden', 'true');
+            node.dataset.llmsExclude = '';
+            node.innerHTML = html;
+            parent.append(node);
+            return node;
+        };
+        let render: (time: number) => void;
+        let period: number;
+        let resetContent = () => {};
+
+        if (figure.matches('.ticket-sequence')) {
+            const rows = all('li').map(row => ({
+                row,
+                buyer: row.querySelector<HTMLElement>('.ticket-sequence__buyer')!,
+                status: row.querySelector<HTMLElement>('.ticket-sequence__ticket small')!,
+                outcome: row.querySelector<HTMLElement>('.ticket-sequence__outcome')!,
+                arrow: row.querySelector<HTMLElement>('.ticket-sequence__ticket + .ticket-sequence__arrow')!,
+                checking: decorate(row.querySelector('.ticket-sequence__ticket')!, 'ticket-checking', '<i class="motion-spinner"></i><span>Checking</span>'),
+            }));
+            period = 8750;
+            render = t => rows.forEach(({buyer, status, outcome, arrow, checking}, index) => {
+                const resolveAt = 2500 + index * 1000;
+                const resolved = ramp(t, resolveAt);
+                style(status, {opacity: resolved});
+                style(outcome, {opacity: resolved});
+                style(arrow, {opacity: resolved});
+                style(checking, {opacity: 1 - resolved});
+                style(checking.querySelector('i')!, {transform: `rotate(${t * .36}deg)`});
+                style(buyer, {boxShadow: t < resolveAt ? '0 0 0 1px #72b8f466, 0 0 18px #72b8f414' : 'none'});
+            });
+        } else if (figure.matches('.replay-diagram')) {
+            const items = all('li');
+            const failed = find('.is-failed');
+            const number = failed.querySelector<HTMLElement>('span')!;
+            const label = failed.querySelector<HTMLElement>('small')!;
+            const spinner = decorate(failed, 'motion-spinner replay-spinner');
+            const check = decorate(failed, 'replay-success', '<i class="bx bx-check"></i>');
+            const successLabel = decorate(failed, 'replay-success-label', 'Handled');
+            const retryLabel = decorate(failed, 'replay-success-label replay-retry-label', 'Retrying');
+            const line = find('.replay-diagram__timeline span');
+            const circles = items.map(item => item.querySelector<HTMLElement>('span')!);
+            period = 11000;
+            render = t => {
+                const track = line.parentElement!.getBoundingClientRect();
+                const positions = circles.map(circle => circle.getBoundingClientRect());
+                const progress = ramp(t, 400, 3000);
+                items.forEach((item, i) => {
+                    // Fade in as the line travels from the circle's edge to its centre.
+                    // All five use the same geometry, including at other viewport widths.
+                    const position = positions[i];
+                    const edge = (position.left - track.left) / track.width;
+                    const radius = position.width / 2 / track.width;
+                    style(item, {opacity: clamp((progress - edge) / radius)});
+                });
+                style(line, {transform: `scaleX(${progress})`});
+                const retrying = t >= 4400 && t < 5500;
+                const done = t >= 5500;
+                style(number, {borderColor: done ? green : red, color: done ? green : red, background: done ? '#0d2823' : '#2b1118'});
+                style(number, {fontSize: retrying ? '0px' : '13px'});
+                style(label, {opacity: done || retrying ? 0 : 1});
+                style(spinner, {opacity: retrying ? 1 : 0, transform: `translateX(-50%) rotate(${t * .36}deg)`});
+                style(check, {opacity: done ? 1 : 0});
+                style(successLabel, {opacity: done ? 1 : 0});
+                style(retryLabel, {opacity: retrying ? 1 : 0});
+            };
+        } else if (figure.matches('.capacity-diagram')) {
+            const waiting = all('.capacity-diagram__incoming > span');
+            const slots = all('.capacity-diagram__gate > div > span');
+            const output = decorate(find('.capacity-diagram__application'), 'capacity-output');
+            const arrivals = [500, 1100, 1700, 2400, 3800, 5200, 6600, 8000];
+            const departures = Array.from({length: 8}, (_, i) => 2200 + i * 1400);
+            period = 13200; // Ends full with two waiting messages, matching the next cycle.
+            render = t => {
+                const active = departures.find(at => t >= at && t < at + 1000);
+                const phase = active === undefined ? -1 : t - active;
+                const admitted = departures.filter(at => t >= at + 800).length;
+                const queue = 2 + arrivals.filter(at => t >= at).length - admitted;
+                waiting.forEach((node, i) => {
+                    const transferring = i === queue - 1 && phase >= 500 && phase < 800;
+                    style(node, {opacity: i < queue ? (transferring ? 1 - (phase - 500) / 300 : 1) : 0,
+                        transform: transferring ? `translate${compact.matches ? 'Y' : 'X'}(${(phase - 500) / 10}px)` : 'none'});
+                });
+                slots.forEach((node, i) => {
+                    // Output frees the rightmost slot first. The remaining messages shift
+                    // right, leaving the leftmost place free for one waiting message.
+                    let x = 0, opacity = 1;
+                    if (phase >= 0 && phase < 500) {
+                        if (i === 5) { opacity = 1 - ramp(phase, 0, 220); x = ramp(phase, 0, 220) * 32; }
+                        else x = ramp(phase, 220, 280) * (node.offsetWidth + 7);
+                    } else if (phase >= 500 && phase < 800 && i === 0) {
+                        opacity = ramp(phase, 500, 300); x = -32 * (1 - opacity);
+                    }
+                    style(node, {transform: `translateX(${x}px)`, opacity});
+                });
+                style(output, {opacity: phase >= 0 && phase < 400 ? Math.sin(phase / 400 * Math.PI) : 0,
+                    transform: compact.matches ? `translate(-50%, ${-42 + clamp(phase / 400) * 42}px)` : `translateX(${-42 + clamp(phase / 400) * 42}px)`});
+            };
+        } else if (figure.matches('.lanes-diagram')) {
+            const rows = all('.lanes-diagram__lane');
+            const extra = decorate(rows[1], 'diagram-extra-lane', '<span class="lane-progress"></span><i class="bx bx-time-five"></i>', 'div');
+            const fills = [...rows, extra].map(row => decorate(row.querySelector('.lane-progress')!, 'diagram-lane-fill'));
+            const checks = [rows[1], extra].map(row => decorate(row, 'diagram-lane-check', '<i class="bx bx-check"></i>'));
+            const steps = [[0,0], [600,.07], [1500,.08], [1900,.2], [3000,.21], [3700,.32], [4600,.33], [5200,.47], [5600,.49], [6300,.67], [6900,.72], [7600,.88], [8400,1]];
+            const slowProgress = (t: number, timeline = steps, movementDuration = 280) => {
+                const index = timeline.findIndex(([at]) => at > t);
+                if (index < 0) return 1;
+                if (!index) return 0;
+                const [start, value] = timeline[index - 1], [end, next] = timeline[index];
+                // Reserve a short pause between movements, with longer pauses for Payments.
+                return value + (next - value) * ramp(t, Math.max(start, end - movementDuration), Math.min(movementDuration, end - start));
+            };
+            const ticketingSteps = [[0,0], [480,.11], [1050,.20], [1580,.34], [2180,.46], [2700,.58], [3250,.69], [3820,.81], [4340,.92], [4800,1]];
+            const notificationSteps = [[180,0], [700,.09], [1250,.19], [1810,.31], [2420,.42], [2930,.53], [3490,.65], [4050,.76], [4620,.87], [5120,.94], [5580,1]];
+            const forkComplete = 4950;
+            const extraSteps = [[forkComplete, slowProgress(forkComplete)], [5450,.58], [6100,.60], [6600,.78], [7100,.80], [7850,1]];
+            period = 14000;
+            render = t => {
+                const paymentProgress = [slowProgress(t), t <= forkComplete ? slowProgress(t) : slowProgress(t, extraSteps)];
+                const steadyProgress = [slowProgress(t, ticketingSteps, 460), slowProgress(t, notificationSteps, 460)];
+                const expansion = ramp(t, 4500, 450) * (1 - ramp(t, 13500, 500));
+                // Fork inside the existing row: no document reflow, and both workers
+                // share the same consumer position when capacity is added.
+                style(extra, {opacity: expansion, transform: `translateY(${10 * expansion}px)`});
+                style(rows[1].querySelector('.lane-progress')!, {transform: `translateY(${-10 * expansion}px)`});
+                style(rows[1].querySelector('i')!, {transform: `translateY(${-10 * expansion}px)`});
+                style(checks[0], {transform: `translateY(calc(-50% - ${10 * expansion}px))`});
+                fills.forEach((fill, i) => {
+                    const slow = i === 1 || i === 3;
+                    const progress = !slow ? steadyProgress[i === 0 ? 0 : 1] : paymentProgress[i === 1 ? 0 : 1];
+                    style(fill, {transform: `scaleX(${progress})`, background: slow && progress < 1 ? amber : blue});
+                });
+                [rows[0], rows[2]].forEach((row, i) => style(row.querySelector('i')!, {opacity: steadyProgress[i] >= 1 ? 1 : 0, color: blue}));
+                [rows[1], extra].forEach((row, i) => {
+                    const caughtUp = paymentProgress[i] >= 1;
+                    style(row.querySelector('i')!, {opacity: caughtUp ? 0 : 1, color: amber});
+                    style(checks[i], {opacity: caughtUp ? 1 : 0, color: blue});
+                });
+            };
+        } else {
+            const history = find('.cloud-proof-next__history');
+            const cards = all('.cloud-proof-next__history > div');
+            // Decorative cards extend the history to its latest event; the original
+            // three examples remain the single semantic representation.
+            const laterTimes = ['7 days ago', '3 days ago', '1 day ago', '12 hours ago', '6 hours ago', '2 hours ago', '30 minutes ago', '5 minutes ago', '1 minute ago'];
+            const copies = laterTimes.map((time, i) => {
+                const copy = decorate(history, 'history-copy', cards[i % cards.length].innerHTML, 'div');
+                copy.querySelector('small')!.textContent = time;
+                return copy;
+            });
+            const track = [...cards, ...copies];
+            const path = find('.cloud-proof-next__evolution-path');
+            const packets = track.map(() => decorate(path, 'history-packet'));
+            const rewards = find('.cloud-proof-next__retroactive > span');
+            const status = find('.cloud-proof-next__retroactive > small');
+            const originalStatus = status.textContent;
+            resetContent = () => { status.textContent = originalStatus; };
+            const catching = decorate(rewards, 'rewards-catching', '<i class="bx bx-fast-forward"></i>');
+            const check = find('.rewards-current');
+            const progress = decorate(rewards, 'rewards-progress');
+            period = 16000;
+            render = t => {
+                const travel = 650;
+                const cardWidth = cards[0].getBoundingClientRect().width;
+                const step = cardWidth + 10;
+                const historyRect = history.getBoundingClientRect();
+                const pathRect = path.getBoundingClientRect();
+                const feedX = pathRect.left + pathRect.width / 2 - historyRect.left;
+                const firstLeft = history.clientLeft + parseFloat(getComputedStyle(history).paddingLeft);
+                const speed = step / 1200;
+                const lastRight = firstLeft + (track.length - 1) * step + cardWidth;
+                const distance = Math.max(0, lastRight - feedX + 12);
+                const historyDuration = distance / speed;
+                const historyEnd = 500 + historyDuration;
+                // Release shortly after the leading edge crosses the feed. Finish
+                // processing only once the final card and its packet have arrived.
+                const crossings = track.map((card, i) => ({card, at: 500 + (firstLeft + i * step - feedX) / speed}))
+                    .filter(({at}) => at >= 500)
+                    .map(crossing => ({...crossing, at: crossing.at + 200}));
+                const filled = .12 + .88 * crossings.reduce((sum, {at}) => sum + ramp(t, at + travel, 180), 0) / Math.max(1, crossings.length);
+                const lastArrival = (crossings.at(-1)?.at ?? 500) + travel + 180;
+                const completeAt = Math.max(historyEnd, lastArrival);
+                const caughtUp = t >= completeAt;
+                period = completeAt + 6500;
+                const followThrough = ramp(t, completeAt, 1500);
+                const extraDistance = step * .6 * (1 - Math.pow(1 - followThrough, 3));
+                track.forEach(card => style(card, {transform: `translateX(${-ramp(t, 500, historyDuration) * distance - extraDistance}px)`}));
+                packets.forEach((packet, i) => {
+                    const crossing = crossings[i];
+                    const phase = crossing ? (t - crossing.at) / travel : -1;
+                    style(packet, {top: `${clamp(phase) * 100}%`, opacity: phase >= 0 && phase < 1 ? 1 : 0});
+                });
+                style(catching, {opacity: caughtUp ? 0 : .55 + .45 * Math.sin(t / 260), transform: `scale(${1 + .08 * Math.sin(t / 260)})`});
+                style(check, {opacity: caughtUp ? 1 : 0});
+                style(progress, {transform: `scaleX(${filled})`, background: caughtUp ? green : blue});
+                const statusText = caughtUp ? 'Up to date' : 'Added later';
+                if (status.textContent !== statusText) status.textContent = statusText;
+                style(status, {color: caughtUp ? green : blue});
+                style(rewards, {borderColor: caughtUp ? green : '#72b8f466'});
+            };
+        }
+
+        let elapsed = 0, lastTime = 0, frame = 0, visible = false;
+        const tick = (now: number) => {
+            elapsed += now - lastTime;
+            lastTime = now;
+            render(elapsed % period);
+            frame = requestAnimationFrame(tick);
+        };
+        const sync = () => {
+            cancelAnimationFrame(frame);
+            if (!media.matches) {
+                figure.classList.remove('has-diagram-motion');
+                resetContent();
+                originals.forEach((value, node) => value === null ? node.removeAttribute('style') : node.setAttribute('style', value));
+                elapsed = 0;
+                return;
+            }
+            if (visible && !document.hidden) {
+                figure.classList.add('has-diagram-motion');
+                render(elapsed % period);
+                lastTime = performance.now();
+                frame = requestAnimationFrame(tick);
+            }
+        };
+        const observer = new IntersectionObserver(([entry]) => {
+            visible = entry.isIntersecting && entry.intersectionRatio >= .35;
+            sync();
+        }, {threshold: [0, .35], rootMargin: '-80px 0px 0px'});
+        observer.observe(figure);
+        media.addEventListener('change', sync);
+        document.addEventListener('visibilitychange', sync);
+        cleanups.push(() => {
+            cancelAnimationFrame(frame); observer.disconnect();
+            media.removeEventListener('change', sync);
+            document.removeEventListener('visibilitychange', sync);
+        });
+    });
+    window.addEventListener('pagehide', event => {
+        if (!event.persisted) cleanups.forEach(cleanup => cleanup());
+    });
+</script>

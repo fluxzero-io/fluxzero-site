@@ -1,12 +1,39 @@
 {
-  "lastUpdated": "2026-10-04T03:15:24.196Z",
-  "latestVersion": "2.12.0",
+  "lastUpdated": "2026-10-04T13:35:45.458Z",
+  "latestVersion": "2.14.0",
   "releases": [
+    {
+      "version": "2.14.0",
+      "date": "2026-10-04",
+      "body": "#### Guard a Model and its descendants\n\nDeclare a shared business rule once on a Model and apply it to that Model and its locally known descendants. For example, a closed Project can prevent further changes to its Tasks and their children:\n\n```java\n@AssertLegal(cascade = true)\nvoid assertOpen() {\n    if (closed) {\n        throw new IllegalCommandException(\"This project is closed.\");\n    }\n}\n```\n\nNormal payload and context injection remains available. Use `allowedClasses` to select payload families, `@Parent(validateAncestors = false)` to stop one inheritance route, or `@Apply(ancestorValidation = AncestorValidation.DISABLED)` to permit a particular child mutation.\n\nThe SDK checks all enabled known parent routes, including both sides of a move and automatically deleted children. Ancestor reads participate in atomic conflict validation: RETRY reevaluates and guarded ACCEPT attempts use FAIL to prevent stale permission. Replay does not execute these assertions.\n\nThis feature is opt-in and SDK-side; writers need the relevant Model classes and rules. It adds no new Runtime protocol requirement. The developer guide and Java/Kotlin agent guides explain timing, exceptions, concurrency and performance.\n\n**Full changelog:** https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.13.0...2.14.0",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.14.0",
+      "quarterKey": "2026-Q4",
+      "year": 2026,
+      "quarter": "Q4"
+    },
+    {
+      "version": "2.13.0",
+      "date": "2026-10-04",
+      "body": "#### Document migrations preserve metadata\n\nHigher-revision `@HandleDocument` replacements now retain the metadata from the exact stored document, including through upcasting. Returning a `Message` explicitly replaces payload and the complete metadata map; document identity and indexed-time rules remain unchanged. Custom serializers can retain source attribution with `DocumentMessageReader.retainSource`. Metadata-free documents use a lightweight path that avoids rebuilding document entries.\n\n#### Model contract diagnostics\n\nModel read failures now carry useful contract and operation context while retaining their existing exception superclass and original cause. Explicit, bounded, namespace-scoped diagnostics help identify missing or incompatible local contracts without claiming replay compatibility or importing types automatically. Existing functional exception handling remains unchanged.\n\nSnapshot count documentation now describes `maxSnapshotCount` as a cleanup target: concurrent writes may temporarily retain extra snapshots, which a later bounded write cleans up. Unlimited retention and snapshot durability remain unchanged.\n\n**Full changelog:** https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.12.0...2.13.0",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.13.0",
+      "quarterKey": "2026-Q4",
+      "year": 2026,
+      "quarter": "Q4"
+    },
     {
       "version": "2.12.0",
       "date": "2026-10-04",
       "body": "#### Graph source reindexing\n\n`Graph.reindex()` refreshes one Model node's canonical search source from its current committed state. It can backfill a missing source when complete event history is retained, and it preserves Model history, relationships, heads and business events. Historical or staged Graph values are ignored.\n\nA bounded consumer's fixed `maxIndexExclusive` uses durable source storage-time evidence to skip already refreshed nodes before replay or another write. Choose the cutoff after old writers and pending materializations have drained; retain the same cutoff across retries and restarts. Descendants require separate calls.\n\nWith AWAIT completion, reindex waits until affected stored Graph projections—including ancestors—are queryable, even when the source write is skipped. Other completion modes retain asynchronous derived work.\n\nThe new reindex and completion requests require Runtime 2.6.0 or newer. Older Runtimes reject unsupported requests rather than silently weakening the completion contract. Upgrading Runtime first avoids temporary reindex failures during application rollout.\n\nReindex source transactions can temporarily delay ordinary namespace commits. Bound concurrency for bulk migrations; the projection wait itself holds no Model write lock.\n\n**Full changelog:** https://github.com/fluxzero-io/fluxzero-sdk-java/compare/2.11.0...2.12.0",
       "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/2.12.0",
+      "quarterKey": "2026-Q4",
+      "year": 2026,
+      "quarter": "Q4"
+    },
+    {
+      "version": "1.292.17",
+      "date": "2026-10-04",
+      "body": "#### Document migration metadata preservation\n\nHigher-revision `@HandleDocument` replacements now preserve metadata from the exact stored document, including through upcasting. Returning a `Message` explicitly replaces the payload and complete metadata map; existing document identity, timestamp precedence and deletion behavior remain unchanged.\n\nMetadata-free documents use a lightweight scan that avoids rebuilding document entries. Custom serializers that create new envelopes or decoded messages can preserve source attribution with `DocumentMessageReader.retainSource`; the extension contract is documented in Javadoc.\n\nThis is the SDK 1.x maintenance backport of the fix released in SDK 2.13.0. It retains the 1.x serialization implementation and does not introduce Model diagnostics or other 2.x features.\n\n**Full changelog:** https://github.com/fluxzero-io/fluxzero-sdk-java/compare/1.292.16...1.292.17",
+      "url": "https://github.com/fluxzero-io/fluxzero-sdk-java/releases/tag/1.292.17",
       "quarterKey": "2026-Q4",
       "year": 2026,
       "quarter": "Q4"

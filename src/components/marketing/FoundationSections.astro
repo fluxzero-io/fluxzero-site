@@ -56,26 +56,26 @@ import ExplainedTerm from './ExplainedTerm.astro';
             <h2 id="valid-state-title">Every action leaves the product<br><span>in a valid state.</span></h2>
             <p>Your product defines what must always be true. Fluxzero makes sure those rules still hold when many users act at the same time. A change either succeeds completely or leaves nothing half-finished behind.</p>
         </header>
-        <figure class="cloud-diagram ticket-sequence" data-reveal data-reveal-delay="1" aria-label="Buyer A reserves ticket 42 first. Buyer B then attempts to reserve it and is rejected.">
+        <figure class="cloud-diagram ticket-sequence" data-reveal data-reveal-delay="1" aria-label="Two buyers attempt to reserve the last ticket. Both start checking together. Buyer A succeeds first; Buyer B is rejected shortly after.">
             <ol>
                 <li class="ticket-sequence__accepted">
-                    <span class="ticket-sequence__number">1</span>
+
                     <span class="ticket-sequence__buyer"><i class="bx bx-user" aria-hidden="true"></i><strong>Buyer A</strong></span>
                     <i class="bx bx-right-arrow-alt ticket-sequence__arrow" aria-hidden="true"></i>
-                    <span class="ticket-sequence__ticket"><i class="bx bx-purchase-tag-alt" aria-hidden="true"></i><strong>Ticket 42</strong><small>Available</small></span>
+                    <span class="ticket-sequence__ticket"><i class="bx bx-purchase-tag-alt" aria-hidden="true"></i><strong>Last ticket</strong><small>Available</small></span>
                     <i class="bx bx-right-arrow-alt ticket-sequence__arrow" aria-hidden="true"></i>
                     <span class="ticket-sequence__outcome"><i class="bx bx-check" aria-hidden="true"></i><strong>Reserved</strong></span>
                 </li>
                 <li class="ticket-sequence__rejected">
-                    <span class="ticket-sequence__number">2</span>
+
                     <span class="ticket-sequence__buyer"><i class="bx bx-user" aria-hidden="true"></i><strong>Buyer B</strong></span>
                     <i class="bx bx-right-arrow-alt ticket-sequence__arrow" aria-hidden="true"></i>
-                    <span class="ticket-sequence__ticket"><i class="bx bx-purchase-tag-alt" aria-hidden="true"></i><strong>Ticket 42</strong><small>Already reserved</small></span>
+                    <span class="ticket-sequence__ticket"><i class="bx bx-purchase-tag-alt" aria-hidden="true"></i><strong>Last ticket</strong><small>Already reserved</small></span>
                     <i class="bx bx-right-arrow-alt ticket-sequence__arrow" aria-hidden="true"></i>
                     <span class="ticket-sequence__outcome"><i class="bx bx-x" aria-hidden="true"></i><strong>Rejected</strong></span>
                 </li>
             </ol>
-            <figcaption class="sr-only">Buyer A acts first and reserves ticket 42. Buyer B acts second and cannot reserve the same ticket.</figcaption>
+            <figcaption class="sr-only">Both buyers attempt the same ticket. Only one reservation succeeds; the other is rejected.</figcaption>
         </figure>
     </div>
 </article>
@@ -86,29 +86,18 @@ import ExplainedTerm from './ExplainedTerm.astro';
             <p class="cloud-proof-next__number">03 · Reliability and recovery</p>
             <h2 id="recoverable-work-title">Failure does not mean<br><span>lost work.</span></h2>
             <p>Fluxzero records work before your application starts it. If an instance restarts, the work waits and continues when it is ready. One failing part does not stop the rest of the product.</p>
-            <p>Fix the cause, then replay only the affected work. Failed work remains visible and recoverable without first building a separate recovery system.</p>
+            <p>Fix the cause, then retry only the affected work. Failed work remains visible and recoverable without first building a separate recovery system.</p>
         </header>
         <div class="cloud-proof-next__diagram-stack cloud-proof-next__diagram-stack--split">
-            <figure class="cloud-diagram request-diagram" data-reveal data-reveal-delay="1" aria-label="A request is recorded before it is handled">
-                <div class="request-diagram__step"><i class="bx bx-log-in" aria-hidden="true"></i><span>Received</span></div>
-                <div class="request-diagram__track" aria-hidden="true"><span></span></div>
-                <div class="request-diagram__step request-diagram__step--record"><i class="bx bx-layer" aria-hidden="true"></i><span>Recorded</span></div>
-                <div class="request-diagram__track" aria-hidden="true"><span></span></div>
-                <div class="request-diagram__step"><i class="bx bx-check" aria-hidden="true"></i><span>Handled</span></div>
-                <figcaption>Recorded first. Handled when the application is ready.</figcaption>
-            </figure>
-            <figure class="cloud-diagram replay-diagram" data-reveal data-reveal-delay="2" aria-label="A failed message is fixed and replayed over a selected part of the recorded timeline">
+            <figure class="cloud-diagram replay-diagram" data-reveal data-reveal-delay="2" aria-label="Messages 1 to 5 arrive in order. Message 3 fails, then succeeds when retried.">
                 <div class="replay-diagram__timeline" aria-hidden="true"><span></span></div>
                 <ol>
                     <li><span>1</span></li>
                     <li><span>2</span></li>
-                    <li class="is-failed"><i class="bx bx-x" aria-hidden="true"></i><small>Failed</small></li>
+                    <li class="is-failed"><span>3</span><small>Failed</small></li>
                     <li><span>4</span></li>
                     <li><span>5</span></li>
                 </ol>
-                <div class="replay-diagram__fix"><i class="bx bx-wrench" aria-hidden="true"></i><span>Fix</span></div>
-                <div class="replay-diagram__return"><i class="bx bx-revision" aria-hidden="true"></i><span>Replay</span></div>
-                <figcaption>Repair the cause. Replay the affected range.</figcaption>
             </figure>
         </div>
     </div>
@@ -226,8 +215,7 @@ import ExplainedTerm from './ExplainedTerm.astro';
                     <div><span></span><span></span><span></span><span></span><span class="is-empty"></span><span class="is-empty"></span></div>
                 </div>
                 <div class="capacity-diagram__application"><i class="bx bx-cube-alt" aria-hidden="true"></i><span>Application</span></div>
-                <div class="capacity-diagram__held"><i class="bx bx-pause" aria-hidden="true"></i><span>Held back</span></div>
-                <figcaption>Excess demand stays outside the application.</figcaption>
+                <div class="capacity-diagram__held"><span>Excess work</span></div>
             </figure>
         </div>
     </div>
@@ -245,7 +233,7 @@ import ExplainedTerm from './ExplainedTerm.astro';
             <figure class="cloud-diagram lanes-diagram" data-reveal data-reveal-delay="1" aria-label="Ticketing, payments, and notifications keep their own progress and capacity">
                 <div class="lanes-diagram__source"><i class="bx bx-layer" aria-hidden="true"></i><span>Recorded events</span></div>
                 <div class="lanes-diagram__lane"><strong>Ticketing</strong><span class="lane-progress lane-progress--full"></span><i class="bx bx-check" aria-hidden="true"></i></div>
-                <div class="lanes-diagram__lane lanes-diagram__lane--paused"><strong>Payments</strong><span class="lane-progress lane-progress--short"></span><i class="bx bx-pause" aria-hidden="true"></i></div>
+                <div class="lanes-diagram__lane lanes-diagram__lane--slow"><strong>Payments</strong><span class="lane-progress lane-progress--short"></span><i class="bx bx-time-five" aria-hidden="true"></i></div>
                 <div class="lanes-diagram__lane"><strong>Notifications</strong><span class="lane-progress lane-progress--full"></span><i class="bx bx-check" aria-hidden="true"></i></div>
             </figure>
         </div>
@@ -271,25 +259,25 @@ import ExplainedTerm from './ExplainedTerm.astro';
             </div>
             <div class="cloud-proof-next__history">
                 <span class="cloud-proof-next__history-ellipsis" aria-hidden="true">…</span>
-                <div><small>Event</small><strong>Ticket reserved</strong></div>
-                <div><small>Event</small><strong>Payment received</strong></div>
-                <div><small>Event</small><strong>Reservation confirmed</strong></div>
+                <div><small>18 days ago</small><strong>Ticket reserved</strong></div>
+                <div><small>14 days ago</small><strong>Payment received</strong></div>
+                <div><small>10 days ago</small><strong>Reservation confirmed</strong></div>
                 <span class="cloud-proof-next__history-ellipsis" aria-hidden="true">…</span>
             </div>
-            <div class="cloud-proof-next__evolution-path"><span>Every capability can use the full history</span></div>
+            <div class="cloud-proof-next__evolution-path" aria-hidden="true"></div>
             <div class="cloud-proof-next__capabilities">
                 <div class="cloud-proof-next__existing-capabilities">
                     <small>Already running</small>
                     <div>
-                        <span><i class="bx bx-calendar-check" aria-hidden="true"></i><strong>Ticket reservations</strong></span>
-                        <span><i class="bx bx-credit-card" aria-hidden="true"></i><strong>Payment processing</strong></span>
-                        <span><i class="bx bx-envelope" aria-hidden="true"></i><strong>Customer confirmations</strong></span>
-                        <span><i class="bx bx-x-circle" aria-hidden="true"></i><strong>Cancellation handling</strong></span>
+                        <span><i class="bx bx-calendar-check" aria-hidden="true"></i><strong>Ticket reservations</strong><i class="bx bx-check capability-current" aria-hidden="true"></i></span>
+                        <span><i class="bx bx-credit-card" aria-hidden="true"></i><strong>Payment processing</strong><i class="bx bx-check capability-current" aria-hidden="true"></i></span>
+                        <span><i class="bx bx-envelope" aria-hidden="true"></i><strong>Customer confirmations</strong><i class="bx bx-check capability-current" aria-hidden="true"></i></span>
+                        <span><i class="bx bx-x-circle" aria-hidden="true"></i><strong>Cancellation handling</strong><i class="bx bx-check capability-current" aria-hidden="true"></i></span>
                     </div>
                 </div>
                 <div class="cloud-proof-next__retroactive">
                     <small>Added later</small>
-                    <span><i class="bx bx-gift" aria-hidden="true"></i><strong>Customer rewards</strong><em>Built from all previous purchases</em></span>
+                    <span><i class="bx bx-check rewards-current" aria-hidden="true"></i><i class="bx bx-gift" aria-hidden="true"></i><strong>Customer rewards</strong><em>Built from all previous purchases</em></span>
                 </div>
             </div>
             <figcaption class="sr-only">Ticket reservations, payment processing, customer confirmations, cancellation handling, and customer rewards can all use the complete product history.</figcaption>

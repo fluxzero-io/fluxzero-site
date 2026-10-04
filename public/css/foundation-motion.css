@@ -1,0 +1,201 @@
+/* Keep the original diagrams complete when motion is unavailable. */
+.how-it-works-page .motion-decoration { display: none; }
+.how-it-works-page .ticket-sequence li {
+    grid-template-columns: 112px 34px minmax(170px, 1fr) 34px 126px;
+}
+.how-it-works-page .replay-diagram {
+    min-height: 200px;
+    padding-top: 44px;
+    padding-bottom: 40px;
+}
+.how-it-works-page .replay-diagram__timeline { top: 70px; }
+.how-it-works-page .replay-diagram li.is-failed > span:not(.motion-decoration) {
+    border-color: #c76672;
+    background: #2b1118;
+    color: #e18a95;
+}
+.lanes-diagram__lane--slow > i { color: #d8a158; }
+@media (max-width: 720px) {
+    .how-it-works-page .ticket-sequence li { grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1.2fr); }
+    .how-it-works-page .ticket-sequence__outcome { grid-column: 1 / 4; }
+    .how-it-works-page .replay-diagram__timeline { top: 66px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+    .has-diagram-motion .motion-decoration { display: block; }
+    .has-diagram-motion .ticket-sequence__ticket { position: relative; }
+    .has-diagram-motion .motion-spinner {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #72b8f433;
+        border-top-color: #93dfc1;
+        border-radius: 50%;
+        background: transparent;
+        left: 50%;
+    }
+    .has-diagram-motion .ticket-checking {
+        display: flex;
+        position: absolute;
+        bottom: 8px;
+        left: 0;
+        right: 0;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        color: #afc1d3;
+        font-size: 11px;
+    }
+    .has-diagram-motion .ticket-checking .motion-spinner {
+        position: static;
+        width: 13px;
+        height: 13px;
+    }
+    .has-diagram-motion .replay-diagram__timeline span { transform-origin: left; }
+    .has-diagram-motion .is-failed { position: relative; }
+    .has-diagram-motion .is-failed .replay-spinner {
+        top: 20px;
+        border-color: #e18a9533;
+        border-top-color: #e18a95;
+    }
+    .has-diagram-motion .is-failed .replay-success {
+        position: absolute;
+        top: -4px;
+        left: calc(50% + 12px);
+        width: 21px;
+        height: 21px;
+        border: 1px solid #93dfc1;
+        border-radius: 50%;
+        background: #0b1928;
+        color: #93dfc1;
+        font-size: 17px;
+    }
+    .has-diagram-motion .is-failed .replay-success > i { color: inherit; }
+    .has-diagram-motion .is-failed .replay-success-label {
+        position: absolute;
+        top: 67px;
+        width: auto;
+        height: auto;
+        border: 0;
+        border-radius: 0;
+        background: none;
+        color: #93dfc1;
+        font-size: 12px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+    }
+    .has-diagram-motion .is-failed .replay-retry-label { color: #e18a95; }
+    .has-diagram-motion .capacity-diagram__gate > div > span {
+        border: 0;
+        background: linear-gradient(180deg, #7dc3fc, #3e8fd8);
+    }
+    .has-diagram-motion .capacity-diagram__application { position: relative; }
+    .has-diagram-motion .capacity-output {
+        position: absolute;
+        left: -7px;
+        top: calc(50% - 7px);
+        width: 14px;
+        height: 14px;
+        border-radius: 4px;
+        background: #bce5ff;
+        box-shadow: 0 0 14px #72b8f466;
+    }
+    .has-diagram-motion .lane-progress::after { display: none; }
+    .has-diagram-motion .diagram-lane-fill { height: 100%; transform-origin: left; border-radius: inherit; }
+    .has-diagram-motion .lanes-diagram__lane { position: relative; }
+    .has-diagram-motion .diagram-extra-lane {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: inherit;
+        gap: inherit;
+        align-items: center;
+        padding: inherit;
+        pointer-events: none;
+    }
+    .has-diagram-motion .diagram-extra-lane > .lane-progress { grid-column: 2; }
+    .has-diagram-motion .diagram-lane-check {
+        position: absolute;
+        top: 50%;
+        right: 18px;
+        width: 32px;
+        transform: translateY(-50%);
+    }
+}
+
+.how-it-works-page .cloud-proof-next__existing-capabilities .capability-current {
+    margin-left: auto;
+    color: #93dfc1;
+    font-size: 18px;
+}
+.how-it-works-page .cloud-proof-next__retroactive > span { position: relative; }
+.how-it-works-page .cloud-proof-next__retroactive .rewards-current {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 19px;
+    color: #93dfc1;
+}
+@media (min-width: 769px) {
+    .how-it-works-page .cloud-proof-next__evolution-path {
+        justify-self: end;
+        margin-right: 94px;
+        top: -14px;
+        height: 122px;
+    }
+}
+@media (min-width: 769px) and (prefers-reduced-motion: no-preference) {
+    .has-diagram-motion .cloud-proof-next__history {
+        display: flex;
+        overflow: hidden;
+    }
+    .has-diagram-motion .cloud-proof-next__history-ellipsis { display: none; }
+    .has-diagram-motion .cloud-proof-next__history > div {
+        flex: 0 0 180px;
+        padding: 10px 12px;
+    }
+    .how-it-works-page .has-diagram-motion .cloud-proof-next__history > div strong {
+        font-size: 12px;
+        white-space: nowrap;
+    }
+    .has-diagram-motion .cloud-proof-next__history > .history-copy { display: flex; }
+    .has-diagram-motion .cloud-proof-next__evolution-path .history-packet {
+        position: absolute;
+        left: -4px;
+        width: 10px;
+        height: 10px;
+        min-height: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 3px;
+        background: #a8d9ff;
+    }
+    .has-diagram-motion .cloud-proof-next__retroactive .rewards-catching {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        min-height: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+    }
+    .has-diagram-motion .rewards-catching i { font-size: 20px; color: #a8d9ff; }
+    .has-diagram-motion .cloud-proof-next__retroactive .rewards-progress {
+        position: absolute;
+        bottom: 0;
+        left: 10px;
+        right: 10px;
+        min-height: 0;
+        height: 3px;
+        padding: 0;
+        border: 0;
+        border-radius: 2px;
+        background: #93dfc1;
+        transform-origin: left;
+    }
+}
+
+@media (max-width: 720px) and (prefers-reduced-motion: no-preference) {
+    .has-diagram-motion .is-failed .replay-spinner { top: 16px; }
+    .has-diagram-motion .diagram-lane-check { right: 14px; width: 24px; }
+    .has-diagram-motion .capacity-output { left: 50%; top: -7px; }
+}

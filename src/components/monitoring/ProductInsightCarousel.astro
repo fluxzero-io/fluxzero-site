@@ -32,7 +32,7 @@ const slides = productInsightSections.map(section => ({
             <div class="insight-carousel__track" id="insight-slides" data-insight-track>
                 {slides.map(slide => (
                     <article class="insight-carousel__slide" id={`insight-${slide.id}`} data-insight-slide aria-labelledby={`insight-${slide.id}-picker`}>
-                        <DashboardExample view={slide.view} sharedHeight />
+                        <DashboardExample view={slide.view} sharedHeight mobileApplication={slide.view === 'insights' ? 'Payments' : undefined} />
                     </article>
                 ))}
             </div>
@@ -163,6 +163,18 @@ const slides = productInsightSections.map(section => ({
         scroll-snap-align: start;
     }
 
+    @media (max-width: 767px) {
+        /* Each mobile tab uses its own content height. Hidden examples cannot
+           leave an empty frame below the single Payments tree. */
+        .insight-carousel__track { display: block; overflow: visible; }
+        .insight-carousel__slide[inert] { display: none; }
+        .insight-carousel :global(.monitoring-example__frame) {
+            height: var(--monitoring-content-height, 640px);
+        }
+        .insight-carousel__picker button::before,
+        .insight-carousel__picker button::after { display: none; }
+    }
+
     @media (max-width: 600px) {
         .insight-section__actions .btn-s { width: 100%; justify-content: center; }
         .insight-carousel { margin-top: 36px; }
@@ -179,6 +191,7 @@ const slides = productInsightSections.map(section => ({
             const slides = [...this.querySelectorAll<HTMLElement>('[data-insight-slide]')];
             const pickers = [...this.querySelectorAll<HTMLButtonElement>('[data-insight-picker]')];
             const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+            const mobile = window.matchMedia('(max-width: 767px)');
             const abort = new AbortController();
             const { signal } = abort;
             const duration = 8000;
@@ -207,13 +220,13 @@ const slides = productInsightSections.map(section => ({
                 const target = (index + slides.length) % slides.length;
                 scrollTarget = target;
                 update(target);
-                track.scrollTo({ left: target * track.clientWidth, behavior: 'instant' });
+                if (!mobile.matches) track.scrollTo({ left: target * track.clientWidth, behavior: 'instant' });
                 if (!reducedMotion.matches) {
                     slides[target].getAnimations().forEach(animation => animation.cancel());
                     slides[target].animate([{ opacity: .2 }, { opacity: 1 }], { duration: 240, easing: 'ease-out' });
                 }
             };
-            const shouldRun = () => inView && !hovering && !focused && !document.hidden && !reducedMotion.matches;
+            const shouldRun = () => inView && !hovering && !focused && !document.hidden && !reducedMotion.matches && !mobile.matches;
             const tick = (time: number) => {
                 timerFrame = 0;
                 if (!shouldRun()) return;
@@ -249,6 +262,7 @@ const slides = productInsightSections.map(section => ({
             track.addEventListener('pointerdown', () => { scrollTarget = null; }, { signal });
             track.addEventListener('wheel', () => { scrollTarget = null; }, { passive: true, signal });
             track.addEventListener('scroll', () => {
+                if (mobile.matches) return;
                 cancelAnimationFrame(scrollFrame);
                 scrollFrame = requestAnimationFrame(() => {
                     if (scrollTarget !== null) {
@@ -280,6 +294,7 @@ const slides = productInsightSections.map(section => ({
             }, { signal });
             document.addEventListener('visibilitychange', sync, { signal });
             reducedMotion.addEventListener('change', sync, { signal });
+            mobile.addEventListener('change', () => { goTo(active); sync(); }, { signal });
 
             const visibilityObserver = new IntersectionObserver(([entry]) => {
                 inView = entry.isIntersecting && entry.intersectionRatio >= .25;
@@ -291,7 +306,7 @@ const slides = productInsightSections.map(section => ({
                 if (track.clientWidth === width) return;
                 width = track.clientWidth;
                 scrollTarget = null;
-                track.scrollTo({ left: active * width, behavior: 'instant' });
+                if (!mobile.matches) track.scrollTo({ left: active * width, behavior: 'instant' });
             });
             resizeObserver.observe(track);
             update(0);
