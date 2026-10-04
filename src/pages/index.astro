@@ -14,35 +14,21 @@ import { fluxzeroBrand } from '../config/brand.mjs';
 
 const comparisonRows = [
     {
-        label: "Agent builds",
+        label: "Your agent’s focus",
         values: [
-            { status: "Product behavior + technical stack", kind: 'owned' },
-            { status: "Product behavior", kind: 'included' },
-        ],
-    },
-    {
-        label: "Team required as you grow",
-        values: [
-            { status: "Backend/platform expertise", kind: 'owned' },
-            { status: "No backend team required", kind: 'included' },
+            { status: "Product features + backend engineering", kind: 'owned' },
+            { status: "Product features", kind: 'included' },
         ],
     },
     {
         label: "Adding a feature",
         values: [
-            { status: "Changes across the entire stack", kind: 'owned' },
+            { status: "Wire it through every layer", kind: 'owned' },
             { status: "Just add the feature", kind: 'included' },
         ],
     },
     {
-        label: "Audit trail",
-        values: [
-            { status: "Build it yourself", kind: 'owned' },
-            { status: "Built into the cloud", kind: 'included' },
-        ],
-    },
-    {
-        label: "Failure/recovery",
+        label: "Reliability and security",
         values: [
             { status: "Your agent's responsibility", kind: 'owned' },
             { status: "Cloud responsibility", kind: 'included' },
@@ -56,10 +42,24 @@ const comparisonRows = [
         ],
     },
     {
-        label: "Maintaining the foundation",
+        label: "Failure recovery",
         values: [
-            { status: "Ongoing work for your agent", kind: 'owned' },
-            { status: "Maintained and improved by Fluxzero", kind: 'included' },
+            { status: "Build it yourself", kind: 'owned' },
+            { status: "Built into the cloud", kind: 'included' },
+        ],
+    },
+    {
+        label: "Enterprise architecture",
+        values: [
+            { status: "Design it yourself", kind: 'owned' },
+            { status: "From day zero", kind: 'included' },
+        ],
+    },
+    {
+        label: "Backend team costs",
+        values: [
+            { status: "As you grow", kind: 'owned' },
+            { status: "Not required", kind: 'included' },
         ],
     },
     {
@@ -69,11 +69,18 @@ const comparisonRows = [
             { status: "No rebuild needed", kind: 'included' },
         ],
     },
+    {
+        label: "Long-term maintenance",
+        values: [
+            { status: "Ongoing work", kind: 'owned' },
+            { status: "Taken care of by Fluxzero", kind: 'included' },
+        ],
+    },
 ];
 
 const comparisonOptions = [
     { name: 'Other clouds', sub: 'Supabase, Vercel, Railway, Lovable & others', index: 0 },
-    { name: 'Fluxzero', sub: 'The product cloud', index: 1, featured: true },
+    { name: 'Fluxzero', sub: 'Frees your agent', index: 1, featured: true },
 ];
 
 const homepageFaqs = [
@@ -82,7 +89,7 @@ const homepageFaqs = [
         question: 'What is Fluxzero?',
         llmsSummary: true,
         answer: [
-            'Fluxzero is a cloud designed to work especially well with coding agents. It handles the data, security, reliability, and scale, so you and your agent can focus on what your product should do.',
+            'Fluxzero is a cloud that works for your agent. It provides the data handling, security, reliability, and scale your product needs, so your agent can build product features without building and maintaining the systems underneath.',
             'Once your product is live, you and your agent can see what happens, investigate problems, and keep improving it.',
         ],
     },
@@ -90,8 +97,8 @@ const homepageFaqs = [
         id: 'faq-generated-backend',
         question: 'My agent can generate a backend. Why should it use Fluxzero?',
         answer: [
-            'Other clouds give your agent infrastructure and services to turn into a reliable product. The backend it builds is still yours to secure, maintain, and scale. Fluxzero takes care of that foundation, so your agent can focus on product features.',
-            'Coding agents work better when they have less to think about. With the technical foundation taken care of, your agent can focus its attention and context on your product’s features, rules, and user experience.',
+            'Generating a backend is only the start. Your agent also has to make it reliable under load, secure its data, recover interrupted work, and keep it running as your product changes.',
+            'With Fluxzero, your agent doesn’t have to do all that. It writes your product’s features and access rules, while the cloud handles their execution at any scale.',
         ],
     },
     {
@@ -99,7 +106,7 @@ const homepageFaqs = [
         question: 'What does building with Fluxzero look like?',
         answer: [],
         steps: [
-            'Describe your product. Copy the getting-started instruction into your coding agent and tell it what you want to build.',
+            'Build your product. Give your coding agent the getting-started instruction, then work with it on your product’s features and behavior.',
             'Try it locally. Run the app on your computer, check how it behaves, and refine it with your agent.',
             'Publish it. When you are ready, deploy your product to Fluxzero.',
         ],
@@ -113,7 +120,7 @@ const homepageFaqs = [
         question: 'Do I need coding experience?',
         answer: [
             'No. You describe what your product should do, and your coding agent writes the code. You try the result and refine it together.',
-            'Developers can also review, change, and extend the same application code alongside your agent.',
+            'Your agent produces real code. Developers can inspect it, contribute changes, and extend the product alongside your agent.',
         ],
     },
     {
@@ -128,15 +135,15 @@ const homepageFaqs = [
         id: 'faq-products',
         question: 'What kinds of products can I build?',
         answer: [
-            'Fluxzero suits a wide range of applications: SaaS products, marketplaces, portals, internal tools, consumer apps, and AI-enabled software.',
-            'Infrastructure products that depend on running a specific underlying component, such as a database service built around a particular database engine, are not a good fit.',
+            'Products across industries and domains, from an internal tool for a handful of people to a mission-critical system serving millions of customers. Your product’s category does not determine whether it fits: Fluxzero handles the data, rules, and workflows underneath.',
+            'Infrastructure tools for developers that depend on a specific hardware component are not a good fit. Your product can still integrate with external services, including payments, email, and AI.',
         ],
     },
     {
         id: 'faq-existing-product',
         question: 'Can I bring an existing product?',
         answer: [
-            'Yes. Your existing product gives your agent a starting point: its features, design, and business rules. Your agent can adapt the backend to use Fluxzero and help migrate your data. How much needs to change depends on how your product is built today.',
+            'Yes. Your existing product gives your agent a starting point: its features, design, and business rules. Your agent can adapt it to use Fluxzero and help migrate your data. How much needs to change depends on how your product is built today.',
         ],
         link: { href: '/contact/', label: 'Tell us about your product' },
     },
@@ -144,37 +151,37 @@ const homepageFaqs = [
         id: 'faq-companies',
         question: 'What kinds of companies run on Fluxzero?',
         answer: [
-            'Fluxzero is used in production by single-founder companies, scale-ups, and enterprises with complex business logic and mission-critical workloads.',
+            'Fluxzero runs production workloads for single-founder companies, scale-ups, and established enterprises. You can start on your own or use it within an existing organisation.',
         ],
-        link: { href: '/how-it-works/', label: 'See how Fluxzero keeps your product running' },
     },
     {
         id: 'faq-growth',
         question: 'Will I outgrow Fluxzero or need to rebuild later?',
         answer: [
-            'No. The same application works locally and at production scale. Individual workloads can receive more capacity as your product grows, without forcing the whole product onto a new architecture.',
+            'No. Fluxzero is built to run your product at enterprise scale. The same application that works locally runs in production with real users. Individual workloads can receive more capacity as usage grows, without changing any code.',
         ],
+        link: { href: '/how-it-works/', label: 'See how Fluxzero keeps your product running' },
     },
     {
         id: 'faq-product-insight',
         question: 'How do I keep track of my product once it’s live?',
         answer: [
-            'You and your agent can follow what happens in your product, investigate errors, and spot performance issues. A searchable history lets you trace an interaction back to the user or system behind it and see how it unfolded across your apps.',
+            'You and your agent can follow what happens in your product, investigate errors, and spot performance issues. Your agent does not need to build a separate activity log or connect tracing tools: Fluxzero records a searchable history that shows how each interaction unfolded across your apps.',
         ],
-        link: { href: '/product-insight/', label: 'See how Fluxzero gives you full insight' },
+        link: { href: '/product-insight/', label: 'See how you get full insight' },
     },
     {
         id: 'faq-ownership',
         question: 'Do I own my code and data?',
         answer: [
-            'Yes. Your application code and product data remain yours. Your data can be exported in a machine-readable format.',
+            'Yes. Your application code and product data remain entirely yours. You can manage the source in your own repository, on GitHub or elsewhere, and work on it with any developer or coding agent. Your data can be exported in a machine-readable format.',
         ],
     },
     {
         id: 'faq-pricing',
         question: 'When do I start paying?',
         answer: [
-            'Building and running locally is free. You start paying when you activate a plan to put your product online.',
+            'You can build, test, and finish your entire product locally for free. You only start paying when you activate a plan to put it online.',
         ],
         link: { href: '/pricing/', label: 'See pricing' },
     },
@@ -264,7 +271,7 @@ const homepageFaqSchema = {
             {comparisonOptions.map((option) => (
                 <div class:list={['comparison-head__option', { 'is-featured': option.featured }]} role="columnheader">
                     <h3>{option.name}</h3>
-                    <p>{option.sub}</p>
+                    {option.sub && <p>{option.sub}</p>}
                 </div>
             ))}
         </div>
@@ -294,7 +301,7 @@ const homepageFaqSchema = {
                 <summary>
                     <span>
                         <strong>{option.name}</strong>
-                        <small>{option.sub}</small>
+                        {option.sub && <small>{option.sub}</small>}
                     </span>
                     <svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg>
                 </summary>
@@ -333,7 +340,7 @@ const homepageFaqSchema = {
     </div>
     <div class="cta-btns homepage-finish__actions">
         <button class="btn-p" type="button" aria-expanded="false" aria-controls="faq" data-toggle-faq>FAQ <span class="homepage-finish__chevron" aria-hidden="true">↓</span></button>
-        <a href="/pricing/" class="btn-s">Pricing <span aria-hidden="true">→</span></a>
+        <a href="/pricing/" data-astro-prefetch="viewport" class="btn-s">Pricing <span aria-hidden="true">→</span></a>
     </div>
     <div class="faq homepage-faq" id="faq" aria-labelledby="faq-title" data-llms-include hidden>
         <div class="faq-list">

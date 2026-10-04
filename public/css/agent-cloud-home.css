@@ -250,6 +250,32 @@
 }
 
 @media (max-width: 600px) {
+    .agent-cloud-home .hero {
+        --hero-space: #18191d;
+        --hero-planet-surface: #191a1e;
+        --mobile-horizon-top: clamp(566px, calc(543px + 7vw), 580px);
+    }
+
+    .agent-cloud-home .hero-sub {
+        max-width: 340px;
+        padding-inline: 24px;
+        font-size: 17px;
+        line-height: 1.65;
+        margin-bottom: 32px;
+    }
+
+    .agent-cloud-home .hero-bg-fade-left {
+        background: linear-gradient(90deg, var(--hero-space), transparent);
+    }
+
+    .agent-cloud-home .hero-bg-fade-right {
+        background: linear-gradient(270deg, var(--hero-space), transparent);
+    }
+
+    .homepage-finish__actions {
+        flex-direction: column-reverse;
+    }
+
     .agent-cloud-home .homepage-finish__title {
         font-size: clamp(29px, 9vw, 40px);
     }

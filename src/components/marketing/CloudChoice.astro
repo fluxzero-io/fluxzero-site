@@ -3,12 +3,12 @@ const choiceOptions = [
     {
         title: 'Other clouds',
         featured: false,
-        copy: 'Builders who want to design and maintain the technical foundation underneath their product.',
+        copy: 'For builders who want their agent to build and maintain the technical stack and keep it reliable, secure, and scalable.',
     },
     {
         title: 'Fluxzero',
         featured: true,
-        copy: 'Builders who want to focus on product features and expect the technology underneath to just work.',
+        copy: 'For builders who want their agent focused on product features, with reliability, security, and scale built into the cloud.',
     },
 ];
 ---
@@ -42,6 +42,9 @@ const choiceOptions = [
     .cloud-choice h3 { color: #d0d8e2; font-family: var(--font-body); font-size: 22px; font-weight: 600; }
     .cloud-choice .is-featured h3 { color: #bcdfff; }
     .cloud-choice__options p { margin-top: 13px; color: #9aa9bb; font-size: 16px; line-height: 1.58; }
+    @media (min-width: 761px) {
+        .cloud-choice__options p { font-size: 18px; }
+    }
     @media (max-width: 760px) {
         .cloud-choice h2 { font-size: clamp(32px, 7.6vw, 46px); }
         .cloud-choice__options { grid-template-columns: 1fr; gap: 30px; }

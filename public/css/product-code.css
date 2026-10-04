@@ -180,12 +180,6 @@
     align-items: start;
 }
 
-.product-code-proof__code-stack {
-    display: grid;
-    min-width: 0;
-    gap: 18px;
-}
-
 .product-code-proof__aside {
     display: grid;
     min-width: 0;
