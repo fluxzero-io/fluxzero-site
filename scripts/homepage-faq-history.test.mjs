@@ -8,7 +8,9 @@ const page = readFileSync(new URL('../src/pages/index.astro', import.meta.url), 
 const script = ts.transpileModule(page.match(/<script>\s*([\s\S]*?)<\/script>/)[1], {}).outputText;
 
 const pricingPage = readFileSync(new URL('../src/components/marketing/PricingPage.astro', import.meta.url), 'utf8');
-const pricingScript = ts.transpileModule(pricingPage.match(/<script>\s*([\s\S]*?)<\/script>/)[1].replace(/import [^;]+;/, ''), {}).outputText;
+// Isolate FAQ behavior from all imported browser modules, including animation
+// and calculator initialization that need their own DOM.
+const pricingScript = ts.transpileModule(pricingPage.match(/<script>\s*([\s\S]*?)<\/script>/)[1].replace(/import [^;]+;/g, ''), {}).outputText;
 
 function visit(hash = '', state = null, source = script) {
     const listeners = new Map();
