@@ -5,13 +5,23 @@ body.how-it-works-page {
 }
 
 .how-it-works-page .agent4-hero {
+    min-height: 0;
     background: var(--section-base);
+}
+
+.how-it-works-hero__inner {
+    padding-block: 110px 104px;
+}
+
+.how-it-works-page .agent4-hero__copy {
+    width: 100%;
+    max-width: none;
+    padding-bottom: 0;
 }
 
 .how-it-works-page .agent4-hero__backdrop {
     mask-image: linear-gradient(to bottom, #000 65%, rgba(0, 0, 0, 0.94) 72%, rgba(0, 0, 0, 0.5) 86%, rgba(0, 0, 0, 0.12) 95%, transparent);
 }
-
 .how-it-works-page .agent4-hero h1,
 .how-it-works-page .cloud-proof-next-conclusion h2 {
     font-size: clamp(38px, 4.5vw, 62px);
@@ -26,6 +36,12 @@ body.how-it-works-page {
 
 .how-it-works-page .performance-stat__context sup a {
     text-decoration: none;
+}
+
+@media (min-width: 701px) {
+    .how-it-works-page .performance-proof {
+        margin-top: 40px;
+    }
 }
 
 .how-it-works-page .cloud-proof-copy h2 {
@@ -44,33 +60,51 @@ body.how-it-works-page {
 
 .how-it-works-page .agent4-hero__copy > p {
     max-width: 800px;
-    margin-top: 40px;
+    margin-top: 32px;
 }
 
-.how-it-works-page .agent4-hero__actions {
-    margin-top: 44px;
-}
+@media (max-width: 600px) {
+    .how-it-works-hero__inner {
+        padding-block: 64px 64px;
+    }
 
-.how-it-works-page .agent4-hero__desktop-break {
-    display: none;
-}
+    .how-it-works-page .agent4-hero__copy > p {
+        margin-top: 28px;
+    }
 
-@media (min-width: 1024px) {
-    .how-it-works-page .agent4-hero__desktop-break {
-        display: initial;
+    .how-it-works-page .agent4-hero__backdrop {
+        opacity: 0.45;
     }
 }
 
-@media (min-width: 761px) {
-    .how-it-works-page .agent4-hero,
-    .how-it-works-page .agent4-hero__inner {
-        min-height: clamp(780px, 72svh, 920px);
+@media (min-width: 1100px) {
+    .how-it-works-hero__inner {
+        padding-block: clamp(125px, calc(55px + 7svh), 145px) clamp(167px, calc(52px + 12svh), 202px);
     }
 
-    .how-it-works-page .agent4-hero__inner {
-        align-items: flex-start;
-        padding-top: clamp(130px, 14svh, 185px);
-        padding-bottom: 220px;
+    .how-it-works-page .agent4-hero {
+        overflow: visible;
+    }
+
+    .how-it-works-page .agent4-hero__backdrop {
+        /* Extend the fade below the hero; compensate 74px to keep the horizon in place. */
+        height: calc(100% + 100px);
+        object-position: center calc(74% - 26px);
+        mask-image: linear-gradient(to bottom,
+            #000 calc(100% - 160px),
+            rgba(0, 0, 0, 0.92) calc(100% - 128px),
+            rgba(0, 0, 0, 0.65) calc(100% - 96px),
+            rgba(0, 0, 0, 0.3) calc(100% - 64px),
+            rgba(0, 0, 0, 0.07) calc(100% - 32px),
+            transparent);
+    }
+
+    .how-it-works-page .agent4-hero__copy > p {
+        margin-top: 36px;
+    }
+
+    .how-it-works-page .performance-proof {
+        margin-top: 48px;
     }
 }
 

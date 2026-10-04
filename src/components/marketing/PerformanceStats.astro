@@ -1,5 +1,18 @@
-<section class="performance-proof" id="proven-foundation" aria-label="Performance and application code">
+---
+import '../../../public/css/performance-flow.css';
+---
+
+<section class="performance-proof cloud-proof-shell" id="proven-foundation" aria-label="Performance and application code">
     <div class="performance-stats">
+        <div class="performance-flow" aria-hidden="true" data-llms-exclude>
+            {['in', 'out'].map(edge => (
+                <svg class={`performance-flow__streams performance-flow__streams--${edge}`} viewBox="0 0 1000 32" preserveAspectRatio="none" focusable="false">
+                    {[8, 16, 24].map((y, lane) => (
+                        <path class={`performance-flow__packets performance-flow__packets--${lane}`} d={`M 0 ${y} H 1000`} pathLength="1000" />
+                    ))}
+                </svg>
+            ))}
+        </div>
         <dl class="performance-stat">
             <dt>GB / min data throughput</dt>
             <dd class="performance-stat__number">100<span>+</span></dd>
@@ -24,8 +37,7 @@
 <style>
     .performance-proof {
         position: relative;
-        width: min(1120px, calc(100% - 64px));
-        margin: 48px auto 60px;
+        margin: 0 auto 60px;
         scroll-margin-top: 110px;
     }
     .performance-stats {
@@ -110,7 +122,6 @@
     .performance-proof a { color: #add4f2; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #add4f255; }
     .performance-source { margin: 20px auto 0; max-width: 960px; color: #778497; text-align: center; font-size: 11px; line-height: 1.65; }
     @media (max-width: 700px) {
-        .performance-proof { width: calc(100% - 40px); margin-top: 24px; }
         .performance-stats { grid-template-columns: 1fr; border-radius: 20px; }
         .performance-stat { padding: 32px 24px; }
         .performance-stat + .performance-stat { border-left: 0; border-top: 1px solid #ebf8ff14; }
@@ -118,3 +129,17 @@
         .performance-stat__context { max-width: 300px; margin-top: 12px; }
     }
 </style>
+
+<script>
+    const stats = document.querySelector('.performance-stats');
+    if (stats) {
+        let inView = false;
+        const updateFlow = () => stats.classList.toggle('is-flowing', inView && !document.hidden);
+        const observer = new IntersectionObserver(([entry]) => {
+            inView = entry.isIntersecting;
+            updateFlow();
+        });
+        observer.observe(stats);
+        document.addEventListener('visibilitychange', updateFlow);
+    }
+</script>
