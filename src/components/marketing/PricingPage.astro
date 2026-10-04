@@ -1,5 +1,6 @@
 ---
 import '../../../public/css/marketing-shell.css';
+import '../../../public/css/marketing-entrance.css';
 import pricingCss from '../../../public/css/pricing.css?inline';
 import BrandHead from '../BrandHead.astro';
 import MarketingFooter from './MarketingFooter.astro';
@@ -141,12 +142,12 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
 
 <main class="pricing-v2">
     <section class="pricing-v2-hero" aria-labelledby="pricing-title">
-        <h1 id="pricing-title">Start running on Fluxzero today.</h1>
-        <p>No surprises or hidden fees. Cancel any time.</p>
+        <h1 id="pricing-title" data-entrance>Start running on Fluxzero today.</h1>
+        <p data-entrance data-entrance-delay="1">No surprises or hidden fees. Cancel any time.</p>
     </section>
 
     <section class="pricing-v2-plans" aria-label="Pricing plans">
-        <article class="pricing-v2-card pricing-v2-free" aria-label="Free plan">
+        <article class="pricing-v2-card pricing-v2-free" aria-label="Free plan" data-entrance data-entrance-delay="2">
             <div class="pricing-v2-card-top">
                 <h2>Free</h2>
                 <div class="pricing-v2-price">
@@ -165,9 +166,11 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                 <a href="/#get-started" class="pricing-v2-card-action">Get started</a>
             </div>
         </article>
+        <!-- Animate cards individually: transforming this panel would lift its
+             negative-z-index glow above the preceding Free card during entry. -->
         <div class="pricing-v2-panel pricing-v2-panel-current">
-            {offers.map(offer => <PricingPlanCard offer={offer} catalog={catalog} />)}
-                <article class="pricing-v2-card">
+            {offers.map((offer, index) => <PricingPlanCard offer={offer} catalog={catalog} entranceDelay={Math.min(index + 3, 5)} />)}
+                <article class="pricing-v2-card" data-entrance data-entrance-delay="5">
                     <div class="pricing-v2-card-top">
                         <h2>Enterprise</h2>
                         <div class="pricing-v2-price pricing-v2-price-custom">
@@ -193,13 +196,13 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
     </section>
 
     <section class="pricing-v2-included" aria-labelledby="pricing-included-title">
-        <div class="pricing-v2-included-head">
+        <div class="pricing-v2-included-head" data-entrance>
             <h2 id="pricing-included-title">Included in every plan.</h2>
             <p>The same reliable foundation, with the capacity you need.</p>
         </div>
 
         <div class="pricing-v2-included-grid">
-            <article class="pricing-v2-included-group foundation-runtime">
+            <article class="pricing-v2-included-group foundation-runtime" data-entrance data-entrance-delay="1">
                 <h3>Deployment & scale</h3>
                 <PricingFoundationDiagram kind="runtime" />
                 <ul class="pricing-v2-list">
@@ -209,7 +212,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-scale"></use></svg>App scaling</li>
                 </ul>
             </article>
-            <article class="pricing-v2-included-group foundation-data">
+            <article class="pricing-v2-included-group foundation-data" data-entrance data-entrance-delay="2">
                 <h3>Data & messaging</h3>
                 <PricingFoundationDiagram kind="data" />
                 <ul class="pricing-v2-list">
@@ -219,7 +222,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-sso"></use></svg>Inter-app messaging</li>
                 </ul>
             </article>
-            <article class="pricing-v2-included-group foundation-trace">
+            <article class="pricing-v2-included-group foundation-trace" data-entrance data-entrance-delay="3">
                 <h3>Visibility</h3>
                 <PricingFoundationDiagram kind="trace" />
                 <ul class="pricing-v2-list">
@@ -229,7 +232,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                     <li><svg class="pricing-v2-feature-icon" aria-hidden="true"><use href="#pricing-icon-uptime"></use></svg>Full visibility into your apps</li>
                 </ul>
             </article>
-            <article class="pricing-v2-included-group foundation-access">
+            <article class="pricing-v2-included-group foundation-access" data-entrance data-entrance-delay="4">
                 <h3>Access & isolation</h3>
                 <PricingFoundationDiagram kind="access" />
                 <ul class="pricing-v2-list">
@@ -242,7 +245,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
         </div>
     </section>
 
-    <section class="pricing-v2-faq" id="faq" aria-labelledby="pricing-faq-title">
+    <section class="pricing-v2-faq" id="faq" aria-labelledby="pricing-faq-title" data-entrance>
         <div class="pricing-v2-faq-list">
             <header class="pricing-v2-faq-head">
                 <h2 id="pricing-faq-title">Frequently asked questions</h2>
@@ -355,6 +358,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
 
 <script type="application/json" id="capacity-catalog" set:html={serializedCatalog}></script>
 <script>
+    import '../../scripts/marketing-entrance';
     import '../../scripts/pricing-calculator';
     const faqItems = Array.from(document.querySelectorAll<HTMLDetailsElement>('.pricing-v2-faq-item[id]'));
     let faqScrollFrame = 0;

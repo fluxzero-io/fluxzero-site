@@ -1,6 +1,6 @@
 ---
 import {availableSizes, capability, productFor} from '../../utils/capacity-pricing.mjs';
-const {offer, catalog} = Astro.props;
+const {offer, catalog, entranceDelay = 0} = Astro.props;
 const plan = offer.subscription;
 const policy = plan.capacityPolicy;
 const pro = !!offer.plan.details.basePlanId;
@@ -34,7 +34,7 @@ const features = pro ? [
     'Community support',
 ];
 ---
-<article class:list={['pricing-v2-card', 'pricing-v2-flip-card', {'is-featured': pro}]} data-plan-card={offer.plan.planId} aria-label={`${plan.displayName} plan`}>
+<article class:list={['pricing-v2-card', 'pricing-v2-flip-card', {'is-featured': pro}]} data-plan-card={offer.plan.planId} aria-label={`${plan.displayName} plan`} data-entrance data-entrance-delay={entranceDelay}>
     <div class="pricing-v2-flip-inner">
         <div class="pricing-v2-flip-face pricing-v2-flip-face--front">
             <div class="pricing-v2-card-top">

@@ -3,6 +3,7 @@ import '../../public/css/v4.css';
 import '../../public/css/marketing-shell.css';
 import '../../public/css/marketing-buttons.css';
 import '../../public/css/about.css';
+import '../../public/css/marketing-entrance.css';
 import BrandHead from '../components/BrandHead.astro';
 import MarketingFooter from '../components/marketing/MarketingFooter.astro';
 import MarketingHeader from '../components/marketing/MarketingHeader.astro';
@@ -35,17 +36,17 @@ const starShapes = aboutStars.slice(aboutStars.indexOf('>') + 1, aboutStars.last
         <span class="about-meteor"></span>
     </div>
     <article class="about-statement" aria-labelledby="mission-title">
-        <h1 id="mission-title">Great ideas deserve<br class="about-statement__break"> to become real products.</h1>
+        <h1 id="mission-title" data-entrance>Great ideas deserve<br class="about-statement__break"> to become real products.</h1>
 
         <div class="about-belief">
-            <p>We believe turning ideas into software<br class="about-statement__break"> should be effortless, at any scale.</p>
-            <p>With AI, the potential of software is unlimited,<br class="about-belief__break"> yet much of it remains just out of reach.</p>
-            <p class="about-belief__closing">Imagine a world where all that potential is finally set free.</p>
+            <p data-entrance data-entrance-delay="1">We believe turning ideas into software<br class="about-statement__break"> should be effortless, at any scale.</p>
+            <p data-entrance data-entrance-delay="2">With AI, the potential of software is unlimited,<br class="about-belief__break"> yet much of it remains just out of reach.</p>
+            <p class="about-belief__closing" data-entrance data-entrance-delay="3">Imagine a world where all that potential is finally set free.</p>
         </div>
 
-        <p class="about-team">We’re a European engineering team with years of experience<br class="about-statement__break"> building and running systems that could not afford to fail.<br class="about-statement__break"> On Fluxzero, that same foundation is available to every builder.</p>
+        <p class="about-team" data-entrance data-entrance-delay="4">We’re a European engineering team with years of experience<br class="about-statement__break"> building and running systems that could not afford to fail.<br class="about-statement__break"> On Fluxzero, that same foundation is available to every builder.</p>
 
-        <div class="about-actions">
+        <div class="about-actions" data-entrance data-entrance-delay="5">
             <a class="btn-p" href="/#get-started">Get started <span aria-hidden="true">→</span></a>
             <a class="btn-s" href="/contact/">Talk to us <span aria-hidden="true">→</span></a>
         </div>
@@ -54,6 +55,7 @@ const starShapes = aboutStars.slice(aboutStars.indexOf('>') + 1, aboutStars.last
 <MarketingFooter />
 
 <script>
+    import '../scripts/marketing-entrance';
     import '../scripts/about-stars';
 
     async function initSystemStatus() {
