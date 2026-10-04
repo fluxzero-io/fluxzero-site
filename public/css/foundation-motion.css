@@ -89,6 +89,7 @@
         background: linear-gradient(180deg, #7dc3fc, #3e8fd8);
     }
     .has-diagram-motion .capacity-diagram__application { position: relative; }
+    .has-diagram-motion .capacity-input,
     .has-diagram-motion .capacity-output {
         position: absolute;
         left: -7px;
@@ -99,6 +100,7 @@
         background: #bce5ff;
         box-shadow: 0 0 14px #72b8f466;
     }
+    .has-diagram-motion .capacity-input { left: calc(100% - 7px); }
     .has-diagram-motion .lane-progress::after { display: none; }
     .has-diagram-motion .diagram-lane-fill { height: 100%; transform-origin: left; border-radius: inherit; }
     .has-diagram-motion .lanes-diagram__lane { position: relative; }

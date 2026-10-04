@@ -207,15 +207,17 @@ import ExplainedTerm from './ExplainedTerm.astro';
         </header>
         <div class="cloud-proof-next__diagram-stack cloud-proof-next__scale-stack">
             <figure class="cloud-diagram capacity-diagram" data-reveal data-reveal-delay="1" aria-label="Incoming work passes through a bounded capacity gate">
-                <div class="capacity-diagram__incoming" aria-hidden="true">
-                    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                <div class="capacity-diagram__queue">
+                    <div class="capacity-diagram__held"><span>Excess work</span></div>
+                    <div class="capacity-diagram__incoming" aria-hidden="true">
+                        <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
                 </div>
                 <div class="capacity-diagram__gate">
                     <strong>Bounded capacity</strong>
                     <div><span></span><span></span><span></span><span></span><span class="is-empty"></span><span class="is-empty"></span></div>
                 </div>
                 <div class="capacity-diagram__application"><i class="bx bx-cube-alt" aria-hidden="true"></i><span>Application</span></div>
-                <div class="capacity-diagram__held"><span>Excess work</span></div>
             </figure>
         </div>
     </div>

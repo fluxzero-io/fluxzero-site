@@ -966,12 +966,18 @@
 .capacity-diagram {
     display: grid;
     grid-template-columns: 1fr 260px 1fr;
-    grid-template-rows: 1fr 32px;
+    grid-template-areas: "queue gate application";
     gap: 18px 34px;
     align-items: center;
 }
 
+.capacity-diagram__queue {
+    grid-area: queue;
+    position: relative;
+}
+
 .capacity-diagram__incoming {
+    position: relative;
     display: grid;
     max-width: 236px;
     grid-template-columns: repeat(4, 34px);
@@ -999,6 +1005,7 @@
 }
 
 .capacity-diagram__gate {
+    grid-area: gate;
     padding: 26px;
     border: 3px solid #5db1fa;
     border-radius: 24px;
@@ -1009,6 +1016,7 @@
 .capacity-diagram__gate strong {
     display: block;
     margin-bottom: 14px;
+    text-align: center;
     color: #e0edfa;
     font-size: 13px;
 }
@@ -1031,6 +1039,7 @@
 }
 
 .capacity-diagram__application {
+    grid-area: application;
     display: flex;
     min-height: 116px;
     align-items: center;
@@ -1059,14 +1068,13 @@
 
 .capacity-diagram__held {
     display: flex;
-    grid-column: 1;
+    position: absolute;
+    bottom: calc(100% + 14px);
+    width: 100%;
     align-items: center;
     justify-content: center;
     gap: 6px;
     color: #879caf;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
 }
 
 .capacity-diagram__held i {
@@ -1556,9 +1564,18 @@
 
     .capacity-diagram {
         grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto auto;
+        grid-template-areas: "queue" "gate" "application";
         gap: 24px;
         justify-items: center;
+    }
+
+    .capacity-diagram__queue {
+        display: grid;
+        gap: 14px;
+    }
+
+    .capacity-diagram__held {
+        position: static;
     }
 
     .capacity-diagram__incoming::after,
@@ -1572,11 +1589,6 @@
 
     .capacity-diagram__application {
         width: 180px;
-    }
-
-    .capacity-diagram__held {
-        grid-column: 1;
-        grid-row: 2;
     }
 
     .history-diagram {

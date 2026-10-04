@@ -134,6 +134,16 @@ body.how-it-works-page {
     z-index: 1;
 }
 
+.how-it-works-page :is(.capacity-diagram__held span, .capacity-diagram__gate strong, .capacity-diagram__application > span) {
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    letter-spacing: normal;
+    text-transform: none;
+    color: var(--diagram-text);
+}
+
 /* Diagram labels must remain readable at their actual rendered size. */
 .how-it-works-page {
     --diagram-text: #dce9f5;
@@ -153,7 +163,7 @@ body.how-it-works-page {
 .how-it-works-page :is(.model-diagram__instance small, .model-diagram__capabilities span,
     .ticket-sequence__ticket small, .replay-diagram__fix span, .replay-diagram__return span,
     .secure-edge-diagram__foundation small, .secure-edge-diagram__connection small,
-    .secure-edge-diagram__cluster > div small, .capacity-diagram__held span,
+    .secure-edge-diagram__cluster > div small,
     .cloud-proof-next__shape small, .cloud-proof-next__evolution-path span,
     .cloud-proof-next__retroactive em, .cloud-proof-next__operations li small,
     .cloud-proof-next__operations-clusters small) {

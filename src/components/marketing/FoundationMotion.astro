@@ -94,18 +94,44 @@ import '../../../public/css/foundation-motion.css';
             const waiting = all('.capacity-diagram__incoming > span');
             const slots = all('.capacity-diagram__gate > div > span');
             const output = decorate(find('.capacity-diagram__application'), 'capacity-output');
+            const queueNode = find('.capacity-diagram__queue');
+            const gate = find('.capacity-diagram__gate');
+            const input = decorate(queueNode, 'capacity-input');
             const arrivals = [500, 1100, 1700, 2400, 3800, 5200, 6600, 8000];
             const departures = Array.from({length: 8}, (_, i) => 2200 + i * 1400);
             period = 13200; // Ends full with two waiting messages, matching the next cycle.
             render = t => {
-                const active = departures.find(at => t >= at && t < at + 1000);
+                const active = departures.find(at => t >= at && t < at + 1100);
                 const phase = active === undefined ? -1 : t - active;
-                const admitted = departures.filter(at => t >= at + 800).length;
+                const leaveAt = compact.matches ? 800 : 650;
+                const enterAt = compact.matches ? 500 : 950;
+                const enterDuration = compact.matches ? 300 : 150;
+                const admitted = departures.filter(at => t >= at + leaveAt).length;
                 const queue = 2 + arrivals.filter(at => t >= at).length - admitted;
+                const arriving = arrivals.find(at => t >= at && t < at + 220);
+                const insertion = arriving === undefined ? 1 : ramp(t, arriving, 220);
                 waiting.forEach((node, i) => {
-                    const transferring = i === queue - 1 && phase >= 500 && phase < 800;
-                    style(node, {opacity: i < queue ? (transferring ? 1 - (phase - 500) / 300 : 1) : 0,
-                        transform: transferring ? `translate${compact.matches ? 'Y' : 'X'}(${(phase - 500) / 10}px)` : 'none'});
+                    // New messages enter at the front and push existing messages back.
+                    // The last occupied position therefore always contains the oldest.
+                    const transferring = i === queue - 1 && phase >= 500 && phase < leaveAt;
+                    const release = ramp(phase, 500, leaveAt - 500);
+                    let opacity = i < queue ? 1 : 0;
+                    let x = 0, y = 0;
+                    if (arriving !== undefined) {
+                        if (i === 0) {
+                            opacity *= insertion;
+                            x = -24 * (1 - insertion);
+                        } else {
+                            x = (waiting[i - 1].offsetLeft - node.offsetLeft) * (1 - insertion);
+                            y = (waiting[i - 1].offsetTop - node.offsetTop) * (1 - insertion);
+                        }
+                    }
+                    if (transferring) {
+                        opacity *= 1 - release;
+                        if (compact.matches) y += release * 30;
+                        else x += release * 30;
+                    }
+                    style(node, {opacity, transform: `translate(${x}px, ${y}px)`});
                 });
                 slots.forEach((node, i) => {
                     // Output frees the rightmost slot first. The remaining messages shift
@@ -114,11 +140,16 @@ import '../../../public/css/foundation-motion.css';
                     if (phase >= 0 && phase < 500) {
                         if (i === 5) { opacity = 1 - ramp(phase, 0, 220); x = ramp(phase, 0, 220) * 32; }
                         else x = ramp(phase, 220, 280) * (node.offsetWidth + 7);
-                    } else if (phase >= 500 && phase < 800 && i === 0) {
-                        opacity = ramp(phase, 500, 300); x = -32 * (1 - opacity);
+                    } else if (phase >= 500 && phase < enterAt + enterDuration && i === 0) {
+                        opacity = ramp(phase, enterAt, enterDuration); x = -32 * (1 - opacity);
                     }
                     style(node, {transform: `translateX(${x}px)`, opacity});
                 });
+                // Only admit the next message after it has crossed the connector.
+                const inputProgress = ramp(phase, 650, 300);
+                const inputDistance = gate.offsetLeft - queueNode.offsetLeft - queueNode.offsetWidth;
+                style(input, {opacity: !compact.matches && phase >= 650 && phase < 950 ? 1 : 0,
+                    transform: `translateX(${inputProgress * inputDistance}px)`});
                 style(output, {opacity: phase >= 0 && phase < 400 ? Math.sin(phase / 400 * Math.PI) : 0,
                     transform: compact.matches ? `translate(-50%, ${-42 + clamp(phase / 400) * 42}px)` : `translateX(${-42 + clamp(phase / 400) * 42}px)`});
             };
