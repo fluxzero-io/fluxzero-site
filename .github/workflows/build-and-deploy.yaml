@@ -40,17 +40,18 @@ jobs:
       - name: Test SDK docs change detection
         run: python3 .github/scripts/sdk-docs-changed.test.py
 
-      - name: Detect SDK docs changes
+      - name: Detect SDK documentation or release changes
         id: sdk-docs
         env:
           EVENT_NAME: ${{ github.event_name }}
           SDK_BEFORE: ${{ github.event.client_payload.sdk_before || github.event.client_payload.before }}
           SDK_AFTER: ${{ github.event.client_payload.sdk_sha || github.event.client_payload.after || github.event.client_payload.sha || 'HEAD' }}
+          SDK_VERSION: ${{ github.event.client_payload.sdk_version }}
         run: |
           if [ "$EVENT_NAME" != "repository_dispatch" ]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           else
-            bash .github/scripts/sdk-docs-changed.sh .cache/fluxzero-sdk-java "$SDK_BEFORE" "$SDK_AFTER" >> "$GITHUB_OUTPUT"
+            bash .github/scripts/sdk-docs-changed.sh .cache/fluxzero-sdk-java "$SDK_BEFORE" "$SDK_AFTER" "$SDK_VERSION" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Setup PNPM

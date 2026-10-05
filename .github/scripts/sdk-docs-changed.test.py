@@ -33,10 +33,12 @@ class DocumentationRefreshTest(unittest.TestCase):
         self.git('commit', '-q', '-m', 'docs: change')
         return self.git('rev-parse', 'HEAD')
 
-    def assert_refresh(self, expected, before=None, after='HEAD'):
-        result = subprocess.run(['bash', str(SCRIPT), str(self.repo),
-                                 self.base if before is None else before, after],
-                                capture_output=True, text=True)
+    def assert_refresh(self, expected, before=None, after='HEAD', version=None):
+        arguments = ['bash', str(SCRIPT), str(self.repo),
+                     self.base if before is None else before, after]
+        if version is not None:
+            arguments.append(version)
+        result = subprocess.run(arguments, capture_output=True, text=True)
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertEqual(f'changed={str(expected).lower()}\n', result.stdout)
 
@@ -54,6 +56,23 @@ class DocumentationRefreshTest(unittest.TestCase):
             self.write(path)
             self.commit()
             self.assert_refresh(False)
+
+    def test_release_refreshes_without_documentation_changes(self):
+        self.write('sdk/Example.java')
+        self.commit()
+        for version in ('2.15.2', '1.292.18', '2.0.0-rc.20'):
+            with self.subTest(version=version):
+                self.assert_refresh(True, version=version)
+        self.assert_refresh(False, version='')
+        self.assert_refresh(False)
+
+    def test_release_rerun_refreshes_even_without_new_commits(self):
+        self.assert_refresh(True, after=self.base, version='2.15.2')
+
+    def test_workflow_passes_release_version_as_data(self):
+        workflow = (SCRIPT.parents[1] / 'workflows/build-and-deploy.yaml').read_text()
+        self.assertIn('SDK_VERSION: ${{ github.event.client_payload.sdk_version }}', workflow)
+        self.assertIn('"$SDK_BEFORE" "$SDK_AFTER" "$SDK_VERSION" >> "$GITHUB_OUTPUT"', workflow)
 
     def test_deletions_and_moves_out_of_public_docs_refresh(self):
         self.git('mv', 'docs/developer/page.mdx', 'page.mdx')

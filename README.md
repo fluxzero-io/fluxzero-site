@@ -50,6 +50,11 @@ A GitHub token is not required for ordinary local development. The changelog loa
 GITHUB_TOKEN=your_token pnpm dev
 ```
 
+The changelog is generated during the build from GitHub releases and `src/data/changelog-cache.json`;
+opening the published page does not fetch new releases. SDK notifications with a non-empty `sdk_version`
+always rebuild the site, even when developer documentation is unchanged. The SDK sends these notifications
+after successful GitHub release publication. Notifications without a version retain the documentation-change filter.
+
 The local feedback provider defaults to in-memory storage. Testing the deployed GitHub-backed feedback and sign-in flow additionally requires the Cloudflare runtime variables used in production: `FEEDBACK_PROVIDER`, `GITHUB_REPO`, `GITHUB_TOKEN`, `GITHUB_APP_CLIENT_ID`, `GITHUB_APP_CLIENT_SECRET`, and `COOKIE_SECRET`. Put local Cloudflare secrets in `.dev.vars`; never commit that file.
 
 ### Website account menu and OIDC

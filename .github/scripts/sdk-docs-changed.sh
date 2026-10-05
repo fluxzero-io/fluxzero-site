@@ -4,6 +4,13 @@ set -euo pipefail
 checkout="${1:?Expected SDK checkout}"
 before="${2-}"
 after="${3:-HEAD}"
+release_version="${4-}"
+
+# A published SDK release changes the changelog even when public docs did not change.
+if [[ -n "$release_version" ]]; then
+  echo 'changed=true'
+  exit 0
+fi
 
 # Unknown history must refresh rather than silently leave the website stale.
 if [[ ! "$before" =~ ^[0-9a-f]{40}$ && ! "$before" =~ ^[0-9a-f]{64}$ ]] ||
