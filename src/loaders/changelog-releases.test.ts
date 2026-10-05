@@ -3,6 +3,7 @@ import { after, test } from 'node:test';
 import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { changelogAnchorPages, paginateReleases } from '../../scripts/changelog-pagination.mjs';
 
 const originalDirectory = process.cwd();
 const originalFetch = globalThis.fetch;
@@ -18,6 +19,49 @@ after(() => {
   if (originalOptional === undefined) delete process.env.npm_package_config_ghreleases_optional;
   else process.env.npm_package_config_ghreleases_optional = originalOptional;
   rmSync(directory, { recursive: true, force: true });
+});
+
+test('renaming GitHub releases preserves content, dates, links, cache and navigation', async () => {
+  const releases = [
+    {
+      tag_name: '2.15.1', name: 'Fluxzero 2.15.1',
+      body: '## [2.15.1](https://example.com/compare) (2026-10-05)\n\n### Bug Fixes\n\n- Retain context',
+      published_at: '2026-10-05T00:15:00Z', html_url: 'https://example.com/releases/tag/2.15.1',
+    },
+    {
+      tag_name: '2.0.0-rc.20', name: 'Fluxzero 2.0.0-rc.20',
+      body: '### Features\n\n- Candidate feature',
+      published_at: '2026-09-30T23:45:00Z', html_url: 'https://example.com/releases/tag/2.0.0-rc.20',
+    },
+    {
+      tag_name: 'v1.239.0', name: 'Fluxzero 1.239.0',
+      // Imported releases retain their historical changelog date on the website.
+      body: '## 1.239.0 (2026-06-30)\n\n### Bug Fixes\n\n- Maintenance fix',
+      published_at: '2026-07-03T12:00:00Z', html_url: 'https://example.com/releases/tag/v1.239.0',
+    },
+  ];
+  const stored = new Map<string, any>();
+  const loader = changelogLoader();
+  const context = {
+    store: { clear: () => stored.clear(), set: ({ id, data }: { id: string; data: unknown }) => stored.set(id, data) },
+    logger: { info() {}, warn() {}, error() {} },
+    parseData: async ({ data }: { data: unknown }) => data,
+  } as unknown as Parameters<typeof loader.load>[0];
+  globalThis.fetch = async () => Response.json(releases);
+  await loader.load(context);
+  const before = [...stored.values()];
+  const cacheBefore = readFileSync(cacheFile, 'utf8');
+  const navigationBefore = changelogAnchorPages(paginateReleases(before));
+
+  const titles = ['2.15.1 – Oct 5, 2026', '2.0.0-rc.20 – Sep 30, 2026', 'v1.239.0 – Jul 3, 2026'];
+  globalThis.fetch = async () => Response.json(releases.map((release, i) => ({ ...release, name: titles[i] })));
+  await loader.load(context);
+  assert.deepEqual([...stored.keys()], ['2.15.1', '2.0.0-rc.20', '1.239.0']);
+  assert.deepEqual([...stored.values()].map(r => r.date), ['2026-10-05', '2026-09-30', '2026-06-30']);
+  assert.deepEqual([...stored.values()].map(r => r.url), releases.map(r => r.html_url));
+  assert.deepEqual([...stored.values()], before);
+  assert.deepEqual(changelogAnchorPages(paginateReleases([...stored.values()])), navigationBefore);
+  assert.equal(readFileSync(cacheFile, 'utf8'), cacheBefore);
 });
 
 test('repairs an incomplete cache and preserves it when a later synchronization fails', async () => {
