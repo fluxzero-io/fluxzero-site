@@ -175,6 +175,7 @@ export default defineConfig({
                             { label: 'Building your first app', slug: 'docs/tutorials/first-app' },
                         ] },
                         { label: 'How-to guides', collapsed: true, items: [
+                            { label: 'Overview', slug: 'docs/guides/how-to' },
                             { label: 'SDK installation', slug: 'docs/getting-started/installation' },
                             { label: 'Messaging', collapsed: true, items: [
                                 { label: 'Message replays', slug: 'docs/guides/messaging/message-replays' },
