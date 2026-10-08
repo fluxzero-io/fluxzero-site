@@ -171,6 +171,7 @@ export default defineConfig({
                             { label: 'Deep dive', slug: 'docs/fluxzero-2-deep-dive' },
                         ] },
                         { label: 'Tutorials', collapsed: true, items: [
+                            { label: 'Overview', slug: 'docs/tutorials' },
                             { label: 'Hello world', slug: 'docs/getting-started/hello-world' },
                             { label: 'Building your first app', slug: 'docs/tutorials/first-app' },
                         ] },
@@ -185,8 +186,8 @@ export default defineConfig({
                                 { label: 'Custom message logs', slug: 'docs/guides/messaging/custom-message-logs' },
                                 { label: 'Sending web requests', slug: 'docs/guides/messaging/sending-web-requests' },
                                 { label: 'Building API integrations', slug: 'docs/guides/messaging/building-api-integrations' },
-                                { label: 'Receive an external callback', slug: 'docs/guides/messaging/receiving-webhooks' },
-                                { label: 'Keep a screen up to date', slug: 'docs/guides/messaging/updating-a-live-screen' },
+                                { label: 'Handle external callbacks', slug: 'docs/guides/messaging/receiving-webhooks' },
+                                { label: 'Keep UIs in sync via WebSockets', slug: 'docs/guides/messaging/updating-a-live-screen' },
                                 { label: 'Build a feature from past events', slug: 'docs/guides/messaging/adding-a-feature-to-history' },
                                 { label: 'Live and historical processing', slug: 'docs/guides/messaging/live-and-historical-processing' },
                                 { label: 'Split a consumer', slug: 'docs/guides/messaging/splitting-a-consumer' },
@@ -211,6 +212,7 @@ export default defineConfig({
                             ] },
                         ] },
                         { label: 'Reference', collapsed: true, items: [
+                            { label: 'Overview', slug: 'docs/reference' },
                             { label: 'Messaging', collapsed: true, items: [
                                 { label: 'Sending messages', slug: 'docs/guides/messaging/sending-messages' },
                                 { label: 'Message handling', slug: 'docs/guides/messaging/message-handling' },
