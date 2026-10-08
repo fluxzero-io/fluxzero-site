@@ -42,6 +42,11 @@ Developer Guides keep Overview, Core concepts and Fluxzero 2.0 at the top level 
 
 Builder guides use native Starlight components for steps, cards and asides. Shared `AgentPrompt` (copyable prose) and `GuideFlow` (responsive ordered stages) components live in `src/components/docs/`, with scoped guide styles in `src/styles/docs-guides.css`. SDK MDX imports these through `~/components/docs/`; publish the website components before or together with documentation that imports them. Keep product wording in the SDK source, rather than embedding it in presentation components.
 
+`Jdoclink` renders a normal API link with an on-demand class-description preview. The build generates
+`/javadoc-index.json` from the same published Javadoc index, preserving nested type filenames. Preview navigation
+uses this index too; classes without a class description can still be opened in the full Javadoc. Run
+`pnpm test:javadoc` when changing the preview lookup.
+
 Relative Markdown links to `.md` and `.mdx` source files are resolved to the target's frontmatter `slug` when rendered. Query strings and fragments are preserved. Missing targets or slugs fail the build, and the final link check validates the published routes.
 
 A GitHub token is not required for ordinary local development. The changelog loader can read public releases without authentication, although setting `GITHUB_TOKEN` avoids GitHub's lower anonymous rate limit:
