@@ -5,7 +5,9 @@
  * Fetches and displays Javadoc documentation inline on hover.
  */
 
-const JAVADOC_JSON_BASE = 'https://fluxzero-io.github.io/fluxzero-sdk-java/javadoc/json-doclet';
+import { createJavadocPreviewLoader } from '../utils/javadoc-preview';
+
+const loadJavadocPreview = createJavadocPreviewLoader();
 const TOOLTIP_ID = 'javadoc-tooltip';
 const CLOSE_DELAY = 300; // ms before closing when mouse leaves
 
@@ -166,16 +168,7 @@ class JavadocTooltip {
 
     // Fetch documentation
     try {
-      const jsonPath = qualifiedName.replace(/\./g, '/');
-      const jsonUrl = `${JAVADOC_JSON_BASE}/${jsonPath}.json`;
-
-      const response = await fetch(jsonUrl);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-      const documentation = data.documentation || '<p>No documentation available.</p>';
+      const documentation = await loadJavadocPreview(qualifiedName) || '<p>No documentation available.</p>';
 
       // Process and clean up the documentation
       const processedDoc = this.processJavadocContent(documentation);
@@ -280,16 +273,7 @@ class JavadocTooltip {
 
     // Fetch documentation
     try {
-      const jsonPath = qualifiedName.replace(/\./g, '/');
-      const jsonUrl = `${JAVADOC_JSON_BASE}/${jsonPath}.json`;
-
-      const response = await fetch(jsonUrl);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const data = await response.json();
-      const documentation = data.documentation || '<p>No documentation available.</p>';
+      const documentation = await loadJavadocPreview(qualifiedName) || '<p>No documentation available.</p>';
 
       // Process and clean up the documentation
       const processedDoc = this.processJavadocContent(documentation);

@@ -71,6 +71,10 @@ jobs:
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm install --frozen-lockfile
 
+      - name: Test Javadoc previews
+        if: steps.sdk-docs.outputs.changed == 'true'
+        run: pnpm test:javadoc
+
       - name: Test changelog import
         if: steps.sdk-docs.outputs.changed == 'true'
         run: pnpm test:changelog
