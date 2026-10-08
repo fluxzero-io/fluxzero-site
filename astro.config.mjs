@@ -182,6 +182,7 @@ export default defineConfig({
                                 { label: 'Model schedule reconciliation', slug: 'docs/guides/messaging/model-schedule-reconciliation' },
                                 { label: 'Custom message logs', slug: 'docs/guides/messaging/custom-message-logs' },
                                 { label: 'Sending web requests', slug: 'docs/guides/messaging/sending-web-requests' },
+                                { label: 'Building API integrations', slug: 'docs/guides/messaging/building-api-integrations' },
                             ] },
                             { label: 'Modeling & persistence', collapsed: true, items: [
                                 { label: 'Designing Model state', slug: 'docs/guides/modeling-and-persistence/model-state' },
