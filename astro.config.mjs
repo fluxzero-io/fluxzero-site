@@ -174,8 +174,8 @@ export default defineConfig({
                             { label: 'Overview', slug: 'docs/tutorials' },
                             { label: 'Hello world', slug: 'docs/getting-started/hello-world' },
                             { label: 'Building your first app', slug: 'docs/tutorials/first-app' },
-                            { label: 'Home automation with Fluxzero', slug: 'docs/tutorials/home-automation' },
-                            { label: 'Ticketing with Fluxzero', slug: 'docs/tutorials/ticketing' },
+                            { label: 'Example: home automation', slug: 'docs/tutorials/home-automation' },
+                            { label: 'Example: ticketing', slug: 'docs/tutorials/ticketing' },
                         ] },
                         { label: 'How-to guides', collapsed: true, items: [
                             { label: 'Overview', slug: 'docs/guides/how-to' },
