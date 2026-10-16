@@ -7,7 +7,7 @@ pnpm test:product-code
 ```
 
 Requires Node.js 22+, Java 25+ and Maven 3.9+. Maven downloads the pinned
-Fluxzero SDK `2.0.0-RC10` from the public Fluxzero package repository.
+Fluxzero SDK `2.18.8` from the public Fluxzero package repository.
 No local SDK checkout, credentials, running server, or private repository is needed.
 
 ## What is tested
@@ -19,7 +19,7 @@ adding an unverified panel makes the check fail. Kotlin examples come from
 `src/data/product-code-kotlin.mjs`, the source rendered by the same panels, and
 are inserted unchanged into `KotlinProductCodeTest.kt.template`. Both languages
 run the same eleven behavior scenarios against the pinned SDK. The Kotlin
-profile uses Kotlin 2.4.20, reflection and Jackson’s Kotlin module. The generated source and JUnit
+profile uses Kotlin 2.4.21, reflection and Jackson’s Kotlin module. The generated source and JUnit
 reports live under the ignored `target/` directory.
 
 The template supplies domain declarations omitted from the examples, plus
@@ -56,13 +56,18 @@ The SDK version is pinned in `pom.xml`. To try another published version:
 
 ```sh
 node tests/product-code/generate.mjs
-mvn -B -f tests/product-code/pom.xml -Dfluxzero.version=2.0.0-RC10 test
-mvn -B -f tests/product-code/pom.xml -Pkotlin -Dfluxzero.version=2.0.0-RC10 test
+mvn -B -f tests/product-code/pom.xml -Dfluxzero.version=2.18.8 test
+mvn -B -f tests/product-code/pom.xml -Pkotlin -Dfluxzero.version=2.18.8 test
 ```
 
 Update the pin only after the examples pass against that release. These tests
 check code behavior; the website build, LLM export tests and browser checks
 cover content extraction and presentation separately.
+
+The displayed Ticket model enables search explicitly. The common fixture starts
+with a show and an available ticket; only update-focused scenarios seed existing
+reservations. Creation and payment scenarios must create their reservations
+through the displayed product action instead of precreating the same IDs.
 
 ## Language presentation
 
