@@ -10,8 +10,8 @@ Source code for the [Fluxzero website](https://fluxzero.io) and [documentation](
 
 ## Requirements
 
-- Node.js 22 or newer
-- pnpm (CI uses version 10)
+- Node.js 22.22 or newer (CI uses Node 24)
+- pnpm 10 (the exact version is pinned in `package.json`)
 - A checkout of [`fluxzero-sdk-java`](https://github.com/fluxzero-io/fluxzero-sdk-java) for the SDK-owned documentation
 
 By default, the docs sync expects both repositories to have the same parent directory:
@@ -118,6 +118,7 @@ Run commands from the repository root.
 | `pnpm dev:website-live-idp` | Start Astro for a separately running local IDP |
 | `pnpm test:website-oidc` | Check configuration, Chrome prerender lifecycle, account actions and real OIDC-library code+PKCE callbacks against the local stub |
 | `pnpm build` | Create the production Worker and static assets in `dist/` |
+| `pnpm test:worker` | Exercise the built Worker on loopback with synthetic auth bindings, without publishing or contacting GitHub login |
 | `pnpm preview` | Serve the existing production build locally with Wrangler |
 | `pnpm sync:docs` | Refresh the generated docs from `fluxzero-sdk-java` |
 | `pnpm astro sync` | Refresh Astro content, generated types, and the release cache |
@@ -128,7 +129,7 @@ Run commands from the repository root.
 | `pnpm test:product-code` | Compile the Java and Kotlin page examples and test their behavior with the published SDK (Java 25 and Maven required) |
 | `pnpm astro ...` | Run another Astro CLI command |
 
-The production build also generates `dist/llms.txt` and per-page Markdown from the rendered core marketing pages. These files are build artifacts; the website HTML remains their source of truth. `/llms-full.txt` temporarily redirects to `/llms.txt`.
+The production build also generates `dist/client/llms.txt` and per-page Markdown from the rendered core marketing pages. These files are build artifacts; the website HTML remains their source of truth. `/llms-full.txt` temporarily redirects to `/llms.txt`.
 
 After CSS inlining, `scripts/protect-homepage-styles.mjs` adds a stylesheet Content
 Security Policy to the homepage. Hashes permit its exact built styles while
@@ -173,6 +174,7 @@ pnpm test:llms
 pnpm test:discovery
 pnpm test:product-code
 pnpm build
+pnpm test:worker
 ```
 
 To run the built Worker locally after that:
@@ -183,7 +185,7 @@ pnpm preview
 
 Deployment is automated by [`.github/workflows/build-and-deploy.yaml`](.github/workflows/build-and-deploy.yaml):
 
-- A pull request builds and deploys the `preview` Cloudflare environment.
+- A trusted human pull request builds and deploys the `preview` Cloudflare environment. Dependabot and fork PRs run the same build and runtime checks without deployment secrets or preview publication.
 - A push to `main` builds and deploys the `production` environment at [fluxzero.io](https://fluxzero.io).
 - `workflow_dispatch` can start the workflow manually.
 - An SDK repository dispatch rebuilds the website when any file under `docs/developer/` changed, including Markdown, MDX and images. Documentation-only SDK pushes can trigger this refresh without an SDK release; the dispatch pins the exact source commit.
@@ -191,6 +193,33 @@ Deployment is automated by [`.github/workflows/build-and-deploy.yaml`](.github/w
 Production runs queue instead of cancelling an earlier documentation refresh when a later SDK dispatch has no docs changes. PR previews retain cancellation of superseded runs.
 
 The workflow checks out the SDK docs, installs dependencies with the frozen lockfile, tests the changelog import, builds the site, and deploys it with Wrangler. Deployment credentials are managed as GitHub Actions secrets: `CLOUDFLARE_API_TOKEN`, `CF_GITHUB_APP_CLIENT_ID`, `CF_GITHUB_APP_CLIENT_SECRET`, `CF_COOKIE_SECRET`, and `CF_GITHUB_TOKEN`. Do not replace this process with manually managed local production secrets.
+
+The Cloudflare environment is selected at build time with `CLOUDFLARE_ENV`, then
+Wrangler uses the generated deployment configuration. For a local preview, use
+`CLOUDFLARE_ENV=preview pnpm build` followed by `pnpm preview`; do not select a
+different environment after building. Public HTML, CSS, images and text exports
+live in `dist/client/`; private Worker modules live in `dist/server/`. Keep build
+postprocessing and release checks pointed at the client directory. The Wrangler
+Action reads its version from the installed lockfile dependency, so local and
+deployment tooling stay aligned.
+
+Starlight's server HTML processors require Satteri's optional WASI target when
+bundled for workerd. `pnpm-workspace.yaml` installs that target alongside the
+native host target. The same file records two scoped security overrides and
+their upstream review conditions. TypeScript remains on 6 because Astro Check
+does not yet support 7; Mermaid remains on 11 until its Astro integration supports
+12. PNPM stays on 10 while that is the newest line supported by Dependabot.
+Daily npm, Actions and product-code Maven updates use the separate Dependabot
+App only for minor/patch merges behind `Website required checks`; its key stays
+outside build jobs. Existing explicit main/deployment and SDK-dispatch behavior
+is preserved.
+
+`pnpm test:worker` starts and cleans up its own local Worker with synthetic
+bindings. It checks the ten core pages, Markdown/HEAD negotiation, redirects,
+404 handling and GitHub-auth state/return boundaries. It never follows the
+external authorization redirect or sends a token exchange. The website uses its
+existing OIDC client and sealed feedback cookies; it does not use Astro sessions
+and therefore disables the adapter's automatic session KV provisioning.
 
 ## Search and agent discovery
 
@@ -286,7 +315,7 @@ Before committing:
 
 1. Run the focused tests for the change.
 2. Run `pnpm build`.
-3. Inspect any generated changelog-cache change and the relevant passage in `dist/llms.txt` when marketing content changed.
+3. Inspect any generated changelog-cache change and the relevant passage in `dist/client/llms.txt` when marketing content changed.
 
 ## License
 

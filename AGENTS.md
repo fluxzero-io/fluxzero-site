@@ -29,7 +29,7 @@ During interactive website work, keep the feedback loop short. Use the existing 
 
 - Do not run a production build after every copy, styling, or layout adjustment, or merely because a chat turn ends. Verify the affected behavior in the dev preview and run focused checks only when needed.
 - Run the production build once for the completed batch before pushing or deploying site changes. Build earlier only when the user explicitly asks or the task specifically requires production output, such as build failures, generated exports, bundling, or deployment behavior. Documentation-only changes to instructions do not require a site build.
-- Defer generated-output checks, including `dist/llms.txt`, to that batch build unless the current task specifically concerns those outputs. Do not repeat an already successful build without a relevant change or unresolved failure.
+- Defer generated-output checks, including `dist/client/llms.txt`, to that batch build unless the current task specifically concerns those outputs. Do not repeat an already successful build without a relevant change or unresolved failure.
 - Do not make a separate commit for every small adjustment. Keep related page refinements together and commit at a meaningful boundary: when switching to substantially different work, preparing a push, or when the user requests a checkpoint.
 - Interpret a task boundary broadly: an ongoing fine-tuning session across multiple existing pages is one task. Switching between Pricing, Home, About, or other pages, or between copy, spacing, colors, and interaction refinements, is not a new task or commit boundary. Introducing an entirely new page or starting a substantially different feature is a meaningful change of task.
 - It is normal to leave verified changes uncommitted between iterations. Finishing a chat response is not itself a reason to build, commit, or push.
@@ -80,7 +80,7 @@ When editing marketing pages:
 
 ### Machine-readable marketing content
 
-The production build generates a self-contained `dist/llms.txt` with an introduction, one building instruction, an index, and six full marketing pages. The homepage Get started section supplies the opening instruction, which is omitted from the later inline homepage content to avoid duplication. Contact and Partners are linked only. All eight marketing pages retain standalone Markdown pages; there is no separate Get started page. `/llms-full.txt` temporarily redirects to `/llms.txt`; do not generate a second file or link back to the alias from the canonical export. These files help crawlers and ad-hoc AI agents understand the same product story as human visitors.
+The production build generates a self-contained `dist/client/llms.txt` with an introduction, one building instruction, an index, and six full marketing pages. The homepage Get started section supplies the opening instruction, which is omitted from the later inline homepage content to avoid duplication. Contact and Partners are linked only. All eight marketing pages retain standalone Markdown pages; there is no separate Get started page. `/llms-full.txt` temporarily redirects to `/llms.txt`; do not generate a second file or link back to the alias from the canonical export. These files help crawlers and ad-hoc AI agents understand the same product story as human visitors.
 
 - Treat the rendered marketing HTML as the single source of truth. Never hand-edit generated files in `dist/` and do not maintain a separate copy of page content for AI agents.
 - Structure content semantically so relationships survive linear or Markdown rendering. Use headings for hierarchy, lists for repeated items, `dl`/`dt`/`dd` for terms, metrics, or key-value groups, and native tables or complete ARIA table roles for comparisons.
@@ -90,7 +90,7 @@ The production build generates a self-contained `dist/llms.txt` with an introduc
 - Responsive variants must not cause duplicated machine-readable content. Keep at least one semantically complete variant, and prefer making the primary desktop HTML complete instead of extracting a separate mobile-only representation.
 - When a public page contains an authentication wall, ensure the generated text contains the useful post-auth content rather than only the login prompt. Use the generic `data-llms-exclude` and `data-llms-include` visibility controls only when normal HTML visibility would otherwise select the wrong content state.
 - When adding or removing a core public marketing page, review the discovery and inline page lists in `scripts/core-pages.mjs` so the generated index and content remain intentional.
-- When running the batch production build before push or deployment, inspect passages in `dist/llms.txt` affected by marketing copy or structure changes. Verify that headings, labels, values, table cells, links, and post-auth content remain correctly associated and that repeated responsive content appears only once. Follow the iteration cadence above rather than building after each edit.
+- When running the batch production build before push or deployment, inspect passages in `dist/client/llms.txt` affected by marketing copy or structure changes. Verify that headings, labels, values, table cells, links, and post-auth content remain correctly associated and that repeated responsive content appears only once. Follow the iteration cadence above rather than building after each edit.
 
 ### Generated site data
 
@@ -100,7 +100,7 @@ The production build generates a self-contained `dist/llms.txt` with an introduc
 
 This Astro app contains both the marketing site and documentation:
 
-- **Astro 5** for the site
+- **Astro** for the site (versions and toolchain constraints live in `package.json`)
 - **Starlight** for `/docs`
 - **TypeScript** configuration with strict mode
 - **Cloudflare Workers** deployment via Wrangler
@@ -141,7 +141,7 @@ Content follows the Diataxis Framework (see https://diataxis.fr). Follow those c
 
 ### Development Notes
 
-- Node.js version >=22.0.0 required
+- Use the Node.js engine range and pinned pnpm version from `package.json`.
 - Sharp is used for image processing but only at compile time (Cloudflare limitation)
 - TypeScript paths configured with `~/*` alias for `src/*`
 
