@@ -108,8 +108,10 @@ class KotlinProductCodeTest {
                 override fun getUserById(id: Any): User = ExampleUser(id.toString())
                 override fun getSystemUser(): User? = null
             }), *handlers)
-            .givenCommands(CreateShow(show), CreateTicket(ticket, show, TicketDetails("balcony", 1)),
-                CreateReservation(reservation, ticket, customer), CreateReservation(other, ticket, customer))
+            .givenCommands(CreateShow(show), CreateTicket(ticket, show, TicketDetails("balcony", 1)))
+
+        fun existingReservationsFixture(vararg handlers: Any): TestFixture = fixture(*handlers)
+            .givenCommands(CreateReservation(reservation, ticket, customer), CreateReservation(other, ticket, customer))
     }
 
     @Test fun rejectsASecondReservation() {
@@ -178,19 +180,19 @@ class KotlinProductCodeTest {
 
     @Test fun contactEmailIsValidatedAndProtected() {
         val owner = ExampleUser(customer)
-        fixture().whenCommandByUser(owner, UpdateContactEmail(reservation, "customer@example.com"))
+        existingReservationsFixture().whenCommandByUser(owner, UpdateContactEmail(reservation, "customer@example.com"))
             .expectSuccessfulResult().expectNoErrors()
             .expectThat { assertEquals("customer@example.com", Fluxzero.loadModel(reservation).get().contactEmail) }
-        fixture().whenCommandByUser(ExampleUser("other-user"), UpdateContactEmail(reservation, "customer@example.com"))
+        existingReservationsFixture().whenCommandByUser(ExampleUser("other-user"), UpdateContactEmail(reservation, "customer@example.com"))
             .expectExceptionalResult(ReservationErrors.notOwner).expectNoEvents()
-        fixture().whenCommandByUser(owner, UpdateContactEmail(reservation, "not-an-email"))
+        existingReservationsFixture().whenCommandByUser(owner, UpdateContactEmail(reservation, "not-an-email"))
             .expectExceptionalResult(Exception::class.java).expectNoEvents()
-        fixture().whenCommand(UpdateContactEmail(reservation, "customer@example.com"))
+        existingReservationsFixture().whenCommand(UpdateContactEmail(reservation, "customer@example.com"))
             .expectExceptionalResult(UnauthenticatedException::class.java).expectNoEvents()
     }
 
     @Test fun historicalRewardsChangeProductState() {
-        val rewards = fixture(CustomerRewards()).whenCommand(ConfirmReservation(reservation))
+        val rewards = existingReservationsFixture(CustomerRewards()).whenCommand(ConfirmReservation(reservation))
             .expectEvents(GrantReward(reservation, customer, 100)).expectNoErrors().andThen()
         rewards.whenApplying { _: Fluxzero -> Fluxzero.loadModel(customer, RewardBalance::class.java).get().points() }
             .expectResult(100).expectNoErrors()
@@ -205,12 +207,12 @@ class KotlinProductCodeTest {
     }
 
     @Test fun fraudQueriesOnlyRequestNecessaryReviews() {
-        fixture(FraudDetection(), CheckForFraud::class.java).whenCommand(ConfirmReservation(reservation))
+        existingReservationsFixture(FraudDetection(), CheckForFraud::class.java).whenCommand(ConfirmReservation(reservation))
             .expectQueries(CheckForFraud(reservation))
             .expectCommands(ReviewReservation(reservation, FraudAssessment(true)))
             .expectThat { assertTrue(Fluxzero.search(FraudAssessment::class.java).fetchAll().isEmpty()) }
             .expectNoErrors()
-        fixture(FraudDetection(), CheckForFraud::class.java).whenCommand(ConfirmReservation(other))
+        existingReservationsFixture(FraudDetection(), CheckForFraud::class.java).whenCommand(ConfirmReservation(other))
             .expectQueries(CheckForFraud(other)).expectNoCommands()
             .expectThat { assertTrue(Fluxzero.search(FraudAssessment::class.java).fetchAll().isEmpty()) }
             .expectNoErrors()

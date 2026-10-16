@@ -26,7 +26,7 @@ data class Show(
     val name: String,
     val status: ShowStatus
 )`,
-    ticketModelCode: `@Model
+    ticketModelCode: `@Model(searchable = true)
 data class Ticket(
     @EntityId val ticketId: TicketId,
     @Parent(pathInParent = "tickets")

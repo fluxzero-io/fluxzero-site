@@ -7,11 +7,11 @@
     <artifactId>product-code-examples</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
-        <fluxzero.version>2.0.0-RC10</fluxzero.version>
+        <fluxzero.version>2.18.8</fluxzero.version>
         <example.source>${project.build.directory}/generated-test-sources</example.source>
         <example.resources>src/test/resources</example.resources>
         <example.output>${project.build.directory}/test-classes</example.output>
-        <kotlin.version>2.4.20</kotlin.version>
+        <kotlin.version>2.4.21</kotlin.version>
         <maven.compiler.release>25</maven.compiler.release>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

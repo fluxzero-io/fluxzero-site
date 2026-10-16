@@ -41,7 +41,7 @@ const showModelCode = `<span class="tok-annotation">@Model</span>
     <span class="tok-type">String</span> <span class="tok-field">name</span>,
     <span class="tok-type">ShowStatus</span> <span class="tok-field">status</span>) {}`;
 
-const ticketModelCode = `<span class="tok-annotation">@Model</span>
+const ticketModelCode = `<span class="tok-annotation">@Model</span>(<span class="tok-field">searchable</span> = <span class="tok-keyword">true</span>)
 <span class="tok-keyword">record</span> <span class="tok-type">Ticket</span>(
     <span class="tok-annotation">@EntityId</span> <span class="tok-type">TicketId</span> <span class="tok-field">ticketId</span>,
     <span class="tok-annotation">@Parent</span>(<span class="tok-field">pathInParent</span> = <span class="tok-string">"tickets"</span>)
