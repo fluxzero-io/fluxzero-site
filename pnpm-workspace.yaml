@@ -4,3 +4,16 @@ allowBuilds:
   esbuild: true
   sharp: true
   workerd: true
+# Starlight's server-side HTML processors are bundled for workerd as well as
+# executed natively while prerendering. Include Satteri's optional WASI target.
+supportedArchitectures:
+  cpu:
+    - current
+    - wasm32
+overrides:
+  # Mermaid 11's supported range lags the KaTeX security fixes. Reassess when
+  # astro-mermaid supports Mermaid 12 or Mermaid updates its own KaTeX range.
+  'mermaid>katex': '^0.19.0'
+  # Expressive Code still uses postcss-nested 6; retain its behavior while
+  # applying the selector parser's recursion/complexity fixes. Reassess upstream.
+  'postcss-nested>postcss-selector-parser': '^7.1.6'
