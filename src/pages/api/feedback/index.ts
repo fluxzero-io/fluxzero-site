@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 export const prerender = false;
 import type { APIRoute } from 'astro';
 import { parseCookies, unsealCookiePayload } from '../auth/_utils';
@@ -43,14 +44,14 @@ async function getUserTokenFromRequest(request: Request, encryptionSecret: strin
   return accessToken;
 }
 
-export const GET: APIRoute = async ({ url, locals }) => {
+export const GET: APIRoute = async ({ url }) => {
   try {
     const slug = sanitizeSlug(url.searchParams.get('slug') ?? '');
     if (!slug) {
       return new Response(JSON.stringify({ error: 'slug parameter is required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
 
-    let data = await getFeedbackProvider(locals.runtime.env).listDiscussions(slug)
+    let data = await getFeedbackProvider(env).listDiscussions(slug)
     return new Response(JSON.stringify(data), { status: 200, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' } });
   } catch (e) {
     console.error(e)
@@ -58,15 +59,15 @@ export const GET: APIRoute = async ({ url, locals }) => {
   }
 };
 
-export const POST: APIRoute = async ({ request, url, locals }) => {
+export const POST: APIRoute = async ({ request, url }) => {
   try {
     const body = await request.json().catch(() => null) as any;
     if (!body || !body.slug || !body.selection?.text || !body.message) {
       return new Response(JSON.stringify({ error: 'Invalid payload' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
     }
 
-    const token = await getUserTokenFromRequest(request, locals.runtime.env.COOKIE_SECRET);
-    const provider = getFeedbackProvider(locals.runtime.env, token);
+    const token = await getUserTokenFromRequest(request, env.COOKIE_SECRET);
+    const provider = getFeedbackProvider(env, token);
     const out = await provider.createDiscussion({
       slug: sanitizeSlug(body.slug),
       selectionText: body.selection.text,

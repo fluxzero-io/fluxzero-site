@@ -5,7 +5,7 @@ import { marketingPages } from './core-pages.mjs';
 
 // Keep documentation styles cacheable. Marketing entry pages embed their small
 // compiled stylesheets so first paint does not wait for additional requests.
-export async function inlineMarketingCss(directory = 'dist') {
+export async function inlineMarketingCss(directory = 'dist/client') {
     for (const path of marketingPages) {
         const file = join(directory, path, 'index.html');
         let html = await readFile(file, 'utf8');

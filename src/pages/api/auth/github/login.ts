@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 import type { APIRoute } from 'astro';
 export const prerender = false;
 import { absoluteCallbackURL, makeCookie, sealCookiePayload } from '../_utils';
@@ -7,12 +8,12 @@ function safeReturnTo(value: string | null): string {
   return value;
 }
 
-export const GET: APIRoute = async ({ url, locals }) => {
+export const GET: APIRoute = async ({ url }) => {
   const {
     GITHUB_APP_CLIENT_ID,
     GITHUB_APP_CLIENT_SECRET,
     COOKIE_SECRET
-  } = locals.runtime.env;
+  } = env;
   if (!GITHUB_APP_CLIENT_ID || !COOKIE_SECRET || !GITHUB_APP_CLIENT_SECRET) {
     return new Response('Incorrect github configuration', { status: 500 });
   }

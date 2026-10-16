@@ -82,7 +82,7 @@ async function htmlPages(directory, prefix = '') {
     }
     return result;
 }
-export async function checkDiscovery(directory = 'dist') {
+export async function checkDiscovery(directory = 'dist/client') {
     const pages = await htmlPages(directory);
     const sitemap = new Set();
     const index = await readFile(join(directory, 'sitemap-index.xml'), 'utf8');

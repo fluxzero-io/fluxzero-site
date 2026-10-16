@@ -40,7 +40,7 @@ export function validateLinks(pages, files, redirects = new Map()) {
     }
     return [...new Set(errors)];
 }
-export async function checkLinks(directory = 'dist') {
+export async function checkLinks(directory = 'dist/client') {
     const files = new Set(), pages = new Map(), redirects = new Map();
     async function walk(prefix = '') {
         for (const entry of await readdir(join(directory, prefix), { withFileTypes: true })) {

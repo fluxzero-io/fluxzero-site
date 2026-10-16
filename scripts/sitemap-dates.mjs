@@ -23,7 +23,7 @@ async function docsSources(directory, prefix = '') {
     }
     return sources;
 }
-export async function addSitemapDates(directory = 'dist') {
+export async function addSitemapDates(directory = 'dist/client') {
     const dates = new Map(marketingPages.map(path => [path, lastChanged(process.cwd(), [`src/pages/${path === '/' ? 'index' : path.slice(1,-1)}.astro`])]));
     const docsRoot = resolve(process.env.FLUXZERO_SDK_DOCS_SOURCE ?? '../fluxzero-sdk-java/docs/developer');
     for (const {path,file} of await docsSources(docsRoot)) dates.set(path, lastChanged(docsRoot,[file]));

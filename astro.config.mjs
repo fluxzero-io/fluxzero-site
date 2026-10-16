@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig, envField } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import starlight from '@astrojs/starlight';
 import mermaid from 'astro-mermaid';
 import tailwindcss from '@tailwindcss/vite';
@@ -13,7 +14,9 @@ import { siteUrl, siteLinkAliases } from './scripts/core-pages.mjs';
 export default defineConfig({
     site: 'https://fluxzero.io',
     prefetch: { defaultStrategy: 'hover' },
-    markdown: { remarkPlugins: [[remarkDocsLinks, { siteUrl, linkAliases: siteLinkAliases }]] },
+    compressHTML: true,
+    markdown: { processor: unified({ remarkPlugins: [[remarkDocsLinks, { siteUrl, linkAliases: siteLinkAliases }]] }) },
+    session: false,
     vite: {
         plugins: [tailwindcss()],
         css: {
@@ -273,7 +276,7 @@ export default defineConfig({
                 },
                 {
                     label: 'About',
-                    autogenerate: { directory: 'docs/about' },
+                    items: [{ autogenerate: { directory: 'docs/about' } }],
                 },
             ],
         }),
@@ -298,10 +301,7 @@ export default defineConfig({
     ],
 
     adapter: cloudflare({
-        workerEntryPoint: { path: './src/worker.mjs' },
         imageService: 'compile',
-        platformProxy: {
-            enabled: true,
-        },
+        prerenderEnvironment: 'node',
     }),
 });

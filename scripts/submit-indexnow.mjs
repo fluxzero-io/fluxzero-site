@@ -15,7 +15,7 @@ try {
 const keyResponse = await request(keyLocation);
 if (!keyResponse.ok || (await keyResponse.text()).trim() !== key) throw new Error('Deployed IndexNow ownership key does not match');
 const live = await request(`${siteUrl}/llms.txt`);
-if (!live.ok || await live.text() !== await read('dist/llms.txt','utf8')) throw new Error('Production content does not match this build; skipping indexing notification');
+if (!live.ok || await live.text() !== await read('dist/client/llms.txt','utf8')) throw new Error('Production content does not match this build; skipping indexing notification');
 for (const path of retiredPages) {
     const response = await request(siteUrl + path);
     if (![404,410].includes(response.status)) throw new Error(`Retired page still served: ${path}`);

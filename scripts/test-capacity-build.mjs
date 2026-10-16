@@ -21,8 +21,8 @@ try {
   });
   const [code] = await once(child, 'exit');
   assert.equal(code, 0, 'Capacity pricing must pass the complete production build');
-  const html = readFileSync('dist/pricing/index.html', 'utf8');
-  const markdown = readFileSync('dist/llms.txt', 'utf8');
+  const html = readFileSync('dist/client/pricing/index.html', 'utf8');
+  const markdown = readFileSync('dist/client/llms.txt', 'utf8');
   for (const {plan, subscription} of catalog.offers) {
     assert.ok(html.includes(`?plan=${plan.planId}`), 'Each CTA must select its published Dashboard plan');
     if (!plan.details.basePlanId) {
