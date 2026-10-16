@@ -1,9 +1,10 @@
+import { env } from "cloudflare:workers";
 export const prerender = false;
 import type { APIRoute } from 'astro';
 import { parseCookies, unsealCookiePayload } from '../_utils';
 
-export const GET: APIRoute = async ({ request, locals }) => {
-  const { FEEDBACK_PROVIDER, COOKIE_SECRET } = locals.runtime.env;
+export const GET: APIRoute = async ({ request }) => {
+  const { FEEDBACK_PROVIDER, COOKIE_SECRET } = env;
   try {
     if (FEEDBACK_PROVIDER === 'memory') {
       return new Response(JSON.stringify({ login: 'local-user' }), { status: 200, headers: { 'Content-Type': 'application/json' } });

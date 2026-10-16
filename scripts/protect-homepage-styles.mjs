@@ -39,7 +39,7 @@ export function protectHomepageStyles(html) {
     return html.slice(0, insertionOffset) + meta + html.slice(insertionOffset);
 }
 
-export async function protectBuiltHomepage(directory = 'dist') {
+export async function protectBuiltHomepage(directory = 'dist/client') {
     const file = join(directory, 'index.html');
     await writeFile(file, protectHomepageStyles(await readFile(file, 'utf8')));
     console.log('Protected homepage styles with a content-hashed policy.');

@@ -32,5 +32,6 @@ pnpm-debug.log*
 
 
 .dev.vars
+.wrangler/
 # SDK-sourced docs materialized by scripts/sync-sdk-docs.mjs
 src/content/docs/docs/

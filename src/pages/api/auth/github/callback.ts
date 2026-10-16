@@ -1,3 +1,4 @@
+import { env } from "cloudflare:workers";
 export const prerender = false;
 import type { APIRoute } from 'astro';
 import { makeCookie, absoluteCallbackURL, parseCookies, sealCookiePayload, unsealCookiePayload } from '../_utils';
@@ -9,13 +10,13 @@ function safeReturnTo(value: unknown): string {
   return value;
 }
 
-export const GET: APIRoute = async ({ url, request, locals }) => {
+export const GET: APIRoute = async ({ url, request }) => {
 
   const {
     GITHUB_APP_CLIENT_ID,
     GITHUB_APP_CLIENT_SECRET,
     COOKIE_SECRET
-  } = locals.runtime.env;
+  } = env;
 
 
   if (!GITHUB_APP_CLIENT_ID || !GITHUB_APP_CLIENT_SECRET || !COOKIE_SECRET) {

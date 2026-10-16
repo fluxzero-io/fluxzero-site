@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 
-const html = readFileSync('dist/pricing/index.html', 'utf8');
+const html = readFileSync('dist/client/pricing/index.html', 'utf8');
 assert.ok(html.includes('id="capacity-catalog"'), 'Pricing must use the published capacity catalog');
 assert.equal((html.match(/data-plan-card=/g) || []).length, 2, 'Starter and Pro each need their own calculator');
 assert.ok(html.includes('pricing-v2-panel-current'), 'Use the original pricing presentation');

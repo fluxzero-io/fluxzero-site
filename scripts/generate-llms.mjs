@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { parse } from 'parse5';
 
 import { siteUrl, marketingPages, inlineMarketingPages, documentationPages, htmlFile } from './core-pages.mjs';
-const outputDirectory = join(process.cwd(), 'dist');
+const outputDirectory = join(process.cwd(), 'dist/client');
 
 // These are the public marketing pages that explain and support the product.
 // Page copy, titles, and descriptions are read from the built HTML so the text

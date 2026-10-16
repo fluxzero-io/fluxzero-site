@@ -2,15 +2,18 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "flux-website",
 	"account_id": "fbb4ae392a349c3a4c7b713ec57dbc29",
-	"main": "./dist/_worker.js/index.js",
+	"main": "./src/worker.mjs",
 	"compatibility_date": "2025-06-04",
 	"compatibility_flags": [
 		"nodejs_compat",
 		"global_fetch_strictly_public"
 	],
+	"vars": {
+		"FEEDBACK_PROVIDER": "memory"
+	},
 	"assets": {
 		"binding": "ASSETS",
-		"directory": "./dist",
+		"directory": "./dist/client",
 		"run_worker_first": [
 			"/",
 			"/index.html",
