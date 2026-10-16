@@ -1,0 +1,42 @@
+version: 2
+registries:
+  fluxzero:
+    type: maven-repository
+    url: https://packages.fluxzero.io/maven
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: 'deps(actions):'
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    versioning-strategy: widen
+    ignore:
+      # @astrojs/check currently supports TypeScript 5 or 6.
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+      # astro-mermaid currently declares Mermaid 10/11 compatibility.
+      - dependency-name: mermaid
+        update-types: [version-update:semver-major]
+      # Dependabot currently supports pnpm only through version 10.
+      - dependency-name: pnpm
+        update-types: [version-update:semver-major]
+      # CI uses Node 24; preserve its compile-time API boundary.
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
+    commit-message:
+      prefix: 'deps(npm):'
+  - package-ecosystem: maven
+    directory: /tests/product-code
+    registries: [fluxzero]
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: 'deps(maven):'
