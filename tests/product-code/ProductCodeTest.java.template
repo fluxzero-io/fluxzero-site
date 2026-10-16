@@ -121,9 +121,12 @@ public class ProductCodeTest {
                     public User getUserById(Object id) { return new ExampleUser(id.toString()); }
                     public User getSystemUser() { return null; }
                 }), handlers)
-                .givenCommands(new CreateShow(show), new CreateTicket(ticket, show, new TicketDetails("balcony", 1)),
-                        new CreateReservation(reservation, ticket, customer),
-                        new CreateReservation(other, ticket, customer));
+                .givenCommands(new CreateShow(show), new CreateTicket(ticket, show, new TicketDetails("balcony", 1)));
+    }
+
+    static TestFixture existingReservationsFixture(Object... handlers) {
+        return fixture(handlers).givenCommands(new CreateReservation(reservation, ticket, customer),
+                new CreateReservation(other, ticket, customer));
     }
 
     @Test
@@ -203,20 +206,20 @@ public class ProductCodeTest {
     @Test
     void contactEmailIsValidatedAndProtected() {
         var owner = new ExampleUser(customer);
-        fixture().whenCommandByUser(owner, new UpdateContactEmail(reservation, "customer@example.com"))
+        existingReservationsFixture().whenCommandByUser(owner, new UpdateContactEmail(reservation, "customer@example.com"))
                 .expectSuccessfulResult().expectNoErrors()
                 .expectThat(fc -> assertEquals("customer@example.com", Fluxzero.loadModel(reservation).get().contactEmail()));
-        fixture().whenCommandByUser(new ExampleUser("other-user"), new UpdateContactEmail(reservation, "customer@example.com"))
+        existingReservationsFixture().whenCommandByUser(new ExampleUser("other-user"), new UpdateContactEmail(reservation, "customer@example.com"))
                 .expectExceptionalResult(ReservationErrors.notOwner).expectNoEvents();
-        fixture().whenCommandByUser(owner, new UpdateContactEmail(reservation, "not-an-email"))
+        existingReservationsFixture().whenCommandByUser(owner, new UpdateContactEmail(reservation, "not-an-email"))
                 .expectExceptionalResult(Exception.class).expectNoEvents();
-        fixture().whenCommand(new UpdateContactEmail(reservation, "customer@example.com"))
+        existingReservationsFixture().whenCommand(new UpdateContactEmail(reservation, "customer@example.com"))
                 .expectExceptionalResult(UnauthenticatedException.class).expectNoEvents();
     }
 
     @Test
     void historicalRewardsChangeProductState() {
-        var rewards = fixture(new CustomerRewards()).whenCommand(new ConfirmReservation(reservation))
+        var rewards = existingReservationsFixture(new CustomerRewards()).whenCommand(new ConfirmReservation(reservation))
                 .expectEvents(new GrantReward(reservation, customer, 100))
                 .expectNoErrors().andThen();
         rewards.whenApplying(fc -> Fluxzero.loadModel(customer, RewardBalance.class).get().points())
@@ -235,13 +238,13 @@ public class ProductCodeTest {
 
     @Test
     void fraudQueriesOnlyRequestNecessaryReviews() {
-        fixture(new FraudDetection(), CheckForFraud.class)
+        existingReservationsFixture(new FraudDetection(), CheckForFraud.class)
                 .whenCommand(new ConfirmReservation(reservation))
                 .expectQueries(new CheckForFraud(reservation))
                 .expectCommands(new ReviewReservation(reservation, new FraudAssessment(true)))
                 .expectThat(fc -> assertTrue(Fluxzero.search(FraudAssessment.class).fetchAll().isEmpty()))
                 .expectNoErrors();
-        fixture(new FraudDetection(), CheckForFraud.class)
+        existingReservationsFixture(new FraudDetection(), CheckForFraud.class)
                 .whenCommand(new ConfirmReservation(other))
                 .expectQueries(new CheckForFraud(other))
                 .expectNoCommands()
