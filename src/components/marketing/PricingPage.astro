@@ -9,6 +9,7 @@ import PricingPlanCard from './PricingPlanCard.astro';
 import PricingFoundationDiagram from './PricingFoundationDiagram.astro';
 const {catalog} = Astro.props;
 const offers = [...catalog.offers].sort((a, b) => Number(!!a.plan.details.basePlanId) - Number(!!b.plan.details.basePlanId));
+const proRecoveryDays = offers.find(offer => offer.plan.details.basePlanId).subscription.capacityPolicy.pointInTimeRecoveryDays;
 const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
 ---
 
@@ -333,7 +334,7 @@ const serializedCatalog = JSON.stringify(catalog).replace(/</g, '\\u003c');
                     </summary>
                 <div class="pricing-v2-faq-a">
                     <p>Starter supports one cluster and one app, each up to Medium. For additional clusters or apps, or larger sizes, you need Pro.</p>
-                    <p>Pro also includes backups and nine-day point-in-time recovery, with optional high availability on clusters from Medium. Contact us for requirements beyond the published plans.</p>
+                    <p>Pro also includes backups and {proRecoveryDays}-day point-in-time recovery, with optional high availability on clusters from Medium. Contact us for requirements beyond the published plans.</p>
                 </div>
             </details>
             <details class="pricing-v2-faq-item" name="pricing-faq" id="faq-included-limits">
