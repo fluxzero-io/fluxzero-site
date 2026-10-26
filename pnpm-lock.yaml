@@ -32,7 +32,7 @@ importers:
         version: 24.19.2
       alpinejs:
         specifier: ^3.17.4
-        version: 3.17.4
+        version: 3.17.5
       astro:
         specifier: ^7.4.0
         version: 7.4.2(@astrojs/markdown-remark@7.3.4)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(sass-embedded@1.106.1)(sass@1.106.1)(tsx@4.23.15)(yaml@2.9.1)
@@ -1427,8 +1427,8 @@ packages:
   ajv@8.20.0:
     resolution: {integrity: sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==}
 
-  alpinejs@3.17.4:
-    resolution: {integrity: sha512-N2gsr+58XVUt7OAPKnUGiKPDtkd+xbSGTae8C8IJxeRdkkhBJPIautkJ+qcwb7lcjJ/QK3/CPVIbN20JPvtK7A==}
+  alpinejs@3.17.5:
+    resolution: {integrity: sha512-XewMqRC6zjy8iaUPn86dxjvooAsNai3hUtQbdn0A5H2w7Jt10xHGZ1SczN5+Dvp3UKkuSEt9moy/UaUWOwKdnQ==}
 
   am-i-vibing@0.5.0:
     resolution: {integrity: sha512-KLcsDhqf1XRrJmJr+9I/C0EX2K+sGrAGZFgkmd84c8TJO9zJBu+/kFInjazu1KfJWFhWDKdRWkpBzEs7s35DVA==}
@@ -4814,7 +4814,7 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
-  alpinejs@3.17.4:
+  alpinejs@3.17.5:
     dependencies:
       '@vue/reactivity': 3.5.44
 
