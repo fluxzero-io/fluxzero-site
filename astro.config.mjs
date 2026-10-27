@@ -235,6 +235,7 @@ export default defineConfig({
                                 { label: 'Correlation data', slug: 'docs/guides/messaging/correlation-data' },
                             ] },
                             { label: 'Modeling & persistence', collapsed: true, items: [
+                                { label: 'State in Fluxzero', slug: 'docs/guides/modeling-and-persistence/state-in-fluxzero' },
                                 { label: 'Models and Graphs', slug: 'docs/guides/modeling-and-persistence/models-and-graphs' },
                                 { label: 'Loading models', slug: 'docs/guides/modeling-and-persistence/entity-loading' },
                                 { label: 'Temporal Graphs', slug: 'docs/guides/modeling-and-persistence/temporal-graphs' },
