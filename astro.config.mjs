@@ -235,6 +235,7 @@ export default defineConfig({
                                 { label: 'Correlation data', slug: 'docs/guides/messaging/correlation-data' },
                             ] },
                             { label: 'Modeling & persistence', collapsed: true, items: [
+                                { label: 'Models and Graphs', slug: 'docs/guides/modeling-and-persistence/models-and-graphs' },
                                 { label: 'Loading models', slug: 'docs/guides/modeling-and-persistence/entity-loading' },
                                 { label: 'Temporal Graphs', slug: 'docs/guides/modeling-and-persistence/temporal-graphs' },
                                 { label: 'Updating models', slug: 'docs/guides/modeling-and-persistence/updating-entities' },
