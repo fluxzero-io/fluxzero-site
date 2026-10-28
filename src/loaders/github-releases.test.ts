@@ -50,6 +50,33 @@ test('deduplicates overlapping pages', async () => {
   assert.equal(result.length, 101);
 });
 
+test('stops after finding the cached 2.x and 1.x cutoffs on the first page', async () => {
+  let calls = 0;
+  const first = [
+    release('2.16.0'),
+    release('1.293.0'),
+    release('2.15.1', { body: 'Edited current 2.x notes' }),
+    release('1.292.34', { body: 'Edited current 1.x notes' }),
+    ...Array.from({ length: 96 }, (_, n) => release(`1.291.${n}`)),
+  ];
+  const request: typeof fetch = async (_url, options) => {
+    calls++;
+    assert.ok(options?.signal instanceof AbortSignal, 'GitHub requests must have a bounded timeout');
+    return Response.json(first);
+  };
+  const result = await fetchReleases(request, new Map([[2, '2.15.1'], [1, '1.292.34']]));
+  assert.equal(calls, 1);
+  assert.deepEqual(result.map(r => r.tag_name), ['2.16.0', '1.293.0', '2.15.1', '1.292.34']);
+});
+
+test('continues pagination until both active maintenance-line cutoffs are found', async () => {
+  const first = [release('2.16.0'), release('2.15.1'),
+    ...Array.from({ length: 98 }, (_, n) => release(`2.14.${n}`))];
+  const result = await fetchReleases(api([first, [release('1.293.0'), release('1.292.34')]]),
+    new Map([[2, '2.15.1'], [1, '1.292.34']]));
+  assert.deepEqual(result.map(r => r.tag_name), ['2.16.0', '2.15.1', '1.293.0', '1.292.34']);
+});
+
 test('rejects a failed later page instead of returning truncated history', async () => {
   let calls = 0;
   const request: typeof fetch = async () => ++calls === 1
