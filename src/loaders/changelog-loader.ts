@@ -1,6 +1,7 @@
 import type { Loader } from 'astro/loaders';
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
+import { major, valid } from 'semver';
 
 import { fetchReleases, type GitHubRelease } from './github-releases';
 const CACHE_FILE = join(process.cwd(), 'src', 'data', 'changelog-cache.json');
@@ -37,11 +38,15 @@ export function changelogLoader(): Loader {
         
         // Read cached data if it exists
         const cachedData = await readCacheFile();
-        // Reconcile the complete release history. Version order is not publication
-        // order: prereleases and maintenance releases can interleave, and existing
-        // release notes can change after publication.
-        const gitHubReleases = await fetchReleases();
-        const allReleases = gitHubReleases.map(formatChangelogRelease);
+        // Refresh both active maintenance lines independently. GitHub publishes
+        // 1.x and 2.x releases in one chronological stream, so one page normally
+        // contains both cutoffs and older history can stay in the checked-in cache.
+        const cutoffs = activeReleaseCutoffs(cachedData.releases);
+        const gitHubReleases = await fetchReleases(fetch, cutoffs);
+        const refreshedReleases = gitHubReleases.map(formatChangelogRelease);
+        const allReleases = cutoffs.size === 2
+          ? mergeRefreshedReleases(refreshedReleases, cachedData.releases)
+          : refreshedReleases;
         if (JSON.stringify(cachedData.releases) !== JSON.stringify(allReleases)) {
           await writeCacheFile({
             lastUpdated: new Date().toISOString(),
@@ -97,6 +102,32 @@ export function changelogLoader(): Loader {
       }
     }
   };
+}
+
+function activeReleaseCutoffs(releases: ChangelogRelease[]): Map<number, string> {
+  const cutoffs = new Map<number, string>();
+  for (const release of releases) {
+    const version = valid(release.version);
+    if (!version) continue;
+    const releaseMajor = major(version);
+    if ((releaseMajor === 1 || releaseMajor === 2) && !cutoffs.has(releaseMajor)) {
+      cutoffs.set(releaseMajor, version);
+    }
+    if (cutoffs.size === 2) break;
+  }
+  return cutoffs;
+}
+
+function mergeRefreshedReleases(
+  refreshed: ChangelogRelease[],
+  cached: ChangelogRelease[],
+): ChangelogRelease[] {
+  const cachedVersions = new Set(cached.map(release => release.version));
+  const refreshedByVersion = new Map(refreshed.map(release => [release.version, release]));
+  return [
+    ...refreshed.filter(release => !cachedVersions.has(release.version)),
+    ...cached.map(release => refreshedByVersion.get(release.version) ?? normalizeChangelogRelease(release)),
+  ];
 }
 
 function getQuarterKey(date: string): { year: number; quarter: string; quarterNum: number } {

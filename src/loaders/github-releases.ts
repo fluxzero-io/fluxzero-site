@@ -1,4 +1,4 @@
-import { satisfies, valid } from 'semver';
+import { major, satisfies, valid } from 'semver';
 
 export interface GitHubRelease {
   tag_name: string;
@@ -9,9 +9,22 @@ export interface GitHubRelease {
   draft?: boolean;
 }
 
-/** Fetch the full history; GitHub's release order is not semantic version order. */
-export async function fetchReleases(request: typeof fetch = fetch): Promise<GitHubRelease[]> {
+const ACTIVE_MAJORS = new Set([1, 2]);
+
+/**
+ * Fetch the full history for an empty cache, or only the releases up to the
+ * newest cached release on both active maintenance lines.
+ */
+export async function fetchReleases(
+  request: typeof fetch = fetch,
+  cutoffs: ReadonlyMap<number, string> = new Map(),
+): Promise<GitHubRelease[]> {
   const releases = new Map<string, GitHubRelease>();
+  const incremental = [...ACTIVE_MAJORS].every(activeMajor => cutoffs.has(activeMajor));
+  const normalizedCutoffs = new Map(
+    [...cutoffs].map(([releaseMajor, tag]) => [releaseMajor, valid(tag) ?? tag.replace(/^v/, '')]),
+  );
+  const reachedCutoffs = new Set<number>();
   const perPage = 100;
   const headers: Record<string, string> = {
     Accept: 'application/vnd.github+json',
@@ -24,7 +37,7 @@ export async function fetchReleases(request: typeof fetch = fetch): Promise<GitH
   for (let page = 1; ; page++) {
     const response = await request(
       `https://api.github.com/repos/fluxzero-io/fluxzero-sdk-java/releases?per_page=${perPage}&page=${page}`,
-      { headers },
+      { headers, signal: AbortSignal.timeout(15_000) },
     );
     if (!response.ok) {
       // Never replace a complete cache with a partially fetched history.
@@ -36,6 +49,11 @@ export async function fetchReleases(request: typeof fetch = fetch): Promise<GitH
       if (!version || release.draft || !satisfies(version, '>=0.1192.0', { includePrerelease: true })) {
         continue;
       }
+      const releaseMajor = major(version);
+      if (incremental && ACTIVE_MAJORS.has(releaseMajor)) {
+        if (reachedCutoffs.has(releaseMajor)) continue;
+        if (version === normalizedCutoffs.get(releaseMajor)) reachedCutoffs.add(releaseMajor);
+      }
       const body = release.body?.trim();
       if (!body || body === release.name || body === `Flux Capacitor ${version}`) {
         continue;
@@ -43,6 +61,7 @@ export async function fetchReleases(request: typeof fetch = fetch): Promise<GitH
       // Pagination can overlap if a release is published while we are fetching.
       if (!releases.has(release.tag_name)) releases.set(release.tag_name, release);
     }
+    if (incremental && reachedCutoffs.size === ACTIVE_MAJORS.size) break;
     if (pageReleases.length < perPage) break;
   }
   return [...releases.values()];

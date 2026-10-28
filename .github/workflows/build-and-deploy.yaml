@@ -102,10 +102,7 @@ jobs:
 
       - name: Test capacity pricing
         if: steps.sdk-docs.outputs.changed == 'true'
-        run: pnpm test:pricing && pnpm test:pricing-build
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FLUXZERO_SDK_DOCS_SOURCE: .cache/fluxzero-sdk-java/docs/developer
+        run: pnpm test:pricing
 
       - name: Setup Java for product examples
         if: steps.sdk-docs.outputs.changed == 'true'
@@ -125,6 +122,7 @@ jobs:
         run: pnpm build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_package_config_ghreleases_optional: 'false'
           FLUXZERO_SDK_DOCS_SOURCE: .cache/fluxzero-sdk-java/docs/developer
           PRICING_CATALOG_URL: ${{ vars.PRICING_CATALOG_URL }}
           PUBLIC_WEBSITE_OIDC_ENABLED: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
