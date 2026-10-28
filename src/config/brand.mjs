@@ -17,7 +17,7 @@ export const fluxzeroBrand = {
     safariPinnedTab: `${iconBase}/safari-pinned-tab.svg`,
     webManifest: `${iconBase}/site.webmanifest`,
     browserConfig: `${iconBase}/browserconfig.xml`,
-    socialImage: '/assets/fluxzero/social-card-ai-era-ff3a3b109c38.png',
+    socialImage: '/assets/fluxzero/social-card-ai-era-975791dafb19.png',
 };
 
 export const fluxzeroLogoCssUrl = `url('${fluxzeroBrand.mark}')`;
