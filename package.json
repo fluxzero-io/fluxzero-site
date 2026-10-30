@@ -64,7 +64,7 @@
     "sass-embedded": "^1.105.2",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
-    "wrangler": "4.152.0"
+    "wrangler": "4.153.0"
   },
   "packageManager": "pnpm@10.34.7"
 }
