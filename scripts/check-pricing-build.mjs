@@ -1,5 +1,13 @@
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {existsSync, readFileSync} from 'node:fs';
+import {marketingPages} from './core-pages.mjs';
+
+// Keep the pricing checks ready for reactivation, and enforce its temporary removal.
+if (!marketingPages.includes('/pricing/')) {
+  assert.ok(!existsSync('dist/client/pricing'), 'Offline pricing must not emit HTML or Markdown');
+  console.log('Pricing is offline; no pricing page or text export was emitted.');
+  process.exit(0);
+}
 
 const html = readFileSync('dist/client/pricing/index.html', 'utf8');
 const markdown = readFileSync('dist/client/llms.txt', 'utf8');

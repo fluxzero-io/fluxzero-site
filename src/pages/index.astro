@@ -177,14 +177,6 @@ const homepageFaqs = [
             'Yes. Your application code and product data remain entirely yours. You can manage the source in your own repository, on GitHub or elsewhere, and work on it with any developer or coding agent. Your data can be exported in a machine-readable format.',
         ],
     },
-    {
-        id: 'faq-pricing',
-        question: 'When do I start paying?',
-        answer: [
-            'You can build, test, and finish your entire product locally for free. You only start paying when you activate a plan to put it online.',
-        ],
-        link: { href: '/pricing/', label: 'See pricing' },
-    },
 ];
 
 const homepageFaqSchema = {
@@ -340,7 +332,6 @@ const homepageFaqSchema = {
     </div>
     <div class="cta-btns homepage-finish__actions">
         <button class="btn-p" type="button" aria-expanded="false" aria-controls="faq" data-toggle-faq>FAQ <span class="homepage-finish__chevron" aria-hidden="true">↓</span></button>
-        <a href="/pricing/" data-astro-prefetch="viewport" class="btn-s">Pricing <span aria-hidden="true">→</span></a>
     </div>
     <div class="faq homepage-faq" id="faq" aria-labelledby="faq-title" data-llms-include hidden>
         <div class="faq-list">

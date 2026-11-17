@@ -1,6 +1,0 @@
----
-import PricingPage from '../components/marketing/PricingPage.astro';
-import {loadPricingCatalog} from '../utils/capacity-pricing.mjs';
-const catalog = await loadPricingCatalog(import.meta.env.PRICING_CATALOG_URL || 'https://api.dashboard.fluxzero.io/api/public/pricing');
----
-<PricingPage catalog={catalog} />

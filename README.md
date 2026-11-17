@@ -62,6 +62,20 @@ after successful GitHub release publication. Notifications without a version ret
 
 The local feedback provider defaults to in-memory storage. Testing the deployed GitHub-backed feedback and sign-in flow additionally requires the Cloudflare runtime variables used in production: `FEEDBACK_PROVIDER`, `GITHUB_REPO`, `GITHUB_TOKEN`, `GITHUB_APP_CLIENT_ID`, `GITHUB_APP_CLIENT_SECRET`, and `COOKIE_SECRET`. Put local Cloudflare secrets in `.dev.vars`; never commit that file.
 
+### Recovering a local build after dependency updates
+
+Use the pinned pnpm version and a supported Node version (CI uses Node 24). If a
+build fails in Starlight's `htmlToHast` with `Invalid typed array length` after an
+incremental dependency update, move the existing `node_modules` out of the
+checkout, then run `pnpm install --frozen-lockfile`. Preserve the lockfile. A stale pnpm hoisted native Sätteri
+binding can pair a different binary version with the JavaScript parser bundled
+for prerendering; a fresh install restores the matching dependency layout.
+Stop the dev server before replacing its dependencies and restart it afterwards.
+
+A missing sidebar slug is a separate source problem: make sure the sibling SDK
+checkout contains the current documentation, or set `FLUXZERO_SDK_DOCS_SOURCE`
+to a compatible checkout. Generated website docs are overwritten during sync.
+
 ### Website account menu and OIDC
 
 The marketing header always has a Dashboard link. The profile icon is always visible on marketing and docs pages. Website OIDC runs only when enabled for the current origin; other previews keep a neutral menu whose Login and Create account links open Dashboard’s account flow. The icon uses the neutral text color (white on the marketing site) in both session states. When signed out, its fill fades in on hover or keyboard focus and out when leaving, with the outline continuously visible. When signed in, the icon stays filled and white at rest, with a subtle opacity change on hover. It also remains filled while the menu is open; reduced-motion preferences disable the transitions. Login appears above Create account in the signed-out menu. On mobile marketing pages, account actions are part of the hamburger menu, using the same typography and touch targets as the navigation; Dashboard remains in the header. The desktop popover uses the shared neutral marketing background. The Dashboard link keeps the same styling regardless of session state. The user's name is inside the menu. A per-tab visual hint, valid for up to 12 hours, restores the signed-in menu before the next silent check completes; an expired or revoked IDP session can still briefly show the old menu until that check clears it. The hint contains no tokens. An absent session or failed silent check leaves the site usable without a visible error. The website checks the IDP session with Authorization Code + PKCE and `prompt=none` in a hidden iframe. On Chrome-prerendered pages, this check starts only after activation so the callback retains its tab-bound state and PKCE verifier. Login and Create account start interactive flows and return to the same website page; Profile opens the IDP account page with the website client ID and exact current page for a validated return link. Logout uses the IDP end-session endpoint. Tokens are kept in memory. With OIDC disabled, the menu remains available without checking or claiming a website session.
@@ -278,6 +292,10 @@ boundaries.
 Unknown URLs use `src/pages/404.astro`, the shared marketing error page.
 Starlight’s default 404 is disabled so missing website URLs do not show the docs
 shell. The response retains HTTP 404 and the page is marked noindex.
+
+Pricing is temporarily offline: `/pricing/` returns 404 and is excluded from navigation,
+sitemap and text exports. Its components and calculator remain available in source for
+reactivation. Shared documentation links to pricing resolve to Contact while it is offline.
 
 Removing a route lets the deployed site return 404; do not block it in robots.txt,
 so crawlers can observe its removal. External search results take time to disappear.
