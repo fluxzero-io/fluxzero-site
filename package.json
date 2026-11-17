@@ -37,7 +37,7 @@
     "@astrojs/check": "^0.9.10",
     "@astrojs/cloudflare": "^14.4.0",
     "@astrojs/markdown-remark": "^7.3.3",
-    "@astrojs/starlight": "^0.42.6",
+    "@astrojs/starlight": "^0.43.1",
     "@types/node": "^24.19.2",
     "alpinejs": "^3.17.4",
     "astro": "^7.4.0",
