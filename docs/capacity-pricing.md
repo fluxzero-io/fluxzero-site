@@ -1,5 +1,8 @@
 # Capacity pricing publication
 
+Pricing is temporarily offline. The route, navigation links and text exports are disabled;
+the components and calculator described below are retained for reactivation.
+
 `/pricing` has one presentation: the original card styling with a wide Free
 card above Starter, Pro and Enterprise. Pro lists additions to Starter; Enterprise
 uses the original custom-offer content and contact CTA. The earlier `PRICING_MODEL` switch and alternative page have
